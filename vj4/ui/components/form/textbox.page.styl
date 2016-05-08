@@ -1,0 +1,85 @@
+@import './var.inc.styl'
+
+// Normal Textbox
+input.textbox, textarea.textbox
+  color: $text-color
+  font-size: 0.9rem
+  border: 1px solid #DDD
+  background: #FFF
+  margin: 0
+  outline: 2px solid transparent
+  padding: 5px
+  line-height: 1.2
+  transition: outline-color .2s, border-color .2s
+  transition-timing-function: ease-out-cubic
+
+  &:focus
+    border-color: $primary-color
+    outline: 2px solid #C1E0FF
+    outline-offset: 0
+
+  &.expanded
+    width: 100%
+
+input.textbox
+  width: rem(400px)
+  height: rem($form-standard-height)
+
+textarea
+  width: rem(500px)
+  height: rem(unit(500 * 0.618, 'px'))
+
+// Material Textbox
+label.textbox.material
+  font-size: 0.8rem
+  color: rgba($text-color, 0.8)
+  width: rem(120px)
+  display: block
+
+  input
+    color: $text-color
+    display: block
+    width: 100%
+    height: rem($form-standard-height)
+    font-size: 0.9rem
+    border: 0
+    background: none
+    margin: 0
+    outline: 0
+    border-bottom: 2px solid rgba($text-color, 0.4)
+    transition: border-color .2s ease-out-cubic
+
+    &:disabled, &:read-only
+      color: rgba($text-color, 0.6)
+
+    &:enabled:read-write:hover
+      border-color: rgba($text-color, 0.8)
+
+    &:enabled:read-write:focus
+      border-color: $primary-color
+
+  &.focus
+    color: $primary-color
+
+  &.expanded
+    width: 100%
+
+label.textbox.material.inverse
+  color: rgba($immersive-text-color, 0.8)
+
+  input
+    color: $immersive-text-color
+    border-color: rgba($immersive-text-color, 0.4)
+
+    &:disabled, &:read-only
+      color: rgba($immersive-text-color, 0.6)
+
+    &:enabled:read-write:hover
+      border-color: rgba($immersive-text-color, 0.8)
+
+    &:enabled:read-write:focus
+      border-color: $immersive-primary-color
+
+  &.focus
+    color: $immersive-primary-color
+

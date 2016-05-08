@@ -1,0 +1,79 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="layout--2col clearfix">
+  <div class="layout--2col__main">
+    <div class="section">
+      <h1 class="section__title">{{ _('Problem Solution List') }}</h1>
+      <table class="section__table">
+        <colgroup>
+          <col class="col--name">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="col--name">{{ _('Problem Solution') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% if not psdocs %}
+          <tr class="section__table-row--empty">
+            <td colspan="1">{{ _('Sorry, there is no problem solution for this problem.') }}</td>
+          </tr>
+        {% else %}
+        {% for psdoc in psdocs %}
+          <tr data-psid="{{ psdoc['doc_id'] }}">
+            <td>
+              <div>{{ psdoc['content']|markdown }}</div>
+              {% for reply in psdoc['reply'] %}
+              <div>{{ reply }}</div>
+              {% endfor %}
+              <div>
+                <a href="{{ reverse_url('user_detail', uid=psdoc['owner_uid']) }}">
+                  {{ psdoc['owner_uid'] }}
+                </a>
+              </div>
+              <div>
+                <span class="vote--count">{{ psdoc['vote'] }}</span>
+                <form method="post">
+                  <input type="hidden" name="operation" value="upvote">
+                  <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
+                  <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+                  <input type="submit" class="vote vote--upvote" value="{{ _('upvote') }}">
+                </form>
+                <form method="post">
+                  <input type="hidden" name="operation" value="downvote">
+                  <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
+                  <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+                  <input type="submit" class="vote vote--downvote" value="{{ _('downvote') }}">
+                </form>
+                <form method="post">
+                  <input type="hidden" name="operation" value="reply">
+                  <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
+                  <textarea name="content"></textarea>
+                  <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+                  <input type="submit" value="{{ _('reply') }}">
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="layout--2col__side">
+    <div class="section">
+      <h1 class="section__title">{{ _('It works!') }}</h1>
+    </div>
+  </div>
+</div>
+<div class="clearfix">TODO: <big>SWX</big> TEMPLATE</div>
+<div>
+  <form method="post">
+    <input type="hidden" name="operation" value="submit">
+    <textarea name="content"></textarea>
+    <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+    <input type="submit" value="{{ _('Submit') }}">
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+.hasjs .hasjs--hide
+  display: none
+
+.nojs .nojs--hide
+  display: none
+
+.main
+  padding: 50px 0
+
++below(rupture.desktop-cutoff)
+  .main
+    padding: 20px 0
+
+.content-container
+  center(100%)
+  margin: 0 20px
+
++desktop()
+  .content-container
+    margin: 0
+    center(980px)
+
++above(1250px)
+  .content-container
+    center(1200px)
+
+.float-layout--left
+  float: left
+
+.float-layout--right
+  float: right
+
+.text-center
+  text-align: center
+
+.text-right
+  text-align: right
+
+.v-center
+  display: inline-block
+  vertical-align: middle
+
+.layout--2col
+  .layout--2col__main
+    col(3/4)
+  .layout--2col__side
+    col(1/4)
+
++below(rupture.desktop-cutoff)
+  .layout--2col
+    .layout--2col__main, .layout--2col__side
+      stack()
+
+    .layout--2col__main
+      margin-bottom: 20px
+
+// Media Object
+// Heavily borrowed from http://csswizardry.com/2013/05/the-flag-object/
+
+.media
+  display: table
+  width: 100%
+
+.media__left, .media__right, .media__body
+  display: table-cell
+  vertical-align: middle
+
+  &.top
+    vertical-align: top
+
+  &.bottom
+    vertical-align: bottom
+
+.media__left
+  padding-right: rem(10px)
+
+.media__right
+  padding-left: rem(10px)
+
+.media__left, .media__right
+  img
+    display: block
+
+.media__body
+  width: 100%
+
+// Number Box Object
+.numbox
+  text-align: center
+
+.numbox__num.large
+  font-size: 1.6rem
+
+.numbox__num.medium
+  font-size: 1.3rem
+
+.numbox__text
+  font-size: 0.8rem
+  margin-top: rem(10px)
+  color: #AAA
+
+// Balancer: horizontally equally distributed columns
+.balancer
+  width: 100%
+  display: table
+  table-layout: fixed
+
+.balancer__body
+  display: table-cell
+  vertical-align: middle
+
+  &.top
+    vertical-align: top
+
+  &.bottom
+    vertical-align: bottom

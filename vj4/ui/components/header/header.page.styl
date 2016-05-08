@@ -1,0 +1,57 @@
+@import './var.inc.styl'
+@import '../navigation/var.inc.styl'
+
+$header-gap-collapsed = ($header-bg-height-collapsed - $nav-item-height - $header-logo-height) / 2
+
+.header
+  position: relative
+  padding-top: rem($header-gap-collapsed + $nav-item-height)
+  height: rem($header-bg-height)
+  background: #5eafca url(./header-background.png) no-repeat center top
+  +retina()
+    background-image: url(./header-background.png)
+    background-size: rem($header-bg-width $header-bg-height)
+  +mobile()
+    .header-content
+      text-align: center
+
+  &.collapsed
+    height: rem($header-bg-height-collapsed)
+
+.header__layer
+  position: absolute
+  left: 0
+  bottom: 0
+  width: 100%
+  height: rem($header-layer-height)
+  background: rgba(#000, 0.5)
+
+.header.collapsed .header__layer
+  display: none
+
+.header__logo
+  display: block
+  width: rem($header-logo-width)
+  height: rem($header-logo-height)
+  background: url(header-logo.png) no-repeat
+  +retina()
+    background-image: url(./header-logo@2x.png)
+    background-size: rem($header-logo-width $header-logo-height)
+  +mobile()
+    display: inline-block
+
+.location-path
+  color: rgba(#FFF, 0.3)
+  line-height: 30px
+  margin-top: 10px
+  a, a:visited
+    color: rgba(#FFF, 0.6)
+  a:hover
+    color: rgba(#FFF, 0.9)
+
+.location-current
+  color: #9ad4f1
+  line-height: 40px
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis

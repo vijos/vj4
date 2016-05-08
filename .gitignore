@@ -1,0 +1,21 @@
+# Editor temporaries.
+*~
+*.swp
+*.sublime-project
+*.sublime-workspace
+.idea/
+.vscode/
+
+# Python cache.
+__pycache__/
+*.pyc
+*.egg-info/
+
+# UI stuffs.
+node_modules/
+npm-debug.log
+.uibuild/
+
+# Vagrant dirts.
+Vagrantfile
+.vagrant/

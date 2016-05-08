@@ -1,0 +1,10 @@
+aiohttp
+jinja2==2.7.3  # there is performance bug in 2.8
+sockjs==0.4  # undocumented interface is used, need to check when upgrade
+motor
+hoedown
+accept
+aioamqp
+smtplibaio
+pytz
+colorlog

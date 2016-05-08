@@ -1,0 +1,51 @@
+$error_width = 650px
+$twd2_width = 270px
+
+.page--error
+  .error--2col
+    center(700px)
+    margin-top: rem(50px)
+    margin-bottom: rem(50px)
+
+  .error--2col__icon
+    width: $twd2_width
+    float: left
+    text-align: center
+
+  .error--2col__main
+    float: left
+    width: rem($error_width - $twd2_width)
+    color: #777
+    height: $twd2_width
+    line-height: 1.5
+    position: relative
+
+    h1
+      font-size: 4rem
+      color: #999
+      margin-bottom: rem(20px)
+
+    li
+      list-style: decimal inside
+
+  .error--2col__text
+    padding: rem(50px)
+    position: absolute
+    top: 50%
+    transform: translateY(-50%)
+
+  +below($error_width + 50)
+    .error--2col__icon
+      stack()
+    .error--2col__main
+      stack()
+    .error--2col__text
+      top: 0
+      left: 50%
+      transform: translateX(-50%)
+
+  .error__twd2
+    background: url('error/twd2.svg') no-repeat
+    width: $twd2_width
+    height: $twd2_width
+    display: inline-block

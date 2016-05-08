@@ -1,0 +1,32 @@
+<nav class="nav">
+  <div class="content-container clearfix">
+    <ol class="nav__list nav__list--main clearfix">
+      <li class="nav__list-item"><a href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('main') }}" class="nav__item">{{ _('main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('problem_main') }}" class="nav__item">{{ _('problem_main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('training_main') }}" class="nav__item">{{ _('training_main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('discussion_main') }}" class="nav__item">{{ _('discussion_main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('contest_main') }}" class="nav__item">{{ _('contest_main') }}</a></li>
+    </ol>
+    <ol class="nav__list nav__list--secondary clearfix">
+    {% if view.user == vj4.model.builtin.USER_GUEST %}
+      <li class="nav__list-item"><a href="{{ reverse_url('user_login') }}" class="nav__item command--nav-login">{{ _('Login') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('user_register') }}" class="nav__item--round command--nav-signup">{{ _('Sign Up') }}</a></li>
+    {% else %}
+      <li class="nav__list-item dropdown-target" data-popup-id="menu-nav-user" data-popup-zindex="400" data-dropdown-position="fixed" data-dropdown-align="right" data-dropdown-hover="true">
+        <a href="{{ reverse_url('user_detail', uid=view.user['_id']) }}" class="nav__item">{{ view.user['uname'] }} <i class="icon-expand_more"></i></a>
+        <ol class="popup menu" id="menu-nav-user">
+          <li class="menu__item"><a href="{{ reverse_url('user_detail', uid=view.user['_id']) }}" class="menu__link">{{ _('My Profile') }}</a></li>
+          <li class="menu__item"><a href="{{ reverse_url('home_messages') }}" class="menu__link">{{ _('Messages') }}</a></li>
+          <li class="menu__seperator"></li>
+          <li class="menu__item"><a href="{{ reverse_url('home_account') }}" class="menu__link">{{ _('My Account') }}</a></li>
+          <li class="menu__item"><a href="{{ reverse_url('home_security') }}" class="menu__link">{{ _('Security Settings') }}</a></li>
+          <li class="menu__seperator"></li>
+          <li class="menu__item"><a href="{{ reverse_url('user_logout') }}" class="menu__link command--nav-logout">{{ _('Logout') }}</a></li>
+        </ol>
+      </li>
+    {% endif %}
+    </ol>
+  </div>
+</nav>
+<nav class="nav--shadow"></nav>

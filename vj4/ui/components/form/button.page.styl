@@ -1,0 +1,42 @@
+@import './var.inc.styl'
+
+.button
+  font-size: 0.9rem
+  line-height: rem($form-standard-height)
+  background-color: #E8E8E8
+  border: 0
+  height: rem($form-standard-height)
+  padding: rem(0 25px)
+  display: inline-block
+  outline: 0
+
+  &:hover, &:focus
+    background-color: #E0E0E0
+    text-decoration: none
+
+  &.expanded
+    padding-left: 0
+    padding-right: 0
+    text-align: center
+    width: 100%
+
+  &.rounded
+    border-radius: rem($form-standard-height / 2)
+
+  &.primary
+    background-color: $primary-color
+    color: #FFF
+
+    &:hover
+      background-color: lighten($primary-color, 10%)
+
+.button.inverse
+  line-height: rem($form-standard-height - 4)
+  border: 2px solid #FFF
+  background: none
+  color: #FFF
+
+  &:hover, &:focus
+    border-color: $immersive-primary-color
+    color: $immersive-primary-color
+    background: none

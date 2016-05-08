@@ -1,0 +1,43 @@
+@import '~misc/section.inc.styl'
+@import './var.inc.styl'
+
+// No JavaScript
+.section__tab-item
+  margin: rem(20px) 0
+  border-bottom: 1px solid #DDD
+
+.section__tab-title
+  font-size: 1.5rem
+  color: #888
+  margin-bottom: 0.8em
+
+// Has JavaScript
+.section__tab-header
+  padding: 0 rem($section-gap-h)
+  padding-top: rem(10px)
+  overflow: hidden
+
+.section__tab-header-item
+  float: left
+  font-size: 0.9rem
+  line-height: rem($tab-item-height - 10px)
+  height: rem($tab-item-height - 10px)
+  padding: 0 rem(20px)
+  margin-right: rem(10px)
+
+.section__tab-content
+  padding: rem($section-gap-v) rem($section-gap-h)
+
+.section__tab-container.immersive
+  .section__tab-header-item
+    color: rgba(#FFF, 0.9)
+    border-radius: 1px 1px 0 0
+    cursor: pointer
+
+    &:hover
+      color: #FFF
+
+    &.selected
+      background: #FFF
+      color: #666
+      box-shadow: 0 0 10px rgba(#000, 0.3)

@@ -1,0 +1,38 @@
+parser: babel-eslint
+plugins:
+  - babel
+  - react
+env:
+  browser: true
+  es6: true
+  jquery: true
+  commonjs: true
+extends:
+  - eslint:recommended
+  - plugin:react/recommended
+parserOptions:
+  sourceType: module
+  ecmaFeatures:
+    - impliedStrict
+    - experimentalObjectRestSpread
+    - jsx
+globals:
+  __webpack_public_path__: true
+  __webpack_require__: true
+  UiContext: true
+rules:
+  babel/object-shorthand: 1
+  indent:
+    - 2
+    - 2
+  quotes:
+    - 1
+    - single
+  semi:
+    - 2
+    - always
+  comma-dangle:
+    - 2
+    - always-multiline
+  no-unused-vars: 1
+  no-console: 0

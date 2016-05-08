@@ -1,0 +1,82 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="layout--2col clearfix">
+  <div class="layout--2col__main">
+    <div>
+      {{ _('page-prefix') }}
+      {% for page0 in range((pcount + view.PROBLEMS_PER_PAGE - 1) // view.PROBLEMS_PER_PAGE) %}
+      {% if page == page0 %}
+      {{ page0 }}
+      {% else %}
+      <a href="{{ reverse_url('problem_main') }}?page={{ page0 }}">{{ page0 }}</a>
+      {% endif %}
+      {% endfor %}
+      {{ _('page-suffix') }}
+    </div>
+    <div class="section">
+      <div class="section__indent top bottom">
+        <h1 class="section__title">{{ _('Problem List') }}</h1>
+        <table class="section__table">
+          <colgroup>
+            <col class="col--status">
+            <col class="col--name">
+            <col class="col--submit_n">
+            <col class="col--ac_rate">
+            <col class="col--difficulty">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="col--status">{{ _('Status') }}</th>
+              <th class="col--name">{{ _('Problem') }}</th>
+              <th class="col--submit_n">{{ _('# Submit') }}</th>
+              <th class="col--ac_rate">{{ _('% AC') }}</th>
+              <th class="col--difficulty">{{ _('Difficulty') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% if not pdocs %}
+            <tr class="section__table-row--empty">
+              <td colspan="4">{{ _('Sorry, there is no problem in the problem set.') }}</td>
+            </tr>
+          {% else %}
+          {% for pdoc in pdocs %}
+            <tr data-pid="{{ pdoc['doc_id'] }}">
+              <td class="col--status">
+                {{ vj4.view.record.STATUS_TEXTS[pdoc['psdoc'].get('status')] }}
+              </td>
+              <td class="col--name">
+                <form method="post">
+                  <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
+                  {% if not pdoc['psdoc'].get('star') %}
+                  <input type="hidden" name="operation" value="star">
+                  <button class="star star--outline" type="submit"><i class="icon-star-empty"></i></button>
+                  {% else %}
+                  <input type="hidden" name="operation" value="unstar">
+                  <button class="star star--fill" type="submit"><i class="icon-star-full"></i></button>
+                  {% endif %}
+                  <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+                  <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
+                    {{ pdoc['title'] }}
+                  </a>
+                </form>
+              </td>
+              <td class="col--submit_n">1234</td>
+              <td class="col--ac_rate">50%</td>
+              <td class="col--difficulty">9</td>
+            </tr>
+          {% endfor %}
+          {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="layout--2col__side">
+    <div class="section side">
+      <div class="section__indent top bottom">
+        <h1 class="section__title">{{ _('Statistics') }}</h1>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

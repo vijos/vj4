@@ -1,0 +1,44 @@
+.dczcomments__item .is-editing
+  .dczcomments__dummy-box
+    display: none
+  > .typo
+    display: none
+
+.dczcomments__box .textbox
+  height: rem(100px)
+  resize: vertical
+
+.dczcomments__dummy-box.textbox
+  height: rem(60px)
+  resize: none
+  font-size: 1.2rem
+  color: #AAA
+  padding: 10px
+
+.dczcomments__item,
+.dczcomments__reply
+  padding: rem(20px) 0
+  border-top: 1px solid $bg-color
+
+.dczcomments__supplementary
+  float: left
+  font-size: 0.9rem
+  line-height: 1
+  color: lighten($text-color, 50%)
+  margin-bottom: rem(5px)
+
+.dczcomments__operations
+  font-size: 1rem
+  float: right
+  vertical-align: top
+  color: lighten($text-color, 30%)
+
+  a, a:visited
+    color: lighten($text-color, 50%)
+    margin-left: rem(3px)
+  a:hover
+    color: $primary-color
+    text-decoration: none
+
+.dczcomments__replies
+  margin-top: rem(20px)

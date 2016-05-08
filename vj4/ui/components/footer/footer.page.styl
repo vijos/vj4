@@ -1,0 +1,56 @@
+$footer-extra-link-gap = 20px
+
+.footer
+  background: #FFF
+  padding: rem(20px 0)
+  color: #666
+
+  a, a:visited, a:active
+    color: #666
+    text-decoration: none
+
+  a:hover
+    color: $primary-color
+    text-decoration: underline
+
+  h1
+    font-size: 1.1rem
+
+.footer__category
+  float: left
+  margin: rem(0 50px 50px 0)
+
+.footer__category__list
+  margin-top: rem(10px)
+  font-size: 0.8rem
+  line-height: 2
+
+.footer__extra-left
+  float: left
+
+.footer__extra-right
+  float: right
+
+.footer__extra-link
+  font-size: 0.8rem
+
+.footer__extra-link-item
+  float: left
+  line-height: 2
+
+.footer__extra-left .footer__extra-link-item
+  margin-right: rem($footer-extra-link-gap)
+
+.footer__extra-right .footer__extra-link-item
+  margin-left: rem($footer-extra-link-gap)
+
+.layout--immersive
+  .footer
+    background: none
+    color: #FFF
+
+    a, a:visited, a:active
+      color: #FFF
+
+    a:hover
+      color: #FFF

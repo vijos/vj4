@@ -1,0 +1,18 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="layout--2col clearfix">
+  <div class="layout--2col__main">
+    <h2>{{ _('contest_create') }}</h2>
+    {{ tdoc }}
+  </div>
+  <div class="layout--2col__side">
+    <div>
+      <ul>
+        <li><a href="{{ reverse_url('contest_status', tid=tdoc['doc_id']) }}">{{ _('contest_status') }}</a></li>
+        <li>{{ _('Swx Template') }}</li>
+        <li>{{ _('Swx Template') }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

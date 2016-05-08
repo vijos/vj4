@@ -1,0 +1,55 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="layout--2col clearfix">
+  <div class="layout--2col__main">
+    <div class="section">
+      <div class="section__indent top bottom">
+        <h1 class="section__title">{{ _('Create Discussion in {0}').format(vnode.title) }}</h1>
+        <div class="section__indent left right">
+          <form method="post">
+            <div class="form__row">
+              <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
+            </div>
+            <div class="form__row">
+              <textarea name="content" class="expanded textbox"></textarea>
+            </div>
+            <div class="form__row">
+              <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+              <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="layout--2col__side">
+    <div class="section side">
+      <div class="section__indent top bottom">
+        <h1 class="section__title">Markdown 语法参考</h1>
+        <div class="section__indent left right typo">
+          <dl>
+            <dt>强调（斜体）</dt>
+            <dd><pre>*text*</pre></dd>
+            <dt>强调（粗体）</dt>
+            <dd><pre>**text**</pre></dd>
+            <dt>代码</dt>
+            <dd>
+<pre>```c++
+int main() {
+  return 0;
+}
+```</pre>
+            </dd>
+            <dt>链接</dt>
+            <dd><pre>[文字](http://...)</pre>
+            <dt>图片</dt>
+            <dd><pre>![文字描述](http://...)</pre>
+            </dd>
+          </dl>
+          <p>了解更多 <a href="http://commonmark.org/help/" target="_blank">CommonMark 规范语法</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

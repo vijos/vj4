@@ -1,0 +1,26 @@
+{% set layout_name = "immersive" %}
+{% extends "layout/html5.html" %}
+{% block body %}
+{% include "components/nav.html" %}
+
+<div class="autoexpand__container">
+  <div class="autoexpand__collapse">
+    <div class="nav--placeholder"></div>
+  </div>
+  <div class="autoexpand__expand">
+    <div class="main">
+      <div class="content-container">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+  <div class="autoexpand__collapse">
+    {% with show_topics = false %}
+      {% include "components/footer.html" %}
+    {% endwith %}
+  </div>
+</div>
+
+{% include "components/login_dialog.html" %}
+
+{% endblock %}

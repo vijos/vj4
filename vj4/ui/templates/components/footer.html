@@ -1,0 +1,54 @@
+<div class="footer">
+  <div class="content-container">
+    {% if show_topics|default(true) %}
+    <div class="footer__links clearfix">
+      <div class="footer__category">
+        <h1>{{ _('Status') }}</h1>
+        <ul class="footer__category__list">
+          <li class="footer__category__item"><a href="{{ reverse_url('record_main') }}">{{ _('Judging Queue') }}</a></li>
+          <li class="footer__category__item"><a href="#">{{ _('Service Status') }}</a></li>
+        </ul>
+      </div>
+      <div class="footer__category">
+        <h1>{{ _('Development') }}</h1>
+        <ul class="footer__category__list">
+          <li class="footer__category__item"><a href="#">{{ _('Open Source') }}</a></li>
+          <li class="footer__category__item"><a href="#">{{ _('API') }}</a></li>
+        </ul>
+      </div>
+      <div class="footer__category">
+        <h1>{{ _('Support') }}</h1>
+        <ul class="footer__category__list">
+          <li class="footer__category__item"><a href="#">{{ _('Help') }}</a></li>
+          <li class="footer__category__item"><a href="#">{{ _('Blog') }}</a></li>
+          <li class="footer__category__item"><a href="#">{{ _('QQ Group') }}</a></li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+    <div class="footer__extra-link clearfix">
+      <div class="footer__extra-left">
+        <ol class="clearfix">
+          <li class="footer__extra-link-item"><a href="#">{{ _('Contact Us') }}</a></li>
+          <li class="footer__extra-link-item"><a href="#">{{ _('About') }}</a></li>
+          <li class="footer__extra-link-item"><a href="#">{{ _('Privacy') }}</a></li>
+          <li class="footer__extra-link-item"><a href="#">{{ _('Security') }}</a></li>
+          <li class="footer__extra-link-item dropdown-target" data-popup-id="menu-footer-lang" data-dropdown-align="right" data-dropdown-hover="true">
+            <span><i class="icon-earth"></i> Language <i class="icon-expand_less"></i></span>
+            <ol class="popup menu" id="menu-footer-lang">
+              <li class="menu__item"><a class="menu__link" href="/lang/en">English</a></li>
+              <li class="menu__item"><a class="menu__link" href="/lang/zh_CN">简体中文</a></li>
+            </ol>
+          </li>
+        </ol>
+      </div>
+      <div class="footer__extra-right">
+        <ol class="clearfix">
+          {% for html in vj4.model.builtin.FOOTER_EXTRA_HTMLS %}
+          <li class="footer__extra-link-item">{{ html|safe }}</li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>

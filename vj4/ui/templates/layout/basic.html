@@ -1,0 +1,40 @@
+{% set layout_name = "basic" %}
+{% extends "layout/html5.html" %}
+{% block body %}
+{% include "components/nav.html" %}
+<div class="autoexpand__container">
+  <div class="autoexpand__collapse">
+    <div class="header{% if header_collapsed %} collapsed{% endif %}">
+      <div class="header-content content-container">
+        <a class="header__logo" href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
+      </div>
+      <div class="header__layer">
+        <div class="content-container">
+          {% block collapsed_header %}
+            <div class="location-path">
+              {% for c in path_components %}
+                / {% if c[1] %}<a href="{{ c[1] }}">{{ _(c[0]) }}</a>{% endif %}
+              {%- endfor %}
+            </div>
+            <h1 class="location-current">{{ _(path_components[-1][0]) }}</h1>
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="autoexpand__expand">
+    <div class="main">
+      <div class="content-container">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+
+  <div class="autoexpand__collapse">
+    {% include "components/footer.html" %}
+  </div>
+</div>
+
+{% include "components/login_dialog.html" %}
+
+{% endblock %}

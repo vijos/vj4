@@ -1,0 +1,63 @@
+@import '~components/tab/var.inc.styl'
+
+.page--user_detail
+
+  .profile-header
+    position: relative
+    background-position: center center
+    background-size: cover
+    min-height: 220px
+
+    &:after
+      padding-top: 30%
+      display: block
+      content: ''
+
+      +mobile()
+        padding-top: 0
+        padding-bottom: rem($tab-item-height)
+
+    .section__inner-indent
+      position: absolute
+      left: 0
+      top: 0
+      width: 100%
+
+      +mobile()
+        position: relative
+
+    .media__left
+      padding-right: rem(30px)
+
+    +mobile()
+      .media, .media__left, .media__body
+        display: block
+
+      .media__left
+        text-align: center
+
+        img
+          display: inline-block
+
+      .media__body
+        margin-top: rem(20px)
+
+  .profile-header__main
+    h1
+      line-height: 40px
+      color: #FFF
+
+    p
+      line-height: 30px
+      color: #FFF
+
+    small
+      color: rgba(#FFF, 0.8)
+
+  .profile-content
+    position: relative
+    z-index: 2
+    margin-top: rem(-($tab-item-height))
+
+    .section__tabs
+      padding-top: rem($tab-item-height)

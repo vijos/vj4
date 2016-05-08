@@ -1,0 +1,56 @@
+@import 'section.inc.styl'
+
+.immersive-section, .section
+  margin-bottom: rem($section-margin)
+
+  &::before, &::after
+    content: ' '
+    display: table
+
+  &.side
+    font-size: 0.9rem
+
+.section
+  background: #FFF
+  box-shadow: 0 2px 2px rgba(#000, 0.2)
+
+.section__title
+  color: #666
+  margin-left: rem($section-gap-h)
+  margin-right: rem($section-gap-h)
+  margin-bottom: 0.7em
+
+h1.section__title
+  font-size: 1.4rem
+
+h2.section__title
+  font-size: 1.2rem
+
+h3.section__title
+  font-size: 1rem
+
+.section__indent
+  &.left
+    margin-left: rem($section-gap-h)
+
+  &.right
+    margin-right: rem($section-gap-h)
+
+  &.top
+    margin-top: rem($section-gap-v)
+
+  &.bottom
+    margin-bottom: rem($section-gap-v)
+
+.section__inner-indent
+  &.left
+    padding-left: rem($section-gap-h)
+
+  &.right
+    padding-right: rem($section-gap-h)
+
+  &.top
+    padding-top: rem($section-gap-v)
+
+  &.bottom
+    padding-bottom: rem($section-gap-v)

@@ -1,0 +1,12 @@
+<span class="user-profile-link inlined v-center">
+  {% if not noAvatar %}
+  <img class="v-center small user-profile-avatar" src="{{ user['gravatar']|gravatar_url }}" width="20" height="20">
+  {% endif %}
+  <a class="v-center user-profile-name" href="{{ reverse_url('user_detail', uid=user['_id']) }}">{{ user['uname'] }}</a>
+  {% if not noBadge %}
+  <a class="v-center user-profile-badge badge--lv6" href="{{ reverse_url('user_detail', uid=user['_id']) }}" title="LV 6: Top 10%">LV 6</a>
+  {% if not noModBadge %}
+  <span class="v-center user-profile-badge badge--mod" title="Moderator">MOD</span>
+  {% endif %}
+  {% endif %}
+</span>

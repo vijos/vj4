@@ -1,0 +1,34 @@
+.dcznode-tag
+  font-size: 0.8rem
+  display: inline-block
+  line-height: rem(20px)
+  padding: rem(0 5px)
+  color: #AAA
+  vertical-align: middle
+
+  &:hover
+    background: $primary-color
+    color: #FFF
+    text-decoration: none
+
+  i
+    font-size: 0.8em
+    margin-right: rem(5px)
+    opacity: 0.9
+
+.dcznode-bg
+  height: 0
+  box-sizing: content-box
+  padding-bottom: 40%
+  background-size: cover
+  background-position: left center
+  background-repeat: no-repeat
+
+  for id in 'qa' 'share' 'vijos'
+    &.{id}
+      background-image: url('./bg/nodes_' + id + '.png')
+      +retina()
+        background-image: url('./bg/nodes@2x_' + id + '.png')
+
+  +below(rupture.desktop-cutoff)
+    display: none

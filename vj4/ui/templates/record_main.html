@@ -1,0 +1,46 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="layout--2col clearfix">
+  <div class="layout--2col__main">
+    <div class="section">
+      <div class="section__indent top bottom">
+        <h1 class="section__title">{{ _('Judging Queue') }}</h1>
+        <table class="section__table record_main__table">
+          <colgroup>
+            <col class="col--status">
+            <col class="col--problem">
+            <col class="col--submit-by">
+            <col class="col--submit-at">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="col--status">{{ _('Status') }}</th>
+              <th class="col--problem">{{ _('Problem') }}</th>
+              <th class="col--submit-by">{{ _('Submit By') }}</th>
+              <th class="col--submit-at">{{ _('Submit At') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% if not rdocs %}
+            <tr class="section__table-row--empty">
+              <td colspan="4">{{ _('Good, there is no task in the queue!') }}</td>
+            </tr>
+          {% else %}
+            {% for rdoc in rdocs %}
+            {% include 'record_tr.html' %}
+            {% endfor %}
+          {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="layout--2col__side">
+    <div class="section">
+      <div class="section__indent top bottom">
+        <h1 class="section__title">{{ _('Statistics') }}</h1>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

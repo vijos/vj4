@@ -1,0 +1,13 @@
+.record-status
+  for key, value in $record-status-color
+    &.{key}
+      color: value !important
+
+.record-status-icon
+  display: inline-block
+  vertical-align: top
+  width: 18px
+  for key, value in $record-status-icon
+    &.{key}:before
+      content: value
+      color: $record-status-color[key]

@@ -1,0 +1,206 @@
+// The typography stylesheet is based on typo.css: http://typo.sofi.sh/
+
+html
+  box-sizing: border-box
+
+*, *:before, *:after
+  box-sizing: inherit
+
+html
+  color: $text-color
+  background: $bg-color
+  -webkit-text-size-adjust: 100%
+  -ms-text-size-adjust: 100%
+  text-rendering: optimizelegibility
+
+body, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, hr, button, article, aside, details, figcaption, figure, footer, header, menu, nav, section
+  margin: 0
+  padding: 0
+
+dt
+  line-height: 1.8
+  color: lighten($text-color, 30%)
+
+dd
+  margin-bottom: rem(10px)
+
+article, aside, details, figcaption, figure, footer, header, menu, nav, section
+  display: block
+
+audio, canvas, video
+  display: inline-block
+
+body, button, input, select, textarea
+  font-family: $primary-font-family
+  font-weight: 300
+  font-size: $font-size
+  line-height: 1
+
+table
+  border-collapse: collapse
+  border-spacing: 0
+
+fieldset, img
+  border: 0
+
+blockquote
+  position: relative
+  color: $blockquote-color
+  font-weight: 400
+  border-left: 3px solid #DDD
+  padding-left: 1em
+  margin: 1em 3em 1em 0
+
+acronym, abbr
+  border-bottom: 1px dotted
+  font-variant: normal
+
+abbr
+  cursor: help
+
+del
+  text-decoration: line-through
+
+address, caption, cite, th, var
+  font-style: normal
+  font-weight: 400
+
+ul, ol
+  list-style: none
+
+caption, th
+  text-align: left
+
+q:before, q:after
+  content: ''
+
+sub, sup
+  font-size: 75%
+  line-height: 0
+  position: relative
+
+:root sub, :root sup
+  vertical-align: baseline
+
+sup
+  top: -0.5em
+
+sub
+  bottom: -0.25em
+
+a
+  color: $primary-color
+
+a:hover
+  text-decoration: underline
+
+ins, a
+  text-decoration: none
+
+u, .typo-u
+  text-decoration: underline
+
+mark
+  background: #fffdd1
+  border-bottom: 1px solid #ffedce
+  padding: 2px
+  margin: 0 5px
+
+pre, code, pre tt
+  font-family: $code-font-family
+
+pre
+  background: none
+  border: 0
+  display: block
+  white-space: pre
+  word-wrap: break-word
+  line-height: 1.2
+
+hr
+  border: none
+  border-bottom: 1px solid #cfcfcf
+  margin-bottom: 0.8em
+  height: 10px
+
+small, figcaption
+  font-size: 0.9em
+  color: $small-color
+
+.typo p, .typo dl, .typo form, .typo hr, .typo table, .typo blockquote
+  padding-top: 0.3em
+  padding-bottom: 0.3em
+
+.typo li, .typo ol
+  padding-top: 0.25em
+  padding-bottom: 0.25em
+
+.typo p
+  line-height: 1.5
+  font-size: inherit
+
+h1, h2, h3, h4, h5, h6
+  font-family: $header-font-family
+  font-weight: 100
+  color: $header-color
+  line-height: 1.1
+
+.typo h1, .typo h2, .typo h3, .typo h4, .typo h5, .typo h6
+  margin-top: 1.0em
+  margin-bottom: 0.6em
+  line-height: 1.1
+
+.typo h1
+  font-size: 1.8em
+
+.typo h2
+  font-size: 1.4em
+
+.typo h3
+  font-size: 1.17em
+
+.typo h4, .typo h5, .typo h6
+  font-size: 1em
+
+.typo ul
+  margin-left: 1.3em
+  list-style: square
+
+.no-heading
+  h1, h2, h3, h4, h5, h6
+    padding-top: 0.3em
+    padding-bottom: 0.3em
+    margin: 0
+    font-size: inherit
+    font-weight: 400
+    line-height: 1
+    margin-top: 0.6em
+
+.typo ol
+  list-style: decimal
+  margin-left: 1.9em
+
+.typo li ul, .typo li ol
+  margin-top: 1.2em
+  margin-bottom: 1.2em
+  margin-left: 2em
+
+.typo li ul
+  list-style: circle
+
+.typo table th, .typo table td, .typo table caption
+  border: 1px solid #ddd
+  padding: 0.5em 1em
+  color: #666
+
+.typo table th
+  background: #fbfbfb
+
+.typo table thead th
+  background: #f1f1f1
+
+.typo table caption
+  border-bottom: none
+
+.typo img
+  max-width: 100%
