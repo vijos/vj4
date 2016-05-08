@@ -3,8 +3,7 @@
 ## Prerequisites
 
 * [Python 3.5+ and its header files](https://www.python.org/downloads/source/)
-* MongoDB 2.6+ from [official repo](https://docs.mongodb.org/manual/installation/) or
-  [manual build](https://git.vijos.org/vijos/vj4/wikis/mongodb-manual-build)
+* [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
 * Node.js 0.11+ from [official repo](https://github.com/nodejs/node-v0.x-archive/wiki/Installing-Node.js-via-package-manager)
   or [manual install](http://npm.taobao.org/mirrors/node)
 * [RabbitMQ](http://www.rabbitmq.com/)
