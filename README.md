@@ -1,5 +1,7 @@
 # VJ4
 
+Next generation of Vijos, built with asyncio on Python 3.5.
+
 ## Prerequisites
 
 * [Python 3.5+ and its header files](https://www.python.org/downloads/source/)
