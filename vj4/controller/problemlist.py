@@ -56,15 +56,19 @@ async def delete_problem_from(domain_id:str, lid: document.convert_doc_id, pid:i
 @argmethod.wrap
 async def star(domain_id: str, lid: document.convert_doc_id, uid: int):
     udoc = user.get_by_uid(uid)
-    stars = udoc['star'] if 'star' in udoc else []
-    if lid in stars:
-        stars.append(lid)
-    return await user.set_by_uid(uid, star=stars)
+    starlst = udoc['starlst'] if 'starlst' in udoc else []
+    star = udoc['star'] if 'star' in udoc else 0
+    if lid in starlst:
+        starlst.append(lid)
+        star += 1
+    return await user.set_by_uid(uid, starlst=starlst, star=star)
 
 @argmethod.wrap
 async def unstar():
     udoc = user.get_by_uid(uid)
-    stars = udoc['star'] if 'star' in udoc else []
-    if lid in stars:
-        stars.append(lid)
-    return await user.set_by_uid(uid, star=stars)
+    starlst = udoc['starlst'] if 'starlst' in udoc else []
+    star = udoc['star'] if 'star' in udoc else 0
+    if lid in starlst:
+        starlst.remove(lid)
+        star -= 1
+    return await user.set_by_uid(uid, starlst=starlst, star=star)
