@@ -53,10 +53,10 @@ async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id):
 
 @argmethod.wrap
 async def delete(domain_id:str, doc_type: int, doc_id:convert_doc_id):
-    coll = db.Collection('document')
-    return await coll.delete_one({'domain_id': domain_id,
-                                  'doc_type': doc_type,
-                                  'doc_id': doc_id})
+  coll = db.Collection('document')
+  return await coll.delete_one({'domain_id': domain_id,
+                                'doc_type': doc_type,
+                                'doc_id': doc_id})
 
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
   coll = db.Collection('document')

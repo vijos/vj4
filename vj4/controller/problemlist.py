@@ -14,61 +14,55 @@ from vj4.util import argmethod
 #收藏题单(用户id, 题单id)
 #取消收藏(用户id, 题单id)
 
-# @argmethod.wrap
-# async def add(domain_id: str, owner_uid: int, title: str, content: str):
-    # return 1
-    # return await document.add(domain_id, content, owner_uid,
-            # document.TYPE_PROBLEM_LIST)
-
 
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int,
-              pid: document.convert_doc_id=None, data: objectid.ObjectId=None):
+              lid: document.convert_doc_id=None):
   return await document.add(domain_id, content, owner_uid,
-                            document.TYPE_PROBLEM, pid, title=title, data=data)
+                            document.TYPE_PROBLEM, lid, title=title)
 
 @argmethod.wrap
 async def get(domain_id: str, lid: document.convert_doc_id):
-    return await document.get(domain_id, document.TYPE_PROBLEM_LIST, lid)
+  return await document.get(domain_id, document.TYPE_PROBLEM_LIST, lid)
 
 @argmethod.wrap
 async def delete(domain_id: str, lid: document.convert_doc_id):
-    return await document.delete(domain_id, document.TYPE_PROBLEM_LIST, lid)
+  return await document.delete(domain_id, document.TYPE_PROBLEM_LIST, lid)
 
 @argmethod.wrap
 async def add_problem_to(domain_id: str, lid: document.convert_doc_id, pid: int):
-    ldoc = await get(domain_id, lid)
-    data = ldoc['data'] if 'data' in ldoc else []
-    if pid not in data:
-        data.append(pid)
-    return await document.set(domain_id, document.TYPE_PROBLEM_LIST, lid,
-            data=data)
+  ldoc = await get(domain_id, lid)
+  data = ldoc['data'] if 'data' in ldoc else []
+  if pid not in data:
+      data.append(pid)
+  return await document.set(domain_id, document.TYPE_PROBLEM_LIST, lid,
+          data=data)
 
 @argmethod.wrap
 async def delete_problem_from(domain_id:str, lid: document.convert_doc_id, pid:int):
-    ldoc = await get(domain_id, lid)
-    data = ldoc['data'] if 'data' in ldoc else []
-    if pid in data:
-        data.remove(pid)
-    return await document.set(domain_id, document.TYPE_PROBLEM_LIST, lid,
-            data=data)
+  ldoc = await get(domain_id, lid)
+  data = ldoc['data'] if 'data' in ldoc else []
+  if pid in data:
+      data.remove(pid)
+  return await document.set(domain_id, document.TYPE_PROBLEM_LIST, lid,
+          data=data)
 
 @argmethod.wrap
 async def star(domain_id: str, lid: document.convert_doc_id, uid: int):
-    udoc = user.get_by_uid(uid)
-    starlst = udoc['starlst'] if 'starlst' in udoc else []
-    star = udoc['star'] if 'star' in udoc else 0
-    if lid in starlst:
-        starlst.append(lid)
-        star += 1
-    return await user.set_by_uid(uid, starlst=starlst, star=star)
+  udoc = user.get_by_uid(uid)
+  starlst = udoc['starlst'] if 'starlst' in udoc else []
+  star = udoc['star'] if 'star' in udoc else 0
+  if lid in starlst:
+      starlst.append(lid)
+      star += 1
+  return await user.set_by_uid(uid, starlst=starlst, star=star)
 
 @argmethod.wrap
 async def unstar():
-    udoc = user.get_by_uid(uid)
-    starlst = udoc['starlst'] if 'starlst' in udoc else []
-    star = udoc['star'] if 'star' in udoc else 0
-    if lid in starlst:
-        starlst.remove(lid)
-        star -= 1
-    return await user.set_by_uid(uid, starlst=starlst, star=star)
+  udoc = user.get_by_uid(uid)
+  starlst = udoc['starlst'] if 'starlst' in udoc else []
+  star = udoc['star'] if 'star' in udoc else 0
+  if lid in starlst:
+      starlst.remove(lid)
+      star -= 1
+  return await user.set_by_uid(uid, starlst=starlst, star=star)
