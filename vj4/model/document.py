@@ -5,6 +5,7 @@ from vj4.util import argmethod
 
 TYPE_PROBLEM = 10
 TYPE_PROBLEM_SOLUTION = 11
+TYPE_PROBLEM_LIST = 12
 TYPE_DISCUSSION_NODE = 20
 TYPE_DISCUSSION = 21
 TYPE_DISCUSSION_REPLY = 22
@@ -49,6 +50,13 @@ async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id):
   return await coll.find_one({'domain_id': domain_id,
                               'doc_type': doc_type,
                               'doc_id': doc_id})
+
+@argmethod.wrap
+async def delete(domain_id:str, doc_type: int, doc_id:convert_doc_id):
+    coll = db.Collection('document')
+    return await coll.delete_one({'domain_id': domain_id,
+                                  'doc_type': doc_type,
+                                  'doc_id': doc_id})
 
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
   coll = db.Collection('document')
