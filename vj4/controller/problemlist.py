@@ -53,6 +53,30 @@ async def delete_problem_from(domain_id:str, lid: document.convert_doc_id, pid:i
                             data=data)
 
 @argmethod.wrap
+async def add_tag_to(domain_id: str, lid:document.convert_doc_id, tag: str):
+  ldoc = await get(domain_id, lid)
+  if not ldoc:
+    return
+  taglst = ldoc['taglst'] if 'taglst' in ldoc else []
+  if tag not in taglst:
+    taglst.append(tag)
+  return await document.set(domain_id, document.TYPE_PROBLEM_LIST, lid,
+                            taglst=taglst)
+
+@argmethod.wrap
+async def delete_tag_from(domain_id: str, lid:document.convert_doc_id, tag: str):
+  ldoc = await get(domain_id, lid)
+  if not ldoc:
+    return
+  taglst = ldoc['taglst'] if 'taglst' in ldoc else []
+  if tag in taglst:
+    taglst.remove(tag)
+  return await document.set(domain_id, document.TYPE_PROBLEM_LIST, lid,
+                            taglst=taglst)
+
+
+
+@argmethod.wrap
 async def star(domain_id: str, lid: document.convert_doc_id, uid: int):
   udoc = await user.get_by_uid(uid)
   if not udoc:
