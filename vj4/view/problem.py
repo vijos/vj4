@@ -15,14 +15,14 @@ class ProblemMainView(base.OperationView):
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.get_argument
-  async def get(self, *, page='0'):
+  async def get(self, *, page='1'):
     page = int(page)
-    if page < 0:
-      page = 0
+    if page < 1:
+      page = 1
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pcount, pdocs = await asyncio.gather(problem.count(self.domain_id),
                                          problem.get_list(self.domain_id, uid,
-                                                          skip=page * self.PROBLEMS_PER_PAGE,
+                                                          skip=(page - 1) * self.PROBLEMS_PER_PAGE,
                                                           limit=self.PROBLEMS_PER_PAGE))
     self.render('problem_main.html', page=page, pcount=pcount, pdocs=pdocs)
 

@@ -5,10 +5,10 @@
     <div>
       {{ _('page-prefix') }}
       {% for page0 in range((pcount + view.PROBLEMS_PER_PAGE - 1) // view.PROBLEMS_PER_PAGE) %}
-      {% if page == page0 %}
-      {{ page0 }}
+      {% if page == page0 + 1 %}
+      {{ page0 + 1 }}
       {% else %}
-      <a href="{{ reverse_url('problem_main') }}?page={{ page0 }}">{{ page0 }}</a>
+      <a href="{{ reverse_url('problem_main') }}?page={{ page0 + 1 }}">{{ page0 + 1 }}</a>
       {% endif %}
       {% endfor %}
       {{ _('page-suffix') }}
