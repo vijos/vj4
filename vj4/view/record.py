@@ -71,4 +71,4 @@ class RecordDetailView(base.View):
   async def get(self, *, rid):
     rdoc = await record.get(objectid.ObjectId(rid))
     # TODO(iceboy): join uname, ugravatar and pname.
-    self.render('record_detail.html', rdoc=rdoc)
+    self.render('record_detail.html', page_title=rid, rdoc=rdoc)
