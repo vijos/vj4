@@ -1,0 +1,30 @@
+upstream app_server {
+	server unix:/tmp/vj4/vijos.sock fail_timeout=0;
+}
+
+map $http_upgrade $connection_upgrade {
+	default upgrade;
+	'' close;
+}
+
+server {
+	listen 8888 ssl default_server;
+	server_name 4.vijos.org;
+	root /opt/vj4/vj4/.uibuild;
+
+	ssl on;
+	ssl_certificate /etc/nginx/ssl/star_vijos_org.crt;
+	ssl_certificate_key /etc/nginx/ssl/private/star_vijos_org.key;
+
+	location / {
+		try_files $uri @proxy_to_app;
+	}
+
+	location @proxy_to_app {
+		proxy_pass http://app_server;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header X-Real-IP $remote_addr;
+	}
+}

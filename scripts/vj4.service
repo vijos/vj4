@@ -1,0 +1,16 @@
+[Unit]
+Description=Vj4
+After=syslog.target network.target mongodb.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/vj4
+User=vj4
+ExecStart=
+ExecStart=/home/vj4/start.sh
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
