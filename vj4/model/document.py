@@ -89,6 +89,28 @@ async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
   return doc
 
 @argmethod.wrap
+async def add_to_set(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: str,
+                     content):
+  coll = db.Collection('document')
+  doc = await coll.find_and_modify(query={'domain_id': domain_id,
+                                          'doc_type': doc_type,
+                                          'doc_id': doc_id},
+                                   update={'$addToSet': {set_key: content}},
+                                   new=True)
+  return doc
+
+@argmethod.wrap
+async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: str,
+               contents):
+  coll = db.Collection('document')
+  doc = await coll.find_and_modify(query={'domain_id': domain_id,
+                                          'doc_type': doc_type,
+                                          'doc_id': doc_id},
+                                   update={'$pull': {set_key: {'$in': contents}}},
+                                   new=True)
+  return doc
+
+@argmethod.wrap
 async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int):
   coll = db.Collection('document.status')
   return await coll.find_one({'domain_id': domain_id, 'doc_type': doc_type,

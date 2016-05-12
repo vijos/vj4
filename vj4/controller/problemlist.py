@@ -10,7 +10,7 @@ from vj4.util import argmethod
 async def add(domain_id: str, title: str, content: str, owner_uid: int,
               lid: document.convert_doc_id=None):
   return await document.add(domain_id, content, owner_uid,
-                            document.TYPE_PROBLEM_LIST, lid, title=title)
+                            document.TYPE_PROBLEM_LIST, lid, title=title, problem=[])
 
 @argmethod.wrap
 async def get(domain_id: str, lid: document.convert_doc_id):
@@ -30,25 +30,11 @@ async def delete(domain_id: str, lid: document.convert_doc_id):
 
 @argmethod.wrap
 async def add_problem(domain_id: str, lid: document.convert_doc_id, pid: document.convert_doc_id):
-  ldoc = await get(domain_id, lid)
-  if not ldoc:
-    raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_LIST, lid)
-  data = ldoc['data'] if 'data' in ldoc else []
-  if pid not in data:
-    data.append(pid)
-  return await document.set(domain_id, document.TYPE_PROBLEM_LIST, lid,
-                            data=data)
+  return await document.add_to_set(domain_id, document.TYPE_PROBLEM_LIST, lid, 'problem', pid)
 
 @argmethod.wrap
 async def delete_problem(domain_id: str, lid: document.convert_doc_id, pid: document.convert_doc_id):
-  ldoc = await get(domain_id, lid)
-  if not ldoc:
-    raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_LIST, lid)
-  data = ldoc['data'] if 'data' in ldoc else []
-  if pid in data:
-    data.remove(pid)
-  return await document.set(domain_id, document.TYPE_PROBLEM_LIST, lid,
-                            data=data)
+  return await document.pull(domain_id, document.TYPE_PROBLEM_LIST, lid, 'problem', [pid])
 
 @argmethod.wrap
 async def set_star(domain_id: str, lid: document.convert_doc_id, uid: int, star: bool):
