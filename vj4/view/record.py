@@ -46,6 +46,7 @@ class RecordMainView(base.View):
   async def get(self):
     # TODO(iceboy): projection, pagination.
     rdocs = await record.get_multi().sort([('_id', -1)]).to_list(50)
+    # TODO(iceboy): projection.
     await asyncio.gather(user.attach_udocs(rdocs, 'uid'),
                          problem.attach_pdocs(rdocs, 'domain_id', 'pid'))
     self.render('record_main.html', rdocs=rdocs)
@@ -58,7 +59,10 @@ class RecordMainConnection(base.Connection):
 
   async def on_record_change(self, e):
     rdoc = await record.get(objectid.ObjectId(e['value']))
-    # TODO(iceboy): get uname, ugravatar and pname from event.
+    # TODO(iceboy): join from event to improve performance?
+    # TODO(iceboy): projection.
+    rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
+        user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     # TODO(iceboy): check permission for visibility. (e.g. test).
     self.send(html=self.render_html('record_tr.html', rdoc=rdoc))
 
