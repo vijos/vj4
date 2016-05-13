@@ -31,6 +31,14 @@ async def get_md5(file_id: objectid.ObjectId):
     return doc['md5']
 
 @argmethod.wrap
+async def get_datetime(file_id: objectid.ObjectId):
+  """Get the upload date and time of a file."""
+  coll = db.Collection('fs.files')
+  doc = await coll.find_one(file_id)
+  if doc:
+    return doc['uploadDate']
+
+@argmethod.wrap
 async def cat(file_id: objectid.ObjectId):
   """Cat a file. Note: this method will block the thread."""
   grid_out = await get(file_id)

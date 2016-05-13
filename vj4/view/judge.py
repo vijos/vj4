@@ -24,6 +24,19 @@ class JudgeNoopView(base.View):
   async def get(self):
     self.json({})
 
+@app.route('/judge/datalist', 'judge_datalist')
+class JudgeDataListView(base.View):
+  @base.get_argument
+  async def get(self, last):
+    # Judge will have PRIV_READ_PROBLEM_DATA, domain administrator will have PERM_READ_PROBLEM_DATA.
+    if not self.has_priv(builtin.PRIV_READ_PROBLEM_DATA):
+      self.check_perm(builtin.PERM_READ_PROBLEM_DATA)
+    pids = await problem.get_data_list(int(last))
+    datalist = []
+    for did, pid in pids:
+      datalist.append({'domain_id': did, 'pid': pid})
+    self.json(datalist)
+
 @app.connection_route('/judge/consume-conn', 'judge_consume-conn')
 class JudgeNotifyConnection(base.Connection):
   @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
@@ -101,3 +114,4 @@ class JudgeNotifyConnection(base.Connection):
       await self.channel.close()
 
     asyncio.get_event_loop().create_task(close())
+

@@ -1,6 +1,8 @@
+import datetime
 import itertools
 from bson import objectid
 from pymongo import errors
+from vj4 import db
 from vj4 import error
 from vj4.model import document
 from vj4.model import fs
@@ -111,6 +113,24 @@ async def set_data(domain_id: str, pid: document.convert_doc_id, data: objectid.
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
   return pdoc
+
+@argmethod.wrap
+async def get_data_list(last: int):
+  last_datetime = datetime.datetime.fromtimestamp(last)
+  # TODO(twd2): performance improve, more elegant
+  coll = db.Collection('document')
+  cursor = coll.find({'doc_type': document.TYPE_PROBLEM})
+  pids = [] # with domain_id
+  async for pdoc in cursor:
+    if 'data' not in pdoc or not pdoc['data']:
+      continue
+    date = await fs.get_datetime(pdoc['data'])
+    if not date:
+      continue
+    if last_datetime < date:
+      pids.append((pdoc['domain_id'], pdoc['doc_id']))
+
+  return list(set(pids))
 
 @argmethod.wrap
 async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
