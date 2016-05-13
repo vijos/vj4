@@ -8,25 +8,47 @@ from vj4.view import base
 
 @app.route('/discuss', 'discussion_main')
 class DiscussionMainView(base.View):
+  DISCUSSIONS_PER_PAGE = 100
+
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
-  async def get(self):
-    nodes, ddocs = await asyncio.gather(discussion.get_nodes(self.domain_id),
-                                        discussion.get_list(self.domain_id))
-    self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs)
+  @base.get_argument
+  async def get(self, *, page='1'):
+    page = int(page)
+    if page < 1:
+      page = 1
+    skip=(page - 1) * self.DISCUSSIONS_PER_PAGE
+    limit=self.DISCUSSIONS_PER_PAGE
+    nodes, ddocs, dcount = await asyncio.gather(discussion.get_nodes(self.domain_id),
+                                                discussion.get_list(self.domain_id,
+                                                                    skip=skip,
+                                                                    limit=limit),
+                                                discussion.count(self.domain_id))
+    self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
+                page=page, dcount=dcount)
 
 @app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
 class DiscussionMainView(base.View):
+  DISCUSSIONS_PER_PAGE = 50
+
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
+  @base.get_argument
   @base.route_argument
-  async def get(self, *, node_or_pid):
-    nodes, (vnode, ddocs) = await asyncio.gather(
+  async def get(self, *, node_or_pid, page='1'):
+    page = int(page)
+    if page < 1:
+      page = 1
+    nodes, (vnode, ddocs), (_, dcount) = await asyncio.gather(
         discussion.get_nodes(self.domain_id),
         discussion.get_vnode_and_list_for_node(self.domain_id,
+                                               document.convert_doc_id(node_or_pid),
+                                               skip=(page - 1) * self.DISCUSSIONS_PER_PAGE,
+                                               limit=self.DISCUSSIONS_PER_PAGE),
+        discussion.get_vnode_and_count_of_node(self.domain_id,
                                                document.convert_doc_id(node_or_pid)))
     path_components = self.build_path(('discussion_main', self.reverse_url('discussion_main')),
                                       (vnode['title'], None))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode, ddocs=ddocs,
-                path_components=path_components)
+                page=page, dcount=dcount, path_components=path_components)
 
 @app.route('/discuss/{node_or_pid}/create', 'discussion_create')
 class DiscussionCreateView(base.View):

@@ -91,25 +91,41 @@ async def inc_views(domain_id: str, did: document.convert_doc_id):
   return await document.inc(domain_id, document.TYPE_DISCUSSION, did, 'views', 1)
 
 @argmethod.wrap
-async def get_list(domain_id: str, *, fields=None):
-  # TODO(iceboy): projection, pagination.
+async def count(domain_id: str):
+  return await document.get_multi(domain_id, document.TYPE_DISCUSSION).count()
+
+@argmethod.wrap
+async def get_list(domain_id: str, *, fields=None, skip: int=0, limit: int=0):
+  # TODO(twd2): projection.
   ddocs = await (document.get_multi(domain_id, document.TYPE_DISCUSSION, fields=fields)
                          .sort([('doc_id', -1)])
+                         .skip(skip)
+                         .limit(limit)
                          .to_list(None))
   await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
                        attach_vnodes(ddocs, domain_id, 'parent_doc_id'))
   return ddocs
 
 @argmethod.wrap
-async def get_vnode_and_list_for_node(domain_id: str, node_or_pid: document.convert_doc_id, *,
-                                      fields=None):
+async def get_vnode_and_count_of_node(domain_id: str, node_or_pid: document.convert_doc_id):
   vnode = await get_vnode(domain_id, node_or_pid)
-  # TODO(iceboy): projection, pagination.
+  count = await document.get_multi(domain_id, document.TYPE_DISCUSSION,
+                                   parent_doc_type=vnode['doc_type'],
+                                   parent_doc_id=vnode['doc_id']).count()
+  return vnode, count
+
+@argmethod.wrap
+async def get_vnode_and_list_for_node(domain_id: str, node_or_pid: document.convert_doc_id, *,
+                                      fields=None, skip: int=0, limit: int=0):
+  vnode = await get_vnode(domain_id, node_or_pid)
+  # TODO(twd2): projection.
   ddocs = await (document.get_multi(domain_id, document.TYPE_DISCUSSION,
                                     parent_doc_type=vnode['doc_type'],
                                     parent_doc_id=vnode['doc_id'],
                                     fields=fields)
                          .sort([('doc_id', -1)])
+                         .skip(skip)
+                         .limit(limit)
                          .to_list(None))
   await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
                        attach_vnodes(ddocs, domain_id, 'parent_doc_id'))
