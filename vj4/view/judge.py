@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import time
 from vj4 import app
 from vj4.controller import contest
 from vj4.controller import problem
@@ -35,7 +36,7 @@ class JudgeDataListView(base.View):
     datalist = []
     for did, pid in pids:
       datalist.append({'domain_id': did, 'pid': pid})
-    self.json(datalist)
+    self.json({'list': datalist, 'time': int(time.time())})
 
 @app.connection_route('/judge/consume-conn', 'judge_consume-conn')
 class JudgeNotifyConnection(base.Connection):
