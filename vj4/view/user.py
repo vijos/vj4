@@ -19,7 +19,8 @@ class UserRegisterView(base.View):
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
   @base.post_argument
-  async def post(self, *, mail):
+  @base.sanitize
+  async def post(self, *, mail: str):
     validator.check_mail(mail)
     if await user.get_by_mail(mail):
       raise error.UserAlreadyExistError(mail)
@@ -38,7 +39,8 @@ class UserRegisterWithCodeView(base.View):
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
   @base.route_argument
-  async def get(self, *, code):
+  @base.sanitize
+  async def get(self, *, code: str):
     doc = await token.get(code, token.TYPE_REGISTRATION)
     if not doc:
       raise error.InvalidTokenError(token.TYPE_REGISTRATION, code)
@@ -47,7 +49,8 @@ class UserRegisterWithCodeView(base.View):
   @base.require_priv(builtin.PRIV_REGISTER_USER)
   @base.route_argument
   @base.post_argument
-  async def post(self, *, code, uname, password, verify_password):
+  @base.sanitize
+  async def post(self, *, code: str, uname: str, password: str, verify_password: str):
     doc = await token.get(code, token.TYPE_REGISTRATION)
     if not doc:
       raise error.InvalidTokenError(token.TYPE_REGISTRATION, code)
@@ -68,14 +71,15 @@ class UserLoginView(base.View):
       self.render('user_login.html')
 
   @base.post_argument
-  async def post(self, *, uname, password, rememberme=None):
+  @base.sanitize
+  async def post(self, *, uname: str, password: str, rememberme: bool=False):
     udoc = await user.check_password_by_uname(uname, password)
     if not udoc:
       raise error.LoginError(uname)
     await asyncio.gather(user.set_by_uid(udoc['_id'],
                                          loginat=datetime.datetime.utcnow(),
                                          loginip=self.remote_ip),
-                         self.update_session(new_saved=bool(rememberme), uid=udoc['_id']))
+                         self.update_session(new_saved=rememberme, uid=udoc['_id']))
     self.json_or_redirect(self.referer_or_main)
 
 @app.route('/logout', 'user_logout')
@@ -94,9 +98,8 @@ class UserLogoutView(base.View):
 @app.route('/user/{uid}', 'user_detail')
 class UserDetailView(base.View):
   @base.route_argument
-  async def get(self, *, uid):
-    # TODO(iceboy): int by annotation?
-    uid = int(uid)
+  @base.sanitize
+  async def get(self, *, uid: int):
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)

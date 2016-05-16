@@ -5,7 +5,8 @@ from vj4.view import base
 @app.route('/lang/{lang}', 'language_set')
 class LanguageView(base.View):
   @base.route_argument
-  async def get(self, *, lang):
+  @base.sanitize
+  async def get(self, *, lang: str):
     if not lang in ['zh_CN', 'en']:
       raise error.ValidationError('lang')
     await self.set_settings(view_lang=lang)

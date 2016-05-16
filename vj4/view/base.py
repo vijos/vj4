@@ -320,3 +320,11 @@ def post_argument(coro):
   async def wrapped(self, **kwargs):
     return await coro(self, **kwargs, **await self.request.post())
   return wrapped
+
+def sanitize(func):
+  @functools.wraps(func)
+  def wrapped(self, **kwargs):
+    for key, value in kwargs.items():
+      kwargs[key] = func.__annotations__[key](value)
+    return func(self, **kwargs)
+  return wrapped

@@ -26,7 +26,11 @@ class HomeSecurityView(base.OperationView):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
-  async def post_change_password(self, *, current_password, new_password, verify_password):
+  @base.sanitize
+  async def post_change_password(self, *,
+                                 current_password: str,
+                                 new_password: str,
+                                 verify_password: str):
     if new_password != verify_password:
       raise error.VerifyPasswordError()
     doc = await user.change_password(self.user['_id'], current_password, new_password)
@@ -36,10 +40,11 @@ class HomeSecurityView(base.OperationView):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
-  async def post_delete_token(self, *, token_type, token_digest):
+  @base.sanitize
+  async def post_delete_token(self, *, token_type: int, token_digest: str):
     sessions = await token.get_session_list_by_uid(self.user['_id'])
     for session in sessions:
-      if (int(token_type) == session['token_type'] and
+      if (token_type == session['token_type'] and
           token_digest == hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest()):
         await token.delete_by_hashed_id(session['_id'], session['token_type'])
         break
@@ -62,7 +67,8 @@ class HomeAccountView(base.View):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument
   @base.require_csrf_token
-  async def post(self, *, gravatar, qq, gender, signature):
+  @base.sanitize
+  async def post(self, *, gravatar: str, qq: str, gender: int, signature: str):
     # TODO(twd2): check gender
     await user.set_by_uid(self.user['_id'], g=gravatar, qq=qq, gender=gender, sig=signature)
     self.json_or_redirect(self.referer_or_main)
@@ -77,9 +83,8 @@ class HomeMessagesView(base.OperationView):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
-  async def post_send_message(self, *, uid, content):
-    # TODO(iceboy): int by annotation?
-    uid = int(uid)
+  @base.sanitize
+  async def post_send_message(self, *, uid: int, content: str):
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)
@@ -88,8 +93,9 @@ class HomeMessagesView(base.OperationView):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
-  async def post_reply_message(self, *, message_id, content):
-    mdoc = await message.add_reply(objectid.ObjectId(message_id), self.user['_id'], content)
+  @base.sanitize
+  async def post_reply_message(self, *, message_id: objectid.ObjectId, content: str):
+    mdoc = await message.add_reply(message_id, self.user['_id'], content)
     if not mdoc:
       return error.MessageNotFoundError(message_id)
     # TODO(iceboy): Fill in JSON result.
@@ -97,6 +103,7 @@ class HomeMessagesView(base.OperationView):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
-  async def post_delete_message(self, *, message_id):
-    await message.delete(objectid.ObjectId(message_id), self.user['_id'])
+  @base.sanitize
+  async def post_delete_message(self, *, message_id: objectid.ObjectId):
+    await message.delete(message_id, self.user['_id'])
     self.json_or_redirect(self.referer_or_main)

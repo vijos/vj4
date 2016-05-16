@@ -1,6 +1,7 @@
 import asyncio
 from bson import objectid
 from vj4 import app
+from vj4 import error
 from vj4.controller import problem
 from vj4.model import bus
 from vj4.model import record
@@ -72,7 +73,11 @@ class RecordMainConnection(base.Connection):
 @app.route('/records/{rid}', 'record_detail')
 class RecordDetailView(base.View):
   @base.route_argument
-  async def get(self, *, rid):
-    rdoc = await record.get(objectid.ObjectId(rid))
-    # TODO(iceboy): join uname, ugravatar and pname.
-    self.render('record_detail.html', page_title=rid, rdoc=rdoc)
+  @base.sanitize
+  async def get(self, *, rid: objectid.ObjectId):
+    rdoc = await record.get(rid)
+    if not rdoc:
+      raise error.RecordNotFoundError(rid)
+    rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
+        user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
+    self.render('record_detail.html', rdoc=rdoc)

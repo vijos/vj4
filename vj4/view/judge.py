@@ -28,11 +28,13 @@ class JudgeNoopView(base.View):
 @app.route('/judge/datalist', 'judge_datalist')
 class JudgeDataListView(base.View):
   @base.get_argument
-  async def get(self, last):
+  @base.sanitize
+  async def get(self, last: int):
+    # TODO(iceboy): This function looks strange.
     # Judge will have PRIV_READ_PROBLEM_DATA, domain administrator will have PERM_READ_PROBLEM_DATA.
     if not self.has_priv(builtin.PRIV_READ_PROBLEM_DATA):
       self.check_perm(builtin.PERM_READ_PROBLEM_DATA)
-    pids = await problem.get_data_list(int(last))
+    pids = await problem.get_data_list(last)
     datalist = []
     for did, pid in pids:
       datalist.append({'domain_id': did, 'pid': pid})

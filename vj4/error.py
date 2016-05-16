@@ -124,3 +124,6 @@ class ContestStatusHiddenError(UserFacingError):
 
 class TrainingRequirementNotSatisfiedError(UserFacingError):
   pass
+
+class RecordNotFoundError(UserFacingError):
+  pass

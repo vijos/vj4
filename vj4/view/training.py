@@ -17,8 +17,9 @@ class TrainingDetailView(base.View):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.route_argument
-  async def get(self, *, tid):
-    tdoc = await training.check(self.domain_id, objectid.ObjectId(tid), self.user['_id'])
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc = await training.check(self.domain_id, tid, self.user['_id'])
     path_components = self.build_path(('training_main', self.reverse_url('training_main')),
                                       (tdoc['title'], None))
     self.render('training_detail.html', tdoc=tdoc, path_components=path_components)

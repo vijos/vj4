@@ -27,8 +27,9 @@ class ContestMainView(base.View):
 class ContestDetailView(base.View):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.route_argument
-  async def get(self, *, tid):
-    tdoc = await contest.get(self.domain_id, objectid.ObjectId(tid))
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc = await contest.get(self.domain_id, tid)
     path_components = self.build_path(('contest_main', self.reverse_url('contest_main')),
                                       (tdoc['title'], None))
     self.render('contest_detail.html', tdoc=tdoc, path_components=path_components)
@@ -37,8 +38,9 @@ class ContestDetailView(base.View):
 class ContestStatusView(base.View):
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
-  async def get(self, *, tid):
-    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, objectid.ObjectId(tid))
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     path_components = self.build_path(
         ('contest_main', self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
