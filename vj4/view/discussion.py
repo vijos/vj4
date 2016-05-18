@@ -8,7 +8,7 @@ from vj4.view import base
 
 @app.route('/discuss', 'discussion_main')
 class DiscussionMainView(base.View):
-  DISCUSSIONS_PER_PAGE = 100
+  DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.get_argument
@@ -27,7 +27,7 @@ class DiscussionMainView(base.View):
 
 @app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
 class DiscussionMainView(base.View):
-  DISCUSSIONS_PER_PAGE = 50
+  DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.get_argument
