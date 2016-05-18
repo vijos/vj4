@@ -75,12 +75,18 @@ class ProblemDetailView(base.View):
 
 @app.route(r'/p/{pid}/solution', 'problem_solution')
 class ProblemSolutionView(base.OperationView):
+  SOLUTIONS_PER_PAGE = 30
+
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
   @base.route_argument
   @base.sanitize
-  async def get(self, *, pid: document.convert_doc_id):
+  async def get(self, *, pid: document.convert_doc_id, page: int=1):
+    skip = (page - 1) * self.SOLUTIONS_PER_PAGE
+    limit = self.SOLUTIONS_PER_PAGE
     pdoc = await problem.get(self.domain_id, pid)
-    psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'])
+    psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
+                                             skip=skip,
+                                             limit=limit)
     path_components = self.build_path(
         ('problem_main', self.reverse_url('problem_main')),
         (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
