@@ -62,8 +62,49 @@
     </div>
   </div>
   <div class="layout--2col__side">
-    <div class="section">
-      <h1 class="section__title">{{ _('It works!') }}</h1>
+    <div class="section side">
+      <div class="section__indent top">
+        <h1 class="section__title">A + B Problem</h1>
+      </div>
+      <div>
+        <!-- TODO (swx): extract and reuse this sidebar -->
+        <ul class="menu">
+          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
+            <i class="menu__icon icon-flag"></i> {{ _('View Problem') }}
+          </a></li>
+          <li class="menu__seperator"></li>
+          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
+            <i class="menu__icon icon-paper-plane"></i> {{ _('Test or Submit') }}
+          </a></li>
+          <li class="menu__item"><a class="menu__link" href="#">
+            <i class="menu__icon icon-pie-chart"></i> {{ _('Submission Statistics') }}
+          </a></li>
+          <li class="menu__seperator"></li>
+          <li class="menu__item"><a class="menu__link active" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
+            <i class="menu__icon icon-bubble2"></i> {{ _('Solutions') }}
+          </a></li>
+          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
+            <i class="menu__icon icon-bubble2"></i> {{ _('Discussions') }}
+          </a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="section side">
+      <div class="section__indent top bottom">
+        <h1 class="section__title">{{ _('Information') }}</h1>
+        <div class="section__indent left right">
+          <div class="typo">
+            <p>状态：????</p>
+            <p>难度：4</p>
+            <p>评分：<i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-empty"></i> (30)</p>
+            <p>分类：动态规划|树形动规、高精度</p>
+            <p>递交次数：140</p>
+            <p>通过次数：30</p>
+            <p>通过率：20%</p>
+            <p>上传用户：Vijos Official</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

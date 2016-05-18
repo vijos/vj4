@@ -91,7 +91,8 @@ class ProblemSolutionView(base.OperationView):
         ('problem_main', self.reverse_url('problem_main')),
         (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
         ('problem_solution', None))
-    self.render('problem_solution.html', psdocs=psdocs, path_components=path_components)
+    self.render('problem_solution.html', pdoc=pdoc,
+                psdocs=psdocs, path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
