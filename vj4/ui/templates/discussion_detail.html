@@ -81,9 +81,8 @@
                 <div class="typo no-heading">
                   {{ drdoc['content']|markdown }}
                 </div>
-                {% if drdoc.get('reply'): %}
-                <ul class="dczcomments__replies">
-                  {% for drrdoc in drdoc['reply'] %}
+                <ul class="dczcomments__replies"><!--
+               -->{% for drrdoc in drdoc['reply'] %}
                   <li class="dczcomments__reply media">
                     <div class="media__left top">
                       <img src="{{ drrdoc['udoc']['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
@@ -105,9 +104,8 @@
                       </div>
                     </div>
                   </li>
-                  {% endfor %}
-                </ul>
-                {% endif %}
+                  {% endfor %}<!--
+             --></ul>
               </div>
             </div></div>
           </li>
