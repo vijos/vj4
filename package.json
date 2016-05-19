@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "author": "Breezewish",
   "private": true,
-  "license": "GPL-3.0",
+  "license": "AGPL-1.0",
   "devDependencies": {
     "autoprefixer": "^6.3.6",
     "babel-core": "^6.8.0",
