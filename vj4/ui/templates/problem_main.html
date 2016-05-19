@@ -2,17 +2,6 @@
 {% block content %}
 <div class="layout--2col clearfix">
   <div class="layout--2col__main">
-    <div>
-      {{ _('page-prefix') }}
-      {% for page0 in range((pcount + view.PROBLEMS_PER_PAGE - 1) // view.PROBLEMS_PER_PAGE) %}
-      {% if page == page0 + 1 %}
-      {{ page0 + 1 }}
-      {% else %}
-      <a href="{{ reverse_url('problem_main') }}?page={{ page0 + 1 }}">{{ page0 + 1 }}</a>
-      {% endif %}
-      {% endfor %}
-      {{ _('page-suffix') }}
-    </div>
     <div class="section">
       <div class="section__indent top bottom">
         <h1 class="section__title">{{ _('Problem List') }}</h1>
@@ -68,6 +57,14 @@
           {% endif %}
           </tbody>
         </table>
+        {% with
+          page_href_pattern = reverse_url('problem_main')~'?page={page}',
+          page_nums = pcount,
+          page_num_per_page = view.PROBLEMS_PER_PAGE,
+          page_current = page
+        %}
+          {% include "components/pagination.html" %}
+        {% endwith %}
       </div>
     </div>
   </div>

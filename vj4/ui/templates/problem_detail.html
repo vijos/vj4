@@ -21,11 +21,12 @@
       </div>
     </div>
     <div class="section side">
-      <div class="section__indent">
+      <div>
         <ul class="menu">
           <li class="menu__item"><a class="menu__link" href="#">
             <i class="menu__icon icon-enlarge"></i> {{ _('Enter IDE Mode') }}
           </a></li>
+          <li class="menu__seperator"></li>
           <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
             <i class="menu__icon icon-paper-plane"></i> {{ _('Test or Submit') }}
           </a></li>
