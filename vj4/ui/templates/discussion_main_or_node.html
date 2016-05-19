@@ -10,27 +10,6 @@
           {% endwith %}
         </div>
       {% else %}
-        <div>
-          {% if vnode %}
-            {% with
-              page_href_pattern = reverse_url('discussion_node', did=vnode['domain_id'], node_or_pid=vnode['doc_id'])~'?page={page}',
-              page_nums = dcount,
-              page_num_per_page = view.DISCUSSIONS_PER_PAGE,
-              page_current = page
-            %}
-              {% include "components/pagination.html" %}
-            {% endwith %}
-          {% else %}
-            {% with
-              page_href_pattern = reverse_url('discussion_main')~'?page={page}',
-              page_nums = dcount,
-              page_num_per_page = view.DISCUSSIONS_PER_PAGE,
-              page_current = page
-            %}
-              {% include "components/pagination.html" %}
-            {% endwith %}
-          {% endif %}
-        </div>
         <ol class="dczlist">
         {% for ddoc in ddocs %}
           <li class="dczlist__item{% if loop.index == 3 %} highlight{% endif %}">
@@ -60,6 +39,25 @@
           </li>
         {% endfor %}
         </ol>
+        {% if vnode %}
+          {% with
+            page_href_pattern = reverse_url('discussion_node', did=vnode['domain_id'], node_or_pid=vnode['doc_id'])~'?page={page}',
+            page_nums = dcount,
+            page_num_per_page = view.DISCUSSIONS_PER_PAGE,
+            page_current = page
+          %}
+            {% include "components/pagination.html" %}
+          {% endwith %}
+        {% else %}
+          {% with
+            page_href_pattern = reverse_url('discussion_main')~'?page={page}',
+            page_nums = dcount,
+            page_num_per_page = view.DISCUSSIONS_PER_PAGE,
+            page_current = page
+          %}
+            {% include "components/pagination.html" %}
+          {% endwith %}
+        {% endif %}
       {% endif %}
     </div>
   </div>

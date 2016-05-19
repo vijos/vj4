@@ -2,16 +2,6 @@
 {% block content %}
 <div class="layout--2col clearfix">
   <div class="layout--2col__main">
-    <div>
-      {% with
-        page_href_pattern = reverse_url('problem_main')~'?page={page}',
-        page_nums = pcount,
-        page_num_per_page = view.PROBLEMS_PER_PAGE,
-        page_current = page
-      %}
-        {% include "components/pagination.html" %}
-      {% endwith %}
-    </div>
     <div class="section">
       <div class="section__indent top bottom">
         <h1 class="section__title">{{ _('Problem List') }}</h1>
@@ -67,6 +57,14 @@
           {% endif %}
           </tbody>
         </table>
+        {% with
+          page_href_pattern = reverse_url('problem_main')~'?page={page}',
+          page_nums = pcount,
+          page_num_per_page = view.PROBLEMS_PER_PAGE,
+          page_current = page
+        %}
+          {% include "components/pagination.html" %}
+        {% endwith %}
       </div>
     </div>
   </div>
