@@ -33,6 +33,8 @@ npm run build  # to watch modifications: npm run watch
 python3.5 -m vj4.server --debug
 ```
 
+* Set `--port` to use a different port (default: 8888).
+
 As an intuitive example, you may want to add a first user and problem to start:
 
 ```bash
@@ -40,9 +42,6 @@ alias pm="python3.5 -m"
 pm vj4.model.user add -1 icebox 12345 icebox@iceboy.org
 pm vj4.controller.problem add system "Dummy Problem" "# It *works*" -1 777
 ```
-
-* Set `--port=x` to use a different port (default: 8888).
-* Set `--ssl-certfile=x` (required) and `--ssl-keyfile=x` (optional) to enable SSL.
 
 ## Production
 
@@ -52,9 +51,12 @@ python3.5 -OO -m vj4.unix_server
 ```
 
 * Set `--path` (default: /tmp/vijos.sock) to specify UNIX socket path.
+* Set `--prefork` (default: 1) to specify the number of worker processes.
+* Set `--ip-header` (default: X-Forwarded-For) to use IP address in request headers.
+* Set `--url-prefix` (default: https://vijos.org) to set URL prefix.
 * Set `--cdn-prefix` (default: /) to set CDN prefix.
-* Set `--ip-header` (default: X-Real-IP) to use IP address in request headers.
-* Set `--db-host=x` (default: localhost) and/or `--db-name=x` (default: test) to use a different
+* Set `--smtp-host`, `--smtp-user` and `--smtp-password` to specify a SMTP server.
+* Set `--db-host` (default: localhost) and/or `--db-name` (default: test) to use a different
   database.
 
 ## Notes

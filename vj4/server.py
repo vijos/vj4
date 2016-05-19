@@ -1,14 +1,18 @@
-import logging
+import asyncio
+import socket
 from aiohttp import web
 from vj4 import app
 from vj4.util import options
+from vj4.util import prefork
 
+options.define('host', default='', help='HTTP server host.')
 options.define('port', default=8888, help='HTTP server port.')
-
-_logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
   options.parse_command_line()
-  web.run_app(app.Application(),
-              port=options.options.port,
-              print=lambda s: [logging.info(l) for l in s.splitlines()])
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  sock.bind((options.options.host, options.options.port))
+  prefork.prefork()
+  loop = asyncio.get_event_loop()
+  loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
+  loop.run_forever()
