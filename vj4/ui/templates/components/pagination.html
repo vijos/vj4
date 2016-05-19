@@ -1,0 +1,15 @@
+<ul class="pager">
+{% for pitem in pager(page_nums, page_num_per_page, page_current) %}
+  <li>
+    {% if pitem['type'] == 'ellipsis' %}
+    <span class="pager__item ellipsis">{{ pitem['text'] }}</span>
+    {% elif pitem['type'] == 'current' %}
+    <span class="pager__item current">{{ pitem['text'] }}</span>
+    {% elif pitem['type'] == 'page' %}
+    <a class="pager__item link" href="{{ page_href_pattern|pager_link(pitem['page']) }}">{{ pitem['text'] }}</a>
+    {% else %}
+    <a class="pager__item link" href="{{ page_href_pattern|pager_link(pitem['page']) }}">{{ _(pitem['text']) }}</a>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>

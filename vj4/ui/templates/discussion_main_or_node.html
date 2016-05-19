@@ -11,19 +11,25 @@
         </div>
       {% else %}
         <div>
-          {{ _('page-prefix') }}
-          {% for page0 in range((dcount + view.DISCUSSIONS_PER_PAGE - 1) // view.DISCUSSIONS_PER_PAGE) %}
-          {% if page == page0 + 1 %}
-          {{ page0 + 1 }}
+          {% if vnode %}
+            {% with
+              page_href_pattern = reverse_url('discussion_node', did=vnode['domain_id'], node_or_pid=vnode['doc_id'])~'?page={page}',
+              page_nums = dcount,
+              page_num_per_page = view.DISCUSSIONS_PER_PAGE,
+              page_current = page
+            %}
+              {% include "components/pagination.html" %}
+            {% endwith %}
           {% else %}
-            {% if vnode %}
-              <a href="{{ reverse_url('discussion_node', did=vnode['domain_id'], node_or_pid=vnode['doc_id']) }}?page={{ page0 + 1 }}">{{ page0 + 1 }}</a>
-            {% else %}
-              <a href="{{ reverse_url('discussion_main') }}?page={{ page0 + 1 }}">{{ page0 + 1 }}</a>
-            {% endif %}
+            {% with
+              page_href_pattern = reverse_url('discussion_main')~'?page={page}',
+              page_nums = dcount,
+              page_num_per_page = view.DISCUSSIONS_PER_PAGE,
+              page_current = page
+            %}
+              {% include "components/pagination.html" %}
+            {% endwith %}
           {% endif %}
-          {% endfor %}
-          {{ _('page-suffix') }}
         </div>
         <ol class="dczlist">
         {% for ddoc in ddocs %}
