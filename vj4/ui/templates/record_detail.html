@@ -11,8 +11,9 @@
           </span>
         </h1>
         <div class="section__indent left right">
-          <pre>{{ rdoc['compiler_texts']|join('\n') }}</pre>
+          <pre class="compiler-text">{{ rdoc['compiler_texts']|join('\n') }}</pre>
         </div>
+        {% if rdoc['cases'] %}
         <table class="section__table record_detail__table">
           <colgroup>
             <col class="col--case">
@@ -46,6 +47,7 @@
           {% endfor %}
           </tbody>
         </table>
+        {% endif %}
       </div>
     </div>
     <div class="section">
@@ -68,10 +70,18 @@
               {% endwith %}</p>
             <p>题目：<a href="{{ reverse_url('problem_detail', pid=rdoc['pdoc']['doc_id']) }}">{{ rdoc['pdoc']['title'] }}</a></p>
             <p>递交于：{{ datetime_span(rdoc['_id'].generation_time) }}</p>
+            {% if rdoc['judge_at'] %}
             <p>评测于：{{ datetime_span(rdoc['judge_at']) }}</p>
+            {% endif %}
+            {% if rdoc['score'] %}
             <p>得分：{{ rdoc['score'] }}%</p>
+            {% endif %}
+            {% if rdoc['time_ms'] %}
             <p>时间消耗：{{ rdoc['time_ms'] }}ms</p>
+            {% endif %}
+            {% if rdoc['memory_kb'] %}
             <p>内存消耗：{{ rdoc['memory_kb'] / 1000 }}MiB</p>
+            {% endif %}
           </div>
         </div>
       </div>
