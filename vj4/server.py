@@ -1,15 +1,17 @@
 import asyncio
+import atexit
 import logging
 import os
+import signal
 import socket
 import sys
 import urllib.parse
 from aiohttp import web
 from vj4 import app
 from vj4.util import options
-from vj4.util import prefork
 
 options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
+options.define('prefork', default=1, help='Number of prefork workers.')
 
 _logger = logging.getLogger(__name__)
 
@@ -32,7 +34,12 @@ def main():
   else:
     _logger.error('Invalid listening scheme %s', url.scheme)
     return 1
-  prefork.prefork()
+  for i in range(1, options.options.prefork):
+    pid = os.fork()
+    if not pid:
+      break
+    else:
+      atexit.register(lambda: os.kill(pid, signal.SIGTERM))
   loop = asyncio.get_event_loop()
   loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
   loop.run_forever()
