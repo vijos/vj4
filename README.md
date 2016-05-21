@@ -33,7 +33,7 @@ npm run build  # to watch modifications: npm run watch
 python3.5 -m vj4.server --debug
 ```
 
-* Set `--port` to use a different port (default: 8888).
+* Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
 
 As an intuitive example, you may want to add a first user and problem to start:
 
@@ -47,10 +47,10 @@ pm vj4.controller.problem add system "Dummy Problem" "# It *works*" -1 777
 
 ```bash
 npm run build:production
-python3.5 -OO -m vj4.unix_server
+python3.5 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
 ```
 
-* Set `--path` (default: /tmp/vijos.sock) to specify UNIX socket path.
+* Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
 * Set `--prefork` (default: 1) to specify the number of worker processes.
 * Set `--ip-header` (default: X-Forwarded-For) to use IP address in request headers.
 * Set `--url-prefix` (default: https://vijos.org) to set URL prefix.
