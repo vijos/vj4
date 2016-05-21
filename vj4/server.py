@@ -32,7 +32,6 @@ def main():
   else:
     _logger.error('Invalid listening scheme %s', url.scheme)
     return 1
-    
   prefork.prefork()
   loop = asyncio.get_event_loop()
   loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
