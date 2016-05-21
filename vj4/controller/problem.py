@@ -43,11 +43,12 @@ async def get_list(domain_id: str, uid: int=None, fields=None, skip: int=0, limi
   if uid is not None:
     doc_ids = [pdoc['doc_id'] for pdoc in pdocs]
     # TODO(iceboy): projection.
-    psdocs = document.get_multi_status(domain_id, document.TYPE_PROBLEM,
-                                       uid=uid, doc_id={'$in': doc_ids})
+    psdocs = (document.get_multi_status(domain_id, document.TYPE_PROBLEM,
+                                        uid=uid, doc_id={'$in': doc_ids})
+                      .sort([('doc_id', 1)]))
     async for psdoc in psdocs:
       pdoc = next(piter)
-      while pdoc['doc_id'] < psdoc['doc_id']:
+      while pdoc['doc_id'] != psdoc['doc_id']:
         pdoc['psdoc'] = {}
         pdoc = next(piter)
       pdoc['psdoc'] = psdoc

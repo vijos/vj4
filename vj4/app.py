@@ -13,7 +13,7 @@ from vj4.util import options
 from vj4.util import tools
 
 options.define('static', default=True, help='Serve static files.')
-options.define('ip_header', default='X-Real-IP', help='Header name for remote IP.')
+options.define('ip_header', default='X-Forwarded-For', help='Header name for remote IP.')
 options.define('unsaved_session_expire_seconds', default=43200,
                help='Expire time for unsaved session, in seconds.')
 options.define('saved_session_expire_seconds', default=2592000,
