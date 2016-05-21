@@ -11,7 +11,7 @@ options.define('port', default=8888, help='HTTP server port.')
 if __name__ == '__main__':
   options.parse_command_line()
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+  sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
   sock.bind((options.options.host, options.options.port))
   prefork.prefork()
   loop = asyncio.get_event_loop()

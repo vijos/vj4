@@ -52,7 +52,7 @@
     </div>
     <div class="section">
       <div class="section__indent top bottom">
-        <h1 class="section__title">代码</h1>
+        <h1 class="section__title">{{ _('Code') }}</h1>
         <div class="section__indent left right">
           <pre><code class="language-{{ rdoc['lang'] }}">{{ rdoc['code'] }}</code></pre>
         </div>
@@ -62,25 +62,25 @@
   <div class="layout--2col__side">
     <div class="section">
       <div class="section__indent top bottom">
-        <h1 class="section__title">{{ _('Infomation') }}</h1>
+        <h1 class="section__title">{{ _('Information') }}</h1>
         <div class="section__indent left right">
           <div class="typo">
-            <p>用户：{% with noModBadge = true, user = rdoc['udoc'] %}
+            <p>{{ _('Submit By') }}: {% with noModBadge = true, user = rdoc['udoc'] %}
                 {% include "components/inline_user.html" %}
               {% endwith %}</p>
-            <p>题目：<a href="{{ reverse_url('problem_detail', pid=rdoc['pdoc']['doc_id']) }}">{{ rdoc['pdoc']['title'] }}</a></p>
-            <p>递交于：{{ datetime_span(rdoc['_id'].generation_time) }}</p>
+            <p>{{ _('Problem') }}: <a href="{{ reverse_url('problem_detail', pid=rdoc['pdoc']['doc_id']) }}">{{ rdoc['pdoc']['title'] }}</a></p>
+            <p>{{ _('Submit At') }}: {{ datetime_span(rdoc['_id'].generation_time) }}</p>
             {% if rdoc['judge_at'] %}
-            <p>评测于：{{ datetime_span(rdoc['judge_at']) }}</p>
+            <p>{{ _('Judged At') }}: {{ datetime_span(rdoc['judge_at']) }}</p>
             {% endif %}
             {% if rdoc['score'] %}
-            <p>得分：{{ rdoc['score'] }}%</p>
+            <p>{{ _('Score') }}: {{ rdoc['score'] }}%</p>
             {% endif %}
             {% if rdoc['time_ms'] %}
-            <p>时间消耗：{{ rdoc['time_ms'] }}ms</p>
+            <p>{{ _('Time Cost') }}: {{ rdoc['time_ms'] }}ms</p>
             {% endif %}
             {% if rdoc['memory_kb'] %}
-            <p>内存消耗：{{ rdoc['memory_kb'] / 1000 }}MiB</p>
+            <p>{{ _('Memory Cost') }}: {{ rdoc['memory_kb'] / 1000 }}MiB</p>
             {% endif %}
           </div>
         </div>
@@ -91,7 +91,7 @@
         <h1 class="section__title">{{ _('Statistics') }}</h1>
         <div class="section__indent left right">
           <div class="typo">
-            <p>Boom!</p>
+            <p>{{ _('Boom!') }} </p>
           </div>
         </div>
       </div>
