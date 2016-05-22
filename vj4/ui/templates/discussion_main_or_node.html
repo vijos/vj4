@@ -39,25 +39,9 @@
           </li>
         {% endfor %}
         </ol>
-        {% if vnode %}
-          {% with
-            page_href_pattern = reverse_url('discussion_node', did=vnode['domain_id'], node_or_pid=vnode['doc_id'])~'?page={page}',
-            page_nums = dcount,
-            page_num_per_page = view.DISCUSSIONS_PER_PAGE,
-            page_current = page
-          %}
-            {% include "components/pagination.html" %}
-          {% endwith %}
-        {% else %}
-          {% with
-            page_href_pattern = reverse_url('discussion_main')~'?page={page}',
-            page_nums = dcount,
-            page_num_per_page = view.DISCUSSIONS_PER_PAGE,
-            page_current = page
-          %}
-            {% include "components/pagination.html" %}
-          {% endwith %}
-        {% endif %}
+        {% with num_pages = (dcount + view.DISCUSSIONS_PER_PAGE - 1) // view.DISCUSSIONS_PER_PAGE %}
+          {% include "components/paginator.html" %}
+        {% endwith %}
       {% endif %}
     </div>
   </div>

@@ -6,7 +6,6 @@ import signal
 import socket
 import sys
 import urllib.parse
-from aiohttp import web
 from vj4 import app
 from vj4.util import options
 
