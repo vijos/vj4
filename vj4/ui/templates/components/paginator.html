@@ -1,0 +1,21 @@
+<ul class="pager">
+{% for type, page0 in paginate(page, num_pages) %}
+  <li>
+    {% if type == 'first' %}
+    <a class="pager__item link" href="?page={{ page0 }}">{{ _('pager_first') }}</a>
+    {% elif type == 'previous' %}
+    <a class="pager__item link" href="?page={{ page0 }}">{{ _('pager_previous') }}</a>
+    {% elif type == 'ellipsis' %}
+    <span class="pager__item ellipsis">...</span>
+    {% elif type == 'page' %}
+    <a class="pager__item link" href="?page={{ page0 }}">{{ page0 }}</a>
+    {% elif type == 'current' %}
+    <span class="pager__item current">{{ page0 }}</span>
+    {% elif type == 'next' %}
+    <a class="pager__item link" href="?page={{ page0 }}">{{ _('pager_next') }}</a>
+    {% elif type == 'last' %}
+    <a class="pager__item link" href="?page={{ page0 }}">{{ _('pager_last') }}</a>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>

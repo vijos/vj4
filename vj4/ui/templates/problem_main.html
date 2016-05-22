@@ -57,13 +57,8 @@
           {% endif %}
           </tbody>
         </table>
-        {% with
-          page_href_pattern = reverse_url('problem_main')~'?page={page}',
-          page_nums = pcount,
-          page_num_per_page = view.PROBLEMS_PER_PAGE,
-          page_current = page
-        %}
-          {% include "components/pagination.html" %}
+        {% with num_pages = (pcount + view.PROBLEMS_PER_PAGE - 1) // view.PROBLEMS_PER_PAGE %}
+          {% include "components/paginator.html" %}
         {% endwith %}
       </div>
     </div>
