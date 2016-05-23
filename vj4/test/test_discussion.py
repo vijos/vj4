@@ -100,7 +100,7 @@ class DiscussionTest(base.SmallcacheTestCase):
     self.assertEqual(ddoc['title'], TITLE)
     self.assertEqual(ddoc['content'], CONTENT)
     ddocs = await discussion.get_list_for_node(DOMAIN_ID_DUMMY, 'meow',
-                                               fields=['title', 'owner_uid'])
+                                               fields=['title', 'owner_uid', 'parent_doc_id'])
     self.assertEqual(len(ddocs), 1)
     self.assertEqual(ddocs[0]['title'], TITLE)
     self.assertFalse('content' in ddocs[0])
