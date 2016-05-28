@@ -1,9 +1,4 @@
-import itertools
-from bson import objectid
-from pymongo import errors
-from vj4 import error
 from vj4.model import document
-from vj4.model import user
 from vj4.util import argmethod
 
 @argmethod.wrap

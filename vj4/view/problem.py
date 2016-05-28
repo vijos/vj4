@@ -35,7 +35,7 @@ class ProblemMainView(base.OperationView):
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
-@app.route('/p/{pid}', 'problem_detail')
+@app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
 class ProblemDetailView(base.View):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
@@ -167,3 +167,17 @@ class ProblemDataView(base.View):
 
   head = functools.partialmethod(stream_data, headers_only=True)
   get = stream_data
+
+@app.route('/p/create', 'problem_create')
+@app.route('/p/{pid}/modify', 'problem_modify')
+class ProblemModifyView(base.View):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id=None):
+    if not pid:
+      self.check_perm(builtin.PERM_CREATE_PROBLEM)
+    else:
+      # TODO(iceboy): Can problem owner edit his problems without this permission?
+      self.check_perm(builtin.PERM_MODIFY_PROBLEM)
+    self.response.text = 'TODO'

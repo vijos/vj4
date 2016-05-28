@@ -117,4 +117,3 @@ class JudgeNotifyConnection(base.Connection):
       await self.channel.close()
 
     asyncio.get_event_loop().create_task(close())
-
