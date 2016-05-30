@@ -28,7 +28,8 @@ class ViewBase(setting.SettingMixin):
   TITLE = None
 
   async def prepare(self):
-    # TODO(iceboy): parallelize: (session -> user) | domain.
+    self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
+    domain_future = domain.get(self.domain_id)
     self.session = await self.update_session()
     if self.session and 'uid' in self.session:
       self.user = await user.get_by_uid(self.session['uid']) or builtin.USER_GUEST
@@ -37,10 +38,9 @@ class ViewBase(setting.SettingMixin):
     self.translate = locale.get_translate(self.get_setting('view_lang'))
     # TODO(iceboy): use user timezone.
     self.datetime_span = _get_datetime_span('Asia/Shanghai')
-    self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id)
-    self.domain = await domain.get(self.domain_id)
+    self.domain = await domain_future
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
 
@@ -143,7 +143,8 @@ class ViewBase(setting.SettingMixin):
     kwargs['view'] = self
     kwargs['_'] = self.translate
     kwargs['domain_id'] = self.domain_id
-    kwargs['page_name'] = self.NAME
+    if not 'page_name' in kwargs:
+      kwargs['page_name'] = self.NAME
     if 'page_title' not in kwargs:
       kwargs['page_title'] = self.translate(self.TITLE)
     if 'path_components' not in kwargs:
