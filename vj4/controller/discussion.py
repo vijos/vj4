@@ -88,7 +88,10 @@ async def get(domain_id: str, did: document.convert_doc_id):
 
 @argmethod.wrap
 async def inc_views(domain_id: str, did: document.convert_doc_id):
-  return await document.inc(domain_id, document.TYPE_DISCUSSION, did, 'views', 1)
+  doc = await document.inc(domain_id, document.TYPE_DISCUSSION, did, 'views', 1)
+  if not doc:
+    raise error.DiscussionNotFoundError(domain_id, did)
+  return doc
 
 @argmethod.wrap
 async def count(domain_id: str):

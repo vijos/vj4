@@ -1,5 +1,6 @@
 """A locale module which mimics tornado's interface."""
 import csv
+import functools
 import os
 import os.path
 from vj4.util import options
@@ -15,6 +16,7 @@ def load_translations(translation_path):
     with open(os.path.join(translation_path, path)) as csv_file:
       _locales[path[:-4]] = dict(csv.reader(csv_file))
 
+@functools.lru_cache()
 def get_translate(locale_code):
   if locale_code not in _locales:
     locale_code = options.options.default_locale

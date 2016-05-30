@@ -34,24 +34,15 @@ class ViewBase(setting.SettingMixin):
       self.user = await user.get_by_uid(self.session['uid']) or builtin.USER_GUEST
     else:
       self.user = builtin.USER_GUEST
+    self.translate = locale.get_translate(self.get_setting('view_lang'))
     # TODO(iceboy): use user timezone.
-    self.locale_context = _get_locale_context(self.get_setting('view_lang'), 'Asia/Shanghai')
+    self.datetime_span = _get_datetime_span('Asia/Shanghai')
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
-    self.domain_context = self.get_domain_context(self.domain_id)
-    self.reverse_url = self.domain_context['reverse_url']
-    self.build_path = self.domain_context['build_path']
+    self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
+    self.build_path = functools.partial(_build_path, domain_id=self.domain_id)
     self.domain = await domain.get(self.domain_id)
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
-
-  @classmethod
-  @functools.lru_cache()
-  def get_domain_context(cls, domain_id):
-    return {'domain_id': domain_id,
-            'page_name': cls.NAME,
-            'reverse_url': functools.partial(_reverse_url, domain_id=domain_id),
-            'build_path': functools.partial(_build_path, domain_id=domain_id),
-            'path_components': _build_path((cls.NAME, None), domain_id=domain_id)}
 
   def has_perm(self, perm):
     role = self.user['roles'].get(self.domain_id, builtin.ROLE_DEFAULT)
@@ -148,6 +139,19 @@ class ViewBase(setting.SettingMixin):
     else:
       return ''
 
+  def render_html(self, template_name, **kwargs):
+    kwargs['view'] = self
+    kwargs['_'] = self.translate
+    kwargs['domain_id'] = self.domain_id
+    kwargs['page_name'] = self.NAME
+    if 'page_title' not in kwargs:
+      kwargs['page_title'] = self.translate(self.TITLE)
+    if 'path_components' not in kwargs:
+      kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
+    kwargs['reverse_url'] = self.reverse_url
+    kwargs['datetime_span'] = self.datetime_span
+    return template.Environment().get_template(template_name).render(kwargs)
+
 class View(web.View, ViewBase):
   @asyncio.coroutine
   def __iter__(self):
@@ -162,17 +166,14 @@ class View(web.View, ViewBase):
         self.response.content_type = 'application/json'
         self.response.text = json.encode({'error': e.to_dict()})
       else:
-        self.render(e.template_name, error=e, path_components=self.build_path(('error', None)),
-                    page_name='error', page_title=self.locale_context['_']('error'))
+        self.render(e.template_name, error=e,
+                    page_name='error', page_title=self.translate('error'),
+                    path_components=self.build_path((self.translate('error'), None)))
     return self.response
 
   def render(self, template_name, **kwargs):
     self.response.content_type = 'text/html'
     self.response.text = self.render_html(template_name, **kwargs)
-
-  def render_html(self, template_name, **kwargs):
-    return template.Environment().get_template(template_name).render(
-        {'view': self, **self.domain_context, **self.locale_context, **kwargs})
 
   def json(self, obj):
     self.response.content_type = 'application/json'
@@ -236,10 +237,6 @@ class Connection(sockjs.Session, ViewBase):
   def send(self, **kwargs):
     super(Connection, self).send(json.encode(kwargs))
 
-  def render_html(self, template_name, **kwargs):
-    return template.Environment().get_template(template_name).render(
-        {**self.domain_context, **self.locale_context, **kwargs})
-
 @functools.lru_cache()
 def _get_csrf_token(session_id_binary):
   return hmac.new(b'csrf_token', session_id_binary, 'sha256').hexdigest()
@@ -259,10 +256,8 @@ def _build_path(*args, domain_id):
   return [(domain_id, _reverse_url('main', domain_id=domain_id)), *args]
 
 @functools.lru_cache()
-def _get_locale_context(locale_name, tzname):
-  translate = locale.get_translate(locale_name)
-  tz = pytz.timezone('Asia/Shanghai')
-  datetime_full = translate('%Y-%m-%d %H:%M:%S')
+def _get_datetime_span(tzname):
+  tz = pytz.timezone(tzname)
 
   @functools.lru_cache()
   def _datetime_span(dt):
@@ -272,9 +267,8 @@ def _get_locale_context(locale_name, tzname):
     return markupsafe.Markup(
         '<span data-timestamp="{0}">{1}</span>'.format(
             int(dt.astimezone(pytz.utc).timestamp()),
-            dt.astimezone(tz).strftime(datetime_full)))
-
-  return {'_': translate, 'datetime_span': _datetime_span}
+            dt.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')))
+  return _datetime_span
 
 # Decorators
 def require_perm(perm):

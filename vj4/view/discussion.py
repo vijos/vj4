@@ -42,8 +42,9 @@ class DiscussionNodeView(base.View):
                                                skip=(page - 1) * self.DISCUSSIONS_PER_PAGE,
                                                limit=self.DISCUSSIONS_PER_PAGE),
         discussion.get_vnode_and_count_of_node(self.domain_id, node_or_pid))
-    path_components = self.build_path(('discussion_main', self.reverse_url('discussion_main')),
-                                      (vnode['title'], None))
+    path_components = self.build_path(
+        (self.translate('discussion_main'), self.reverse_url('discussion_main')),
+        (vnode['title'], None))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode, ddocs=ddocs,
                 page=page, dcount=dcount, path_components=path_components)
 
@@ -56,9 +57,9 @@ class DiscussionCreateView(base.View):
   async def get(self, *, node_or_pid: document.convert_doc_id):
     vnode = await discussion.get_vnode(self.domain_id, node_or_pid)
     path_components = self.build_path(
-        ('discussion_main', self.reverse_url('discussion_main')),
+        (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
-        ('discussion_create', None))
+        (self.translate('discussion_create'), None))
     self.render('discussion_create.html', vnode=vnode, path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -81,7 +82,7 @@ class DiscussionDetailView(base.OperationView):
     udoc = await user.get_by_uid(ddoc['owner_uid'])
     vnode = await discussion.get_vnode(self.domain_id, ddoc['parent_doc_id'])
     path_components = self.build_path(
-        ('discussion_main', self.reverse_url('discussion_main')),
+        (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
         (ddoc['title'], None))
     drdocs = await discussion.get_list_reply(self.domain_id, ddoc['doc_id'])

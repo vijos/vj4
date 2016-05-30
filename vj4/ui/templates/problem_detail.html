@@ -41,7 +41,7 @@
             <i class="menu__icon icon-bubble2"></i> {{ _('Discussions') }}
           </a></li>
           <li class="menu__seperator"></li>
-          <li class="menu__item"><a class="menu__link" href="#">
+          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">
             <i class="menu__icon icon-pencil"></i>  {{ _('Edit') }}
           </a></li>
           <li class="menu__item"><a class="menu__link" href="#">

@@ -104,6 +104,9 @@ class DiscussionNodeAlreadyExistError(UserFacingError):
 class DiscussionNodeNotFoundError(NotFoundError):
   pass
 
+class DiscussionNotFoundError(DocumentNotFoundError):
+  pass
+
 class MessageNotFoundError(NotFoundError):
   pass
 
@@ -125,5 +128,5 @@ class ContestStatusHiddenError(UserFacingError):
 class TrainingRequirementNotSatisfiedError(UserFacingError):
   pass
 
-class RecordNotFoundError(UserFacingError):
+class RecordNotFoundError(NotFoundError):
   pass

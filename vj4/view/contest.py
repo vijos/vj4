@@ -30,8 +30,9 @@ class ContestDetailView(base.View):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc = await contest.get(self.domain_id, tid)
-    path_components = self.build_path(('contest_main', self.reverse_url('contest_main')),
-                                      (tdoc['title'], None))
+    path_components = self.build_path(
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
+        (tdoc['title'], None))
     self.render('contest_detail.html', tdoc=tdoc, path_components=path_components)
 
 @app.route('/tests/{tid:\w{24}}/status', 'contest_status')
@@ -42,9 +43,9 @@ class ContestStatusView(base.View):
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     path_components = self.build_path(
-        ('contest_main', self.reverse_url('contest_main')),
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
-        ('contest_status', None))
+        (self.translate('contest_status'), None))
     self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs, path_components=path_components)
 
 @app.route('/tests/create', 'contest_create')
