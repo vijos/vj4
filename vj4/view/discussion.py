@@ -35,13 +35,11 @@ class DiscussionNodeView(base.View):
   @base.sanitize
   async def get(self, *, node_or_pid: document.convert_doc_id, page: int=1):
     # TODO(iceboy): continuation based pagination.
-    nodes, (vnode, ddocs), (_, dcount) = await asyncio.gather(
+    nodes, (vnode, ddocs, dcount) = await asyncio.gather(
         discussion.get_nodes(self.domain_id),
-        discussion.get_vnode_and_list_for_node(self.domain_id,
-                                               node_or_pid,
-                                               skip=(page - 1) * self.DISCUSSIONS_PER_PAGE,
-                                               limit=self.DISCUSSIONS_PER_PAGE),
-        discussion.get_vnode_and_count_of_node(self.domain_id, node_or_pid))
+        discussion.get_vnode_and_list_and_count_for_node(
+            self.domain_id, node_or_pid,
+            skip=(page - 1) * self.DISCUSSIONS_PER_PAGE, limit=self.DISCUSSIONS_PER_PAGE))
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], None))

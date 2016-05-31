@@ -110,17 +110,14 @@ async def get_list(domain_id: str, *, fields=None, skip: int=0, limit: int=0):
   return ddocs
 
 @argmethod.wrap
-async def get_vnode_and_count_of_node(domain_id: str, node_or_pid: document.convert_doc_id):
+async def get_vnode_and_list_and_count_for_node(domain_id: str,
+                                                node_or_pid: document.convert_doc_id, *,
+                                                fields=None, skip: int=0, limit: int=0):
   vnode = await get_vnode(domain_id, node_or_pid)
-  count = await document.get_multi(domain_id, document.TYPE_DISCUSSION,
-                                   parent_doc_type=vnode['doc_type'],
-                                   parent_doc_id=vnode['doc_id']).count()
-  return vnode, count
-
-@argmethod.wrap
-async def get_vnode_and_list_for_node(domain_id: str, node_or_pid: document.convert_doc_id, *,
-                                      fields=None, skip: int=0, limit: int=0):
-  vnode = await get_vnode(domain_id, node_or_pid)
+  count_future = asyncio.ensure_future(
+      document.get_multi(domain_id, document.TYPE_DISCUSSION,
+                         parent_doc_type=vnode['doc_type'],
+                         parent_doc_id=vnode['doc_id']).count())
   # TODO(twd2): projection.
   ddocs = await (document.get_multi(domain_id, document.TYPE_DISCUSSION,
                                     parent_doc_type=vnode['doc_type'],
@@ -132,12 +129,7 @@ async def get_vnode_and_list_for_node(domain_id: str, node_or_pid: document.conv
                          .to_list(None))
   await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
                        attach_vnodes(ddocs, domain_id, 'parent_doc_id'))
-  return vnode, ddocs
-
-@argmethod.wrap
-async def get_list_for_node(domain_id: str, node_or_pid: document.convert_doc_id, *, fields=None):
-  _, ddocs = await get_vnode_and_list_for_node(domain_id, node_or_pid, fields=fields)
-  return ddocs
+  return vnode, ddocs, await count_future
 
 @argmethod.wrap
 async def add_reply(domain_id: str, did: document.convert_doc_id, owner_uid: int, content: str):
