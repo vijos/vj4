@@ -78,9 +78,9 @@ async def get_vnode(domain_id: str, node_or_pid: document.convert_doc_id):
 @argmethod.wrap
 async def add(domain_id: str, node_or_pid: str, owner_uid: int, title: str, content: str):
   vnode = await get_vnode(domain_id, node_or_pid)
-  return await document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION, title=title,
-                            parent_doc_type=vnode['doc_type'],
-                            parent_doc_id=vnode['doc_id'])
+  return await document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION,
+                            title=title, num_replies=0,
+                            parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id'])
 
 @argmethod.wrap
 async def get(domain_id: str, did: document.convert_doc_id):
@@ -133,8 +133,11 @@ async def get_vnode_and_list_and_count_for_node(domain_id: str,
 
 @argmethod.wrap
 async def add_reply(domain_id: str, did: document.convert_doc_id, owner_uid: int, content: str):
-  return await document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION_REPLY,
-                            parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did)
+  drdoc, _ = await asyncio.gather(
+    document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION_REPLY,
+                 parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did),
+    document.inc(domain_id, document.TYPE_DISCUSSION, did, 'num_replies', 1))
+  return drdoc
 
 @argmethod.wrap
 async def get_reply(domain_id: str, drid: document.convert_doc_id, did=None):

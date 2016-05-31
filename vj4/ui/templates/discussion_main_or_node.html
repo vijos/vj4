@@ -16,7 +16,7 @@
             <div class="media">
               <div class="media__left">
                 <div class="dczlist__reply_n numbox">
-                  <div class="numbox__num large"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}">10</a></div>
+                  <div class="numbox__num large"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}">{{ ddoc['num_replies'] }}</a></div>
                   <div class="numbox__text">{{ _('Comments') }}</div>
                 </div>
               </div>
@@ -32,7 +32,7 @@
                   <span class="v-center"> · </span>
                   <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
                   <span class="v-center"> · </span>
-                  <a class="v-center dczlist__reply-link" href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}"><i class="icon-bubble"></i> {{ _('{0} comments').format(10) }}</a>
+                  <a class="v-center dczlist__reply-link" href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}"><i class="icon-bubble"></i> {{ _('{0} comments').format(ddoc['num_replies']) }}</a>
                 </div>
               </div>
             </div>
