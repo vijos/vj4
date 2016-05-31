@@ -44,7 +44,7 @@ def gravatar_url(gravatar, size=200):
     gravatar_hash = hashlib.md5(gravatar.lower().encode()).hexdigest()
   else:
     gravatar_hash = ''
-  return ('https://www.gravatar.com/avatar/' + gravatar_hash + "?" +
+  return ('//gravatar.lug.ustc.edu.cn/avatar/' + gravatar_hash + "?" +
           parse.urlencode({'d': 'mm', 's': str(size)}))
 
 def paginate(page, num_pages):
