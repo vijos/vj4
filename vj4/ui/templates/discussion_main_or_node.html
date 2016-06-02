@@ -23,7 +23,7 @@
               <div class="media__body top">
                 <h1 class="dczlist__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}">{{ ddoc['title'] }}</a></h1>
                 <div class="dczlist__supplementary">
-                  <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['vnode']['doc_id']) }}"><i class="icon-price-tag"></i>{{ ddoc['vnode']['title'] }}</a>
+                  <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['vnode']['doc_id']) }}"><i class="icon-tag"></i>{{ ddoc['vnode']['title'] }}</a>
                   <span class="v-center"> · </span>
                   {# TODO(iceboy): Handle inexistent user... #}
                   {% with noBadge = true, user = ddoc['udoc'] %}

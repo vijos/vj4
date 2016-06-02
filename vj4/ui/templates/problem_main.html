@@ -38,10 +38,10 @@
                   <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
                   {% if not pdoc['psdoc'].get('star') %}
                   <input type="hidden" name="operation" value="star">
-                  <button class="star star--outline" type="submit"><i class="icon-star-empty"></i></button>
+                  <button class="star star--outline" type="submit"><i class="icon-star--outline"></i></button>
                   {% else %}
                   <input type="hidden" name="operation" value="unstar">
-                  <button class="star star--fill" type="submit"><i class="icon-star-full"></i></button>
+                  <button class="star star--fill" type="submit"><i class="icon-star"></i></button>
                   {% endif %}
                   <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
                   <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">

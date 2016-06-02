@@ -74,17 +74,17 @@
           </a></li>
           <li class="menu__seperator"></li>
           <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-paper-plane"></i> {{ _('Test or Submit') }}
+            <i class="menu__icon icon-send"></i> {{ _('Test or Submit') }}
           </a></li>
           <li class="menu__item"><a class="menu__link" href="#">
-            <i class="menu__icon icon-pie-chart"></i> {{ _('Submission Statistics') }}
+            <i class="menu__icon icon-statistics"></i> {{ _('Submission Statistics') }}
           </a></li>
           <li class="menu__seperator"></li>
           <li class="menu__item"><a class="menu__link active" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-bubble2"></i> {{ _('Solutions') }}
+            <i class="menu__icon icon-bubble--outline"></i> {{ _('Solutions') }}
           </a></li>
           <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-bubble2"></i> {{ _('Discussions') }}
+            <i class="menu__icon icon-bubble--outline"></i> {{ _('Discussions') }}
           </a></li>
         </ul>
       </div>
@@ -96,7 +96,7 @@
           <div class="typo">
             <p>状态：????</p>
             <p>难度：4</p>
-            <p>评分：<i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-empty"></i> (30)</p>
+            <p>评分：<i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star--outline"></i> (30)</p>
             <p>分类：动态规划|树形动规、高精度</p>
             <p>递交次数：140</p>
             <p>通过次数：30</p>

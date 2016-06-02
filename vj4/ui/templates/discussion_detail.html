@@ -7,7 +7,7 @@
         <div class="section__indent left right">
           <h1>{{ ddoc['title'] }}</h1>
           <div class="dczdetail__supplementary">
-            <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><i class="icon-price-tag"></i>{{ vnode['title'] }}</a>
+            <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><i class="icon-tag"></i>{{ vnode['title'] }}</a>
             <span class="v-center"> · </span>
             {% with user = udoc %}
               {% include "components/inline_user.html" %}
@@ -22,7 +22,7 @@
       </div>
       <div class="topic__footer">
         <div class="section__indent left right">
-          {{ _('{0} views').format(ddoc['views']) }} · <a href="#"><i class="icon-star-empty"></i> 收藏主题</a> · <a href="#"><i class="icon-warning"></i> 举报</a>
+          {{ _('{0} views').format(ddoc['views']) }} · <a href="#"><i class="icon-star--outline"></i> 收藏主题</a> · <a href="#"><i class="icon-warning"></i> 举报</a>
         </div>
       </div>
     </div>
