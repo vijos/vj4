@@ -1,5 +1,4 @@
 import json
-import logging
 from vj4.util import options
 from aiohttp import web
 from pymongo import MongoClient
@@ -51,10 +50,9 @@ def count_level(perc):
 
   for key, value in level_config.items():
     if perc <= value:
-      # print(perc, key, value)
       return int(key)
 
-async def handle_rank(request):
+def handle_rank():
   udocs = list(COLL.find())
   udocs.sort(key = lambda x:(x['rp']), reverse=True)
 
@@ -66,33 +64,15 @@ async def handle_rank(request):
     rankN = rank_array[index]
     udoc['rankN'] = rankN
     udoc['level'] = count_level(rankN / total)
-    # print((index, udoc['rankN'], udoc['level']))
     COLL.save(udoc)
     index += 1
 
-  response = {
-      'status':200,
-      'success':True
-  }
-
-  return web.Response(
-    body=json.dumps(response).encode('utf-8'),
-    content_type="application/json",
-    charset="utf-8")
+def main():
+  options.parse_command_line()
+  load_conf(options.options.level_config)
+  handle_rank()
 
 options.define('level_config', default='level_config.json', help='Level Config')
-options.define('port', default=8887, help='HTTP server port')
-
-_logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
-  options.parse_command_line()
-
-  load_conf(options.options.level_config)
-
-  app = web.Application()
-  app.router.add_route('GET', '/api/rank', handle_rank)
-
-  web.run_app(app,
-              port=options.options.port,
-              print=lambda s: [logging.info(l) for l in s.splitlines()])
+  main()
