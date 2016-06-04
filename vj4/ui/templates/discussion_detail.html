@@ -22,7 +22,7 @@
       </div>
       <div class="topic__footer">
         <div class="section__indent left right">
-          {{ _('{0} views').format(ddoc['views']) }} · <a href="#"><i class="icon-star--outline"></i> 收藏主题</a> · <a href="#"><i class="icon-warning"></i> 举报</a>
+          {{ _('{0} views').format(ddoc['views']) }} · <i class="icon-star--outline"></i> 收藏主题 · <a href="#"><i class="icon-warning"></i> 举报</a>
         </div>
       </div>
     </div>
@@ -54,8 +54,17 @@
                   <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
                 </form>
                 <div class="nojs--hide">
-                  <textarea class="expanded dczcomments__dummy-box textbox" data-form="{{ {"operation": "reply"}|json }}">Write Your Comments</textarea>
+                  <textarea class="expanded dczcomments__dummy-box textbox" data-form="{{ {"operation": "reply"}|json }}" placeholder="Write Your Comments"></textarea>
                 </div>
+                <div class="commentbox-placeholder"></div>
+                <ul style="display:none">
+                  <li class="dczcomments__reply media commentbox-container">
+                    <div class="media__left top">
+                      <img src="{{ view.user['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
+                    </div>
+                    <div class="media__body top commentbox-placeholder"></div>
+                  </li>
+                </ul>
               </div>
             </div></div>
           </li>
@@ -81,7 +90,7 @@
                 <div class="typo no-heading">
                   {{ drdoc['content']|markdown }}
                 </div>
-                <ul class="dczcomments__replies"><!--
+                <ul class="dczcomments__replies commentbox-prepend-target"><!--
                -->{% for drrdoc in drdoc['reply'] %}
                   <li class="dczcomments__reply media">
                     <div class="media__left top">

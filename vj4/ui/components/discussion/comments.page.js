@@ -1,6 +1,22 @@
 import { AutoloadPage } from 'misc/PageLoader';
 import CommentBox from 'components/discussion/CommentBox';
 
+let $template;
+
+function init() {
+  $template = $('.commentbox-container').eq(0);
+}
+
+function createCommentBoxContainer($parent) {
+  let $container = $template.clone();
+  $parent.find('.commentbox-prepend-target').eq(0).prepend($container);
+  return $container.find('.commentbox-placeholder');
+}
+
+function destroyCommentBoxContainer($parent) {
+  $parent.find('.commentbox-container').remove();
+}
+
 function onCommentClickReply(ev, options) {
   const $evTarget = $(ev.currentTarget);
 
@@ -12,14 +28,18 @@ function onCommentClickReply(ev, options) {
     return;
   }
 
+  const $mediaBody = $evTarget.closest('.media__body');
+  const isInReply = $evTarget.closest('.dczcomments__reply').length > 0;
+
   const opt = {
     initialText: '',
     mode: 'reply',
     ...options,
+    onCancel: () => {
+      destroyCommentBoxContainer($mediaBody);
+    },
   };
 
-  const $mediaBody = $evTarget.closest('.media__body');
-  const isInReply = $evTarget.closest('.dczcomments__reply').length > 0;
   if (isInReply) {
     const username = $mediaBody
       .find('.user-profile-name').eq(0)
@@ -34,7 +54,7 @@ function onCommentClickReply(ev, options) {
         form: JSON.parse($evTarget.attr('data-form')),
         ...opt,
       })
-      .appendAfter($mediaBody.find('.typo').eq(0))
+      .appendTo(createCommentBoxContainer($mediaBody))
       .focus();
   }
 }
@@ -57,6 +77,7 @@ function onCommentClickEdit(ev) {
     form: JSON.parse($evTarget.attr('data-form')),
     mode: 'update',
     onCancel: () => {
+      destroyCommentBoxContainer($mediaBody);
       $mediaBody.removeClass('is-editing');
     },
   };
@@ -65,7 +86,7 @@ function onCommentClickEdit(ev) {
 
   CommentBox
     .getOrConstruct($evTarget, opt)
-    .appendAfter($mediaBody.find('.typo').eq(0))
+    .appendTo(createCommentBoxContainer($mediaBody))
     .focus();
 }
 
@@ -93,11 +114,12 @@ function onClickDummyBox(ev) {
 
   CommentBox
     .getOrConstruct($evTarget, opt)
-    .appendAfter($evTarget)
+    .appendTo($mediaBody.find('.commentbox-placeholder').eq(0))
     .focus();
 }
 
 const commentsPage = new AutoloadPage(() => {
+  init();
   $(document).on('click', '.dczcomments__dummy-box', onClickDummyBox);
   $(document).on('click', '.dczcomments__op-reply', onCommentClickReply);
   $(document).on('click', '.dczcomments__op-edit', onCommentClickEdit);

@@ -67,8 +67,8 @@ export default class CommentBox extends DOMAttachedObject {
     return this;
   }
 
-  appendAfter($dom) {
-    this.$box.insertAfter($dom);
+  appendTo($dom) {
+    this.$box.appendTo($dom);
     return this;
   }
 
