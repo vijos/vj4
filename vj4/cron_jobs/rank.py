@@ -1,6 +1,3 @@
-import json
-from vj4.util import options
-from aiohttp import web
 from pymongo import MongoClient
 
 DB_HOST = 'localhost'
@@ -12,12 +9,21 @@ CONN = MongoClient(DB_HOST, DB_PORT)
 DB = CONN[DB_NAME]
 COLL = DB[COLL_NAME]
 
-level_config = None
-
-def load_conf(path):
-  global level_config
-  with open(path) as f:
-    level_config = json.load(f)
+# Key represents level
+# Value represents percent
+# E.g. "10": 1 means that people who rank in 1% will get 10 levels
+level_config = {
+    "10": 1,
+    "9": 2,
+    "8": 3,
+    "7": 5,
+    "6": 10,
+    "5": 20,
+    "4": 30,
+    "3": 50,
+    "2": 80,
+    "1": 100
+}
 
 def rank_data(udocs):
   global level_config
@@ -68,11 +74,7 @@ def handle_rank():
     index += 1
 
 def main():
-  options.parse_command_line()
-  load_conf(options.options.level_config)
   handle_rank()
-
-options.define('level_config', default='level_config.json', help='Level Config')
 
 if __name__ == '__main__':
   main()

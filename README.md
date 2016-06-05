@@ -45,7 +45,7 @@ pm vj4.controller.problem add system "Dummy Problem" "# It *works*" -1 777
 
 You need to run rank script on a regular basis to maintain correct ranks for all users
 ```bash
-pm vj4.util.rank main
+pm vj4.cron_jobs.rank main
 ```
 
 ## Production
