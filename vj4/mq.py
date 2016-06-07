@@ -1,5 +1,7 @@
-import aioamqp
 import asyncio
+
+import aioamqp
+
 from vj4.util import options
 
 options.define('mq_host', default='localhost', help='Message queue hostname or IP address.')
@@ -7,6 +9,7 @@ options.define('mq_vhost', default='/', help='Message queue virtual host.')
 
 _protocol_future = None
 _channel_futures = {}
+
 
 async def _connect():
   global _protocol_future
@@ -24,10 +27,12 @@ async def _connect():
     _protocol_future = None
     raise
 
+
 async def _wait_protocol(protocol):
   global _protocol_future
   await protocol.wait_closed()
   _protocol_future = None
+
 
 async def channel(key=None):
   global _channel_futures
@@ -46,6 +51,7 @@ async def channel(key=None):
     future.set_exception(e)
     del _channel_futures[key]
     raise
+
 
 async def _wait_channel(channel, key):
   global _channel_futures

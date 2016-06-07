@@ -1,11 +1,13 @@
 import asyncio
+
 from bson import objectid
+
 from vj4 import app
 from vj4 import error
-from vj4.controller import problem
-from vj4.model import bus
 from vj4.model import record
 from vj4.model import user
+from vj4.model.adaptor import problem
+from vj4.service import bus
 from vj4.view import base
 
 STATUS_TEXTS = {
@@ -42,6 +44,7 @@ STATUS_CODES = {
   record.STATUS_IGNORED: 'ignored',
 }
 
+
 @app.route('/records', 'record_main')
 class RecordMainView(base.View):
   async def get(self):
@@ -51,6 +54,7 @@ class RecordMainView(base.View):
     await asyncio.gather(user.attach_udocs(rdocs, 'uid'),
                          problem.attach_pdocs(rdocs, 'domain_id', 'pid'))
     self.render('record_main.html', rdocs=rdocs)
+
 
 @app.connection_route('/records-conn', 'record_main-conn')
 class RecordMainConnection(base.Connection):
@@ -63,12 +67,13 @@ class RecordMainConnection(base.Connection):
     # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
-        user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
+      user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     # TODO(iceboy): check permission for visibility. (e.g. test).
     self.send(html=self.render_html('record_tr.html', rdoc=rdoc))
 
   async def on_close(self):
     bus.unsubscribe(self.on_record_change)
+
 
 @app.route('/records/{rid}', 'record_detail')
 class RecordDetailView(base.View):
@@ -79,5 +84,5 @@ class RecordDetailView(base.View):
     if not rdoc:
       raise error.RecordNotFoundError(rid)
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
-        user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
+      user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     self.render('record_detail.html', rdoc=rdoc)

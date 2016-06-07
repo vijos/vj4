@@ -2,6 +2,7 @@ from vj4 import app
 from vj4 import error
 from vj4.view import base
 
+
 @app.route('/lang/{lang}', 'language_set')
 class LanguageView(base.View):
   @base.route_argument

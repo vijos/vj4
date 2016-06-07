@@ -1,16 +1,19 @@
 import asyncio
 import functools
 import os
-import pymongo
 import unittest
+
+import pymongo
+
 from vj4 import db
-from vj4.controller import smallcache
-from vj4.model import bus
-from vj4.util import event
+from vj4.service import bus
+from vj4.service import event
+from vj4.service import smallcache
 from vj4.util import options
 from vj4.util import tools
 
 wait = asyncio.get_event_loop().run_until_complete
+
 
 class DatabaseTestCase(unittest.TestCase):
   def setUp(self):
@@ -21,6 +24,7 @@ class DatabaseTestCase(unittest.TestCase):
 
   def tearDown(self):
     pymongo.MongoClient(options.options.db_host).drop_database(options.options.db_name)
+
 
 class BusTestCase(DatabaseTestCase):
   def setUp(self):
@@ -38,6 +42,7 @@ class BusTestCase(DatabaseTestCase):
     bus.unsubscribe = self.old_unsubscribe
     super(BusTestCase, self).tearDown()
 
+
 class SmallcacheTestCase(BusTestCase):
   def setUp(self):
     super(SmallcacheTestCase, self).setUp()
@@ -47,8 +52,10 @@ class SmallcacheTestCase(BusTestCase):
     smallcache.uninit()
     super(SmallcacheTestCase, self).tearDown()
 
+
 def wrap_coro(coro):
   @functools.wraps(coro)
   def wrapped(*args, **kwargs):
     wait(coro(*args, **kwargs))
+
   return wrapped

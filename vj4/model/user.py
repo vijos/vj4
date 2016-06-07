@@ -1,5 +1,7 @@
 import datetime
+
 from pymongo import errors
+
 from vj4 import db
 from vj4 import error
 from vj4.model import builtin
@@ -7,8 +9,9 @@ from vj4.util import argmethod
 from vj4.util import pwhash
 from vj4.util import validator
 
+
 @argmethod.wrap
-async def add(uid: int, uname: str, password: str, mail: str, regip: str=''):
+async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
   """Add a user."""
   validator.check_uname(uname)
   # TODO(iceboy): Filter uname by keywords.
@@ -42,6 +45,7 @@ async def add(uid: int, uname: str, password: str, mail: str, regip: str=''):
   except errors.DuplicateKeyError:
     raise error.UserAlreadyExistError(uid, uname, mail) from None
 
+
 @argmethod.wrap
 async def get_by_uid(uid: int):
   """Get a user by uid."""
@@ -50,6 +54,7 @@ async def get_by_uid(uid: int):
       return user
   coll = db.Collection('user')
   return await coll.find_one({'_id': uid})
+
 
 @argmethod.wrap
 async def get_by_uname(uname: str):
@@ -61,6 +66,7 @@ async def get_by_uname(uname: str):
   coll = db.Collection('user')
   return await coll.find_one({'uname_lower': uname_lower})
 
+
 @argmethod.wrap
 async def get_by_mail(mail: str):
   """Get a user by mail."""
@@ -71,12 +77,14 @@ async def get_by_mail(mail: str):
   coll = db.Collection('user')
   return await coll.find_one({'mail_lower': mail_lower})
 
+
 @argmethod.wrap
 async def check_password_by_uname(uname: str, password: str):
   """Check password. Returns doc or None."""
   doc = await get_by_uname(uname)
   if doc and pwhash.check(password, doc['salt'], doc['hash']):
     return doc
+
 
 @argmethod.wrap
 async def change_password(uid: int, current_password: str, password: str):
@@ -95,10 +103,12 @@ async def change_password(uid: int, current_password: str, password: str):
                                    new=True)
   return doc
 
+
 async def set_by_uid(uid, **kwargs):
   coll = db.Collection('user')
   doc = await coll.find_and_modify(query={'_id': uid}, update={'$set': kwargs}, new=True)
   return doc
+
 
 async def attach_udocs(docs, field_name):
   """Attach udoc to docs by uid in the specified field."""
@@ -112,11 +122,13 @@ async def attach_udocs(docs, field_name):
       doc['udoc'] = uids.get(doc[field_name])
   return docs
 
+
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('user')
   await coll.ensure_index('uname_lower', unique=True)
   await coll.ensure_index('mail_lower', sparse=True)
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

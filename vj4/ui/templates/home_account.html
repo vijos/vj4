@@ -2,7 +2,7 @@
 {% block home_content %}
 <div class="section">
   <form method="post">
-    {% with settings = vj4.controller.setting.SETTINGS_BY_FAMILY %}
+    {% with settings = vj4.model.adaptor.setting.SETTINGS_BY_FAMILY %}
     {% for family in settings %}
     <div class="section__indent top bottom">
       <h1 class="section__title">{{ _(family) }}</h1>

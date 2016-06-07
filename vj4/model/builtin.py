@@ -59,7 +59,7 @@ ADMIN_PERMISSIONS = (DEFAULT_PERMISSIONS |
 DOMAIN_SYSTEM = {'_id': DOMAIN_ID_SYSTEM,
                  'owner_uid': 0,
                  'roles': {ROLE_DEFAULT: DEFAULT_PERMISSIONS,
-                            ROLE_ADMIN: ADMIN_PERMISSIONS}}
+                           ROLE_ADMIN: ADMIN_PERMISSIONS}}
 DOMAINS = [DOMAIN_SYSTEM]
 
 # Users.
@@ -100,6 +100,6 @@ VIEW_LANGS = collections.OrderedDict([('zh_CN', '简体中文'),
                                       ('en', 'English')])
 
 # Footer extra HTMLs.
-FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', '{$GIT_REVISION}', 
+FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', '{$GIT_REVISION}',
                       '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
                       '沪ICP备14040537号</a>']

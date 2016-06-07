@@ -6,6 +6,7 @@ import signal
 import socket
 import sys
 import urllib.parse
+
 from vj4 import app
 from vj4.util import options
 
@@ -13,6 +14,7 @@ options.define('listen', default='http://127.0.0.1:8888', help='Server listening
 options.define('prefork', default=1, help='Number of prefork workers.')
 
 _logger = logging.getLogger(__name__)
+
 
 def main():
   options.parse_command_line()
@@ -42,6 +44,7 @@ def main():
   loop = asyncio.get_event_loop()
   loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
   loop.run_forever()
+
 
 if __name__ == '__main__':
   sys.exit(main())

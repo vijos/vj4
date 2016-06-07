@@ -1,8 +1,10 @@
 from motor import motor_asyncio
+
 from vj4.util import options
 
 options.define('db_host', default='localhost', help='Database hostname or IP address.')
 options.define('db_name', default='test', help='Database name.')
+
 
 class Database(object):
   _instance = None
@@ -13,6 +15,7 @@ class Database(object):
       cls._instance = motor_asyncio.AsyncIOMotorDatabase(client, options.options.db_name)
     return cls._instance
 
+
 class Collection(object):
   _instances = {}
 
@@ -20,6 +23,7 @@ class Collection(object):
     if name not in cls._instances:
       cls._instances[name] = motor_asyncio.AsyncIOMotorCollection(Database(), name)
     return cls._instances[name]
+
 
 class GridFS(object):
   _instances = {}

@@ -1,12 +1,14 @@
 import asyncio
 import functools
 import logging
+from os import path
+
 import sockjs
 from aiohttp import web
-from os import path
+
 from vj4 import error
-from vj4.controller import smallcache
-from vj4.model import bus
+from vj4.service import bus
+from vj4.service import smallcache
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
@@ -27,11 +29,12 @@ options.define('cdn_prefix', default='/', help='CDN prefix.')
 
 _logger = logging.getLogger(__name__)
 
+
 class Application(web.Application):
   def __init__(self):
     super(Application, self).__init__(
-        handler_factory=functools.partial(web.RequestHandlerFactory, access_log=None),
-        debug=options.options.debug)
+      handler_factory=functools.partial(web.RequestHandlerFactory, access_log=None),
+      debug=options.options.debug)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     # Initialize components.
@@ -54,6 +57,7 @@ class Application(web.Application):
     if options.options.static:
       self.router.add_static('/', path.join(path.dirname(__file__), '.uibuild'), name='static')
 
+
 def route(url, name):
   def decorate(view):
     view.NAME = view.NAME or name
@@ -61,7 +65,9 @@ def route(url, name):
     Application().router.add_route('*', url, view, name=name)
     Application().router.add_route('*', '/d/{domain_id}' + url, view, name=name + '_with_domain_id')
     return view
+
   return decorate
+
 
 def connection_route(prefix, name):
   def decorate(conn):
@@ -88,4 +94,5 @@ def connection_route(prefix, name):
     sockjs.add_endpoint(Application(), handler, name=name, prefix=prefix,
                         manager=Manager(name, Application(), handler, Application().loop))
     return conn
+
   return decorate

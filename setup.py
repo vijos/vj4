@@ -10,7 +10,7 @@ setuptools.setup(name='vj4',
                  url='https://vijos.org/',
                  packages=[
                    'vj4',
-                   'vj4.controller',
+                   'vj4.adaptor',
                    'vj4.model',
                    'vj4.util',
                    'vj4.view',

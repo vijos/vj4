@@ -1,8 +1,10 @@
 import datetime
 import unittest
+
 from bson import objectid
+
 from vj4 import error
-from vj4.controller import contest
+from vj4.model.adaptor import contest
 from vj4.test import base
 
 NOW = datetime.datetime.utcnow().replace(microsecond=0)
@@ -21,6 +23,7 @@ OWNER_UID = 22
 TITLE = 'dummy_title'
 CONTENT = 'dummy_content'
 ATTEND_UID = 44
+
 
 class OiRuleTest(unittest.TestCase):
   def test_zero(self):
@@ -47,6 +50,7 @@ class OiRuleTest(unittest.TestCase):
     stats = contest._oi_stat(TDOC, [SUBMIT_780_AC])
     self.assertEqual(stats['score'], 0)
     self.assertEqual(stats['detail'], [])
+
 
 class AcmRuleTest(unittest.TestCase):
   def test_zero(self):
@@ -92,6 +96,7 @@ class AcmRuleTest(unittest.TestCase):
     self.assertEqual(stats['time'], 0)
     self.assertEqual(stats['detail'], [])
 
+
 class OuterTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_get(self):
@@ -110,6 +115,7 @@ class OuterTest(base.DatabaseTestCase):
     self.assertEqual(tdocs[0]['title'], TITLE)
     self.assertFalse('content' in tdocs[0])
 
+
 class InnerTest(base.DatabaseTestCase):
   def setUp(self):
     super(InnerTest, self).setUp()
@@ -117,7 +123,7 @@ class InnerTest(base.DatabaseTestCase):
     end_at = NOW + datetime.timedelta(seconds=22)
     self.tid = base.wait(contest.add(DOMAIN_ID_DUMMY, TITLE, CONTENT, OWNER_UID,
                                      contest.RULE_ACM, begin_at, end_at, [1000, 1001, 1002]))
-                                     # TODO(twd2): test RULE_OI
+    # TODO(twd2): test RULE_OI
 
   @base.wrap_coro
   async def test_attend(self):
@@ -171,6 +177,7 @@ class InnerTest(base.DatabaseTestCase):
     self.assertEqual(tsdoc['journal'][2]['pid'], 1002)
     self.assertEqual(tsdoc['journal'][2]['accept'], True)
     self.assertEqual(tsdoc['journal'][2]['score'], 100)
+
 
 if __name__ == '__main__':
   unittest.main()

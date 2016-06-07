@@ -1,5 +1,7 @@
 import hmac
+
 from bson import objectid
+
 from vj4 import app
 from vj4 import error
 from vj4.model import builtin
@@ -12,6 +14,7 @@ TOKEN_TYPE_TEXTS = {
   token.TYPE_SAVED_SESSION: 'Saved session',
   token.TYPE_UNSAVED_SESSION: 'Unsaved session',
 }
+
 
 @app.route('/home/security', 'home_security')
 class HomeSecurityView(base.OperationView):
@@ -45,7 +48,7 @@ class HomeSecurityView(base.OperationView):
     sessions = await token.get_session_list_by_uid(self.user['_id'])
     for session in sessions:
       if (token_type == session['token_type'] and
-          token_digest == hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest()):
+              token_digest == hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest()):
         await token.delete_by_hashed_id(session['_id'], session['token_type'])
         break
     else:
@@ -57,6 +60,7 @@ class HomeSecurityView(base.OperationView):
   async def post_delete_all_tokens(self):
     await token.delete_by_uid(self.user['_id'])
     self.json_or_redirect(self.referer_or_main)
+
 
 @app.route('/home/account', 'home_account')
 class HomeAccountView(base.View):
@@ -72,6 +76,7 @@ class HomeAccountView(base.View):
     # TODO(twd2): check gender
     await user.set_by_uid(self.user['_id'], g=gravatar, qq=qq, gender=gender, sig=signature)
     self.json_or_redirect(self.referer_or_main)
+
 
 @app.route('/home/messages', 'home_messages')
 class HomeMessagesView(base.OperationView):

@@ -1,12 +1,16 @@
 import sys
+
 from bson import objectid
+
 from vj4 import db
 from vj4.util import argmethod
+
 
 async def add():
   """Add a file. Returns MotorGridIn."""
   fs = db.GridFS('fs')
   return await fs.new_file(metadata={'link': 1})
+
 
 @argmethod.wrap
 async def add_local(pathname: str):
@@ -17,10 +21,12 @@ async def add_local(pathname: str):
     await grid_in.close()
     return grid_in._id
 
+
 async def get(file_id):
   """Get a file. Returns MotorGridOut."""
   fs = db.GridFS('fs')
   return await fs.get(file_id)
+
 
 @argmethod.wrap
 async def get_md5(file_id: objectid.ObjectId):
@@ -30,6 +36,7 @@ async def get_md5(file_id: objectid.ObjectId):
   if doc:
     return doc['md5']
 
+
 @argmethod.wrap
 async def get_datetime(file_id: objectid.ObjectId):
   """Get the upload date and time of a file."""
@@ -37,6 +44,7 @@ async def get_datetime(file_id: objectid.ObjectId):
   doc = await coll.find_one(file_id)
   if doc:
     return doc['uploadDate']
+
 
 @argmethod.wrap
 async def cat(file_id: objectid.ObjectId):
@@ -47,6 +55,7 @@ async def cat(file_id: objectid.ObjectId):
     sys.stdout.buffer.write(buf)
     buf = await grid_out.read()
 
+
 @argmethod.wrap
 async def link_by_md5(file_md5: str):
   """Link a file by MD5 if exists."""
@@ -55,6 +64,7 @@ async def link_by_md5(file_md5: str):
                                    update={'$inc': {'metadata.link': 1}})
   if doc:
     return doc['_id']
+
 
 @argmethod.wrap
 async def unlink(file_id: objectid.ObjectId):
@@ -66,6 +76,7 @@ async def unlink(file_id: objectid.ObjectId):
   if not doc['metadata']['link']:
     fs = db.GridFS('fs')
     await fs.delete(file_id)
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

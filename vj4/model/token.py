@@ -2,6 +2,7 @@ import binascii
 import datetime
 import hashlib
 import os
+
 from vj4 import db
 from vj4.util import argmethod
 
@@ -10,8 +11,10 @@ TYPE_SAVED_SESSION = 2
 TYPE_UNSAVED_SESSION = 3
 TYPE_ACTIVATION = 4
 
+
 def _get_id(id_binary):
   return hashlib.sha256(id_binary).digest()
+
 
 @argmethod.wrap
 async def add(token_type: int, expire_seconds: int, **kwargs):
@@ -37,6 +40,7 @@ async def add(token_type: int, expire_seconds: int, **kwargs):
   await coll.insert(doc)
   return binascii.hexlify(id_binary).decode(), doc
 
+
 @argmethod.wrap
 async def get(token_id: str, token_type: int):
   """Get a token.
@@ -53,6 +57,7 @@ async def get(token_id: str, token_type: int):
   doc = await coll.find_one({'_id': _get_id(id_binary), 'token_type': token_type})
   return doc
 
+
 @argmethod.wrap
 async def get_most_recent_session_by_uid(uid: int):
   """Get the most recent session by uid."""
@@ -62,6 +67,7 @@ async def get_most_recent_session_by_uid(uid: int):
                             sort=[('update_at', -1)])
   return doc
 
+
 @argmethod.wrap
 async def get_session_list_by_uid(uid: int):
   """Get the session list by uid."""
@@ -69,6 +75,7 @@ async def get_session_list_by_uid(uid: int):
   return await coll.find({'uid': uid,
                           'token_type': {'$in': [TYPE_SAVED_SESSION, TYPE_UNSAVED_SESSION]}},
                          sort=[('create_at', 1)]).to_list(None)
+
 
 @argmethod.wrap
 async def update(token_id: str, token_type: int, expire_seconds: int, **kwargs):
@@ -88,12 +95,13 @@ async def update(token_id: str, token_type: int, expire_seconds: int, **kwargs):
   assert 'token_type' not in kwargs
   now = datetime.datetime.utcnow()
   doc = await coll.find_and_modify(
-      query={'_id': _get_id(id_binary), 'token_type': token_type},
-      update={'$set': {**kwargs,
-                       'update_at': now,
-                       'expire_at': now + datetime.timedelta(seconds=expire_seconds)}},
-      new=True)
+    query={'_id': _get_id(id_binary), 'token_type': token_type},
+    update={'$set': {**kwargs,
+                     'update_at': now,
+                     'expire_at': now + datetime.timedelta(seconds=expire_seconds)}},
+    new=True)
   return doc
+
 
 @argmethod.wrap
 async def delete(token_id: str, token_type: int):
@@ -108,12 +116,14 @@ async def delete(token_id: str, token_type: int):
   """
   return await delete_by_hashed_id(_get_id(binascii.unhexlify(token_id)), token_type)
 
+
 @argmethod.wrap
 async def delete_by_hashed_id(hashed_id: str, token_type: int):
   """Delete a token by the hashed ID."""
   coll = db.Collection('token')
   doc = await coll.remove({'_id': hashed_id, 'token_type': token_type})
   return bool(doc['n'])
+
 
 @argmethod.wrap
 async def delete_by_uid(uid: int):
@@ -123,11 +133,13 @@ async def delete_by_uid(uid: int):
                            'token_type': {'$in': [TYPE_SAVED_SESSION, TYPE_UNSAVED_SESSION]}})
   return bool(doc['n'])
 
+
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('token')
   await coll.ensure_index([('uid', 1), ('token_type', 1), ('update_at', -1)], sparse=True)
   await coll.ensure_index('expire_at', expireAfterSeconds=0)
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

@@ -3,11 +3,13 @@ import csv
 import functools
 import os
 import os.path
+
 from vj4.util import options
 
 options.define('default_locale', default='zh_CN', help='Default locale.')
 
 _locales = {}
+
 
 def load_translations(translation_path):
   for path in os.listdir(translation_path):
@@ -15,6 +17,7 @@ def load_translations(translation_path):
       continue
     with open(os.path.join(translation_path, path)) as csv_file:
       _locales[path[:-4]] = dict(csv.reader(csv_file))
+
 
 @functools.lru_cache()
 def get_translate(locale_code):

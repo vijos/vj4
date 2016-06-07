@@ -1,15 +1,17 @@
 import asyncio
 import datetime
+
 from vj4 import app
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import system
 from vj4.model import token
 from vj4.model import user
-from vj4.util import mailer
+from vj4.service import mailer
 from vj4.util import options
 from vj4.util import validator
 from vj4.view import base
+
 
 @app.route('/register', 'user_register')
 class UserRegisterView(base.View):
@@ -32,6 +34,7 @@ class UserRegisterView(base.View):
                                url=self.reverse_url('user_register_with_code', code=rid))
     await mailer.send_mail(mail, 'Sign Up - Vijos', content)
     self.render('user_register_mail_sent.html')
+
 
 @app.route('/register/{code}', 'user_register_with_code')
 class UserRegisterWithCodeView(base.View):
@@ -62,6 +65,7 @@ class UserRegisterWithCodeView(base.View):
     await self.update_session(new_saved=False, uid=uid)
     self.json_or_redirect(self.reverse_url('main'))
 
+
 @app.route('/login', 'user_login')
 class UserLoginView(base.View):
   async def get(self):
@@ -72,7 +76,7 @@ class UserLoginView(base.View):
 
   @base.post_argument
   @base.sanitize
-  async def post(self, *, uname: str, password: str, rememberme: bool=False):
+  async def post(self, *, uname: str, password: str, rememberme: bool = False):
     udoc = await user.check_password_by_uname(uname, password)
     if not udoc:
       raise error.LoginError(uname)
@@ -81,6 +85,7 @@ class UserLoginView(base.View):
                                          loginip=self.remote_ip),
                          self.update_session(new_saved=rememberme, uid=udoc['_id']))
     self.json_or_redirect(self.referer_or_main)
+
 
 @app.route('/logout', 'user_logout')
 class UserLogoutView(base.View):
@@ -94,6 +99,7 @@ class UserLogoutView(base.View):
   async def post(self):
     await self.delete_session()
     self.json_or_redirect(self.referer_or_main)
+
 
 @app.route('/user/{uid}', 'user_detail')
 class UserDetailView(base.View):

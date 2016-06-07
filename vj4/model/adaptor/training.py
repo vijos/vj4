@@ -1,13 +1,17 @@
 import asyncio
+
 from bson import objectid
+
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
+
 
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int, pids=(), require_tids=()):
   return await document.add(domain_id, content, owner_uid, document.TYPE_TRAINING,
                             title=title, pids=pids, require_tids=require_tids)
+
 
 @argmethod.wrap
 async def get(domain_id: str, tid: objectid.ObjectId):
@@ -16,15 +20,17 @@ async def get(domain_id: str, tid: objectid.ObjectId):
     raise error.DocumentNotFoundError(domain_id, document.TYPE_TRAINING, tid)
   return tdoc
 
+
 @argmethod.wrap
 async def check(domain_id: str, tid: objectid.ObjectId, uid: int):
   tdoc = await get(domain_id, tid)
   done_count = await (document.get_multi_status(domain_id, document.TYPE_TRAINING, uid=uid,
                                                 done=True, doc_id={'$in': tdoc['require_tids']})
-                              .count())
+                      .count())
   if done_count < len(tdoc['require_tids']):
     raise error.TrainingRequirementNotSatisfiedError(domain_id, document.TYPE_TRAINING, tid)
   return tdoc
+
 
 @argmethod.wrap
 async def get_list_by_user(domain_id: str, uid: int, *, fields=None):
@@ -37,9 +43,10 @@ async def get_list_by_user(domain_id: str, uid: int, *, fields=None):
   tdocs = await (document.get_multi(domain_id, document.TYPE_TRAINING,
                                     require_tids={'$not': {'$elemMatch': {'$nin': done_tids}}},
                                     fields=fields)
-                         .sort([('doc_id', 1)])
-                         .to_list(None))
+                 .sort([('doc_id', 1)])
+                 .to_list(None))
   return tdocs
+
 
 async def _update_status(domain_id, tdoc, uid, key, value):
   tsdoc = await document.rev_push_status(domain_id, document.TYPE_TRAINING, tdoc['doc_id'],
@@ -53,6 +60,7 @@ async def _update_status(domain_id, tdoc, uid, key, value):
   if done:
     await update_status_by_tid(domain_id, uid, tdoc['doc_id'])
 
+
 @argmethod.wrap
 async def update_status_by_pid(domain_id: str, uid: int, pid: document.convert_doc_id):
   tdocs = document.get_multi(domain_id, document.TYPE_TRAINING, pids=pid,
@@ -62,6 +70,7 @@ async def update_status_by_pid(domain_id: str, uid: int, pid: document.convert_d
     futs.append(_update_status(domain_id, tdoc, uid, 'done_pids', pid))
   await asyncio.gather(*futs)
 
+
 @argmethod.wrap
 async def update_status_by_tid(domain_id: str, uid: int, tid: objectid.ObjectId):
   tdocs = document.get_multi(domain_id, document.TYPE_TRAINING, require_tids=tid,
@@ -70,6 +79,7 @@ async def update_status_by_tid(domain_id: str, uid: int, tid: objectid.ObjectId)
   async for tdoc in tdocs:
     futs.append(_update_status(domain_id, tdoc, uid, 'done_tids', tid))
   await asyncio.gather(*futs)
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

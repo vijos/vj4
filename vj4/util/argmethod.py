@@ -8,16 +8,19 @@ Usage example:
     python3.5 -m vj4.model.user --db-name=prod get -1
 """
 import collections
+
 from vj4.util import options
 
 options.define('pretty', default=False, help='Pretty print the result.')
 
 _methods = collections.OrderedDict()
 
+
 def wrap(method):
   if method.__module__ == '__main__':
     _methods[method.__name__] = method
   return method
+
 
 def invoke_by_args():
   import argparse
@@ -58,6 +61,7 @@ def invoke_by_args():
         async def aloop():
           async for entry in result:
             print_func(entry)
+
         loop.run_until_complete(aloop())
       else:
         print_func(result)
