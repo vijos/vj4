@@ -36,20 +36,20 @@
                 <form method="post">
                   <input type="hidden" name="operation" value="upvote">
                   <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
-                  <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+                  <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                   <input type="submit" class="vote vote--upvote" value="{{ _('upvote') }}">
                 </form>
                 <form method="post">
                   <input type="hidden" name="operation" value="downvote">
                   <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
-                  <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+                  <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                   <input type="submit" class="vote vote--downvote" value="{{ _('downvote') }}">
                 </form>
                 <form method="post">
                   <input type="hidden" name="operation" value="reply">
                   <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
                   <textarea name="content"></textarea>
-                  <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+                  <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                   <input type="submit" value="{{ _('reply') }}">
                 </form>
               </div>
@@ -113,7 +113,7 @@
   <form method="post">
     <input type="hidden" name="operation" value="submit">
     <textarea name="content"></textarea>
-    <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
     <input type="submit" value="{{ _('Submit') }}">
   </form>
 </div>

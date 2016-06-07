@@ -10,27 +10,27 @@ from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
 from vj4.service import bus
-from vj4.view import base
+from vj4.handler import base
 
 _logger = logging.getLogger(__name__)
 
 
 @app.route('/judge/playground', 'judge_playground')
-class JudgePlaygroundView(base.View):
+class JudgePlaygroundView(base.Handler):
   @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
   async def get(self):
     self.render('judge_playground.html')
 
 
 @app.route('/judge/noop', 'judge_noop')
-class JudgeNoopView(base.View):
+class JudgeNoopView(base.Handler):
   @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
   async def get(self):
     self.json({})
 
 
 @app.route('/judge/datalist', 'judge_datalist')
-class JudgeDataListView(base.View):
+class JudgeDataListView(base.Handler):
   @base.get_argument
   @base.sanitize
   async def get(self, last: int):

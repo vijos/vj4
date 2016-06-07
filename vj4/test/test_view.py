@@ -1,6 +1,6 @@
 import unittest
 
-from vj4.view import base
+from vj4.handler import base
 
 PERM_DUMMY = 1
 PRIV_DUMMY = 2

@@ -8,7 +8,7 @@ from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import problem
 from vj4.service import bus
-from vj4.view import base
+from vj4.handler import base
 
 STATUS_TEXTS = {
   record.STATUS_WAITING: 'Waiting',
@@ -46,7 +46,7 @@ STATUS_CODES = {
 
 
 @app.route('/records', 'record_main')
-class RecordMainView(base.View):
+class RecordMainView(base.Handler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
     rdocs = await record.get_multi().sort([('_id', -1)]).to_list(50)
@@ -76,7 +76,7 @@ class RecordMainConnection(base.Connection):
 
 
 @app.route('/records/{rid}', 'record_detail')
-class RecordDetailView(base.View):
+class RecordDetailView(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):

@@ -10,7 +10,7 @@
     <input id="input-new_password" type="password" name="new_password">
     <label for="input-verify_password">{{ _('Verify Password') }}</label>
     <input id="input-verify_password" type="password" name="verify_password">
-    <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
     <input type="submit" value="{{ _('Change Password') }}">
   </form>
 </div>
@@ -34,7 +34,7 @@
         <td>{{ datetime_span(session['create_at']) }}</span></td>
         <td>{{ session['create_ip'] }}</td>
         <td>{{ session['create_ua'] }}</td>
-        <td>{{ _(vj4.view.home.TOKEN_TYPE_TEXTS[session['token_type']]) }}</td>
+        <td>{{ _(vj4.handler.home.TOKEN_TYPE_TEXTS[session['token_type']]) }}</td>
         <td>{{ datetime_span(session['update_at']) }}</span></td>
         <td>{{ session['update_ip'] }}</td>
         <td>{{ session['update_ua'] }}</td>
@@ -47,7 +47,7 @@
             <input type="hidden" name="operation" value="delete_token">
             <input type="hidden" name="token_type" value="{{ session['token_type'] }}">
             <input type="hidden" name="token_digest" value="{{ session['token_digest'] }}">
-            <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <input type="submit" value="{{ _('Delete') }}">
           </form>
         {% endif %}
@@ -58,7 +58,7 @@
   </table>
   <form method="post">
     <input type="hidden" name="operation" value="delete_all_tokens">
-    <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
     <input type="submit" value="{{ _('Delete All Sessions') }}">
   </form>
 </div>

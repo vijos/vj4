@@ -10,7 +10,7 @@
       {% for setting in settings[family] %}
       <div class="compact form__row">
         <label for="input-{{ setting['key'] }}">{{ _(setting['key']) }}</label>
-        <input id="input-{{ setting['key'] }}" class="textbox" name="{{ setting['key'] }}" value="{{ view.get_setting(setting['key']) }}">
+        <input id="input-{{ setting['key'] }}" class="textbox" name="{{ setting['key'] }}" value="{{ handler.get_setting(setting['key']) }}">
       </div>
       {% endfor %}
       </div>
@@ -18,7 +18,7 @@
     {% endfor %}
     {% endwith %}
     <div class="section__indent top bottom left right">
-      <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
       <input type="submit" class="rounded primary button" value="{{ _('Save All Changes') }}">
     </div>
   </form>

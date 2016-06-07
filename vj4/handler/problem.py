@@ -9,7 +9,7 @@ from vj4.model import queue
 from vj4.model import record
 from vj4.model.adaptor import problem
 from vj4.service import bus
-from vj4.view import base
+from vj4.handler import base
 
 
 @app.route('/p', 'problem_main')
@@ -40,7 +40,7 @@ class ProblemMainView(base.OperationView):
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
-class ProblemDetailView(base.View):
+class ProblemDetailView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -55,7 +55,7 @@ class ProblemDetailView(base.View):
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
-class ProblemDetailView(base.View):
+class ProblemDetailView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -145,7 +145,7 @@ class ProblemSolutionView(base.OperationView):
 
 
 @app.route('/p/{pid}/data', 'problem_data')
-class ProblemDataView(base.View):
+class ProblemDataView(base.Handler):
   @base.route_argument
   @base.sanitize
   async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool = False):
@@ -179,7 +179,7 @@ class ProblemDataView(base.View):
 
 
 @app.route('/p/create', 'problem_create')
-class ProblemCreateView(base.View):
+class ProblemCreateView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
   async def get(self):
@@ -187,7 +187,7 @@ class ProblemCreateView(base.View):
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
-class ProblemEditView(base.View):
+class ProblemEditView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument

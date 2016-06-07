@@ -8,7 +8,7 @@ from vj4.model import builtin
 from vj4.model import message
 from vj4.model import token
 from vj4.model import user
-from vj4.view import base
+from vj4.handler import base
 
 TOKEN_TYPE_TEXTS = {
   token.TYPE_SAVED_SESSION: 'Saved session',
@@ -63,7 +63,7 @@ class HomeSecurityView(base.OperationView):
 
 
 @app.route('/home/account', 'home_account')
-class HomeAccountView(base.View):
+class HomeAccountView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     self.render('home_account.html')

@@ -3,11 +3,11 @@ from bson import objectid
 from vj4 import app
 from vj4.model import builtin
 from vj4.model.adaptor import training
-from vj4.view import base
+from vj4.handler import base
 
 
 @app.route('/training', 'training_main')
-class TrainingMainView(base.View):
+class TrainingMainView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   async def get(self):
@@ -16,7 +16,7 @@ class TrainingMainView(base.View):
 
 
 @app.route('/training/{tid}', 'training_detail')
-class TrainingDetailView(base.View):
+class TrainingDetailView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.route_argument

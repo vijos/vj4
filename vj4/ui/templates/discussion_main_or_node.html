@@ -39,7 +39,7 @@
           </li>
         {% endfor %}
         </ol>
-        {% with num_pages = (dcount + view.DISCUSSIONS_PER_PAGE - 1) // view.DISCUSSIONS_PER_PAGE %}
+        {% with num_pages = (dcount + handler.DISCUSSIONS_PER_PAGE - 1) // handler.DISCUSSIONS_PER_PAGE %}
           {% include "components/paginator.html" %}
         {% endwith %}
       {% endif %}

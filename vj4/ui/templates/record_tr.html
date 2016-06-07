@@ -1,9 +1,9 @@
 <tr data-rid="{{ rdoc['_id'] }}">
-  <td class="col--status record-status--border {{ vj4.view.record.STATUS_CODES[rdoc['status']] }}">
+  <td class="col--status record-status--border {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}">
     <div class="col--status__text">
-      <i class="record-status--icon {{ vj4.view.record.STATUS_CODES[rdoc['status']] }}"></i>
-      <a href="{{ reverse_url('record_detail', rid=rdoc['_id']) }}" class="record-status--text {{ vj4.view.record.STATUS_CODES[rdoc['status']] }}">
-        {{ vj4.view.record.STATUS_TEXTS[rdoc['status']] }}
+      <i class="record-status--icon {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}"></i>
+      <a href="{{ reverse_url('record_detail', rid=rdoc['_id']) }}" class="record-status--text {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}">
+        {{ vj4.handler.record.STATUS_TEXTS[rdoc['status']] }}
       </a>
     </div>
     {% if rdoc['status'] == vj4.model.record.STATUS_JUDGING %}

@@ -3,7 +3,7 @@ from bson import objectid
 from vj4 import app
 from vj4.model import builtin
 from vj4.model.adaptor import contest
-from vj4.view import base
+from vj4.handler import base
 
 STATUS_TEXTS = {
   contest.STATUS_NEW: 'New',
@@ -19,7 +19,7 @@ TYPE_TEXTS = {
 
 
 @app.route('/tests', 'contest_main')
-class ContestMainView(base.View):
+class ContestMainView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   async def get(self):
     tdocs = await contest.get_list(self.domain_id)
@@ -27,7 +27,7 @@ class ContestMainView(base.View):
 
 
 @app.route('/tests/{tid:\w{24}}', 'contest_detail')
-class ContestDetailView(base.View):
+class ContestDetailView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.route_argument
   @base.sanitize
@@ -40,7 +40,7 @@ class ContestDetailView(base.View):
 
 
 @app.route('/tests/{tid:\w{24}}/status', 'contest_status')
-class ContestStatusView(base.View):
+class ContestStatusView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
   @base.sanitize
@@ -54,7 +54,7 @@ class ContestStatusView(base.View):
 
 
 @app.route('/tests/create', 'contest_create')
-class ContestMainView(base.View):
+class ContestMainView(base.Handler):
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
     self.render('contest_create.html')

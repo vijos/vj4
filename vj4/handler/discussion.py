@@ -5,11 +5,11 @@ from vj4.model import builtin
 from vj4.model import document
 from vj4.model import user
 from vj4.model.adaptor import discussion
-from vj4.view import base
+from vj4.handler import base
 
 
 @app.route('/discuss', 'discussion_main')
-class DiscussionMainView(base.View):
+class DiscussionMainView(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -29,7 +29,7 @@ class DiscussionMainView(base.View):
 
 
 @app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
-class DiscussionNodeView(base.View):
+class DiscussionNodeView(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -51,7 +51,7 @@ class DiscussionNodeView(base.View):
 
 
 @app.route('/discuss/{node_or_pid}/create', 'discussion_create')
-class DiscussionCreateView(base.View):
+class DiscussionCreateView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_DISCUSSION)
   @base.route_argument

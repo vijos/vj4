@@ -33,11 +33,11 @@
         </div>
         <ul class="dczcomments__list">
           <!-- TODO (iceboy): privilege/permission based -->
-          {% if view.user != vj4.model.builtin.USER_GUEST %}
+          {% if handler.user != vj4.model.builtin.USER_GUEST %}
           <li class="dczcomments__item">
             <div class="section__indent left right"><div class="media">
               <div class="media__left top">
-                <img src="{{ view.user['gravatar']|gravatar_url }}" width="60" height="60" class="medium user-profile-avatar">
+                <img src="{{ handler.user['gravatar']|gravatar_url }}" width="60" height="60" class="medium user-profile-avatar">
               </div>
               <div class="media__body top">
                 <form method="post" class="hasjs--hide">
@@ -51,7 +51,7 @@
                     </div>
                   </div>
                   <input type="hidden" name="operation" value="reply">
-                  <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
+                  <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                 </form>
                 <div class="nojs--hide">
                   <textarea class="expanded dczcomments__dummy-box textbox" data-form="{{ {"operation": "reply"}|json }}">Write Your Comments</textarea>

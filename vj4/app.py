@@ -44,16 +44,16 @@ class Application(web.Application):
     smallcache.init()
 
     # Load views.
-    from vj4.view import contest
-    from vj4.view import discussion
-    from vj4.view import home
-    from vj4.view import judge
-    from vj4.view import main
-    from vj4.view import problem
-    from vj4.view import record
-    from vj4.view import training
-    from vj4.view import user
-    from vj4.view import i18n
+    from vj4.handler import contest
+    from vj4.handler import discussion
+    from vj4.handler import home
+    from vj4.handler import judge
+    from vj4.handler import main
+    from vj4.handler import problem
+    from vj4.handler import record
+    from vj4.handler import training
+    from vj4.handler import user
+    from vj4.handler import i18n
     if options.options.static:
       self.router.add_static('/', path.join(path.dirname(__file__), '.uibuild'), name='static')
 

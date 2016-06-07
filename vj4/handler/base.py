@@ -26,7 +26,7 @@ from vj4.util import options
 _logger = logging.getLogger(__name__)
 
 
-class ViewBase(setting.SettingMixin):
+class HandlerBase(setting.SettingMixin):
   NAME = None
   TITLE = None
 
@@ -142,7 +142,7 @@ class ViewBase(setting.SettingMixin):
       return ''
 
   def render_html(self, template_name, **kwargs):
-    kwargs['view'] = self
+    kwargs['handler'] = self
     kwargs['_'] = self.translate
     kwargs['domain_id'] = self.domain_id
     if not 'page_name' in kwargs:
@@ -156,13 +156,13 @@ class ViewBase(setting.SettingMixin):
     return template.Environment().get_template(template_name).render(kwargs)
 
 
-class View(web.View, ViewBase):
+class Handler(web.View, HandlerBase):
   @asyncio.coroutine
   def __iter__(self):
     try:
       self.response = web.Response()
-      yield from ViewBase.prepare(self)
-      yield from super(View, self).__iter__()
+      yield from HandlerBase.prepare(self)
+      yield from super(Handler, self).__iter__()
     except error.UserFacingError as e:
       _logger.warning("User facing error: %s", repr(e))
       self.response.set_status(e.http_status, None)
@@ -214,7 +214,7 @@ class View(web.View, ViewBase):
             'url_prefix': options.options.url_prefix}
 
 
-class OperationView(View):
+class OperationView(Handler):
   async def post(self):
     arguments = (await self.request.post()).copy()
     operation = arguments.pop('operation')
@@ -225,7 +225,7 @@ class OperationView(View):
     await method(**arguments)
 
 
-class Connection(sockjs.Session, ViewBase):
+class Connection(sockjs.Session, HandlerBase):
   def __init__(self, request, *args, **kwargs):
     super(Connection, self).__init__(*args, **kwargs)
     self.request = request
