@@ -1,14 +1,16 @@
 import asyncio
 import functools
+
 from vj4 import app
 from vj4 import error
-from vj4.controller import problem
-from vj4.view import base
 from vj4.model import builtin
-from vj4.model import bus
 from vj4.model import document
-from vj4.model import record
 from vj4.model import queue
+from vj4.model import record
+from vj4.model.adaptor import problem
+from vj4.service import bus
+from vj4.handler import base
+
 
 @app.route('/p', 'problem_main')
 class ProblemMainView(base.OperationView):
@@ -17,7 +19,7 @@ class ProblemMainView(base.OperationView):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.get_argument
   @base.sanitize
-  async def get(self, *, page: int=1):
+  async def get(self, *, page: int = 1):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pcount, pdocs = await asyncio.gather(problem.count(self.domain_id),
                                          problem.get_list(self.domain_id, uid,
@@ -36,8 +38,9 @@ class ProblemMainView(base.OperationView):
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
+
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
-class ProblemDetailView(base.View):
+class ProblemDetailView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -45,13 +48,14 @@ class ProblemDetailView(base.View):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
     path_components = self.build_path(
-        (self.translate('problem_main'), self.reverse_url('problem_main')),
-        (pdoc['title'], None))
+      (self.translate('problem_main'), self.reverse_url('problem_main')),
+      (pdoc['title'], None))
     self.render('problem_detail.html', pdoc=pdoc,
                 page_title=pdoc['title'], path_components=path_components)
 
+
 @app.route('/p/{pid}/submit', 'problem_submit')
-class ProblemDetailView(base.View):
+class ProblemDetailView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -59,8 +63,8 @@ class ProblemDetailView(base.View):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
     path_components = self.build_path(
-        (self.translate('problem_main'), self.reverse_url('problem_main')),
-        (pdoc['title'], None))
+      (self.translate('problem_main'), self.reverse_url('problem_main')),
+      (pdoc['title'], None))
     self.render('problem_submit.html', pdoc=pdoc,
                 page_title=pdoc['title'], path_components=path_components)
 
@@ -76,6 +80,7 @@ class ProblemDetailView(base.View):
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
     self.json_or_redirect(self.reverse_url('record_main'))
 
+
 @app.route(r'/p/{pid}/solution', 'problem_solution')
 class ProblemSolutionView(base.OperationView):
   SOLUTIONS_PER_PAGE = 30
@@ -83,7 +88,7 @@ class ProblemSolutionView(base.OperationView):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
   @base.route_argument
   @base.sanitize
-  async def get(self, *, pid: document.convert_doc_id, page: int=1):
+  async def get(self, *, pid: document.convert_doc_id, page: int = 1):
     skip = (page - 1) * self.SOLUTIONS_PER_PAGE
     limit = self.SOLUTIONS_PER_PAGE
     pdoc = await problem.get(self.domain_id, pid)
@@ -91,9 +96,9 @@ class ProblemSolutionView(base.OperationView):
                                              skip=skip,
                                              limit=limit)
     path_components = self.build_path(
-        (self.translate('problem_main'), self.reverse_url('problem_main')),
-        (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
-        (self.translate('problem_solution'), None))
+      (self.translate('problem_main'), self.reverse_url('problem_main')),
+      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+      (self.translate('problem_solution'), None))
     self.render('problem_solution.html', pdoc=pdoc,
                 psdocs=psdocs, path_components=path_components)
 
@@ -138,11 +143,12 @@ class ProblemSolutionView(base.OperationView):
     await problem.reply_solution(self.domain_id, psdoc['doc_id'], self.user['_id'], content)
     self.json_or_redirect(self.reverse_url('problem_solution', pid=pid))
 
+
 @app.route('/p/{pid}/data', 'problem_data')
-class ProblemDataView(base.View):
+class ProblemDataView(base.Handler):
   @base.route_argument
   @base.sanitize
-  async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool=False):
+  async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool = False):
     # Judge will have PRIV_READ_PROBLEM_DATA, domain administrator will have PERM_READ_PROBLEM_DATA.
     if not self.has_priv(builtin.PRIV_READ_PROBLEM_DATA):
       self.check_perm(builtin.PERM_READ_PROBLEM_DATA)
@@ -171,15 +177,17 @@ class ProblemDataView(base.View):
   head = functools.partialmethod(stream_data, headers_only=True)
   get = stream_data
 
+
 @app.route('/p/create', 'problem_create')
-class ProblemCreateView(base.View):
+class ProblemCreateView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
   async def get(self):
     self.render('problem_edit.html')
 
+
 @app.route('/p/{pid}/edit', 'problem_edit')
-class ProblemEditView(base.View):
+class ProblemEditView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument
@@ -189,8 +197,8 @@ class ProblemEditView(base.View):
     if not pdoc:
       raise error.DiscussionNotFoundError(self.domain_id, pid)
     path_components = self.build_path(
-        (self.translate('problem_main'), self.reverse_url('problem_main')),
-        (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
-        (self.translate('problem_edit'), None))
+      (self.translate('problem_main'), self.reverse_url('problem_main')),
+      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+      (self.translate('problem_edit'), None))
     self.render('problem_edit.html', pdoc=pdoc,
                 page_title=pdoc['title'], path_components=path_components)

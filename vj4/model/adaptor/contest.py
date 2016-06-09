@@ -1,8 +1,10 @@
 import collections
 import datetime
 import itertools
+
 from bson import objectid
 from pymongo import errors
+
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
@@ -17,9 +19,11 @@ RULE_ACM = 3
 
 Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
 
+
 def _oi_stat(tdoc, journal):
   detail = list(dict((j['pid'], j) for j in journal if j['pid'] in tdoc['pids']).values())
   return {'score': sum(d['score'] for d in detail), 'detail': detail}
+
 
 def _acm_stat(tdoc, journal):
   naccept = collections.defaultdict(int)
@@ -29,20 +33,24 @@ def _acm_stat(tdoc, journal):
       effective[j['pid']] = j
       if not j['accept']:
         naccept[j['pid']] += 1
+
   def time(jdoc):
     real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
     penalty = datetime.timedelta(minutes=20) * naccept[jdoc['pid']]
     return (real + penalty).total_seconds()
+
   detail = [{**j, 'naccept': naccept[j['pid']], 'time': time(j)} for j in effective.values()]
   return {'accept': sum(int(d['accept']) for d in detail),
           'time': sum(d['time'] for d in detail if d['accept']),
           'detail': detail}
+
 
 _RULES = {
   RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)]),
   RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
                  _acm_stat, [('accept', -1), ('time', 1)]),
 }
+
 
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: int,
@@ -57,6 +65,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
                             title=title, status=STATUS_NEW, rule=rule,
                             begin_at=begin_at, end_at=end_at, pids=pids, attend=0)
 
+
 @argmethod.wrap
 async def get(domain_id: str, tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
@@ -64,13 +73,15 @@ async def get(domain_id: str, tid: objectid.ObjectId):
     raise error.DocumentNotFoundError(domain_id, document.TYPE_CONTEST, tid)
   return tdoc
 
+
 @argmethod.wrap
 async def get_list(domain_id: str, fields=None):
   # TODO(iceboy): projection, pagination.
   tdocs = await (document.get_multi(domain_id, document.TYPE_CONTEST, fields=fields)
-                         .sort([('doc_id', -1)])
-                         .to_list(None))
+                 .sort([('doc_id', -1)])
+                 .to_list(None))
   return tdocs
+
 
 @argmethod.wrap
 async def attend(domain_id: str, tid: objectid.ObjectId, uid: int):
@@ -82,6 +93,7 @@ async def attend(domain_id: str, tid: objectid.ObjectId, uid: int):
     raise error.ContestAlreadyAttendedError(domain_id, tid, uid) from None
   return await document.inc(domain_id, document.TYPE_CONTEST, tid, 'attend', 1)
 
+
 @argmethod.wrap
 async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.
@@ -91,9 +103,10 @@ async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=Non
     raise error.ContestStatusHiddenError()
   tsdocs = await (document.get_multi_status(domain_id, document.TYPE_CONTEST, doc_id=tdoc['doc_id'],
                                             fields=fields)
-                          .sort(_RULES[tdoc['rule']].status_sort)
-                          .to_list(None))
+                  .sort(_RULES[tdoc['rule']].status_sort)
+                  .to_list(None))
   return tdoc, tsdocs
+
 
 @argmethod.wrap
 async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
@@ -104,8 +117,8 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
     raise error.ValidationError('pid')
 
   tsdoc = await document.rev_push_status(
-      domain_id, document.TYPE_CONTEST, tdoc['doc_id'], uid,
-      'journal', {'rid': rid, 'pid': pid, 'accept': accept, 'score': score})
+    domain_id, document.TYPE_CONTEST, tdoc['doc_id'], uid,
+    'journal', {'rid': rid, 'pid': pid, 'accept': accept, 'score': score})
   if 'attend' not in tsdoc or not tsdoc['attend']:
     raise error.ContestNotAttendedError(domain_id, tid, uid)
 
@@ -117,6 +130,7 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
   tsdoc = await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, uid, tsdoc['rev'],
                                         journal=journal, **stats)
   return tsdoc
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

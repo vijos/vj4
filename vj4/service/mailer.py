@@ -1,5 +1,7 @@
-import smtplibaio
 from email.mime import text
+
+import smtplibaio
+
 from vj4.util import argmethod
 from vj4.util import options
 
@@ -8,6 +10,7 @@ options.define('smtp_port', default=465, help='SMTP server')
 options.define('smtp_user', default='', help='SMTP username')
 options.define('smtp_password', default='', help='SMTP password')
 options.define('mail_from', default='', help='Mail from')
+
 
 async def send_mail(to: str, subject: str, content: str):
   msg = text.MIMEText(content, _subtype='html', _charset='UTF-8')
@@ -20,6 +23,7 @@ async def send_mail(to: str, subject: str, content: str):
   await server.login(options.options.smtp_user, options.options.smtp_password)
   await server.sendmail(options.options.mail_from, to, msg.as_string())
   await server.quit()
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

@@ -10,10 +10,11 @@ setuptools.setup(name='vj4',
                  url='https://vijos.org/',
                  packages=[
                    'vj4',
-                   'vj4.controller',
+                   'vj4.handler',
                    'vj4.model',
+                   'vj4.model.adaptor',
+                   'vj4.service',
                    'vj4.util',
-                   'vj4.view',
                  ],
                  package_data={
                    'vj4': ['locale/*.csv', 'ui/templates/*', '.uibuild/*'],

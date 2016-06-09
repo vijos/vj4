@@ -1,5 +1,7 @@
 import datetime
+
 from bson import objectid
+
 from vj4 import db
 from vj4.model import document
 from vj4.util import argmethod
@@ -20,9 +22,10 @@ STATUS_JUDGING = 20
 STATUS_COMPILING = 21
 STATUS_IGNORED = 30
 
+
 @argmethod.wrap
 async def add(domain_id: str, pid: document.convert_doc_id, uid: int,
-              lang: str, code: str, tid: objectid.ObjectId=None, hidden=False):
+              lang: str, code: str, tid: objectid.ObjectId = None, hidden=False):
   coll = db.Collection('record')
   return await coll.insert({'hidden': hidden,
                             'status': STATUS_WAITING,
@@ -36,18 +39,21 @@ async def add(domain_id: str, pid: document.convert_doc_id, uid: int,
                             'code': code,
                             'tid': tid})
 
+
 @argmethod.wrap
 async def get(record_id: objectid.ObjectId):
   coll = db.Collection('record')
   return await coll.find_one(record_id)
 
+
 @argmethod.wrap
-def get_multi(end_id: objectid.ObjectId=None, *, fields=None):
+def get_multi(end_id: objectid.ObjectId = None, *, fields=None):
   coll = db.Collection('record')
   query = {'hidden': False}
   if end_id:
     query['_id'] = {'$lt': end_id}
   return coll.find(query, fields=fields)
+
 
 @argmethod.wrap
 async def begin_judge(record_id: objectid.ObjectId,
@@ -64,6 +70,7 @@ async def begin_judge(record_id: objectid.ObjectId,
                                    new=True)
   return doc
 
+
 async def next_judge(record_id, judge_uid, judge_token, **kwargs):
   coll = db.Collection('record')
   doc = await coll.find_and_modify(query={'_id': record_id,
@@ -72,6 +79,7 @@ async def next_judge(record_id, judge_uid, judge_token, **kwargs):
                                    update=kwargs,
                                    new=True)
   return doc
+
 
 @argmethod.wrap
 async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: str,
@@ -88,11 +96,13 @@ async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: s
                                    new=True)
   return doc
 
+
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('record')
   await coll.ensure_index([('hidden', 1), ('_id', -1)])
   # TODO(iceboy): Add more indexes.
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

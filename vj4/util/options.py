@@ -9,6 +9,7 @@ _args = None
 _parser = argparse.ArgumentParser()
 options = argparse.Namespace()
 
+
 def define(name, default=None, help=None):
   flag_name = '--' + name.replace('_', '-')
   flag_type = type(default)
@@ -20,6 +21,7 @@ def define(name, default=None, help=None):
     _parser.add_argument(flag_name, dest=name, default=default, type=flag_type, help=help)
   if _args is not None:
     _parser.parse_known_args(args=_args, namespace=options)
+
 
 def enable_pretty_logging():
   logging.config.dictConfig({
@@ -44,6 +46,7 @@ def enable_pretty_logging():
     'disable_existing_loggers': False,
   })
 
+
 def parse_command_line():
   global _args
   _args = sys.argv[1:]
@@ -51,9 +54,11 @@ def parse_command_line():
   enable_pretty_logging()
   return argv
 
+
 def set_default_for_test():
   global _args
   _args = ''
   _parser.parse_known_args(args=_args, namespace=options)
+
 
 define('debug', default=False, help='Enable debug mode.')

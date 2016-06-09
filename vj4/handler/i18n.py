@@ -1,9 +1,10 @@
 from vj4 import app
 from vj4 import error
-from vj4.view import base
+from vj4.handler import base
+
 
 @app.route('/lang/{lang}', 'language_set')
-class LanguageView(base.View):
+class LanguageView(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, lang: str):

@@ -1,5 +1,7 @@
 import unittest
+
 from vj4.util import pwhash
+
 
 class Test(unittest.TestCase):
   def test_gen_salt(self):
@@ -29,6 +31,7 @@ class Test(unittest.TestCase):
     self.assertFalse(pwhash.check(password1, salt2, hash1))
     password2 = 'password2'
     self.assertFalse(pwhash.check(password2, salt1, hash1))
+
 
 if __name__ == '__main__':
   unittest.main()

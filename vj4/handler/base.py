@@ -1,29 +1,32 @@
-import accept
 import asyncio
 import calendar
 import functools
 import hmac
 import logging
-import markupsafe
-import sockjs
-import pytz
-from aiohttp import web
 from email import utils
+
+import accept
+import markupsafe
+import pytz
+import sockjs
+from aiohttp import web
+
 from vj4 import app
 from vj4 import error
 from vj4 import template
-from vj4.controller import setting
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import token
 from vj4.model import user
+from vj4.model.adaptor import setting
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
 
 _logger = logging.getLogger(__name__)
 
-class ViewBase(setting.SettingMixin):
+
+class HandlerBase(setting.SettingMixin):
   NAME = None
   TITLE = None
 
@@ -139,7 +142,7 @@ class ViewBase(setting.SettingMixin):
       return ''
 
   def render_html(self, template_name, **kwargs):
-    kwargs['view'] = self
+    kwargs['handler'] = self
     kwargs['_'] = self.translate
     kwargs['domain_id'] = self.domain_id
     if not 'page_name' in kwargs:
@@ -152,13 +155,14 @@ class ViewBase(setting.SettingMixin):
     kwargs['datetime_span'] = self.datetime_span
     return template.Environment().get_template(template_name).render(kwargs)
 
-class View(web.View, ViewBase):
+
+class Handler(web.View, HandlerBase):
   @asyncio.coroutine
   def __iter__(self):
     try:
       self.response = web.Response()
-      yield from ViewBase.prepare(self)
-      yield from super(View, self).__iter__()
+      yield from HandlerBase.prepare(self)
+      yield from super(Handler, self).__iter__()
     except error.UserFacingError as e:
       _logger.warning("User facing error: %s", repr(e))
       self.response.set_status(e.http_status, None)
@@ -209,7 +213,8 @@ class View(web.View, ViewBase):
             'cdn_prefix': options.options.cdn_prefix,
             'url_prefix': options.options.url_prefix}
 
-class OperationView(View):
+
+class OperationView(Handler):
   async def post(self):
     arguments = (await self.request.post()).copy()
     operation = arguments.pop('operation')
@@ -219,7 +224,8 @@ class OperationView(View):
       raise error.InvalidOperationError(operation) from None
     await method(**arguments)
 
-class Connection(sockjs.Session, ViewBase):
+
+class Connection(sockjs.Session, HandlerBase):
   def __init__(self, request, *args, **kwargs):
     super(Connection, self).__init__(*args, **kwargs)
     self.request = request
@@ -237,9 +243,11 @@ class Connection(sockjs.Session, ViewBase):
   def send(self, **kwargs):
     super(Connection, self).send(json.encode(kwargs))
 
+
 @functools.lru_cache()
 def _get_csrf_token(session_id_binary):
   return hmac.new(b'csrf_token', session_id_binary, 'sha256').hexdigest()
+
 
 @functools.lru_cache()
 def _reverse_url(name, *, domain_id, **kwargs):
@@ -251,9 +259,11 @@ def _reverse_url(name, *, domain_id, **kwargs):
   else:
     return app.Application().router[name].url()
 
+
 @functools.lru_cache()
 def _build_path(*args, domain_id):
   return [(domain_id, _reverse_url('main', domain_id=domain_id)), *args]
+
 
 @functools.lru_cache()
 def _get_datetime_span(tzname):
@@ -265,10 +275,12 @@ def _get_datetime_span(tzname):
       dt = dt.replace(tzinfo=pytz.utc)
     # TODO(iceboy): add a class for javascript selection.
     return markupsafe.Markup(
-        '<span data-timestamp="{0}">{1}</span>'.format(
-            int(dt.astimezone(pytz.utc).timestamp()),
-            dt.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')))
+      '<span data-timestamp="{0}">{1}</span>'.format(
+        int(dt.astimezone(pytz.utc).timestamp()),
+        dt.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')))
+
   return _datetime_span
+
 
 # Decorators
 def require_perm(perm):
@@ -277,8 +289,11 @@ def require_perm(perm):
     def wrapper(self, *args, **kwargs):
       self.check_perm(perm)
       return func(self, *args, **kwargs)
+
     return wrapper
+
   return decorate
+
 
 def require_priv(priv):
   def decorate(func):
@@ -286,8 +301,11 @@ def require_priv(priv):
     def wrapper(self, *args, **kwargs):
       self.check_priv(priv)
       return func(self, *args, **kwargs)
+
     return wrapper
+
   return decorate
+
 
 def require_csrf_token(func):
   @functools.wraps(func)
@@ -295,25 +313,33 @@ def require_csrf_token(func):
     if self.csrf_token and self.csrf_token != kwargs.pop('csrf_token', ''):
       raise error.CsrfTokenError()
     return func(self, *args, **kwargs)
+
   return wrapper
+
 
 def route_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
     return func(self, **kwargs, **self.request.match_info)
+
   return wrapped
+
 
 def get_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
     return func(self, **kwargs, **self.request.GET)
+
   return wrapped
+
 
 def post_argument(coro):
   @functools.wraps(coro)
   async def wrapped(self, **kwargs):
     return await coro(self, **kwargs, **await self.request.post())
+
   return wrapped
+
 
 def sanitize(func):
   @functools.wraps(func)
@@ -321,4 +347,5 @@ def sanitize(func):
     for key, value in kwargs.items():
       kwargs[key] = func.__annotations__[key](value)
     return func(self, **kwargs)
+
   return wrapped

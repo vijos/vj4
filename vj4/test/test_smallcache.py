@@ -1,7 +1,9 @@
 import unittest
-from vj4.controller import smallcache
+
+from vj4.service import smallcache
 from vj4.test import base
 from vj4.util import options
+
 
 class OfflineTest(unittest.TestCase):
   def setUp(self):
@@ -71,12 +73,14 @@ class OfflineTest(unittest.TestCase):
     self.assertEqual(smallcache.get(3), 1)
     self.assertEqual(smallcache.get(4), 4)
 
+
 class OnlineTest(base.SmallcacheTestCase):
   @base.wrap_coro
   async def test_unset(self):
     smallcache.set_local(0, 7)
     await smallcache.unset_global(0)
     self.assertIsNone(smallcache.get(0))
+
 
 if __name__ == '__main__':
   unittest.main()

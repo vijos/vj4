@@ -1,13 +1,15 @@
 import unittest
+
 from vj4 import error
-from vj4.controller import discussion
 from vj4.model import document
+from vj4.model.adaptor import discussion
 from vj4.test import base
 
 DOMAIN_ID_DUMMY = 'dummy'
 OWNER_UID = 22
 TITLE = 'dummy_title'
 CONTENT = 'dummy_content'
+
 
 class NodesTest(base.SmallcacheTestCase):
   @base.wrap_coro
@@ -83,6 +85,7 @@ class NodesTest(base.SmallcacheTestCase):
     with self.assertRaises(error.DiscussionNodeNotFoundError):
       await discussion.check_node(DOMAIN_ID_DUMMY, 'meow')
 
+
 class DiscussionTest(base.SmallcacheTestCase):
   @base.wrap_coro
   async def test_add_get(self):
@@ -106,6 +109,7 @@ class DiscussionTest(base.SmallcacheTestCase):
     self.assertEqual(len(ddocs), 1)
     self.assertEqual(ddocs[0]['title'], TITLE)
     self.assertFalse('content' in ddocs[0])
+
 
 if __name__ == '__main__':
   unittest.main()

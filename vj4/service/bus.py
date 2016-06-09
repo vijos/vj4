@@ -1,16 +1,20 @@
 import asyncio
-import bson
 import logging
 import pprint
+
+import bson
+
 from vj4 import mq
 from vj4.util import argmethod
 
 _logger = logging.getLogger(__name__)
 _subscribers = {}
 
+
 async def init():
   channel = await _consume()
   asyncio.get_event_loop().create_task(_work(channel))
+
 
 async def _consume():
   channel = await mq.channel('bus')
@@ -29,6 +33,7 @@ async def _consume():
   await channel.basic_consume(on_message, queue_name)
   return channel
 
+
 async def _work(channel):
   while True:
     await channel.close_event.wait()
@@ -39,10 +44,12 @@ async def _work(channel):
     except Exception as e:
       _logger.exception(e)
 
+
 @argmethod.wrap
 async def publish(key: str, value: str):
   channel = await mq.channel('bus')
   await channel.basic_publish(bson.BSON.encode({'key': key, 'value': value}), 'bus', '')
+
 
 def subscribe(callback, keys):
   """Subscibe a set of bus keys for a callback.
@@ -54,6 +61,7 @@ def subscribe(callback, keys):
   assert type(keys) in (set, list, tuple)
   _subscribers[callback] = keys
 
+
 def unsubscribe(callback):
   """Unsubscribe buses for a callback.
 
@@ -62,6 +70,7 @@ def unsubscribe(callback):
   """
   if callback in _subscribers:
     del _subscribers[callback]
+
 
 @argmethod.wrap
 async def tail():
@@ -76,6 +85,7 @@ async def tail():
 
   await channel.basic_consume(on_message, queue_name)
   await channel.close_event.wait()
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

@@ -1,32 +1,34 @@
 import collections
-import itertools
 import functools
+import itertools
+
 from vj4.model import builtin
 from vj4.model import user
 
 Setting = functools.partial(
-    collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui']),
-    range=None, ui='input')
+  collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui']),
+  range=None, ui='input')
 
 PRIVACY_RANGE = collections.OrderedDict(
-    [(-1, 'visible_all'), (0, 'visible_user'), (2, 'invisible')])
+  [(-1, 'visible_all'), (0, 'visible_user'), (2, 'invisible')])
 
 # Setting keys should not duplicate with user keys or session keys.
 SETTINGS = [
-    Setting('info', 'gravatar', str),
-    Setting('info', 'qq', str),
-    Setting('info', 'gender', int, range=builtin.USER_GENDERS),
-    Setting('info', 'signature', str, ui='textarea'),
-    Setting('privacy', 'show_mail', int, range=PRIVACY_RANGE, ui='option'),
-    Setting('privacy', 'show_qq', int, range=PRIVACY_RANGE, ui='option'),
-    Setting('preference', 'view_lang', str, range=['zh_CN', 'en'], ui='option'),
-    Setting('preference', 'code_lang', str, range=builtin.LANGS, ui='option'),
-    Setting('preference', 'show_tags', int),
-    Setting('preference', 'send_code', int)]
+  Setting('info', 'gravatar', str),
+  Setting('info', 'qq', str),
+  Setting('info', 'gender', int, range=builtin.USER_GENDERS),
+  Setting('info', 'signature', str, ui='textarea'),
+  Setting('privacy', 'show_mail', int, range=PRIVACY_RANGE, ui='option'),
+  Setting('privacy', 'show_qq', int, range=PRIVACY_RANGE, ui='option'),
+  Setting('preference', 'view_lang', str, range=['zh_CN', 'en'], ui='option'),
+  Setting('preference', 'code_lang', str, range=builtin.LANGS, ui='option'),
+  Setting('preference', 'show_tags', int),
+  Setting('preference', 'send_code', int)]
 
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
 SETTINGS_BY_FAMILY = collections.OrderedDict(
-    (f, list(l)) for f, l in itertools.groupby(SETTINGS, lambda s: s.family))
+  (f, list(l)) for f, l in itertools.groupby(SETTINGS, lambda s: s.family))
+
 
 class SettingMixin(object):
   def get_setting(self, key):

@@ -1,18 +1,20 @@
 import asyncio
 import datetime
+
 from vj4 import app
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import system
 from vj4.model import token
 from vj4.model import user
-from vj4.util import mailer
+from vj4.service import mailer
 from vj4.util import options
 from vj4.util import validator
-from vj4.view import base
+from vj4.handler import base
+
 
 @app.route('/register', 'user_register')
-class UserRegisterView(base.View):
+class UserRegisterView(base.Handler):
   @base.require_priv(builtin.PRIV_REGISTER_USER)
   async def get(self):
     self.render('user_register.html')
@@ -33,8 +35,9 @@ class UserRegisterView(base.View):
     await mailer.send_mail(mail, 'Sign Up - Vijos', content)
     self.render('user_register_mail_sent.html')
 
+
 @app.route('/register/{code}', 'user_register_with_code')
-class UserRegisterWithCodeView(base.View):
+class UserRegisterWithCodeView(base.Handler):
   TITLE = 'user_register'
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
@@ -62,8 +65,9 @@ class UserRegisterWithCodeView(base.View):
     await self.update_session(new_saved=False, uid=uid)
     self.json_or_redirect(self.reverse_url('main'))
 
+
 @app.route('/login', 'user_login')
-class UserLoginView(base.View):
+class UserLoginView(base.Handler):
   async def get(self):
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       self.redirect(self.reverse_url('main'))
@@ -72,7 +76,7 @@ class UserLoginView(base.View):
 
   @base.post_argument
   @base.sanitize
-  async def post(self, *, uname: str, password: str, rememberme: bool=False):
+  async def post(self, *, uname: str, password: str, rememberme: bool = False):
     udoc = await user.check_password_by_uname(uname, password)
     if not udoc:
       raise error.LoginError(uname)
@@ -82,8 +86,9 @@ class UserLoginView(base.View):
                          self.update_session(new_saved=rememberme, uid=udoc['_id']))
     self.json_or_redirect(self.referer_or_main)
 
+
 @app.route('/logout', 'user_logout')
-class UserLogoutView(base.View):
+class UserLogoutView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     self.render('user_logout.html')
@@ -95,8 +100,9 @@ class UserLogoutView(base.View):
     await self.delete_session()
     self.json_or_redirect(self.referer_or_main)
 
+
 @app.route('/user/{uid}', 'user_detail')
-class UserDetailView(base.View):
+class UserDetailView(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, uid: int):
