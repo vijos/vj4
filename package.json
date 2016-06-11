@@ -35,7 +35,7 @@
     "diff-dom": "^2.0.3",
     "highlight.js": "^9.4.0",
     "jqmath-build": "^0.0.4",
-    "jquery": "^2.2.4",
+    "jquery": "^3.0.0",
     "jquery.transit": "^0.9.12",
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
