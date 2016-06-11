@@ -48,6 +48,7 @@
   "scripts": {
     "build": "webpack --progress --colors --display-error-details",
     "build:production": "npm run build -- -p",
-    "watch": "npm run build -- --watch"
+    "watch": "npm run build -- --watch",
+    "lint": "eslint -c vj4/ui/.eslintrc.yml \"vj4/ui/**/*.js\""
   }
 }

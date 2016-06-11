@@ -1,0 +1,15 @@
+sudo: required
+services:
+  - rabbitmq
+  - mongodb
+language: python
+python:
+  - "3.5"
+  - "3.5-dev"
+  - "nightly"
+install:
+  - pip install -r requirements.txt
+  - npm install
+script:
+  - python -m unittest
+  - npm run lint
