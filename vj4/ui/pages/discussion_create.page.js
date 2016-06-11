@@ -79,8 +79,6 @@ const page = new NamedPage('discussion_create', () => {
       safe: true,
     });
 
-    console.log('ok');
-
   });
 
 });
