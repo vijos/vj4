@@ -73,4 +73,3 @@ Indentation: 2 spaces
 * [Jinja2 Documentation](http://jinja.pocoo.org/docs/)
 * [Motor: Asynchronous Python driver for MongoDB](http://motor.readthedocs.org/en/stable/)
 * [Webpack Module Bundler](http://webpack.github.io/docs/)
-* [Typescript](http://www.typescriptlang.org/Handbook)
