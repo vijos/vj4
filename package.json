@@ -23,7 +23,7 @@
     "jeet": "^6.1.2",
     "postcss-loader": "^0.9.1",
     "rupture": "^0.6.1",
-    "simple-cmeditor": "^1.11.0",
+    "simple-cmeditor": "^1.11.3",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.1.0",
