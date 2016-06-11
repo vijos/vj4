@@ -1,0 +1,18 @@
+sudo: required
+services:
+  - rabbitmq
+  - mongodb
+env:
+  - TRAVIS_NODE_VERSION="5.11"
+language: python
+python:
+  - "3.5"
+  - "3.5-dev"
+  - "nightly"
+install:
+  - pip install -r requirements.txt
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
+  - npm install
+script:
+  - python -m unittest
+  - npm run lint
