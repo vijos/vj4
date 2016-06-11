@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from pymongo.errors import BulkWriteError
 
 DB_HOST = 'localhost'
 DB_PORT = 27017
@@ -32,7 +33,7 @@ def rank_data(udocs):
   result = list()
   rank = 1
   for udoc in udocs:
-    if len(stack) == 0:
+    if not stack:
       stack.append(udoc)
     elif udoc['rp'] == stack[-1]['rp']:
       stack.append(udoc)
@@ -66,12 +67,23 @@ def handle_rank():
   total = rank_array[-1]
 
   index = 0
+  bulk = COLL.initialize_unordered_bulk_op()
+
   for udoc in udocs:
     rankN = rank_array[index]
-    udoc['rankN'] = rankN
-    udoc['level'] = count_level(rankN / total)
-    COLL.save(udoc)
+    level = count_level(rankN / total)
+    bulk.find({'_id':udoc['_id']}).update_one(
+      {'$set':
+        {
+          'rankN':rankN,
+          'level':level
+          }})
     index += 1
+
+  try:
+    bulk.execute()
+  except BulkWriteError as bwe:
+    pprint(bwe.details)
 
 def main():
   handle_rank()
