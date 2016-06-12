@@ -1,0 +1,41 @@
+<div class="section side">
+  {% if page_name != 'problem_detail' %}
+  <div class="section__indent top">
+    <h1 class="section__title">{{ pdoc['title'] }}</h1>
+  </div>
+  {% endif %}
+  <div>
+    <ul class="menu">
+      {% if page_name == 'problem_detail' %}
+      <li class="menu__item"><a class="menu__link" href="#">
+        <i class="menu__icon icon-enlarge"></i> {{ _('Enter IDE Mode') }}
+      </a></li>
+      {% else %}
+      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
+        <i class="menu__icon icon-flag"></i> {{ _('View Problem') }}
+      </a></li>
+      {% endif %}
+      <li class="menu__seperator"></li>
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
+        <i class="menu__icon icon-send"></i> {{ _('Test or Submit') }}
+      </a></li>
+      <li class="menu__item"><a class="menu__link" href="#">
+        <i class="menu__icon icon-statistics"></i> {{ _('Submission Statistics') }}
+      </a></li>
+      <li class="menu__seperator"></li>
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_solution' %} active{% endif %}" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
+        <i class="menu__icon icon-bubble--outline"></i> {{ _('Solutions') }}
+      </a></li>
+      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
+        <i class="menu__icon icon-bubble--outline"></i> {{ _('Discussions') }}
+      </a></li>
+      <li class="menu__seperator"></li>
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">
+        <i class="menu__icon icon-edit"></i>  {{ _('Edit') }}
+      </a></li>
+      <li class="menu__item"><a class="menu__link" href="#">
+        <i class="menu__icon icon-wrench"></i> {{ _('Settings') }}
+      </a></li>
+    </ul>
+  </div>
+</div>
