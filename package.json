@@ -21,7 +21,6 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "jeet": "^6.1.2",
-    "object-assign": "^4.1.0",
     "postcss-loader": "^0.9.1",
     "rupture": "^0.6.1",
     "simple-cmeditor": "^1.11.4",

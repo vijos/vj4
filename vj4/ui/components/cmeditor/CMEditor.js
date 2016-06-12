@@ -1,9 +1,10 @@
 import SimpleMDE from 'simple-cmeditor';
-import objectAssign from 'object-assign';
+import assign from 'lodash/assign';
 
 export default class CMEditor extends SimpleMDE {
 
-  constructor(options) {
+  constructor(options = {}) {
+
     const defaultOptions = {
       toolbar: [
         {
@@ -74,11 +75,8 @@ export default class CMEditor extends SimpleMDE {
         safe: true,
       },
     };
-    if (options) {
-      super(objectAssign({}, defaultOptions, options));
-    }
-    else {
-      super(defaultOptions);
-    }
+
+    super(assign({}, defaultOptions, options));
+
   }
 }
