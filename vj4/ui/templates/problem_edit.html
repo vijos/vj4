@@ -1,4 +1,28 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-{{ _('Swx Template!') }}
+<div class="layout--2col clearfix">
+  <div class="layout--2col__main">
+    <div class="section">
+      <div class="section__indent top bottom left right">
+        <h1>title</h1>
+        <div class="typo">foo</div>
+      </div>
+    </div>
+  </div>
+  <div class="layout--2col__side">
+    {% if page_name == 'problem_edit' %}
+      {% include "components/problem_sidebar.html" %}
+    {% endif %}
+    <div class="section side">
+      <div class="section__indent top bottom">
+        <h1 class="section__title">{{ _('Information') }}</h1>
+        <div class="section__indent left right">
+          <div class="typo">
+            123
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

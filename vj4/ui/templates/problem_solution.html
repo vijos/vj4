@@ -62,33 +62,7 @@
     </div>
   </div>
   <div class="layout--2col__side">
-    <div class="section side">
-      <div class="section__indent top">
-        <h1 class="section__title">A + B Problem</h1>
-      </div>
-      <div>
-        <!-- TODO (swx): extract and reuse this sidebar -->
-        <ul class="menu">
-          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-flag"></i> {{ _('View Problem') }}
-          </a></li>
-          <li class="menu__seperator"></li>
-          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-send"></i> {{ _('Test or Submit') }}
-          </a></li>
-          <li class="menu__item"><a class="menu__link" href="#">
-            <i class="menu__icon icon-statistics"></i> {{ _('Submission Statistics') }}
-          </a></li>
-          <li class="menu__seperator"></li>
-          <li class="menu__item"><a class="menu__link active" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-bubble--outline"></i> {{ _('Solutions') }}
-          </a></li>
-          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-bubble--outline"></i> {{ _('Discussions') }}
-          </a></li>
-        </ul>
-      </div>
-    </div>
+    {% include "components/problem_sidebar.html" %}
     <div class="section side">
       <div class="section__indent top bottom">
         <h1 class="section__title">{{ _('Information') }}</h1>
