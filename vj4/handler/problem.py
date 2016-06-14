@@ -75,15 +75,22 @@ class ProblemDetailView(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
-    # pdoc = await problem.get(self.domain_id, pid)
-    # rid = await record.add(self.domain_id, pdoc['doc_id'], self.user['_id'], lang, code)
-    # await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
-    # self.json_or_redirect(self.reverse_url('record_main'))
+    pdoc = await problem.get(self.domain_id, pid)
+    rid = await record.add(self.domain_id, pdoc['doc_id'], self.user['_id'], lang, code)
+    await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
+    self.json_or_redirect(self.reverse_url('record_main'))
 
+
+@app.route('/duipai/submit', 'duipai_submit')
+class DuipaiDetailView(base.Handler):
+  @base.post_argument
+  @base.sanitize
+  async def post(self, *, lang: str, code: str, data_input: str, data_output: str):
     did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_DATA, data_input = ['1 2', '3 4'], data_output = ['3', '7'])
     rid = await record.add(self.domain_id, did, self.user['_id'], lang, code)
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
-    self.json_or_redirect(self.reverse_url('record_main'))
+    self.json({'record_id': str(rid)})
+
 
 @app.route(r'/p/{pid}/solution', 'problem_solution')
 class ProblemSolutionView(base.OperationView):
