@@ -58,13 +58,19 @@ class JudgeDataDetailView(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
-    # ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['doc_id'])
+    ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['did'])
 
     inMemoryOutputFile = BytesIO()
     zipFile = ZipFile(inMemoryOutputFile, 'w')
-    zipFile.writestr('/Config.ini', 'hello world')
-    zipFile.writestr('Input/input0.txt', 'hello world')
-    zipFile.writestr('Output/output0.txt', 'hello world')
+    config_content = str(len(ddoc['data_input'])) + "\n"
+    for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
+      input_file = 'input' + str(i) + '.txt'
+      output_file = 'output' + str(i) + '.txt'
+      config_content += input_file + '|' + output_file + '|' + str("1|10|1024\n")
+      zipFile.writestr('Input/' + input_file, data_input)
+      zipFile.writestr('Output/' + output_file, data_output)
+
+    zipFile.writestr('/Config.ini', config_content)
     zipFile.close()
     await self.zip(inMemoryOutputFile)
 
