@@ -2,10 +2,13 @@ import asyncio
 import logging
 import time
 
+from bson import objectid
+
 from vj4 import app
 from vj4.model import builtin
 from vj4.model import queue
 from vj4.model import record
+from vj4.model import document
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
@@ -44,6 +47,16 @@ class JudgeDataListView(base.Handler):
       datalist.append({'domain_id': did, 'pid': pid})
     self.json({'list': datalist, 'time': int(time.time())})
 
+@app.route('/judge/data/{rid}', 'data_detail')
+class JudgeDataDetailView(base.Handler):
+  @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, rid: objectid.ObjectId):
+    rdoc = await record.get(rid)
+    if not rdoc:
+      raise error.RecordNotFoundError(rid)
+    ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['doc_id'])
 
 @app.connection_route('/judge/consume-conn', 'judge_consume-conn')
 class JudgeNotifyConnection(base.Connection):
@@ -60,6 +73,8 @@ class JudgeNotifyConnection(base.Connection):
       rdoc = await record.begin_judge(rid, self.user['_id'], self.id, record.STATUS_COMPILING)
       if rdoc:
         self.rids[tag] = rdoc['_id']
+        # self.send(tag=tag, pid=rdoc['pid'], domain_id=rdoc['domain_id'],
+                  # lang=rdoc['lang'], code=rdoc['code'], rec_type=rdoc['rec_type'])
         self.send(tag=tag, pid=rdoc['pid'], domain_id=rdoc['domain_id'],
                   lang=rdoc['lang'], code=rdoc['code'])
         await bus.publish('record_change', rdoc['_id'])

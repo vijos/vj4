@@ -95,6 +95,8 @@ class RecordDetailView(base.Handler):
     rdoc = await record.get(rid)
     if rdoc:
       rdoc['_id'] = str(rdoc['_id'])
+      if 'judge_at' in rdoc:
+        rdoc['judge_at'] = rdoc['judge_at'].strftime("%Y-%m-%d %H:%M:%S")
     else:
       rdoc = {}
     self.json(rdoc)

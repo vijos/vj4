@@ -80,6 +80,8 @@ class ProblemDetailView(base.Handler):
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
     self.json_or_redirect(self.reverse_url('record_main'))
 
+    # rid = await record.add(self.domain_id, pdoc['doc_id'], self.user['_id'], lang, code)
+    # await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
 
 @app.route(r'/p/{pid}/solution', 'problem_solution')
 class ProblemSolutionView(base.OperationView):
