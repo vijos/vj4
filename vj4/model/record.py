@@ -46,7 +46,17 @@ async def add(domain_id: str, pid: document.convert_doc_id, uid: int, lang: str,
 async def add(domain_id: str, did: document.convert_doc_id, uid:int, lang: str,
     code: str, hidden=False):
   coll = db.Collection('record')
-
+  return await coll.insert({'hidden': hidden,
+                            'status': STATUS_WAITING,
+                            'score': 0,
+                            'time_ms': 0,
+                            'memory_kb': 0,
+                            'domain_id': domain_id,
+                            'did': did,
+                            'uid': uid,
+                            'lang': lang,
+                            'code': code,
+                            'rec_type': TYPE_DUIPAU})
 
 @argmethod.wrap
 async def get(record_id: objectid.ObjectId):

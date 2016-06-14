@@ -10,6 +10,7 @@ import markupsafe
 import pytz
 import sockjs
 from aiohttp import web
+from aiohttp import MultiDict
 
 from vj4 import app
 from vj4 import error
@@ -182,6 +183,11 @@ class Handler(web.View, HandlerBase):
   def json(self, obj):
     self.response.content_type = 'application/json'
     self.response.text = json.encode(obj)
+
+  async def zip(self, obj):
+    self.response = web.StreamResponse()
+    await self.response.prepare(self.request)
+    self.response.write(obj.getvalue())
 
   @property
   def prefer_json(self):

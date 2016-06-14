@@ -3,6 +3,8 @@ import logging
 import time
 
 from bson import objectid
+from zipfile import ZipFile
+from io import BytesIO
 
 from vj4 import app
 from vj4.model import builtin
@@ -56,7 +58,15 @@ class JudgeDataDetailView(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
-    ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['doc_id'])
+    # ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['doc_id'])
+
+    inMemoryOutputFile = BytesIO()
+    zipFile = ZipFile(inMemoryOutputFile, 'w')
+    zipFile.writestr('/Config.ini', 'hello world')
+    zipFile.writestr('Input/input0.txt', 'hello world')
+    zipFile.writestr('Output/output0.txt', 'hello world')
+    zipFile.close()
+    await self.zip(inMemoryOutputFile)
 
 @app.connection_route('/judge/consume-conn', 'judge_consume-conn')
 class JudgeNotifyConnection(base.Connection):
@@ -73,10 +83,8 @@ class JudgeNotifyConnection(base.Connection):
       rdoc = await record.begin_judge(rid, self.user['_id'], self.id, record.STATUS_COMPILING)
       if rdoc:
         self.rids[tag] = rdoc['_id']
-        # self.send(tag=tag, pid=rdoc['pid'], domain_id=rdoc['domain_id'],
-                  # lang=rdoc['lang'], code=rdoc['code'], rec_type=rdoc['rec_type'])
         self.send(tag=tag, pid=rdoc['pid'], domain_id=rdoc['domain_id'],
-                  lang=rdoc['lang'], code=rdoc['code'])
+                  lang=rdoc['lang'], code=rdoc['code'], rec_type=rdoc['rec_type'])
         await bus.publish('record_change', rdoc['_id'])
       else:
         # Record not found, eat it.
