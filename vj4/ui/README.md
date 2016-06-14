@@ -151,7 +151,7 @@ The section title itself contains left and right paddings and the amount is exac
 
 If the main content of the section is a data table (or additionally with a title and a paginator), it is suggested to apply `section__table` to the table. Section table should not be put inside a horizontal-padding container as well.
 
-2 * 3 table sample:
+3 * 2 table sample:
 
 ```html
 <div class="section">
