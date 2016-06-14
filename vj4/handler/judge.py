@@ -51,7 +51,7 @@ class JudgeDataListView(base.Handler):
 
 @app.route('/judge/data/{rid}', 'data_detail')
 class JudgeDataDetailView(base.Handler):
-  @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
+  # @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):

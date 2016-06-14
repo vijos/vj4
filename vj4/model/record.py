@@ -56,7 +56,7 @@ async def add(domain_id: str, did: document.convert_doc_id, uid:int, lang: str,
                             'uid': uid,
                             'lang': lang,
                             'code': code,
-                            'rec_type': TYPE_DUIPAU})
+                            'rec_type': TYPE_DUIPAI})
 
 @argmethod.wrap
 async def get(record_id: objectid.ObjectId):
@@ -67,7 +67,7 @@ async def get(record_id: objectid.ObjectId):
 @argmethod.wrap
 def get_multi(end_id: objectid.ObjectId = None, *, fields=None):
   coll = db.Collection('record')
-  query = {'hidden': False}
+  query = {'hidden': False, 'rec_type': TYPE_NORMAL}
   if end_id:
     query['_id'] = {'$lt': end_id}
   return coll.find(query, fields=fields)
