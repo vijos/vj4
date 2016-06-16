@@ -27,7 +27,7 @@ TYPE_DUIPAI = 1
 
 @argmethod.wrap
 async def add(domain_id: str, pid: document.convert_doc_id, uid: int, lang: str,
-    code: str, tid: objectid.ObjectId = None, hidden=False):
+    code: str, tid: objectid.ObjectId = None, hidden=False, rec_type: int = TYPE_NORMAL):
   coll = db.Collection('record')
   return await coll.insert({'hidden': hidden,
                             'status': STATUS_WAITING,
@@ -40,23 +40,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, uid: int, lang: str,
                             'lang': lang,
                             'code': code,
                             'tid': tid,
-                            'rec_type': TYPE_NORMAL})
-
-@argmethod.wrap
-async def add(domain_id: str, did: document.convert_doc_id, uid:int, lang: str,
-    code: str, hidden=False):
-  coll = db.Collection('record')
-  return await coll.insert({'hidden': hidden,
-                            'status': STATUS_WAITING,
-                            'score': 0,
-                            'time_ms': 0,
-                            'memory_kb': 0,
-                            'domain_id': domain_id,
-                            'did': did,
-                            'uid': uid,
-                            'lang': lang,
-                            'code': code,
-                            'rec_type': TYPE_DUIPAI})
+                            'rec_type': rec_type})
 
 @argmethod.wrap
 async def get(record_id: objectid.ObjectId):

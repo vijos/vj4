@@ -2,8 +2,9 @@ import asyncio
 import logging
 import time
 
-from bson import objectid
+import zipfile
 from zipfile import ZipFile
+from bson import objectid
 from io import BytesIO
 
 from vj4 import app
@@ -49,7 +50,7 @@ class JudgeDataListView(base.Handler):
       datalist.append({'domain_id': did, 'pid': pid})
     self.json({'list': datalist, 'time': int(time.time())})
 
-@app.route('/judge/data/{rid}', 'data_detail')
+@app.route('/judge/data/{did}', 'data_detail')
 class JudgeDataDetailView(base.Handler):
   # @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
   @base.route_argument
@@ -61,7 +62,7 @@ class JudgeDataDetailView(base.Handler):
     ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['did'])
 
     inMemoryOutputFile = BytesIO()
-    zipFile = ZipFile(inMemoryOutputFile, 'w')
+    zipFile = ZipFile(inMemoryOutputFile, 'a', zipfile.ZIP_DEFLATED)
     config_content = str(len(ddoc['data_input'])) + "\n"
     for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
       input_file = 'input' + str(i) + '.txt'
@@ -69,8 +70,12 @@ class JudgeDataDetailView(base.Handler):
       config_content += input_file + '|' + output_file + '|' + str("1|10|1024\n")
       zipFile.writestr('Input/' + input_file, data_input)
       zipFile.writestr('Output/' + output_file, data_output)
+    zipFile.writestr('Config.ini', config_content)
 
-    zipFile.writestr('/Config.ini', config_content)
+    for zfile in zipFile.filelist:
+      zfile.create_system = 0
+
+    inMemoryOutputFile.seek(0)
     zipFile.close()
     await self.zip(inMemoryOutputFile)
 
@@ -89,7 +94,7 @@ class JudgeNotifyConnection(base.Connection):
       rdoc = await record.begin_judge(rid, self.user['_id'], self.id, record.STATUS_COMPILING)
       if rdoc:
         self.rids[tag] = rdoc['_id']
-        self.send(tag=tag, pid=rdoc['pid'], domain_id=rdoc['domain_id'],
+        self.send(tag=tag, pid=str(rdoc['pid']), record_id=str(rdoc['_id']), domain_id=rdoc['domain_id'],
                   lang=rdoc['lang'], code=rdoc['code'], rec_type=rdoc['rec_type'])
         await bus.publish('record_change', rdoc['_id'])
       else:
