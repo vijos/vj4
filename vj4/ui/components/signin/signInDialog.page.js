@@ -1,8 +1,7 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import Dialog from 'components/dialog/Dialog';
+import { AutoloadPage } from '../../misc/PageLoader';
+import Dialog from '../dialog/Dialog';
 
 const signinDialogPage = new AutoloadPage(() => {}, () => {
-
   const signInDialog = Dialog.getOrConstruct($('.dialog--signin'), {
     cancelByClickingBack: true,
     cancelByEsc: true,
@@ -25,7 +24,6 @@ const signinDialogPage = new AutoloadPage(() => {}, () => {
       signInDialog.hide();
     });
   }
-
 });
 
 export default signinDialogPage;

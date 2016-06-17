@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import assign from 'lodash/assign';
-import DOMAttachedObject from 'components/DOMAttachedObject';
+import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Popup extends DOMAttachedObject {
 
@@ -64,6 +65,8 @@ export default class Popup extends DOMAttachedObject {
       return basePos.left + targetWidth;
     case Popup.PopupLayoutAnchor.bottom_outside:
       return basePos.top + targetHeight;
+    default:
+      throw new Error('Invalid anchor');
     }
   }
 
@@ -87,6 +90,8 @@ export default class Popup extends DOMAttachedObject {
     case Popup.PopupLayoutAnchor.left_outside:
     case Popup.PopupLayoutAnchor.top_outside:
       return pos < 0;
+    default:
+      throw new Error('Invalid anchor');
     }
   }
 
@@ -108,40 +113,64 @@ export default class Popup extends DOMAttachedObject {
     switch (this._anchorH) {
     case Popup.PopupLayoutAnchor.left_outside:
       if (this.isPopupOverflow($target, this._anchorH, options.position)) {
-        if (!this.isPopupOverflow($target, Popup.PopupLayoutAnchor.right_outside, options.position)) {
+        if (!this.isPopupOverflow($target,
+          Popup.PopupLayoutAnchor.right_outside,
+          options.position
+        )) {
           this._anchorH = Popup.PopupLayoutAnchor.right_outside;
         }
       }
       break;
     case Popup.PopupLayoutAnchor.right_outside:
       if (this.isPopupOverflow($target, this._anchorH, options.position)) {
-        if (!this.isPopupOverflow($target, Popup.PopupLayoutAnchor.left_outside, options.position)) {
+        if (!this.isPopupOverflow($target,
+          Popup.PopupLayoutAnchor.left_outside,
+          options.position
+        )) {
           this._anchorH = Popup.PopupLayoutAnchor.left_outside;
         }
       }
+      break;
+    default:
+      throw new Error('Invalid anchor');
     }
     switch (this._anchorV) {
     case Popup.PopupLayoutAnchor.top_outside:
       if (this.isPopupOverflow($target, this._anchorV, options.position)) {
-        if (!this.isPopupOverflow($target, Popup.PopupLayoutAnchor.bottom_outside, options.position)) {
+        if (!this.isPopupOverflow($target,
+          Popup.PopupLayoutAnchor.bottom_outside,
+          options.position
+        )) {
           this._anchorV = Popup.PopupLayoutAnchor.bottom_outside;
         }
       }
       break;
     case Popup.PopupLayoutAnchor.bottom_outside:
       if (this.isPopupOverflow($target, this._anchorV, options.position)) {
-        if (!this.isPopupOverflow($target, Popup.PopupLayoutAnchor.top_outside, options.position)) {
+        if (!this.isPopupOverflow($target,
+          Popup.PopupLayoutAnchor.top_outside,
+          options.position
+        )) {
           this._anchorV = Popup.PopupLayoutAnchor.top_outside;
         }
       }
+      break;
+    default:
+      throw new Error('Invalid anchor');
     }
 
     // show popup based on final anchor
     this._$target = $target;
     this._options = options;
 
-    let posX = this.getScreenPosition(this._$target, this._anchorH, this._options.position);
-    let posY = this.getScreenPosition(this._$target, this._anchorV, this._options.position);
+    let posX = this.getScreenPosition(this._$target,
+      this._anchorH,
+      this._options.position
+    );
+    let posY = this.getScreenPosition(this._$target,
+      this._anchorV,
+      this._options.position
+    );
     if (this._options.position === 'absolute') {
       posX += window.scrollX;
       posY += window.scrollY;
@@ -226,9 +255,8 @@ export default class Popup extends DOMAttachedObject {
   hideIfNotHover() {
     if (!this.popupHover) {
       return this.hide();
-    } else {
-      return false;
     }
+    return false;
   }
 
   /**
@@ -236,8 +264,14 @@ export default class Popup extends DOMAttachedObject {
    * Only enabled when calling show(...).
    */
   onWindowResize() {
-    let posX = this.getScreenPosition(this._$target, this._anchorH, this._options.position);
-    let posY = this.getScreenPosition(this._$target, this._anchorV, this._options.position);
+    let posX = this.getScreenPosition(this._$target,
+      this._anchorH,
+      this._options.position
+    );
+    let posY = this.getScreenPosition(this._$target,
+      this._anchorV,
+      this._options.position
+    );
 
     if (this._options.position === 'absolute') {
       posX += window.scrollX;
@@ -262,5 +296,5 @@ export default class Popup extends DOMAttachedObject {
 
 }
 
-Popup._attachKey = 'vjPopupInstance';
+Popup.DOMAttachKey = 'vjPopupInstance';
 assign(Popup, DOMAttachedObject);

@@ -1,5 +1,5 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import * as util from 'misc/Util';
+import { AutoloadPage } from '../../misc/PageLoader';
+import * as util from '../../misc/Util';
 import throttle from 'lodash/throttle';
 
 let $nav = null;
@@ -70,7 +70,7 @@ function onNavDropdownHide() {
 }
 
 function onNavLogoutClick() {
-  var $logoutLink = $('.command--nav-logout');
+  const $logoutLink = $('.command--nav-logout');
   util.post($logoutLink.attr('href'))
     .then(() => window.location.reload());
   return false;
@@ -79,7 +79,9 @@ function onNavLogoutClick() {
 const navigationPage = new AutoloadPage(() => {
   $nav = $('.nav');
   $navShadow = $('.nav--shadow');
-  if ($nav.length > 0 && document.documentElement.getAttribute('data-layout') === 'basic') {
+  if ($nav.length > 0
+    && document.documentElement.getAttribute('data-layout') === 'basic'
+  ) {
     $(window).on('scroll', throttle(onWindowScroll, 100));
     $nav.hover(onNavEnter, onNavLeave);
     $nav.on('vjDropdownShow', onNavDropdownShow);

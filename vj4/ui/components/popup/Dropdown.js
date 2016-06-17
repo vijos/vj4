@@ -1,6 +1,6 @@
 import Popup from './Popup';
 import assign from 'lodash/assign';
-import DOMAttachedObject from 'components/DOMAttachedObject';
+import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Dropdown extends DOMAttachedObject {
 
@@ -75,7 +75,7 @@ export default class Dropdown extends DOMAttachedObject {
     if (this.options && this.options.expandOnHover) {
       this.popup.show(this.$dom, this.popupOptions);
     }
-    if (this.popupHideTimer != -1) {
+    if (this.popupHideTimer !== -1) {
       clearTimeout(this.popupHideTimer);
       this.popupHideTimer = -1;
     }
@@ -83,7 +83,7 @@ export default class Dropdown extends DOMAttachedObject {
 
   onTargetLeave() {
     this.targetHover = false;
-    if (this.popupHideTimer != -1) {
+    if (this.popupHideTimer !== -1) {
       clearTimeout(this.popupHideTimer);
     }
     // Delay the hiding a little
@@ -117,5 +117,5 @@ export default class Dropdown extends DOMAttachedObject {
 
 }
 
-Dropdown._attachKey = 'vjDropdownInstance';
+Dropdown.DOMAttachKey = 'vjDropdownInstance';
 assign(Dropdown, DOMAttachedObject);
