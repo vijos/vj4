@@ -50,7 +50,7 @@ class JudgeDataListView(base.Handler):
       datalist.append({'domain_id': did, 'pid': pid})
     self.json({'list': datalist, 'time': int(time.time())})
 
-@app.route('/judge/data/{did}', 'data_detail')
+@app.route('/judge/data/{rid}', 'data_detail')
 class JudgeDataDetailView(base.Handler):
   # @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
   @base.route_argument
@@ -59,7 +59,9 @@ class JudgeDataDetailView(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
-    ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['did'])
+    ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['pid'])
+    if not ddoc:
+      raise error.ProblemDataNotFoundError(rdoc['pid'])
 
     inMemoryOutputFile = BytesIO()
     zipFile = ZipFile(inMemoryOutputFile, 'a', zipfile.ZIP_DEFLATED)

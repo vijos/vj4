@@ -85,7 +85,9 @@ class DuipaiDetailView(base.Handler):
   @base.post_argument
   @base.sanitize
   async def post(self, *, lang: str, code: str, data_input: str, data_output: str):
+    # TODO: 对拍API
     did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_DATA, data_input = ['1 2', '3 4'], data_output = ['3', '7'])
+    # did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_DATA, data_input = data_input, data_output = data_output)
     rid = await record.add(self.domain_id, did, self.user['_id'], lang, code, rec_type = record.TYPE_DUIPAI)
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
     self.json({'record_id': str(rid)})
