@@ -1,4 +1,3 @@
-import 'simple-cmeditor/dist/simplemde.min.css';
 import { NamedPage } from '../misc/PageLoader';
 
 const page = new NamedPage('discussion_create', () => {
