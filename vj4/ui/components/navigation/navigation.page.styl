@@ -3,7 +3,7 @@
 .nav--placeholder
   height: $nav-item-height
 
-.nav
+.nav, .nav--slideout-trigger
   position: fixed
   left: 0
   top: 0
@@ -13,6 +13,16 @@
   transition: background .2s
   transition-timing-function: ease-out-cubic
   z-index: 500
+
+.nav--slideout-trigger
+  position: absolute
+  display: none
+  background: rgba(#000, 0.5)
+  color: #FFF
+  line-height: rem($nav-item-height)
+
+  .nav__hamburger
+    color: #FFF
 
 .nav--shadow
   position: fixed
@@ -123,3 +133,89 @@
 
 .nav--shadow.floating
   box-shadow: 0 0 6px rgba(#000, 0.3)
+
+.slideout-panel-container
+  height: 100%
+
+// For Mobile: show a slideout vertical arranged menu
++below(rupture.mobile-cutoff)
+
+  .nav--slideout-trigger
+    display: block
+
+  .nav--shadow
+    display: none
+
+  .nav.slideout-menu
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 0;
+    width: 256px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: none;
+    background: #1D1F20;
+    height: auto;
+
+    .content-container
+      margin: 0
+
+  .nav__list
+    float: none
+
+  .nav__list-item
+    float: none
+
+  .nav__logo
+    width: auto !important
+    opacity: 1
+    background-position: center center
+    margin: 0
+    height: rem($nav-logo-height + 40px)
+
+  .nav__item, .nav__item--round, .dropdown-target.menu .menu__link
+    line-height: rem($nav-item-height - 6) !important
+    padding: rem(0 20px 3px 20px) !important
+    border: 0 !important
+    margin: 0 !important
+    border-radius: 0 !important
+    background: none !important
+    color: #FFF !important
+
+    &:visited, &:active
+      background: none !important
+      color: #FFF !important
+
+    &:hover
+      background: rgba(#FFF, 0.15) !important
+      color: #FFF !important
+
+  .dropdown-target.menu
+    display: block
+    background: none
+    border: 0
+    box-shadow: none
+
+    .menu__link
+      padding-left: rem(35px)
+
+    .menu__seperator
+      display: none
+
+  .nav__list--secondary
+    border-top: 1px solid #666
+
+  .slideout-panel
+    position: relative;
+    z-index: 1;
+
+  .slideout-open .slideout-menu
+    display: block;
+
+  .slideout-open body,
+  .slideout-open .slideout-panel-container,
+  .slideout-open .slideout-panel
+    overflow: hidden;

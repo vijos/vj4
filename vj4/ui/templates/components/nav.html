@@ -1,4 +1,4 @@
-<nav class="nav">
+<nav class="nav slideout-menu" id="menu">
   <div class="content-container clearfix">
     <ol class="nav__list nav__list--main clearfix">
       <li class="nav__list-item"><a href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
@@ -13,7 +13,7 @@
       <li class="nav__list-item"><a href="{{ reverse_url('user_login') }}" class="nav__item command--nav-login">{{ _('Login') }}</a></li>
       <li class="nav__list-item"><a href="{{ reverse_url('user_register') }}" class="nav__item--round command--nav-signup">{{ _('Sign Up') }}</a></li>
     {% else %}
-      <li class="nav__list-item dropdown-trigger" data-dropdown-target="#menu-nav-user">
+      <li class="nav__list-item dropdown-trigger" data-dropdown-target="#menu-nav-user" data-dropdown-trigger-desktop-only>
         <a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="nav__item">{{ handler.user['uname'] }} <i class="icon-expand_more"></i></a>
         <ol class="dropdown-target menu" id="menu-nav-user">
           <li class="menu__item"><a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="menu__link">{{ _('My Profile') }}</a></li>

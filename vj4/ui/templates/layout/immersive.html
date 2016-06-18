@@ -3,8 +3,10 @@
 {% block body %}
 {% include "components/nav.html" %}
 
-<div class="autoexpand__container">
+<div class="slideout-panel-container">
+<div class="autoexpand__container slideout-panel" id="panel">
   <div class="autoexpand__collapse">
+    {% include "components/nav-hamburger.html" %}
     <div class="nav--placeholder"></div>
   </div>
   <div class="autoexpand__expand">
@@ -19,6 +21,7 @@
       {% include "components/footer.html" %}
     {% endwith %}
   </div>
+</div>
 </div>
 
 {% include "components/login_dialog.html" %}

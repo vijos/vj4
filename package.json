@@ -45,6 +45,7 @@
     "normalize.css": "^4.1.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
+    "slideout": "^0.1.12",
     "sockjs-client": "^1.1.1",
     "tether-drop": "^1.4.2"
   },

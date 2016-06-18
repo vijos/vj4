@@ -5,6 +5,12 @@ import DOMAttachedObject from '../DOMAttachedObject';
 export default class Dropdown extends DOMAttachedObject {
 
   static initFromDOM($dom) {
+    // special: for navigation bar, show as a menu only in desktop
+    if ($dom.attr('data-dropdown-trigger-desktop-only') !== undefined) {
+      if (window.innerWidth < 450) {
+        return null;
+      }
+    }
     const options = {
       target: $.find($dom.attr('data-dropdown-target'))[0],
       position: $dom.attr('data-dropdown-position') || 'top left',

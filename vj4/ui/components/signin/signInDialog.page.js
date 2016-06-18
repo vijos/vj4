@@ -7,7 +7,8 @@ const signinDialogPage = new AutoloadPage(() => {}, () => {
     cancelByEsc: true,
   });
 
-  if ($('.command--nav-login').length > 0) {
+  // don't show quick login dialog if in mobile
+  if ($('.command--nav-login').length > 0 && window.innerWidth >= 450) {
     // nav
     $('.command--nav-login').click((ev) => {
       if (ev.shiftKey || ev.metaKey || ev.ctrlKey) {
