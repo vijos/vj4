@@ -34,7 +34,6 @@
     "webpack": "^1.13.1"
   },
   "dependencies": {
-    "balloon-css": "^0.2.5",
     "codemirror": "^5.15.2",
     "diff-dom": "^2.0.3",
     "highlight.js": "^9.4.0",

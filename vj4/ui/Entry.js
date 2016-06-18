@@ -4,7 +4,6 @@ __webpack_public_path__ = UiContext.cdn_prefix;
 import 'jquery.transit';
 
 import 'normalize.css/normalize.css';
-import 'balloon-css/balloon.min.css';
 import 'jqmath-build/webpack.js';
 import 'codemirror/lib/codemirror.css';
 
