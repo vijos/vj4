@@ -29,7 +29,7 @@
     "simple-cmeditor": "^1.11.4",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
-    "stylus-loader": "^2.1.0",
+    "stylus-loader": "^2.1.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.1"
   },

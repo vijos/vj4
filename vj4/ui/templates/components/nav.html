@@ -13,9 +13,9 @@
       <li class="nav__list-item"><a href="{{ reverse_url('user_login') }}" class="nav__item command--nav-login">{{ _('Login') }}</a></li>
       <li class="nav__list-item"><a href="{{ reverse_url('user_register') }}" class="nav__item--round command--nav-signup">{{ _('Sign Up') }}</a></li>
     {% else %}
-      <li class="nav__list-item dropdown-target" data-popup-id="menu-nav-user" data-popup-zindex="400" data-dropdown-position="fixed" data-dropdown-align="right" data-dropdown-hover="true">
+      <li class="nav__list-item dropdown-trigger" data-dropdown-target="#menu-nav-user">
         <a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="nav__item">{{ handler.user['uname'] }} <i class="icon-expand_more"></i></a>
-        <ol class="popup menu" id="menu-nav-user">
+        <ol class="dropdown-target menu" id="menu-nav-user">
           <li class="menu__item"><a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="menu__link">{{ _('My Profile') }}</a></li>
           <li class="menu__item"><a href="{{ reverse_url('home_messages') }}" class="menu__link">{{ _('Messages') }}</a></li>
           <li class="menu__seperator"></li>
