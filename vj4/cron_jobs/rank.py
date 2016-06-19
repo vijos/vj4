@@ -1,12 +1,11 @@
-from pymongo import MongoClient
-from pymongo.errors import BulkWriteError
+import pymongo
+import pymongo.errors
 
 from vj4.util import options
 
 options.define('db_host', default='localhost', help='Database hostname or IP address.')
 options.define('db_port', default=27017, help='Database port.')
 options.define('db_name', default='test', help='Database name.')
-options.define('coll_name', default='user', help='User collection')
 
 # Key represents level
 # Value represents percent
@@ -34,13 +33,13 @@ def rank_data(udocs):
     elif udoc['rp'] == stack[-1]['rp']:
       stack.append(udoc)
     else:
-      while len(stack) != 0:
+      while stack:
         doc = stack.pop()
         result.append(rank)
       rank += 1
       stack.append(udoc)
 
-  while len(stack) != 0:
+  while stack:
     doc = stack.pop()
     result.append(rank)
 
@@ -51,16 +50,14 @@ def count_level(perc):
 
   perc *= 100
 
-  for item in level_config:
-    key = item[0]
-    value = item[1]
+  for key, value in level_config:
     if perc <= value:
       return key
 
 def handle_rank():
-  conn = MongoClient(options.options.db_host, options.options.db_port)
+  conn = pymongo.MongoClient(options.options.db_host, options.options.db_port)
   db = conn[options.options.db_name]
-  coll = db[options.options.coll_name]
+  coll = db['user']
 
   udocs = list(coll.find())
   udocs.sort(key = lambda x:(x['rp']), reverse=True)
@@ -68,11 +65,9 @@ def handle_rank():
   rank_array = rank_data(udocs)
   total = rank_array[-1]
 
-  index = 0
   bulk = coll.initialize_unordered_bulk_op()
 
-  for udoc in udocs:
-    rankN = rank_array[index]
+  for udoc, rankN in zip(udocs, rank_array):
     level = count_level(rankN / total)
 
     bulk.find({'_id':udoc['_id']}).update_one(
@@ -81,11 +76,10 @@ def handle_rank():
           'rankN':rankN,
           'level':level
           }})
-    index += 1
 
   try:
     bulk.execute()
-  except BulkWriteError as bwe:
+  except pymongo.errors.BulkWriteError as bwe:
     pprint(bwe.details)
 
 def main():
