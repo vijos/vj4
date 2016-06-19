@@ -26,8 +26,8 @@ TYPE_SUBMISSION = 0
 TYPE_TEST = 1
 
 @argmethod.wrap
-async def add(domain_id: str, type: int, pid_or_tid: document.convert_doc_id, uid: int, lang: str,
-    code: str, tid: objectid.ObjectId = None, hidden = False):
+async def add(domain_id: str, type: int, pid_or_tid: document.convert_doc_id,
+    uid: int, lang: str, code: str, tid: objectid.ObjectId = None, hidden = False):
   coll = db.Collection('record')
   return await coll.insert({'hidden': hidden,
                             'status': STATUS_WAITING,
@@ -35,7 +35,7 @@ async def add(domain_id: str, type: int, pid_or_tid: document.convert_doc_id, ui
                             'time_ms': 0,
                             'memory_kb': 0,
                             'domain_id': domain_id,
-                            'pid': pid,
+                            'pid': pid_or_tid,
                             'uid': uid,
                             'lang': lang,
                             'code': code,
