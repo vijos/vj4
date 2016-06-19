@@ -85,10 +85,13 @@ class ProblemTestView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
   @base.route_argument
+  @base.post_argument
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, lang: str, code: str, data_input: str, data_output: str):
-    tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PROBLEM_TEST_DATA, data_input = data_input, data_output = data_output)
+    tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PROBLEM_TEST_DATA,
+                             data_input = self.request.POST.getall('data_input'),
+                             data_output = self.request.POST.getall('data_output'))
     rid = await record.add(self.domain_id, record.TYPE_TEST, tid, self.user['_id'], lang, code)
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
     self.json_or_redirect(self.reverse_url('record_main'))
