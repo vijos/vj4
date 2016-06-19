@@ -1,0 +1,219 @@
+// IDE Mode
+.main--ide-mode
+  display: table
+  width: 100%
+  height: 100%
+  padding-bottom: 0
+  .content-container
+    max-width: none
+    display: table
+    width: 100%
+    height: 100%
+
+.ide
+  display: table-row
+  width: 100%
+  height: 100%
+  // background: rgba(252, 133, 130 ,0.55)
+
+  .ide__left, .ide__right
+    width: 50%
+    height: 100%
+    display: table
+
+  .ide-layout--table
+    display: table
+    table-layout: fixed
+    width: 100%
+    height: 100%
+    border-collapse: collapse
+
+  .ide-layout--table-row
+    display: table-row
+    width: 100%
+
+  .ide-layout--table-cell
+    display: table-cell
+    vertical-align: top
+
+  .ide__code-area__toolbar
+    height: 2.5rem
+    background: rgb(213, 223, 227)
+
+  .ide__code-area__toolbar__btn
+    min-width: 65px
+    height: 2.5rem
+    padding: 0 5px
+    background: none
+    border: none
+    outline: none
+    cursor: pointer
+    transition: background-color .25s ease-in-out-cubic
+    i
+      font-size: 1.15rem
+      line-height: 2.5rem
+      vertical-align: middle
+    span
+      line-height: 2.5rem
+      vertical-align: middle
+      font-size: 0.8rem
+    &:hover
+      background: rgb(233, 243, 247)
+
+  .ide__code-area__toolbar__label
+    display: inline-block
+    min-width: 65px
+    height: 2.5rem
+
+    padding: 0 5px
+    cursor: pointer
+    font-size: 0.8rem
+
+    line-height: 2.5rem
+    vertical-align: middle
+
+  /* Testing area */
+
+  .ide__testing-area
+    height: 100%
+
+  .ide__testing-area-table
+    display: table
+    width: 100%
+
+  .ide__testing-area__toolbar,
+  .ide__evaluating-area__toolbar
+    height: 2.1875rem
+    background: rgb(105, 167, 215)
+    color: #fff
+    font-size: 0.8rem
+
+    line-height: 2.1875rem
+    vertical-align: middle
+
+  .ide__testing-area__toolbar__title,
+  .ide__evaluating-area__toolbar__title
+    display: inline-block
+    padding: 0 10px
+    margin-right: 25px
+
+  .toolbar-tabs
+    display: inline-block
+    padding: 0 5px
+    .tab
+      padding 0 2.5px
+      display: inline-block
+      cursor: pointer
+    .tab--active
+      height: 2.1875rem
+      border-bottom: 0.1875rem solid rgb(254, 231, 160)
+
+  .ide__testing-area__toolbar__operations,
+  .ide__evaluating-area__toolbar__operations
+    .operation
+      display: inline-block
+      height: 2.1875rem
+      line-height: 2.1875rem
+      vertical-align: middle
+      padding: 0 5px
+      cursor: pointer
+
+  /*.ide__testing-area__text-input
+    border-left: 3px solid rgb(239, 239, 239)*/
+  /*.ide__testing-area__text-output
+    border-left: 3px solid rgb(239, 239, 239)*/
+  .test-input-footer
+    background: #fff
+    color: #aeaeae
+    padding-left: 5px
+    line-height: 1.5rem
+    font-size: 0.8rem
+
+  /* evaluating */
+  .ide__evaluating-area
+    min-height: 130px
+    height: 100%
+
+  .ide__evaluating-area__results
+    width: 100%
+    height: 100%
+    min-height: 150px
+    background: #fff
+    overflow-y: auto
+
+  /* results */
+  .results
+    display: block
+    position: relative
+    padding: 0
+    list-style: none
+    overflow-y: auto
+    .result
+      display: block
+      position: relative
+      height: 2.1875rem
+      list-style: none
+      font-size: 0.9rem
+      line-height: 2.1875rem
+      &:nth-child(2n)
+        background: #efefef
+      .result__progress-bg
+        position: absolute
+        background: rgba(241, 151, 37, 0.15)
+        height: 100%
+      .result__title
+        display: inline-block
+        width: 100px
+        padding-left: 5px
+        i
+          padding: 5px
+      .result__title__text
+        color: rgb(181, 181, 181)
+      .result__state
+        display: inline-block
+        min-width: 200px
+      .result__state__items
+        display: inline-block
+      .result__state__items__item
+        display: inline-block
+        padding: 0 5px
+        color: rgb(181, 181, 181)
+      .result__statistics
+        display: inline-block
+        float: right
+      .result__statistics__running-time, .result__statistics__memory-usage, .result__statistics__start-time
+        display: inline-block
+        padding: 0 5px
+        line-height: 2.1875rem
+        color: rgb(181, 181, 181)
+
+    .result--pending
+      border-left: 5px solid rgb(181, 181, 181)
+      .result__title__icon
+        color: rgb(181, 181, 181)
+    .result--judging
+      border-left: 5px solid rgb(241, 151, 37)
+      .result__title__icon
+        color: rgb(241, 151, 37)
+    .result--ac
+      border-left: 5px solid rgb(46, 172, 70)
+      .result__title__icon
+        color: rgb(46, 172, 70)
+    .result--err
+      border-left: 5px solid rgb(248, 87, 89)
+      .result__title__icon
+        color: rgb(248, 87, 89)
+
+  /* CodeMirror style fixes */
+  .ReactCodeMirror
+    display: table-row
+    height: 100%
+    min-height: none
+  .CodeMirror
+    display: table-cell
+    padding: 0
+    border-radius: 0
+    min-height: 200px !important
+    height: auto !important
+  .CodeMirror-scroll
+    overflow-x: hidden !important
