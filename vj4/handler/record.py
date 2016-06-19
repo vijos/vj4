@@ -1,5 +1,4 @@
 import asyncio
-import json
 
 from bson import objectid
 from aiohttp import web
