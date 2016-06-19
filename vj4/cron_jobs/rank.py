@@ -54,19 +54,20 @@ def count_level(perc):
     if perc <= value:
       return key
 
-def handle_rank():
+def rank():
   conn = pymongo.MongoClient(options.options.db_host, options.options.db_port)
   db = conn[options.options.db_name]
   coll = db['user']
 
-  udocs = list(coll.find())
-  udocs.sort(key = lambda x:(x['rp']), reverse=True)
+  udocs = coll.find().sort([('rp', -1)])
 
   rank_array = rank_data(udocs)
   total = rank_array[-1]
 
   bulk = coll.initialize_unordered_bulk_op()
 
+  # reset cursor
+  udocs.rewind()
   for udoc, rankN in zip(udocs, rank_array):
     level = count_level(rankN / total)
 
@@ -84,7 +85,7 @@ def handle_rank():
 
 def main():
   options.parse_command_line()
-  handle_rank()
+  rank()
 
 if __name__ == '__main__':
   main()
