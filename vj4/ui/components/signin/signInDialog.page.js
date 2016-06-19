@@ -1,14 +1,14 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import Dialog from 'components/dialog/Dialog';
+import { AutoloadPage } from '../../misc/PageLoader';
+import Dialog from '../dialog/Dialog';
 
 const signinDialogPage = new AutoloadPage(() => {}, () => {
-
   const signInDialog = Dialog.getOrConstruct($('.dialog--signin'), {
     cancelByClickingBack: true,
     cancelByEsc: true,
   });
 
-  if ($('.command--nav-login').length > 0) {
+  // don't show quick login dialog if in mobile
+  if ($('.command--nav-login').length > 0 && window.innerWidth >= 450) {
     // nav
     $('.command--nav-login').click((ev) => {
       if (ev.shiftKey || ev.metaKey || ev.ctrlKey) {
@@ -25,7 +25,6 @@ const signinDialogPage = new AutoloadPage(() => {}, () => {
       signInDialog.hide();
     });
   }
-
 });
 
 export default signinDialogPage;

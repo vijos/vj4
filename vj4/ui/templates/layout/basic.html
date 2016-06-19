@@ -2,8 +2,11 @@
 {% extends "layout/html5.html" %}
 {% block body %}
 {% include "components/nav.html" %}
-<div class="autoexpand__container">
+
+<div class="slideout-panel-container">
+<div class="autoexpand__container slideout-panel" id="panel">
   <div class="autoexpand__collapse">
+    {% include "components/nav-hamburger.html" %}
     <div class="header{% if header_collapsed %} collapsed{% endif %}">
       <div class="header-content content-container">
         <a class="header__logo" href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
@@ -33,6 +36,7 @@
   <div class="autoexpand__collapse">
     {% include "components/footer.html" %}
   </div>
+</div>
 </div>
 
 {% include "components/login_dialog.html" %}

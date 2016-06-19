@@ -1,5 +1,5 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import * as util from 'misc/Util';
+import { AutoloadPage } from '../../misc/PageLoader';
+import * as util from '../../misc/Util';
 
 function setVoteState($voteTr, vote) {
   const $voteCount = $voteTr.find('.vote--count');
@@ -7,7 +7,6 @@ function setVoteState($voteTr, vote) {
 }
 
 const votePage = new AutoloadPage(() => {
-
   $(document).on('click', '.vote', (ev) => {
     const $button = $(ev.currentTarget);
     const $tr = $button.closest('tr');
@@ -25,7 +24,6 @@ const votePage = new AutoloadPage(() => {
       });
     return false;
   });
-
 });
 
 export default votePage;

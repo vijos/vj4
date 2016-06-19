@@ -1,6 +1,7 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import * as util from 'misc/Util';
+import { AutoloadPage } from '../../misc/PageLoader';
+import * as util from '../../misc/Util';
 import throttle from 'lodash/throttle';
+import Slideout from 'slideout';
 
 let $nav = null;
 let $navShadow = null;
@@ -33,8 +34,8 @@ function updateNavFloating() {
   }
 }
 
-function onWindowScroll() {
-  if (window.scrollY > 30) {
+function onScroll() {
+  if ($(window).scrollTop() > 30) {
     if (!isNonTop) {
       isNonTop = true;
       updateNavFloating();
@@ -70,7 +71,7 @@ function onNavDropdownHide() {
 }
 
 function onNavLogoutClick() {
-  var $logoutLink = $('.command--nav-logout');
+  const $logoutLink = $('.command--nav-logout');
   util.post($logoutLink.attr('href'))
     .then(() => window.location.reload());
   return false;
@@ -79,14 +80,31 @@ function onNavLogoutClick() {
 const navigationPage = new AutoloadPage(() => {
   $nav = $('.nav');
   $navShadow = $('.nav--shadow');
-  if ($nav.length > 0 && document.documentElement.getAttribute('data-layout') === 'basic') {
-    $(window).on('scroll', throttle(onWindowScroll, 100));
+
+  if ($nav.length > 0
+    && document.documentElement.getAttribute('data-layout') === 'basic'
+    && window.innerWidth >= 450
+  ) {
+    $(window).on('scroll', throttle(onScroll, 100));
     $nav.hover(onNavEnter, onNavLeave);
     $nav.on('vjDropdownShow', onNavDropdownShow);
     $nav.on('vjDropdownHide', onNavDropdownHide);
-    $nav.find('.command--nav-logout').click(onNavLogoutClick);
-    onWindowScroll();
+    onScroll();
   }
+
+  $nav.find('.command--nav-logout').click(onNavLogoutClick);
+
+  const slideout = new Slideout({
+    panel: document.getElementById('panel'),
+    menu: document.getElementById('menu'),
+    padding: 256,
+    tolerance: 70,
+  });
+  [['beforeopen', 'add'], ['beforeclose', 'remove']].forEach(([event, action]) => {
+    slideout.on(event, () => $('.nav__hamburger .hamburger')[`${action}Class`]('is-active'));
+  });
+
+  $('.nav__hamburger').click(() => slideout.toggle());
 });
 
 export default navigationPage;

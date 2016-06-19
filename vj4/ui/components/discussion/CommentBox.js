@@ -1,19 +1,9 @@
 import assign from 'lodash/assign';
-import DOMAttachedObject from 'components/DOMAttachedObject';
-import * as util from 'misc/Util';
+import DOMAttachedObject from '../DOMAttachedObject';
+import * as util from '../../misc/Util';
 
 let initialized = false;
 let $template;
-
-function init() {
-  if (initialized) {
-    return;
-  }
-  $template = $('.dczcomments__box').eq(0);
-  $(document).on('click', '.dczcomments__box__submit', onBoxSubmit);
-  $(document).on('click', '.dczcomments__box__cancel', onBoxCancel);
-  initialized = true;
-}
 
 function getClosestInstance($dom) {
   return $dom.closest('.dczcomments__box').data('instance');
@@ -31,6 +21,16 @@ function onBoxSubmit(ev) {
   if (commentBox) {
     commentBox.onSubmit(ev);
   }
+}
+
+function init() {
+  if (initialized) {
+    return;
+  }
+  $template = $('.dczcomments__box').eq(0);
+  $(document).on('click', '.dczcomments__box__submit', onBoxSubmit);
+  $(document).on('click', '.dczcomments__box__cancel', onBoxCancel);
+  initialized = true;
 }
 
 export default class CommentBox extends DOMAttachedObject {
@@ -72,7 +72,7 @@ export default class CommentBox extends DOMAttachedObject {
     return this;
   }
 
-  onSubmit(ev) {
+  onSubmit() {
     util.post('', {
       ...this.options.form,
       content: this.$box.find('textarea').val(),
@@ -92,5 +92,5 @@ export default class CommentBox extends DOMAttachedObject {
 
 }
 
-CommentBox._attachKey = 'vjCommentBoxInstance';
+CommentBox.DOMAttachKey = 'vjCommentBoxInstance';
 assign(CommentBox, DOMAttachedObject);

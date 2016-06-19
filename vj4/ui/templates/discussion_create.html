@@ -11,7 +11,7 @@
               <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
             </div>
             <div class="form__row">
-              <textarea name="content" class="expanded textbox"></textarea>
+              <textarea id="markdown-textarea" name="content" class="expanded textbox"></textarea>
             </div>
             <div class="form__row">
               <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">

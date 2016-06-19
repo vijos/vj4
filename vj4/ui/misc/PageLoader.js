@@ -11,13 +11,13 @@ export class Page {
 }
 
 export class NamedPage extends Page {
-  constructor(name = 'empty', beforeLoading = function() {}, afterLoading = function() {}) {
+  constructor(name = 'empty', beforeLoading = function () {}, afterLoading = function () {}) {
     super(name, false, beforeLoading, afterLoading);
   }
 }
 
 export class AutoloadPage extends Page {
-  constructor(beforeLoading = function() {}, afterLoading = function() {}) {
+  constructor(beforeLoading = function () {}, afterLoading = function () {}) {
     super(null, true, beforeLoading, afterLoading);
   }
 }
@@ -29,16 +29,15 @@ export class PageLoader {
   }
 
   getAutoloadPages() {
-    var pages = this.pageInstances.filter(page => page.autoload);
+    const pages = this.pageInstances.filter(page => page.autoload);
     return pages;
   }
 
   getNamedPage(pageName) {
-    var pages = this.pageInstances.filter(page => page.name === pageName);
+    const pages = this.pageInstances.filter(page => page.name === pageName);
     if (pages.length > 0) {
       return pages[0];
-    } else {
-      return new NamedPage();
     }
+    return new NamedPage();
   }
 }

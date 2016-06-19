@@ -1,5 +1,10 @@
 # VJ4
 
+[![Build Status](https://img.shields.io/travis/vijos/vj4.svg?maxAge=2592000&branch=master&style=flat-square)](https://travis-ci.org/vijos/vj4)
+[![Code Climate](https://img.shields.io/codeclimate/github/vijos/vj4.svg?maxAge=2592000&style=flat-square)](https://codeclimate.com/github/vijos/vj4)
+[![Dependency Status](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62/badge.svg?style=flat)](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62)
+[![GitHub license](https://img.shields.io/badge/license-AGPLv3-blue.svg?style=flat-square)](https://raw.githubusercontent.com/vijos/vj4/master/LICENSE)
+
 Next generation of Vijos, built with asyncio on Python 3.5.
 
 ## Prerequisites
@@ -67,10 +72,11 @@ Maximum line width: 100
 
 Indentation: 2 spaces
 
+[JavaScript Style Guide](https://github.com/airbnb/javascript)
+
 ## References
 
 * [aiohttp](http://aiohttp.readthedocs.org/en/stable/)
 * [Jinja2 Documentation](http://jinja.pocoo.org/docs/)
 * [Motor: Asynchronous Python driver for MongoDB](http://motor.readthedocs.org/en/stable/)
 * [Webpack Module Bundler](http://webpack.github.io/docs/)
-* [Typescript](http://www.typescriptlang.org/Handbook)

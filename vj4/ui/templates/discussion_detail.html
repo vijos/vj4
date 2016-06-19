@@ -60,7 +60,7 @@
                 <ul style="display:none">
                   <li class="dczcomments__reply media commentbox-container">
                     <div class="media__left top">
-                      <img src="{{ view.user['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
+                      <img src="{{ handler.user['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
                     </div>
                     <div class="media__body top commentbox-placeholder"></div>
                   </li>
@@ -84,7 +84,7 @@
                     <span class="v-center">@ {{ datetime_span(drdoc['_id'].generation_time) }}</span>
                   </div>
                   <div class="dczcomments__operations nojs--hide">
-                    <a href="javascript:;" data-balloon="Reply" class="dczcomments__op-reply" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><i class="icon-reply"></i></a> <a href="javascript:;" data-balloon="Edit" class="dczcomments__op-edit"><i class="icon-edit"></i></a> <a href="javascript:;" data-balloon="Delete" class="dczcomments__op-delete"><i class="icon-delete"></i></a>
+                    <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><i class="icon-reply"></i></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><i class="icon-edit"></i></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><i class="icon-delete"></i></a>
                   </div>
                 </div>
                 <div class="typo no-heading">
@@ -105,7 +105,7 @@
                           <span class="v-center">@ {{ datetime_span(drrdoc['at']) }}</span>
                         </div>
                         <div class="dczcomments__operations nojs--hide">
-                          <a href="javascript:;" data-balloon="Reply" class="dczcomments__op-reply"><i class="icon-reply"></i></a> <a href="javascript:;" data-balloon="Edit" class="dczcomments__op-edit"><i class="icon-edit"></i></a> <a href="javascript:;" data-balloon="Delete" class="dczcomments__op-delete"><i class="icon-delete"></i></a>
+                          <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply"><i class="icon-reply"></i></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><i class="icon-edit"></i></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><i class="icon-delete"></i></a>
                         </div>
                       </div>
                       <div class="typo no-heading">
