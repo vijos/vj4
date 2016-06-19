@@ -55,7 +55,7 @@ class ProblemDetailView(base.Handler):
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
-class ProblemDetailView(base.Handler):
+class ProblemSubmissionView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -76,21 +76,22 @@ class ProblemDetailView(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
     pdoc = await problem.get(self.domain_id, pid)
-    rid = await record.add(self.domain_id, pdoc['doc_id'], self.user['_id'], lang, code)
+    rid = await record.add(self.domain_id, record.TYPE_SUBMISSION, pdoc['doc_id'], self.user['_id'], lang, code)
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
     self.json_or_redirect(self.reverse_url('record_main'))
 
-@app.route('/duipai/submit', 'duipai_submit')
-class DuipaiDetailView(base.Handler):
-  @base.post_argument
+@app.route('/p/test', 'problem_test')
+class ProblemTestView(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
+  @base.route_argument
+  @base.require_csrf_token
   @base.sanitize
   async def post(self, *, lang: str, code: str, data_input: str, data_output: str):
-    # TODO: 对拍API
-    did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_DATA, data_input = ['1 2', '3 4'], data_output = ['3', '7'])
-    # did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_DATA, data_input = data_input, data_output = data_output)
-    rid = await record.add(self.domain_id, did, self.user['_id'], lang, code, rec_type = record.TYPE_DUIPAI)
+    tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PROBLEM_TEST_DATA, data_input = data_input, data_output = data_output)
+    rid = await record.add(self.domain_id, record.TYPE_TEST, tid, self.user['_id'], lang, code)
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
-    self.json({'record_id': str(rid)})
+    self.json_or_redirect(self.reverse_url('record_main'))
 
 @app.route(r'/p/{pid}/solution', 'problem_solution')
 class ProblemSolutionView(base.OperationView):

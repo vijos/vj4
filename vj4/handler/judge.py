@@ -59,7 +59,7 @@ class JudgeDataDetailView(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
-    ddoc = await document.get(rdoc['domain_id'], document.TYPE_DATA, rdoc['pid'])
+    ddoc = await document.get(rdoc['domain_id'], document.TYPE_PROBLEM_TEST_DATA, rdoc['pid'])
     if not ddoc:
       raise error.ProblemDataNotFoundError(rdoc['pid'])
 
@@ -79,7 +79,7 @@ class JudgeDataDetailView(base.Handler):
 
     inMemoryOutputFile.seek(0)
     zipFile.close()
-    await self.zip(inMemoryOutputFile)
+    await self.binary_stream(inMemoryOutputFile)
 
 @app.connection_route('/judge/consume-conn', 'judge_consume-conn')
 class JudgeNotifyConnection(base.Connection):
@@ -96,8 +96,8 @@ class JudgeNotifyConnection(base.Connection):
       rdoc = await record.begin_judge(rid, self.user['_id'], self.id, record.STATUS_COMPILING)
       if rdoc:
         self.rids[tag] = rdoc['_id']
-        self.send(tag=tag, pid=str(rdoc['pid']), record_id=str(rdoc['_id']), domain_id=rdoc['domain_id'],
-                  lang=rdoc['lang'], code=rdoc['code'], rec_type=rdoc['rec_type'])
+        self.send(id=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
+                  lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])
         await bus.publish('record_change', rdoc['_id'])
       else:
         # Record not found, eat it.

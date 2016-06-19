@@ -22,12 +22,12 @@ STATUS_JUDGING = 20
 STATUS_COMPILING = 21
 STATUS_IGNORED = 30
 
-TYPE_NORMAL = 0
-TYPE_DUIPAI = 1
+TYPE_SUBMISSION = 0
+TYPE_TEST = 1
 
 @argmethod.wrap
-async def add(domain_id: str, pid: document.convert_doc_id, uid: int, lang: str,
-    code: str, tid: objectid.ObjectId = None, hidden=False, rec_type: int = TYPE_NORMAL):
+async def add(domain_id: str, type: int, pid_or_tid: document.convert_doc_id, uid: int, lang: str,
+    code: str, tid: objectid.ObjectId = None, hidden = False):
   coll = db.Collection('record')
   return await coll.insert({'hidden': hidden,
                             'status': STATUS_WAITING,
@@ -40,7 +40,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, uid: int, lang: str,
                             'lang': lang,
                             'code': code,
                             'tid': tid,
-                            'rec_type': rec_type})
+                            'type': type})
 
 @argmethod.wrap
 async def get(record_id: objectid.ObjectId):
@@ -51,7 +51,7 @@ async def get(record_id: objectid.ObjectId):
 @argmethod.wrap
 def get_multi(end_id: objectid.ObjectId = None, *, fields=None):
   coll = db.Collection('record')
-  query = {'hidden': False, 'rec_type': TYPE_NORMAL}
+  query = {'hidden': False}
   if end_id:
     query['_id'] = {'$lt': end_id}
   return coll.find(query, fields=fields)
