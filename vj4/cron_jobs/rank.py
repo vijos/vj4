@@ -1,5 +1,6 @@
 import pymongo
 import pymongo.errors
+import time
 
 from vj4.util import options
 
@@ -25,7 +26,6 @@ level_config = [
 
 def rank_data(udocs):
   stack = list()
-  result = list()
   rank = 1
   for udoc in udocs:
     if not stack:
@@ -35,15 +35,13 @@ def rank_data(udocs):
     else:
       while stack:
         doc = stack.pop()
-        result.append(rank)
+        yield rank
       rank += 1
       stack.append(udoc)
 
   while stack:
     doc = stack.pop()
-    result.append(rank)
-
-  return result
+    yield rank
 
 def count_level(perc):
   global level_config
@@ -59,22 +57,30 @@ def rank():
   db = conn[options.options.db_name]
   coll = db['user']
 
+  # update rankN
   udocs = coll.find().sort([('rp', -1)])
-
-  rank_array = rank_data(udocs)
-  total = rank_array[-1]
-
   bulk = coll.initialize_unordered_bulk_op()
-
-  # reset cursor
-  udocs.rewind()
-  for udoc, rankN in zip(udocs, rank_array):
-    level = count_level(rankN / total)
-
+  for udoc, rankN in zip(udocs, rank_data(udocs)):
     bulk.find({'_id':udoc['_id']}).update_one(
       {'$set':
         {
-          'rankN':rankN,
+          'rankN':rankN
+          }})
+
+  try:
+    bulk.execute()
+  except pymongo.errors.BulkWriteError as bwe:
+    pprint(bwe.details)
+
+  # update level
+  totalN = coll.find_one(sort=[('rp', 1)])['rankN']
+  udocs = coll.find()
+  bulk = coll.initialize_unordered_bulk_op()
+  for udoc in udocs:
+    level = count_level(udoc['rankN'] / totalN)
+    bulk.find({'_id':udoc['_id']}).update_one(
+      {'$set':
+        {
           'level':level
           }})
 
