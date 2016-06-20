@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Constants from './ide-constants';
+import moment from 'moment';
 
 class RecordRow extends React.Component {
 
@@ -26,21 +27,7 @@ class RecordRow extends React.Component {
   }
 
   static calculateDiffTime(creationTime) {
-    const currentTime = new Date();
-    const diffMs = currentTime.getTime() - creationTime.getTime();
-
-    const ONE_DAY = 1000 * 60 * 60 * 24;
-    const ONE_HOUR = 1000 * 60 * 60;
-    const ONE_MINUTE = 1000 * 60;
-
-    if (diffMs < ONE_MINUTE) {
-      return 'just now';
-    } else if (diffMs < ONE_HOUR) {
-      return `${Math.floor(diffMs / ONE_MINUTE)} minute${Math.floor(diffMs / ONE_MINUTE) !== 1 ? 's' : ''} ago`;
-    } else if (diffMs < ONE_DAY) {
-      return `${Math.floor(diffMs / ONE_HOUR)} hour${Math.floor(diffMs / ONE_DAY) !== 1 ? 's' : ''} ago`;
-    }
-    return `${Math.floor(diffMs / ONE_DAY)} day${Math.floor(diffMs / ONE_DAY) !== 1 ? 's' : ''} ago`;
+    return moment(creationTime).fromNow();
   }
 
   constructor(props) {
