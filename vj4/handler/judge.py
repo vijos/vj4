@@ -59,7 +59,7 @@ class JudgeDataDetailView(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
-    ddoc = await document.get(rdoc['domain_id'], document.TYPE_PROBLEM_TEST_DATA, rdoc['pid'])
+    ddoc = await document.get(rdoc['domain_id'], document.TYPE_PROBLEM_TEST_DATA, rdoc['data_id'])
     if not ddoc:
       raise error.ProblemDataNotFoundError(rdoc['pid'])
 
