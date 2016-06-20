@@ -274,7 +274,14 @@ class Ide extends React.Component {
       lineNumbers: true,
       matchBrackets: true,
       readOnly: false,
+      indentUnit: 4,
       mode: Ide.mapLangToMode[this.state.language],
+      extraKeys: {
+        Tab: (cm) => {
+          const spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+          cm.replaceSelection(spaces, "end", "+input");
+        },
+      },
     };
 
     // console.log(`this.state = `, this.state);
