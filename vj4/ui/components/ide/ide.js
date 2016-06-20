@@ -56,6 +56,12 @@ class Ide extends React.Component {
       this.sock = sockJS('/records-conn');
       this.sock.onmessage = (message) => {
         const rdoc = JSON.parse(message.data).rdoc;
+        // console.log('Received rdoc = ', rdoc);
+        /* Check uid and pid to ensure that the record should be shown */
+        if ((window.UserContext.uid.toString() !== rdoc.udoc._id.toString())
+          || (window.Context.problemId.toString() !== rdoc.pid.toString())) {
+          return;
+        }
         const nextResultData = this.state.resultData.slice();
         const existedRdoc = nextResultData.filter(val => val._id === rdoc._id)[0];
         if (existedRdoc) {
@@ -223,7 +229,7 @@ class Ide extends React.Component {
         key={idx}
         onClick={this.spanClickTestCaseTabCallback(idx).bind(this)}
       >
-        <span>#{i + 1}</span>
+        <span>#{idx + 1}</span>
       </div>
     );
   }
