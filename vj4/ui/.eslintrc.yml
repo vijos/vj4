@@ -21,6 +21,7 @@ globals:
   __webpack_public_path__: true
   __webpack_require__: true
   UiContext: true
+  Context: true
 rules:
   no-unused-vars: warn
   no-console: off
