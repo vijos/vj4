@@ -8,10 +8,11 @@ env:
   jquery: true
   commonjs: true
 extends:
-  - eslint:recommended
+  - airbnb
   - plugin:react/recommended
 parserOptions:
   sourceType: module
+  ecmaVersion: 7
   ecmaFeatures:
     - impliedStrict
     - experimentalObjectRestSpread
@@ -21,18 +22,11 @@ globals:
   __webpack_require__: true
   UiContext: true
 rules:
-  babel/object-shorthand: 1
+  no-unused-vars: warn
+  no-console: off
   indent:
+    - error
     - 2
-    - 2
-  quotes:
-    - 1
-    - single
-  semi:
-    - 2
-    - always
-  comma-dangle:
-    - 2
-    - always-multiline
-  no-unused-vars: 1
-  no-console: 0
+    - { SwitchCase: 0 }
+  func-names:
+    - off

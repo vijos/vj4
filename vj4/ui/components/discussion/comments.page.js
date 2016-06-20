@@ -1,5 +1,5 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import CommentBox from 'components/discussion/CommentBox';
+import { AutoloadPage } from '../../misc/PageLoader';
+import CommentBox from '../discussion/CommentBox';
 
 let $template;
 
@@ -8,7 +8,7 @@ function init() {
 }
 
 function createCommentBoxContainer($parent) {
-  let $container = $template.clone();
+  const $container = $template.clone();
   $parent.find('.commentbox-prepend-target').eq(0).prepend($container);
   return $container.find('.commentbox-placeholder');
 }
@@ -23,7 +23,7 @@ function onCommentClickReply(ev, options) {
   if (CommentBox.get($evTarget)) {
     CommentBox
       .get($evTarget)
-      .insertText(opt.initialText)
+      .insertText(options.initialText)
       .focus();
     return;
   }

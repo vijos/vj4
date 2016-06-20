@@ -183,6 +183,11 @@ class Handler(web.View, HandlerBase):
     self.response.content_type = 'application/json'
     self.response.text = json.encode(obj)
 
+  async def binary(self, data):
+    self.response = web.StreamResponse()
+    await self.response.prepare(self.request)
+    self.response.write(data)
+
   @property
   def prefer_json(self):
     for d in accept.parse(self.request.headers.get('Accept')):

@@ -72,6 +72,8 @@ Maximum line width: 100
 
 Indentation: 2 spaces
 
+[JavaScript Style Guide](https://github.com/airbnb/javascript)
+
 ## References
 
 * [aiohttp](http://aiohttp.readthedocs.org/en/stable/)

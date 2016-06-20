@@ -1,6 +1,8 @@
 import asyncio
+import json
 
 from bson import objectid
+from aiohttp import web
 
 from vj4 import app
 from vj4 import error
@@ -86,3 +88,15 @@ class RecordDetailView(base.Handler):
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     self.render('record_detail.html', rdoc=rdoc)
+
+  @base.route_argument
+  @base.sanitize
+  async def post(self, *, rid: objectid.ObjectId):
+    rdoc = await record.get(rid)
+    if rdoc:
+      rdoc['_id'] = str(rdoc['_id'])
+      if 'judge_at' in rdoc:
+        rdoc['judge_at'] = rdoc['judge_at'].strftime("%Y-%m-%d %H:%M:%S")
+    else:
+      rdoc = {}
+    self.json(rdoc)

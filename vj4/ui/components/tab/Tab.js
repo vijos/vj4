@@ -1,5 +1,5 @@
 import assign from 'lodash/assign';
-import DOMAttachedObject from 'components/DOMAttachedObject';
+import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Tab extends DOMAttachedObject {
 
@@ -39,6 +39,7 @@ export default class Tab extends DOMAttachedObject {
 
     this.selectTab(0);
 
+    return true;
   }
 
   selectTab(index) {
@@ -51,5 +52,5 @@ export default class Tab extends DOMAttachedObject {
 
 }
 
-Tab._attachKey = 'vjTabInstance';
+Tab.DOMAttachKey = 'vjTabInstance';
 assign(Tab, DOMAttachedObject);

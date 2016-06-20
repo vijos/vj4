@@ -1,5 +1,5 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import hljs from 'components/highlighter/hljs';
+import { AutoloadPage } from '../../misc/PageLoader';
+import hljs from '../highlighter/hljs';
 
 const highlighterPage = new AutoloadPage(() => {
   hljs.highlightBlocks($('body'));

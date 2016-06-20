@@ -3,9 +3,37 @@
 <div class="layout--2col clearfix">
   <div class="layout--2col__main">
     <div class="section">
-      <div class="section__indent top bottom left right">
-        <h1>title</h1>
-        <div class="typo">foo</div>
+      <div class="section__indent top bottom">
+        <h1 class="section__title">{% if page_name == 'problem_edit' %}Edit Problem{% else %}Create Problem{% endif %}</h1>
+        <div class="section__indent left right">
+          <form method="post">
+            <div class="form__row">
+              <label class="form__group">
+                所属账户
+                <select>
+                  <option value="123">当前账户</option>
+                  <option value="123456">同济大学</option>
+                </select>
+              </label>
+            </div>
+            <div class="form__row">
+              <label class="form__group">
+                名称
+                <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
+              </label>
+            </div>
+            <div class="form__row">
+              <label class="form__group">
+                内容
+                <textarea id="markdown-textarea" name="content" class="expanded textbox"></textarea>
+              </label>
+            </div>
+            <div class="form__row">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

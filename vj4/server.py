@@ -10,7 +10,7 @@ import urllib.parse
 from vj4 import app
 from vj4.util import options
 
-options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
+options.define('listen', default='http://0.0.0.0:8888', help='Server listening address.')
 options.define('prefork', default=1, help='Number of prefork workers.')
 
 _logger = logging.getLogger(__name__)

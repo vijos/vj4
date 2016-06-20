@@ -1,5 +1,5 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import * as util from 'misc/Util';
+import { AutoloadPage } from '../../misc/PageLoader';
+import * as util from '../../misc/Util';
 
 function setStarButtonState($starButton, star) {
   const $starIcon = $starButton.find('i');
@@ -13,7 +13,6 @@ function setStarButtonState($starButton, star) {
 }
 
 const starPage = new AutoloadPage(() => {
-
   $(document).on('click', '.star', (ev) => {
     const $button = $(ev.currentTarget);
     const currentState = $button.hasClass('activated');
@@ -33,7 +32,6 @@ const starPage = new AutoloadPage(() => {
       });
     return false;
   });
-
 });
 
 export default starPage;

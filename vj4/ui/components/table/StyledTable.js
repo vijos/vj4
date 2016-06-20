@@ -1,5 +1,5 @@
 import assign from 'lodash/assign';
-import DOMAttachedObject from 'components/DOMAttachedObject';
+import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
 
@@ -28,6 +28,7 @@ export default class StyledTable extends DOMAttachedObject {
       .append(this.$dom);
 
     this.update();
+    return true;
   }
 
   update() {
@@ -42,5 +43,5 @@ export default class StyledTable extends DOMAttachedObject {
 
 }
 
-StyledTable._attachKey = 'vjStyledTableInstance';
+StyledTable.DOMAttachKey = 'vjStyledTableInstance';
 assign(StyledTable, DOMAttachedObject);
