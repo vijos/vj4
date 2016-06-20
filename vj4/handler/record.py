@@ -107,14 +107,14 @@ class RecordPretestDataView(base.Handler):
       raise error.ProblemDataNotFoundError(rdoc['pid'])
 
     output_buffer = io.BytesIO()
-    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZipFile.ZIP_DEFLATED)
+    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
     config_content = str(len(ddoc['data_input'])) + "\n"
     for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
       input_file = 'input' + str(i) + '.txt'
-      output_buffer = 'output' + str(i) + '.txt'
-      config_content += input_file + '|' + output_buffer + '|' + str("1|10|1024\n")
+      output_file = 'output' + str(i) + '.txt'
+      config_content += input_file + '|' + output_file + '|' + str("1|10|1024\n")
       zip_file.writestr('Input/' + input_file, data_input)
-      zip_file.writestr('Output/' + output_buffer, data_output)
+      zip_file.writestr('Output/' + output_file, data_output)
     zip_file.writestr('Config.ini', config_content)
 
     # mark all files as created in Windows

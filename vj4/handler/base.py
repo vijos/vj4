@@ -185,6 +185,7 @@ class Handler(web.View, HandlerBase):
 
   async def binary(self, data):
     self.response = web.StreamResponse()
+    self.response.content_length = len(data)
     await self.response.prepare(self.request)
     self.response.write(data)
 
