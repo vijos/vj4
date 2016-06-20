@@ -10,7 +10,6 @@ const page = new NamedPage('problem_detail', () => {
     'react-dom',
     'react-codemirror',
   ], (require) => {
-    console.log('page problem detail');
     const CodeMirror = require('react-codemirror');
     const Ide = require('components/ide/ide').default;
     const React = require('react');
@@ -26,7 +25,6 @@ const page = new NamedPage('problem_detail', () => {
   /* Initialize IDE */
   const enterIdeMode = (refresh) => {
     if (refresh) {
-      console.log('Refreshing');
       $('.header').addClass('header--hidden');
       $('.footer').addClass('footer--hidden');
     }

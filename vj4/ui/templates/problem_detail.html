@@ -1,6 +1,6 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix" style="display: none;">
+<div class="layout--2col clearfix" style="display: none;"><!-- style="display: none;"-->
   <div class="layout--2col__main">
     <div class="section">
       <div class="section__indent top bottom left right">
@@ -54,7 +54,7 @@
 <div class="ide ide-container">
   <div class="ide-layout--table">
     <div class="ide-layout--table-row">
-      <!-- problem --><div class="ide-layout--table-cell">
+      <!-- problem --><div class="ide-layout--table-cell section">
         <div class="section__indent top bottom left right">
           <h1>{{ pdoc['title'] }}</h1>
           <div class="typo">{{ pdoc['content']|markdown }}</div>
