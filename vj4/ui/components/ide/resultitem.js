@@ -143,9 +143,11 @@ class ResultItem extends React.Component {
       MLE: 0,
       RTE: 0,
     };
-    if (ResultItem.statusToWillShowDetail[this.props.statusCode]) {
+    const status = ResultItem.codeToStatusMap[this.props.statusCode];
+    if (ResultItem.statusToWillShowDetail[status]) {
       this.props.cases.map(el => {
-        return statistic[ResultItem.statusToNotation[el.status]] += 1;
+        const caseStatus = ResultItem.codeToStatusMap[el.status];
+        return statistic[ResultItem.statusToNotation[caseStatus]] += 1;
       });
       return (
         <span className="result__state__items">
@@ -176,7 +178,7 @@ class ResultItem extends React.Component {
       return (
         <span className="result__state__items">
           <span className="result__state__items__item">
-            {ResultItem.statusToContentNameMap[this.props.statusCode]}
+            {ResultItem.statusToContentNameMap[status]}
           </span>
         </span>
       );
@@ -200,13 +202,13 @@ class ResultItem extends React.Component {
           </span>
         </span>
         <span className="result__state">
-          {this.renderDetailItems().bind(this)}
+          {this.renderDetailItems()}
         </span>
         <span className="result__statistics">
           {(() =>
-            ResultItem.statusToWillShowDetail[this.props.statusCode] ? [
-              <span className="result__statistics__running-time">{parseMemoryUsage(memoryKb)}</span>,
-              <span className="result__statistics__memory-usage">{parseTimeUsage(timeMs)}</span>
+            ResultItem.statusToWillShowDetail[status] ? [
+              <span className="result__statistics__running-time" key={0}>{parseMemoryUsage(memoryKb)}</span>,
+              <span className="result__statistics__memory-usage" key={1}>{parseTimeUsage(timeMs)}</span>
             ] : []).call(this)}
           <span className="result__statistics__start-time">
             {calculateDiffTime(dateFromMongoObjectId(this.props.objectId))}

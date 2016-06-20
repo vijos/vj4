@@ -75,6 +75,27 @@ class Ide extends React.Component {
     this.sock = null;
   }
 
+  componentDidMount() {
+    if (!this.sock) {
+      this.sock = SockJS('/records-conn');
+      const self = this;
+      this.sock.onmessage = (message) => {
+        const nextResultData = self.state.resultData.slice();
+        const rdoc = JSON.parse(message.data).rdoc;
+        const existed_rdoc = nextResultData.filter(val => val._id === rdoc._id)[0];
+        if (existed_rdoc) {
+          const idx = nextResultData.indexOf(existed_rdoc);
+          nextResultData[idx] = rdoc;
+        } else {
+          nextResultData.unshift(rdoc);
+        }
+        return self.setState({
+          resultData: nextResultData,
+        });
+      };
+    }
+  }
+
   onLanguageChange(ev) {
     // console.log(this.refs.editor.getCodeMirror());
     this.setState({
@@ -124,6 +145,8 @@ class Ide extends React.Component {
     return this.setState({
       testingData: nextTestingData,
       currentActiveTabIndex: nextActiveTabIndex,
+      currentTestingInputText: nextTestingData[nextActiveTabIndex].input,
+      currentTestingOutputText: nextTestingData[nextActiveTabIndex].output,
     });
   }
 
@@ -176,52 +199,19 @@ class Ide extends React.Component {
     if (!this.state.testingData.length) {
       return;
     }
-    if (!this.sock) {
-      this.sock = SockJS('/records-conn');
-      // console.log('sock on, sock = ', this.sock);
-      this.sock.onmessage = (message) => {
-        const prevResultData = _.cloneDeep(this.props.state.resultData);
-        const rdoc = JSON.parse(message.data).rdoc;
-        const existed_rdoc = prevResultData.filter(val => val._id === rdoc._id);
-        if (existed_rdoc) {
-          existed_rdoc[0] = rdoc;
-        } else {
-          prevResultData.push(rdoc);
-        }
-        return this.setState({
-          resultData: prevResultData
-        });
-      };
-    }
     const dataInput = this.state.testingData.map(el => el.input);
     const dataOutput = this.state.testingData.map(el => el.output);
-
+    const pid = window.location.pathname.split('/').pop();
     post('/p/test', {
       lang: this.state.language,
       code: this.state.code,
       data_input: dataInput,
       data_output: dataOutput,
+      pid: pid,
     });
   }
 
   onProblemSubmit() {
-    if (!this.sock) {
-      this.sock = SockJS('/records-conn');
-      // console.log('sock on, sock = ', this.sock);
-      this.sock.onmessage = (message) => {
-        const prevResultData = _.cloneDeep(this.props.state.resultData);
-        const rdoc = JSON.parse(message.data).rdoc;
-        const existed_rdoc = prevResultData.filter(val => val._id === rdoc._id);
-        if (existed_rdoc) {
-          existed_rdoc[0] = rdoc;
-        } else {
-          prevResultData.push(rdoc);
-        }
-        return this.setState({
-          resultData: prevResultData
-        });
-      };
-    }
     const pid = window.location.pathname.split('/').pop();
     post(`/p/${pid}/submit`, {
       lang: this.state.language,
@@ -256,23 +246,20 @@ class Ide extends React.Component {
   }
 
   renderEvaluatingResultList() {
-
-    const resultList = [];
     if (this.state.resultData) {
-      for (let rdoc of this.state.resultData) {
-        resultList.push(<ResultItem
+      return this.state.resultData.map(
+        (rdoc, idx) => <ResultItem
           objectId={rdoc._id}
           statusCode={rdoc.status}
           type={rdoc.type}
-          memoryKb={rdoc.memory_kb}
-          timeMs={rdoc.time_ms}
-          cases={rdoc.cases}
-        />);
-      }
+          memoryKb={rdoc.memory_kb || 0}
+          timeMs={rdoc.time_ms || 0}
+          cases={rdoc.cases || []}
+          key={`${rdoc._id}-${rdoc.status}-${idx}`}
+        />
+      );
     }
-    return <ul className="results">
-      { resultList }
-    </ul>;
+    return [];
   }
 
   render() {
@@ -284,7 +271,7 @@ class Ide extends React.Component {
     };
 
     // console.log(`this.state = `, this.state);
-    // window.vm = this;
+    window.vm = this;
     return (
       <div className="ide-layout--table">
 
@@ -408,7 +395,9 @@ class Ide extends React.Component {
               </div>
               <div className="ide-layout--table-row">
                 <div className="ide__evaluating-area__results">
-                  { this.renderEvaluatingResultList() }
+                  <ul className="results">
+                    { this.renderEvaluatingResultList() }
+                  </ul>
                 </div>
               </div>
             </div>
