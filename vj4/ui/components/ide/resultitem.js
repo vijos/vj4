@@ -9,7 +9,7 @@ class ResultItem extends React.Component {
     cases: PropTypes.array.isRequired,
     memoryKb: PropTypes.number,
     timeMs: PropTypes.number,
-    timeStart: PropTypes.number,
+    objectId: PropTypes.string,
   }
 
   static codeToStatusMap = {
@@ -101,7 +101,30 @@ class ResultItem extends React.Component {
   }
 
   static parseTimeUsage(timeMs) {
-      return (timeMs < 100) ? `${timeMs} ms` : `${timeMs / 1000} s`
+    return (timeMs < 100) ? `${timeMs} ms` : `${timeMs / 1000} s`;
+  }
+
+  static dateFromMongoObjectId(objectId) {
+    return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
+  }
+
+  static calculateDiffTime(creationTime) {
+    const currentTime = new Date();
+    const diffMs = currentTime.getTime() - creationTime.getTime();
+
+    const ONE_DAY = 1000 * 60 * 60 * 24;
+    const ONE_HOUR = 1000 * 60 * 60;
+    const ONE_MINUTE = 1000 * 60;
+
+    if (diffMs < ONE_MINUTE) {
+      return 'just now';
+    } else if (diffMs < ONE_HOUR) {
+      return `${Math.floor(diffMs / ONE_MINUTE)} minute${Math.floor(diffMs / ONE_MINUTE) !== 1 ? 's' : ''} ago`;
+    } else if (diffMs < ONE_DAY) {
+      return `${Math.floor(diffMs / ONE_HOUR)} hour${Math.floor(diffMs / ONE_DAY) !== 1 ? 's' : ''} ago`;
+    } else {
+      return `${Math.floor(diffMs / ONE_DAY)} day${Math.floor(diffMs / ONE_DAY) !== 1 ? 's' : ''} ago`;
+    }
   }
 
   constructor(props) {
@@ -122,7 +145,7 @@ class ResultItem extends React.Component {
     };
     if (ResultItem.statusToWillShowDetail[this.props.statusCode]) {
       this.props.cases.map(el => {
-        statistic[ResultItem.statusToNotation[el.status]] += 1;
+        return statistic[ResultItem.statusToNotation[el.status]] += 1;
       });
       return (
         <span className="result__state__items">
@@ -162,6 +185,8 @@ class ResultItem extends React.Component {
 
   render() {
     const status = ResultItem.codeToStatusMap[this.props.statusCode];
+    const {memoryKb, timeMs} = this.props;
+    const {parseMemoryUsage, parseTimeUsage, dateFromMongoObjectId, calculateDiffTime} = ResultItem;
 
     return (
       <li className={`result ${ResultItem.statusToClassNameMap[status]}`}>
@@ -178,9 +203,14 @@ class ResultItem extends React.Component {
           {this.renderDetailItems().bind(this)}
         </span>
         <span className="result__statistics">
-          <span className="result__statistics__running-time">{ResultItem.parseMemoryUsage(this.props.memoryKb)}</span>
-          <span className="result__statistics__memory-usage">{ResultItem.parseTimeUsage(this.props.timeMs)}</span>
-          <span className="result__statistics__start-time">{`just now`}</span>
+          {(() =>
+            ResultItem.statusToWillShowDetail[this.props.statusCode] ? [
+              <span className="result__statistics__running-time">{parseMemoryUsage(memoryKb)}</span>,
+              <span className="result__statistics__memory-usage">{parseTimeUsage(timeMs)}</span>
+            ] : []).call(this)}
+          <span className="result__statistics__start-time">
+            {calculateDiffTime(dateFromMongoObjectId(this.props.objectId))}
+          </span>
         </span>
         <div className="clearfix"></div>
       </li>

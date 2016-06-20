@@ -15,6 +15,50 @@ import 'codemirror/mode/php/php';
 
 class Ide extends React.Component {
 
+  static supportLangTypes = {
+    c: 'C',
+    cc: 'C++',
+    pas: 'Pascal',
+    java: 'Java',
+    cs: 'C#',
+    py: 'Python 2.x',
+    py3: 'Python 3',
+    js: 'JavaScript',
+    php: 'PHP',
+    ruby: 'Ruby',
+  }
+
+  static mapLangToMode = {
+    c: 'text/x-csrc',
+    cc: 'text/x-c++src',
+    pas: 'text/x-pascal',
+    java: 'text/x-java',
+    cs: 'text/x-csharp',
+    py: {
+      name: 'text/x-cython',
+      version: 2,
+      singleLineStringErrors: false,
+    },
+    py3: {
+      name: 'python',
+      version: 3,
+      singleLineStringErrors: false,
+    },
+    js: 'text/javascript',
+    php: 'text/x-php',
+    ruby: 'text/x-ruby',
+  }
+
+  static spanSupportLanguageList() {
+    let ret = [];
+    let i = 0;
+    for (let key of Object.keys(Ide.supportLangTypes)) {
+      ret.push(<option value={key} key={i}>{Ide.supportLangTypes[key]}</option>);
+      i += 1;
+    }
+    return ret;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -25,53 +69,10 @@ class Ide extends React.Component {
       currentTestingOutputText: '',
       language: 'c',
       testingData: [],
+      resultData: [],
       currentActiveTabIndex: -1,
     };
-    this.supportLangTypes = {
-      'c': 'C',
-      'cc': 'C++',
-      'pas': 'Pascal',
-      'java': 'Java',
-      'cs': 'C#',
-      'py': 'Python 2.x',
-      'py3': 'Python 3',
-      'js': 'JavaScript',
-      'php': 'PHP',
-      'ruby': 'Ruby',
-    };
-    this.mapLangToMode = {
-      'c': 'text/x-csrc',
-      'cc': 'text/x-c++src',
-      'pas': 'text/x-pascal',
-      'java': 'text/x-java',
-      'cs': 'text/x-csharp',
-      'py': {
-        name: 'text/x-cython',
-        version: 2,
-        singleLineStringErrors: false,
-      },
-      'py3': {
-        name: 'python',
-        version: 3,
-        singleLineStringErrors: false,
-      },
-      'js': 'text/javascript',
-      'php': 'text/x-php',
-      'ruby': 'text/x-ruby',
-    };
     this.sock = null;
-  }
-
-  toggleDisplayTesting() {
-    this.setState({
-      displayTesting: !this.state.displayTesting,
-    });
-  }
-
-  toggleDisplayEvaluating() {
-    this.setState({
-      displayEvalutating: !this.state.displayEvalutating,
-    });
   }
 
   onLanguageChange(ev) {
@@ -79,7 +80,7 @@ class Ide extends React.Component {
     this.setState({
       language: ev.target.value,
     });
-    this.refs.editor.getCodeMirror().setOption('mode', this.mapLangToMode[ev.target.value]);
+    this.refs.editor.getCodeMirror().setOption('mode', Ide.mapLangToMode[ev.target.value]);
   }
 
   onCodeUpdate(newCode) {
@@ -88,22 +89,12 @@ class Ide extends React.Component {
     });
   }
 
-  spanSupportLanguageList() {
-    let ret = [];
-    let i = 0;
-    for (let key of Object.keys(this.supportLangTypes)) {
-      ret.push(<option value={key} key={i}>{this.supportLangTypes[key]}</option>);
-      i += 1;
-    }
-    return ret;
-  }
-
   onAddTestCase(ev, cb = () => {}) {
     const newTestcase = {
       input: '',
       output: '',
     };
-    let nextTestingData = _.cloneDeep(this.state.testingData);
+    const nextTestingData = _.cloneDeep(this.state.testingData);
     nextTestingData.push(newTestcase);
     this.setState({
       currentTestingInputText: '',
@@ -114,25 +105,23 @@ class Ide extends React.Component {
   }
 
   onDeleteTestCase() {
-    let nextTestingData = _.cloneDeep(this.state.testingData);
+    const nextTestingData = _.cloneDeep(this.state.testingData);
     nextTestingData.splice(this.state.currentActiveTabIndex, 1);
     let nextActiveTabIndex = 0;
 
     if ((this.state.currentActiveTabIndex === 0) && (this.state.testingData.length !== 1)) {
       nextActiveTabIndex = 0;
-    }
-    else if ((this.state.currentActiveTabIndex === 0) && (this.state.testingData.length === 1)) {
+    } else if ((this.state.currentActiveTabIndex === 0) && (this.state.testingData.length === 1)) {
       return this.setState({
         currentTestingInputText: '',
         currentTestingOutputText: '',
         testingData: [],
         currentActiveTabIndex: -1,
       });
-    }
-    else {
+    } else {
       nextActiveTabIndex = this.state.currentActiveTabIndex - 1;
     }
-    this.setState({
+    return this.setState({
       testingData: nextTestingData,
       currentActiveTabIndex: nextActiveTabIndex,
     });
@@ -148,24 +137,10 @@ class Ide extends React.Component {
     };
   }
 
-  renderTestingTabList() {
-    let ret = [];
-    for (let i = 0; i < this.state.testingData.length; ++i) {
-      ret.push(
-        <div className={`tab ${(this.state.currentActiveTabIndex === i) ? 'tab--active' : ''}`}
-             key={i}
-             onClick={this.onClickTestCaseTab(i).bind(this)}>
-          <span>#{i + 1}</span>
-        </div>
-      );
-    }
-    return ret;
-  }
-
   onUpdateTestingCaseInput(ev) {
     const newText = ev.target.value;
     const callback = () => {
-      let nextTestingData = _.cloneDeep(this.state.testingData);
+      const nextTestingData = _.cloneDeep(this.state.testingData);
       nextTestingData[this.state.currentActiveTabIndex].input = newText;
       this.setState({
         currentTestingInputText: newText,
@@ -183,7 +158,7 @@ class Ide extends React.Component {
   onUpdateTestingCaseOutput(ev) {
     const newText = ev.target.value;
     const callback = () => {
-      let nextTestingData = _.cloneDeep(this.state.testingData);
+      const nextTestingData = _.cloneDeep(this.state.testingData);
       nextTestingData[this.state.currentActiveTabIndex].output = newText;
       this.setState({
         currentTestingOutputText: newText,
@@ -192,36 +167,35 @@ class Ide extends React.Component {
     };
     if (this.state.testingData.length === 0) {
       this.onAddTestCase(null, callback.bind(this));
-    }
-    else {
+    } else {
       callback();
     }
   }
 
-  onStartTesting() {
+  onTestingSubmit() {
     if (!this.state.testingData.length) {
       return;
     }
     if (!this.sock) {
       this.sock = SockJS('/records-conn');
-      console.log('sock on, sock = ', this.sock);
+      // console.log('sock on, sock = ', this.sock);
       this.sock.onmessage = (message) => {
-        const msg = JSON.parse(message.data);
-        console.log(msg);
+        const prevResultData = _.cloneDeep(this.props.state.resultData);
+        const rdoc = JSON.parse(message.data).rdoc;
+        const existed_rdoc = prevResultData.filter(val => val._id === rdoc._id);
+        if (existed_rdoc) {
+          existed_rdoc[0] = rdoc;
+        } else {
+          prevResultData.push(rdoc);
+        }
+        return this.setState({
+          resultData: prevResultData
+        });
       };
     }
-
     const dataInput = this.state.testingData.map(el => el.input);
     const dataOutput = this.state.testingData.map(el => el.output);
-    /*$.post({
-      url: '/p/test',
-      data: {
-        lang: this.state.language,
-        code: this.state.code,
-        data_input: dataInput,
-        data_output: dataOutput,
-      },
-    });*/
+
     post('/p/test', {
       lang: this.state.language,
       code: this.state.code,
@@ -233,10 +207,19 @@ class Ide extends React.Component {
   onProblemSubmit() {
     if (!this.sock) {
       this.sock = SockJS('/records-conn');
-      console.log('sock on, sock = ', this.sock);
+      // console.log('sock on, sock = ', this.sock);
       this.sock.onmessage = (message) => {
-        const msg = JSON.parse(message.data);
-        console.log('received sock message: ', msg);
+        const prevResultData = _.cloneDeep(this.props.state.resultData);
+        const rdoc = JSON.parse(message.data).rdoc;
+        const existed_rdoc = prevResultData.filter(val => val._id === rdoc._id);
+        if (existed_rdoc) {
+          existed_rdoc[0] = rdoc;
+        } else {
+          prevResultData.push(rdoc);
+        }
+        return this.setState({
+          resultData: prevResultData
+        });
       };
     }
     const pid = window.location.pathname.split('/').pop();
@@ -246,17 +229,62 @@ class Ide extends React.Component {
     });
   }
 
+  toggleDisplayEvaluating() {
+    this.setState({
+      displayEvalutating: !this.state.displayEvalutating,
+    });
+  }
+
+  toggleDisplayTesting() {
+    this.setState({
+      displayTesting: !this.state.displayTesting,
+    });
+  }
+
+  renderTestingTabList() {
+    let ret = [];
+    for (let i = 0; i < this.state.testingData.length; ++i) {
+      ret.push(
+        <div className={`tab ${(this.state.currentActiveTabIndex === i) ? 'tab--active' : ''}`}
+             key={i}
+             onClick={this.onClickTestCaseTab(i).bind(this)}>
+          <span>#{i + 1}</span>
+        </div>
+      );
+    }
+    return ret;
+  }
+
+  renderEvaluatingResultList() {
+
+    const resultList = [];
+    if (this.state.resultData) {
+      for (let rdoc of this.state.resultData) {
+        resultList.push(<ResultItem
+          objectId={rdoc._id}
+          statusCode={rdoc.status}
+          type={rdoc.type}
+          memoryKb={rdoc.memory_kb}
+          timeMs={rdoc.time_ms}
+          cases={rdoc.cases}
+        />);
+      }
+    }
+    return <ul className="results">
+      { resultList }
+    </ul>;
+  }
+
   render() {
     const codeAreaOptions = {
       lineNumbers: true,
       matchBrackets: true,
       readOnly: false,
-      mode: this.mapLangToMode[this.state.language],
+      mode: Ide.mapLangToMode[this.state.language],
     };
 
     // console.log(`this.state = `, this.state);
-    window.vm = this;
-
+    // window.vm = this;
     return (
       <div className="ide-layout--table">
 
@@ -266,7 +294,7 @@ class Ide extends React.Component {
               <div className="float-layout--left">
                 <button className="ide__code-area__toolbar__btn"
                         disabled={ this.state.testingData.length ? undefined : 'disabled' }
-                        onClick={this.onStartTesting.bind(this)} >
+                        onClick={this.onTestingSubmit.bind(this)} >
                   <i className="icon-debug" style={{color: 'rgb(252, 93, 95)'}} />
                   <span>测试</span>
                 </button
@@ -290,7 +318,7 @@ class Ide extends React.Component {
                   <span>编辑器设置</span>
                 </button>*/}
                 <select onChange={this.onLanguageChange.bind(this)} >
-                  {this.spanSupportLanguageList()}
+                  {Ide.spanSupportLanguageList()}
                 </select>
               </div>
             </div>
@@ -380,9 +408,7 @@ class Ide extends React.Component {
               </div>
               <div className="ide-layout--table-row">
                 <div className="ide__evaluating-area__results">
-                  <ul className="results">
-                    <ResultItem type="pending" info={{startTime: 'just now'}} />
-                  </ul>
+                  { this.renderEvaluatingResultList() }
                 </div>
               </div>
             </div>
