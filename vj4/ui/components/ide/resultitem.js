@@ -122,9 +122,8 @@ class ResultItem extends React.Component {
       return `${Math.floor(diffMs / ONE_MINUTE)} minute${Math.floor(diffMs / ONE_MINUTE) !== 1 ? 's' : ''} ago`;
     } else if (diffMs < ONE_DAY) {
       return `${Math.floor(diffMs / ONE_HOUR)} hour${Math.floor(diffMs / ONE_DAY) !== 1 ? 's' : ''} ago`;
-    } else {
-      return `${Math.floor(diffMs / ONE_DAY)} day${Math.floor(diffMs / ONE_DAY) !== 1 ? 's' : ''} ago`;
     }
+    return `${Math.floor(diffMs / ONE_DAY)} day${Math.floor(diffMs / ONE_DAY) !== 1 ? 's' : ''} ago`;
   }
 
   constructor(props) {
@@ -147,7 +146,8 @@ class ResultItem extends React.Component {
     if (ResultItem.statusToWillShowDetail[status]) {
       this.props.cases.map(el => {
         const caseStatus = ResultItem.codeToStatusMap[el.status];
-        return statistic[ResultItem.statusToNotation[caseStatus]] += 1;
+        statistic[ResultItem.statusToNotation[caseStatus]] += 1;
+        return;
       });
       return (
         <span className="result__state__items">
@@ -174,15 +174,13 @@ class ResultItem extends React.Component {
         </span>
       );
     }
-    else {
-      return (
-        <span className="result__state__items">
-          <span className="result__state__items__item">
-            {ResultItem.statusToContentNameMap[status]}
-          </span>
+    return (
+      <span className="result__state__items">
+        <span className="result__state__items__item">
+          {ResultItem.statusToContentNameMap[status]}
         </span>
-      );
-    }
+      </span>
+    );
   }
 
   render() {
@@ -208,7 +206,7 @@ class ResultItem extends React.Component {
           {(() =>
             ResultItem.statusToWillShowDetail[status] ? [
               <span className="result__statistics__running-time" key={0}>{parseMemoryUsage(memoryKb)}</span>,
-              <span className="result__statistics__memory-usage" key={1}>{parseTimeUsage(timeMs)}</span>
+              <span className="result__statistics__memory-usage" key={1}>{parseTimeUsage(timeMs)}</span>,
             ] : []).call(this)}
           <span className="result__statistics__start-time">
             {calculateDiffTime(dateFromMongoObjectId(this.props.objectId))}

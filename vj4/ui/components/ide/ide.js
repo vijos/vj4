@@ -3,7 +3,7 @@ import './ide.styl';
 import Codemirror from 'react-codemirror';
 import ResultItem from './resultitem';
 import _ from 'lodash';
-import SockJS from 'sockjs-client';
+import sockJS from 'sockjs-client';
 import { post } from '../../misc/Util';
 
 import 'codemirror/mode/clike/clike';
@@ -50,7 +50,7 @@ class Ide extends React.Component {
   }
 
   static spanSupportLanguageList() {
-    let ret = [];
+    const ret = [];
     let i = 0;
     for (let key of Object.keys(Ide.supportLangTypes)) {
       ret.push(<option value={key} key={i}>{Ide.supportLangTypes[key]}</option>);
@@ -77,14 +77,14 @@ class Ide extends React.Component {
 
   componentDidMount() {
     if (!this.sock) {
-      this.sock = SockJS('/records-conn');
+      this.sock = sockJS('/records-conn');
       const self = this;
       this.sock.onmessage = (message) => {
         const nextResultData = self.state.resultData.slice();
         const rdoc = JSON.parse(message.data).rdoc;
-        const existed_rdoc = nextResultData.filter(val => val._id === rdoc._id)[0];
-        if (existed_rdoc) {
-          const idx = nextResultData.indexOf(existed_rdoc);
+        const existedRdoc = nextResultData.filter(val => val._id === rdoc._id)[0];
+        if (existedRdoc) {
+          const idx = nextResultData.indexOf(existedRdoc);
           nextResultData[idx] = rdoc;
         } else {
           nextResultData.unshift(rdoc);
@@ -179,8 +179,7 @@ class Ide extends React.Component {
     };
     if (this.state.testingData.length === 0) {
       this.onAddTestCase(null, callback.bind(this));
-    }
-    else {
+    } else {
       callback();
     }
   }
@@ -238,12 +237,14 @@ class Ide extends React.Component {
   }
 
   renderTestingTabList() {
-    let ret = [];
+    const ret = [];
     for (let i = 0; i < this.state.testingData.length; ++i) {
       ret.push(
-        <div className={`tab ${(this.state.currentActiveTabIndex === i) ? 'tab--active' : ''}`}
-             key={i}
-             onClick={this.onClickTestCaseTab(i).bind(this)}>
+        <div
+          className={`tab ${(this.state.currentActiveTabIndex === i) ? 'tab--active' : ''}`}
+          key={i}
+          onClick={this.onClickTestCaseTab(i).bind(this)}
+        >
           <span>#{i + 1}</span>
         </div>
       );
@@ -277,8 +278,8 @@ class Ide extends React.Component {
       mode: Ide.mapLangToMode[this.state.language],
       extraKeys: {
         Tab: (cm) => {
-          const spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
-          cm.replaceSelection(spaces, "end", "+input");
+          const spaces = Array(cm.getOption('indentUnit') + 1).join(' ');
+          cm.replaceSelection(spaces, 'end', '+input');
         },
       },
     };
@@ -292,36 +293,50 @@ class Ide extends React.Component {
           <div className="ide-layout--table ide__code-area">
             <div className="ide-layout--table-row ide__code-area__toolbar">
               <div className="float-layout--left">
-                <button className="ide__code-area__toolbar__btn"
-                        disabled={ this.state.testingData.length ? undefined : 'disabled' }
-                        onClick={this.onTestingSubmit.bind(this)} >
-                  <i className="icon-debug" style={{color: 'rgb(252, 93, 95)'}} />
+                <button
+                  className="ide__code-area__toolbar__btn ide__code-area__toolbar__btn--pretest"
+                  disabled={ this.state.testingData.length ? undefined : 'disabled' }
+                  onClick={this.onTestingSubmit.bind(this)}
+                >
+                  <i className="icon-debug" />
                   <span>测试</span>
                 </button>
-                <button className="ide__code-area__toolbar__btn"
-                         onClick={this.onProblemSubmit.bind(this)}>
-                  <i className="icon-play" style={{color: 'rgb(21, 151, 71)'}} />
-                <span>递交代码</span>
+                <button
+                  className="ide__code-area__toolbar__btn ide__code-area__toolbar__btn--submit"
+                  onClick={this.onProblemSubmit.bind(this)}
+                >
+                  <i className="icon-play" />
+                  <span>递交代码</span>
                 </button>
-                <button className="ide__code-area__toolbar__btn"
-                        onClick={this.onLeaveIDEMode}>
-                  <i className="icon-close" style={{color: 'rgb(90, 88, 88)'}} />
+                <button
+                  className="ide__code-area__toolbar__btn ide__code-area__toolbar__btn--exit"
+                  onClick={this.onLeaveIDEMode}
+                >
+                  <i className="icon-close" />
                   <span>退出IDE模式</span>
                 </button>
               </div>
               <div className="float-layout--right">
-                <label className={'ide__code-area__toolbar__label ' + (this.state.displayTesting ? 'ide__code-area__toolbar__label--active': '')} onClick={this.toggleDisplayTesting.bind(this)}>
-                  <i className="icon-edit" style={{color: 'rgb(90, 88, 88)'}} />
+                <label
+                  className={'ide__code-area__toolbar__label ' + (this.state.displayTesting ? 'ide__code-area__toolbar__label--active' : '')}
+                  onClick={this.toggleDisplayTesting.bind(this)}
+                >
+                  <i className="icon-edit" />
                   <span>测试数据</span>
                 </label>
-                <label className={'ide__code-area__toolbar__label ' + (this.state.displayEvalutating ? 'ide__code-area__toolbar__label--active': '')} onClick={this.toggleDisplayEvaluating.bind(this)}>
-                  <i className="icon-flag" style={{color: 'rgb(90, 88, 88)'}} />
+                <label
+                  className={'ide__code-area__toolbar__label ' + (this.state.displayEvalutating ? 'ide__code-area__toolbar__label--active' : '')}
+                  onClick={this.toggleDisplayEvaluating.bind(this)}
+                >
+                  <i className="icon-flag" />
                   <span>评测结果</span>
                 </label>
-                {/*<button className="ide__code-area__toolbar__btn">
-                  <i className="icon-settings" style={{color: 'rgb(90, 88, 88)'}} />
+                {/*
+                <button className="ide__code-area__toolbar__btn">
+                  <i className="icon-settings" />
                   <span>编辑器设置</span>
-                </button>*/}
+                </button>
+                */}
                 <select onChange={this.onLanguageChange.bind(this)} >
                   {Ide.spanSupportLanguageList()}
                 </select>
@@ -365,9 +380,12 @@ class Ide extends React.Component {
                   <div className="ide-layout--table-cell" style={{'minWidth': '50%'}}>
                     <div className="ide-layout--table ide__testing-area__text-input">
                       <div className="ide-layout--table-row">
-                        <textarea ref="testingInput" wrap="off"
-                                  value={this.state.currentTestingInputText}
-                                  onChange={this.onUpdateTestingCaseInput.bind(this)} />
+                        <textarea
+                          ref="testingInput"
+                          wrap="off"
+                          value={this.state.currentTestingInputText}
+                          onChange={this.onUpdateTestingCaseInput.bind(this)}
+                        />
                       </div>
                       <div className="ide-layout--table-row test-input-footer">样例输入</div>
                     </div>
