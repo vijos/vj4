@@ -5,10 +5,10 @@
     'problemId': pdoc['doc_id']|string(),
   }|json|safe }};
 </script>
-<div class="layout--2col clearfix">
+<div class="layout--2col clearfix content-main">
   <div class="layout--2col__main">
     <div class="section">
-      <div class="section__indent top bottom left right">
+      <div id="node-problem-content" class="section__indent top bottom left right">
         <h1>{{ pdoc['title'] }}</h1>
         <div class="typo">{{ pdoc['content']|markdown }}</div>
       </div>
@@ -44,18 +44,34 @@
       </div>
     </div>
     <div class="section side">
-      <div class="section__indent top bottom">
-        <h1 class="section__title">{{ _('Related') }}</h1>
-        <div class="section__indent left right">
-          <div class="typo">
-            <p>以下题单收录：</p>
-            <p>123abc</p>
-            <p>处于以下训练计划中：</p>
-            <p>123abc</p>
-          </div>
-        </div>
+      <h1 class="section__title">{{ _('Related') }}</h1>
+      <div class="typo">
+        <p>以下题单收录：</p>
+        <p>123abc</p>
+        <p>处于以下训练计划中：</p>
+        <p>123abc</p>
       </div>
     </div>
   </div>
 </div>
+
+<!-- IDE Mode -->
+<div class="ide ide-container">
+  <div class="ide-layout--table">
+    <div class="ide-layout--table-row" style="max-height: 100%;">
+      <!-- problem -->
+      <div class="ide-layout--table-cell section">
+        <div id="node-ide-problem-content" class="ide-problem-detail">
+          <!-- Problem content will be dynamically cloned here-->
+        </div>
+      </div><!-- problem END -->
+      <!-- codearea -->
+      <div class="ide-layout--table-cell">
+        <div id="ide" class="ide-layout--table"></div>
+      </div>
+      <!-- codearea END -->
+    </div>
+  </div>
+</div>
+
 {% endblock %}
