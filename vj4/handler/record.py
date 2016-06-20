@@ -70,7 +70,7 @@ class RecordMainConnection(base.Connection):
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     # TODO(iceboy): check permission for visibility. (e.g. test).
-    self.send(html=self.render_html('record_tr.html', rdoc=rdoc))
+    self.send(html=self.render_html('record_tr.html', rdoc=rdoc), rdoc=rdoc)
 
   async def on_close(self):
     bus.unsubscribe(self.on_record_change)
