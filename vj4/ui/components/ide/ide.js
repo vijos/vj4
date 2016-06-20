@@ -86,7 +86,6 @@ class Ide extends React.Component {
 
   onLeaveIDEMode() {
     if (window.confirm('确认退出IDE模式吗？')) {
-      $('body').removeClass('ide-mode');
       window.location.hash = '';
     }
   }

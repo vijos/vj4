@@ -45,6 +45,8 @@ const page = new NamedPage('problem_detail', () => {
       /* On entering IDE mode */
       if (window.location.hash === '#ide') {
         enterIdeMode();
+      } else {
+        leaveIdeMode();
       }
     });
   });
