@@ -8,7 +8,7 @@
 <div class="layout--2col clearfix content-main">
   <div class="layout--2col__main">
     <div class="section">
-      <div class="section__indent top bottom left right">
+      <div id="node-problem-content" class="section__indent top bottom left right">
         <h1>{{ pdoc['title'] }}</h1>
         <div class="typo">{{ pdoc['content']|markdown }}</div>
       </div>
@@ -61,11 +61,8 @@
     <div class="ide-layout--table-row" style="max-height: 100%;">
       <!-- problem -->
       <div class="ide-layout--table-cell section">
-        <div class="ide-problem-detail">
-          <div class="section__indent top bottom left right">
-            <h1>{{ pdoc['title'] }}</h1>
-            <div class="typo">{{ pdoc['content']|markdown }}</div>
-          </div>
+        <div id="node-ide-problem-content" class="ide-problem-detail">
+          <!-- Problem content will be dynamically cloned here-->
         </div>
       </div><!-- problem END -->
       <!-- codearea -->

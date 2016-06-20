@@ -15,10 +15,12 @@ const page = new NamedPage('problem_detail', () => {
     const Ide = require('../components/ide/ide').default;
     const React = require('react');
     const ReactDOM = require('react-dom');
-
     const enterIdeMode = () => {
       $('body').addClass('ide-mode');
       if (!ideRendered) {
+        /* Clone problem detail DOMs */
+        const cloneNode = document.getElementById('node-problem-content').cloneNode(true);
+        document.getElementById('node-ide-problem-content').appendChild(cloneNode);
         /* Initialize IDE */
         ReactDOM.render(
           (<Ide />),
@@ -27,29 +29,24 @@ const page = new NamedPage('problem_detail', () => {
         ideRendered = true;
       }
     };
-
     const leaveIdeMode = () => {
       $('body').removeClass('ide-mode');
     };
-
     /* check url hash on refreshing */
     if (window.location.hash) {
       const hash = window.location.hash;
       if (hash === '#ide') {
         enterIdeMode();
-      }
-      else {
+      } else {
         leaveIdeMode();
       }
     }
-
     $(window).on('hashchange', () => {
       /* On entering IDE mode */
       if (window.location.hash === '#ide') {
         enterIdeMode();
       }
     });
-
   });
 });
 
