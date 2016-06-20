@@ -1,4 +1,6 @@
 import json
+import calendar
+import datetime
 
 from bson import objectid
 
@@ -13,6 +15,8 @@ class Encoder(json.JSONEncoder):
   def default(self, o):
     if type(o) is objectid.ObjectId:
       return str(o)
+    if type(o) is datetime.datetime:
+      return o.isoformat()
     return super(Encoder, self).default(o)
 
 
