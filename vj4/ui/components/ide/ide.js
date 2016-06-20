@@ -79,7 +79,8 @@ class Ide extends React.Component {
 
   componentWillUnmount() {
     if (this.sock) {
-      this.sock.disconnect();
+      this.sock.close();
+      this.sock = null;
     }
   }
 
