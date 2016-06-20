@@ -50,11 +50,18 @@ async def get(record_id: objectid.ObjectId):
 
 
 @argmethod.wrap
-def get_multi(end_id: objectid.ObjectId = None, *, fields=None):
+def get_all_multi(end_id: objectid.ObjectId = None, *, fields=None):
   coll = db.Collection('record')
   query = {'hidden': False}
   if end_id:
     query['_id'] = {'$lt': end_id}
+  return coll.find(query, fields=fields)
+
+
+@argmethod.wrap
+def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_doc_id, *, fields=None):
+  coll = db.Collection('record')
+  query = {'hidden': False, 'domain_id': domain_id, 'pid': pid, 'uid': uid}
   return coll.find(query, fields=fields)
 
 
@@ -104,6 +111,7 @@ async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: s
 async def ensure_indexes():
   coll = db.Collection('record')
   await coll.ensure_index([('hidden', 1), ('_id', -1)])
+  await coll.ensure_index([('hidden', 1), ('domain_id'), ('pid', 1), ('uid', 1), ('_id', -1)])
   # TODO(iceboy): Add more indexes.
 
 

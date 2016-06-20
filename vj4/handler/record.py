@@ -50,7 +50,7 @@ STATUS_CODES = {
 class RecordMainView(base.Handler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
-    rdocs = await record.get_multi().sort([('_id', -1)]).to_list(50)
+    rdocs = await record.get_all_multi().sort([('_id', -1)]).to_list(50)
     # TODO(iceboy): projection.
     await asyncio.gather(user.attach_udocs(rdocs, 'uid'),
                          problem.attach_pdocs(rdocs, 'domain_id', 'pid'))
