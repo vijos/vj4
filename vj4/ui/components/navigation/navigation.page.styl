@@ -22,7 +22,11 @@
   line-height: rem($nav-item-height)
 
   .nav__hamburger
+    background: none
+    border: 0
+    border-radius: 0
     color: #FFF
+    outline: 0
 
 .nav--shadow
   position: fixed
@@ -170,37 +174,40 @@
     float: none
 
   .nav__logo
-    width: auto !important
+    width: auto
     opacity: 1
     background-position: center center
     margin: 0
     height: rem($nav-logo-height + 40px)
 
-  .nav__item, .nav__item--round, .dropdown-target.menu .menu__link
-    line-height: rem($nav-item-height - 6) !important
-    padding: rem(0 20px 3px 20px) !important
-    border: 0 !important
-    margin: 0 !important
-    border-radius: 0 !important
-    background: none !important
-    color: #FFF !important
+  .nav__item,
+  .nav__item--round,
+  .nav__list--secondary .nav__item--round,
+  .nav .dropdown-target.menu .menu__link
+    line-height: rem($nav-item-height - 6)
+    padding: rem(0 20px 3px 20px)
+    border: 0
+    margin: 0
+    border-radius: 0
+    background: none
+    color: #FFF
 
     &:visited, &:active
-      background: none !important
-      color: #FFF !important
+      background: none
+      color: #FFF
 
     &:hover
-      background: rgba(#FFF, 0.15) !important
-      color: #FFF !important
+      background: rgba(#FFF, 0.15)
+      color: #FFF
 
-  .dropdown-target.menu
+  .nav .dropdown-target.menu
     display: block
-    background: none !important
-    border: 0 !important
-    box-shadow: none !important
+    background: none
+    border: 0
+    box-shadow: none
 
     .menu__link
-      padding-left: rem(35px) !important
+      padding-left: rem(35px)
 
     .menu__seperator
       display: none
