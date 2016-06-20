@@ -1,10 +1,14 @@
 import asyncio
+import io
+import zipfile
 
-from bson import objectid
 from aiohttp import web
+from bson import objectid
 
 from vj4 import app
 from vj4 import error
+from vj4.model import builtin
+from vj4.model import document
 from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import problem
@@ -43,6 +47,11 @@ STATUS_CODES = {
   record.STATUS_JUDGING: 'progress',
   record.STATUS_COMPILING: 'progress',
   record.STATUS_IGNORED: 'ignored',
+}
+
+TYPE_TEXTS = {
+  record.TYPE_SUBMISSION: 'Submission',
+  record.TYPE_PRETEST: 'Pretest',
 }
 
 
@@ -87,3 +96,35 @@ class RecordDetailView(base.Handler):
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     self.render('record_detail.html', rdoc=rdoc)
+
+
+@app.route('/records/{rid}/pretest_data', 'record_pretest_data')
+class RecordPretestDataView(base.Handler):
+  @base.require_priv(builtin.PRIV_READ_PRETEST_DATA)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, rid: objectid.ObjectId):
+    rdoc = await record.get(rid)
+    if not rdoc:
+      raise error.RecordNotFoundError(rid)
+    ddoc = await document.get(rdoc['domain_id'], document.TYPE_PRETEST_DATA, rdoc['data_id'])
+    if not ddoc:
+      raise error.ProblemDataNotFoundError(rdoc['pid'])
+
+    output_buffer = io.BytesIO()
+    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
+    config_content = str(len(ddoc['data_input'])) + "\n"
+    for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
+      input_file = 'input{0}.txt'.format(i)
+      output_file = 'output{0}.txt'.format(i)
+      config_content += '{0}|{1}|1|10|1024\n'.format(input_file, output_file)
+      zip_file.writestr('Input/{0}'.format(input_file), data_input)
+      zip_file.writestr('Output/{0}'.format(output_file), data_output)
+    zip_file.writestr('Config.ini', config_content)
+
+    # mark all files as created in Windows
+    for zfile in zip_file.filelist:
+      zfile.create_system = 0
+
+    zip_file.close()
+    await self.binary(output_buffer.getvalue())

@@ -1,6 +1,11 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix content-main"><!-- style="display: none;"-->
+<script>
+  var Context = {{ {
+    'problemId': pdoc['doc_id']|string(),
+  }|json|safe }};
+</script>
+<div class="layout--2col clearfix content-main">
   <div class="layout--2col__main">
     <div class="section">
       <div class="section__indent top bottom left right">

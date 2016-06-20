@@ -208,18 +208,17 @@ class Ide extends React.Component {
     }
     const dataInput = this.state.testingData.map(el => el.input);
     const dataOutput = this.state.testingData.map(el => el.output);
-    const pid = window.location.pathname.split('/').pop();
-    post('/p/test', {
+    const pid = window.Context.problemId;
+    post(`/p/${pid}/pretest`, {
       lang: this.state.language,
       code: this.state.code,
       data_input: dataInput,
       data_output: dataOutput,
-      pid: pid,
     });
   }
 
   onProblemSubmit() {
-    const pid = window.location.pathname.split('/').pop();
+    const pid = window.Context.problemId;
     post(`/p/${pid}/submit`, {
       lang: this.state.language,
       code: this.state.code,
@@ -285,7 +284,7 @@ class Ide extends React.Component {
     };
 
     // console.log(`this.state = `, this.state);
-    window.vm = this;
+    // window.vm = this;
     return (
       <div className="ide-layout--table">
 
