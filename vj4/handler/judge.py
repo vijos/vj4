@@ -1,11 +1,16 @@
 import asyncio
 import logging
 import time
+import zipfile
+import io
+
+from bson import objectid
 
 from vj4 import app
 from vj4.model import builtin
 from vj4.model import queue
 from vj4.model import record
+from vj4.model import document
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
@@ -44,6 +49,38 @@ class JudgeDataListView(base.Handler):
       datalist.append({'domain_id': did, 'pid': pid})
     self.json({'list': datalist, 'time': int(time.time())})
 
+@app.route('/judge/data/{rid}', 'pretest_data')
+class JudgeDataDetailView(base.Handler):
+  @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_READ_PRETEST_DATA)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, rid: objectid.ObjectId):
+    rdoc = await record.get(rid)
+    if not rdoc:
+      raise error.RecordNotFoundError(rid)
+    ddoc = await document.get(rdoc['domain_id'], document.TYPE_PROBLEM_TEST_DATA, rdoc['data_id'])
+    if not ddoc:
+      raise error.ProblemDataNotFoundError(rdoc['pid'])
+
+    output_buffer = io.BytesIO()
+    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZipFile.ZIP_DEFLATED)
+    config_content = str(len(ddoc['data_input'])) + "\n"
+    for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
+      input_file = 'input' + str(i) + '.txt'
+      output_buffer = 'output' + str(i) + '.txt'
+      config_content += input_file + '|' + output_buffer + '|' + str("1|10|1024\n")
+      zip_file.writestr('Input/' + input_file, data_input)
+      zip_file.writestr('Output/' + output_buffer, data_output)
+    zip_file.writestr('Config.ini', config_content)
+
+    # mark all files as created in Windows
+    for zfile in zip_file.filelist:
+      zfile.create_system = 0
+
+    output_buffer.seek(0)
+    zip_file.close()
+    await self.binary(output_buffer.getvalue())
+
 
 @app.connection_route('/judge/consume-conn', 'judge_consume-conn')
 class JudgeNotifyConnection(base.Connection):
@@ -60,8 +97,8 @@ class JudgeNotifyConnection(base.Connection):
       rdoc = await record.begin_judge(rid, self.user['_id'], self.id, record.STATUS_COMPILING)
       if rdoc:
         self.rids[tag] = rdoc['_id']
-        self.send(tag=tag, pid=rdoc['pid'], domain_id=rdoc['domain_id'],
-                  lang=rdoc['lang'], code=rdoc['code'])
+        self.send(id=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
+                  lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])
         await bus.publish('record_change', rdoc['_id'])
       else:
         # Record not found, eat it.

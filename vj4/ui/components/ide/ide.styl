@@ -1,0 +1,269 @@
+@import '../../common/common.inc.styl'
+
+$toolbar-secondary-height = rem(2.1875)
+
+.ide
+  display: table-row
+  width: 100%
+  height: 100%
+
+  .ide__left, .ide__right
+    width: 50%
+    height: 100%
+    display: table
+
+  .ide-layout--table
+    display: table
+    table-layout: fixed
+    width: 100%
+    height: 100%
+    border-collapse: collapse
+
+  .ide-layout--table-row
+    display: table-row
+    width: 100%
+
+  .ide-layout--table-cell
+    display: table-cell
+    vertical-align: top
+
+  .ide__code-area__toolbar
+    height: 2.5rem
+    background: rgb(213, 223, 227)
+
+  .ide__code-area__toolbar__btn
+    min-width: 65px
+    height: 2.5rem
+    padding: 0 5px
+    background: none
+    border: none
+    outline: none
+    cursor: pointer
+    transition: background-color .25s ease-in-out-cubic
+    i
+      font-size: 1.15rem
+      line-height: 2.5rem
+      vertical-align: middle
+    span
+      line-height: 2.5rem
+      vertical-align: middle
+      font-size: 0.8rem
+    &:hover
+      background: $bg-color
+    &:disabled
+      opacity: 0.3
+      transition: none
+      cursor: not-allowed
+      &:hover
+        background: none
+
+  .ide__code-area__toolbar__label
+    display: inline-block
+    min-width: 65px
+    height: 2.5rem
+    padding: 0 5px
+
+    font-size: 0.8rem
+    line-height: 2.5rem
+    vertical-align: middle
+
+    cursor: pointer
+    user-select: none
+
+  .ide__code-area__toolbar__label--active
+    background: $primary-color
+    color: #ffffff
+    i
+      color: #ffffff !important
+
+  /* Testing area */
+
+  .ide__testing-area
+    height: 100%
+
+  .ide__testing-area-table
+    display: table
+    width: 100%
+
+  .ide__testing-area__toolbar,
+  .ide__evaluating-area__toolbar
+    height: 2.1875rem
+    background: $primary-color
+    color: #fff
+    font-size: 0.8rem
+
+    line-height: 2.1875rem
+    vertical-align: middle
+
+  .ide__testing-area__toolbar__title,
+  .ide__evaluating-area__toolbar__title
+    display: inline-block
+    padding: 0 10px
+    margin-right: 25px
+
+  .toolbar-tabs
+    display: inline-block
+    padding: 0 5px
+    .tab
+      padding 0 2.5px
+      display: inline-block
+      cursor: pointer
+    .tab--active
+      height: 2.1875rem
+      border-bottom: 0.1875rem solid $immersive-primary-color
+
+  .ide__testing-area__toolbar__operations,
+  .ide__evaluating-area__toolbar__operations
+    .operation
+      display: inline-block
+      height: 2.1875rem
+      padding: 0 5px
+
+      line-height: 2.1875rem
+      vertical-align: middle
+
+      cursor: pointer
+      user-select: none
+
+  .ide__testing-area__text-input,
+  .ide__testing-area__text-output
+    textarea
+      height: 100%
+      box-sizing: border-box
+      outline: none
+      resize: none
+      font-family: $code-font-family
+      border: 1px solid $table-border-color
+      max-width: 100%
+
+  .test-input-footer
+    height: 1.5rem
+    background: #fff
+    color: #aeaeae
+    padding-left: 5px
+    line-height: 1.5rem
+    font-size: 0.8rem
+    border-left: 1px solid $table-border-color
+
+  /* evaluating */
+  .ide__evaluating-area
+    height: 100%
+
+  .ide__evaluating-area__results
+    width: 100%
+    height: 100%
+    background: #fff
+    overflow-y: auto
+    border-left: 1px solid $table-border-color
+
+  /* results */
+  .results
+    display: block
+    position: relative
+    padding: 0
+    list-style: none
+    overflow: auto
+    .result
+      display: block
+      position: relative
+      height: 2.1875rem
+      list-style: none
+      font-size: 0.9rem
+      line-height: 2.1875rem
+      &:nth-child(2n)
+        background: #efefef
+      .result__progress-bg
+        position: absolute
+        background: $record-status-color.progress
+        opacity: 0.15
+        height: 100%
+        transition: width 0.2s ease-in-cubic
+      .result__title
+        display: inline-block
+        width: 100px
+        padding-left: 5px
+        i
+          padding: 5px
+      .result__title__text--pretest
+        color: $small-color !important
+      .result__state
+        display: inline-block
+        min-width: 200px
+      .result__state__items
+        display: inline-block
+      .result__state__items__item
+        display: inline-block
+        padding: 0 5px
+      .result__state__items__item--pass
+        color: $record-status-color.pass !important
+      .result__state__items__item--fail
+        color: $record-status-color.fail !important
+      .result__state__items__item--normal
+        color: $small-color !important
+      .result__statistics
+        display: inline-block
+        float: right
+      .result__statistics__running-time, .result__statistics__memory-usage, .result__statistics__start-time
+        display: inline-block
+        padding: 0 5px
+        line-height: 2.1875rem
+        color: $small-color
+
+    .result--pending
+      border-left: 5px solid $record-status-color.pending
+      .result__title__icon
+        &:before
+          content: $record-status-icon.pending
+        color: $record-status-color.pending
+      .result__title__text, .result__state__items__item
+        color: $record-status-color.pending
+    .result--progress
+      border-left: 5px solid $record-status-color.progress
+      .result__title__icon
+        &:before
+          content: $record-status-icon.progress
+        color: $record-status-color.progress
+      .result__title__text, .result__state__items__item
+        color: $record-status-color.progress
+    .result--pass
+      border-left: 5px solid $record-status-color.pass
+      .result__title__icon
+        &:before
+          content: $record-status-icon.pass
+        color: $record-status-color.pass
+      .result__title__text, .result__state__items__item
+        color: $record-status-color.pass
+    .result--fail
+      border-left: 5px solid $record-status-color.fail
+      .result__title__icon
+        &:before
+          content: $record-status-icon.fail
+        color: $record-status-color.fail
+      .result__title__text, .result__state__items__item
+        color: $record-status-color.fail
+    .result--ignore
+      border-left: 5px solid $record-status-color.ignored
+      .result__title__icon
+        &:before
+          content: $record-status-icon.ignored
+        color: $record-status-color.ignored
+      .result__title__text, .result__state__items__item
+        color: $record-status-color.ignored
+
+
+  /* CodeMirror style fixes */
+  .ReactCodeMirror
+    display: table-row
+    height: 100%
+    min-height: 0
+    font-family: $code-font-family
+  .CodeMirror
+    display: table-cell
+    padding: 0
+    border-radius: 0
+    min-height: 250px !important
+    height: auto !important
+  .CodeMirror-scroll
+    overflow-x: hidden !important
+    min-height: 250px !important
+
