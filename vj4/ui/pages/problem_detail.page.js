@@ -23,34 +23,26 @@ const page = new NamedPage('problem_detail', () => {
   });
 
   /* Initialize IDE */
-  const enterIdeMode = (refresh) => {
-    if (refresh) {
-      $('.header').addClass('header--hidden');
-      $('.footer').addClass('footer--hidden');
-    }
-    else {
-      $('.header').addClass('header--transition').addClass('header--hidden');
-      $('.footer').addClass('footer--hidden');
-    }
-    $('.main').addClass('main--ide-mode');
+  const enterIdeMode = () => {
+    $('body').addClass('ide-mode');
   };
 
   const leaveIdeMode = () => {
-    $('.header').removeClass('header--hidden');
+    $('body').removeClass('ide-mode');
   };
 
   /* url hash changes */
   if (window.location.hash) {
     const hash = window.location.hash;
     if (hash === '#ide') {
-      enterIdeMode(true);
+      enterIdeMode();
     }
   }
 
   $(window).on('hashchange', function() {
     /* On entering IDE mode */
     if (window.location.hash === '#ide') {
-      enterIdeMode(false);
+      enterIdeMode();
     }
   });
 

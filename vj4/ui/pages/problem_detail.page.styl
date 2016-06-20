@@ -1,4 +1,6 @@
 .page--problem_detail
+  .ide-container
+    display: none
   .section--contest-info
     background: #67AABB url(problem_detail/problem-contest-bg.png) right top no-repeat
     color: #FFF
@@ -14,14 +16,27 @@
       color: #FFF
       text-shadow: 0 1px 3px rgba(#000, 0.5)
 
-  .header--transition
-    transition: margin .25s ease-in-out-cubic
-
   .header--hidden
     margin-top: -20rem
 
   .main--hidden, .footer--hidden
     display: none
 
-
+  .ide-mode
+    .header
+      margin-top: -20rem
+    .content-main, .footer
+      display: none
+    .ide-container
+      display: table-row
+    .main
+      display: table
+      width: 100%
+      height: 100%
+      padding-bottom: 0
+      .content-container
+        max-width: none
+        display: table
+        width: 100%
+        height: 100%
 

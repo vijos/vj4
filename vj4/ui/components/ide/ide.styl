@@ -2,18 +2,6 @@
 
 $toolbar-secondary-height = rem(2.1875)
 
-// IDE Mode
-.main--ide-mode
-  display: table
-  width: 100%
-  height: 100%
-  padding-bottom: 0
-  .content-container
-    max-width: none
-    display: table
-    width: 100%
-    height: 100%
-
 .ide
   display: table-row
   width: 100%
@@ -137,10 +125,6 @@ $toolbar-secondary-height = rem(2.1875)
       cursor: pointer
       user-select: none
 
-  /*.ide__testing-area__text-input
-    border-left: 3px solid rgb(239, 239, 239)*/
-  /*.ide__testing-area__text-output
-    border-left: 3px solid rgb(239, 239, 239)*/
   .ide__testing-area__text-input,
   .ide__testing-area__text-output
     textarea
@@ -223,37 +207,32 @@ $toolbar-secondary-height = rem(2.1875)
     .result--pending
       border-left: 5px solid $record-status-color.pending
       .result__title__icon
-        &:before {
+        &:before
           content: $record-status-icon.pending
-        }
         color: $record-status-color.pending
     .result--progress
       border-left: 5px solid $record-status-color.progress
       .result__title__icon
-        &:before {
+        &:before
           content: $record-status-icon.progress
-        }
         color: $record-status-color.progress
     .result--pass
       border-left: 5px solid $record-status-color.pass
       .result__title__icon
-        &:before {
+        &:before
           content: $record-status-icon.pass
-        }
         color: $record-status-color.pass
     .result--fail
       border-left: 5px solid $record-status-color.fail
       .result__title__icon
-        &:before {
+        &:before
           content: $record-status-icon.fail
-        }
         color: $record-status-color.fail
     .result--ignore
       border-left: 5px solid $record-status-color.ignored
       .result__title__icon
-        &:before {
+        &:before
           content: $record-status-icon.ignored
-        }
         color: $record-status-color.ignored
 
   /* CodeMirror style fixes */
