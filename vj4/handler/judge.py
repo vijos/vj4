@@ -1,11 +1,10 @@
 import asyncio
 import logging
 import time
-
 import zipfile
-from zipfile import ZipFile
+import io
+
 from bson import objectid
-from io import BytesIO
 
 from vj4 import app
 from vj4.model import builtin
@@ -63,8 +62,8 @@ class JudgeDataDetailView(base.Handler):
     if not ddoc:
       raise error.ProblemDataNotFoundError(rdoc['pid'])
 
-    output_buffer = BytesIO()
-    zip_file = ZipFile(output_buffer, 'a', ZipFile.ZIP_DEFLATED)
+    output_buffer = io.BytesIO()
+    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZipFile.ZIP_DEFLATED)
     config_content = str(len(ddoc['data_input'])) + "\n"
     for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
       input_file = 'input' + str(i) + '.txt'
