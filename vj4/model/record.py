@@ -110,8 +110,13 @@ async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: s
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('record')
-  await coll.ensure_index([('hidden', 1), ('_id', -1)])
-  await coll.ensure_index([('hidden', 1), ('domain_id'), ('pid', 1), ('uid', 1), ('_id', -1)])
+  await coll.ensure_index([('hidden', 1),
+                           ('_id', -1)])
+  await coll.ensure_index([('hidden', 1),
+                           ('domain_id', 1),
+                           ('pid', 1),
+                           ('uid', 1),
+                           ('_id', -1)])
   # TODO(iceboy): Add more indexes.
 
 

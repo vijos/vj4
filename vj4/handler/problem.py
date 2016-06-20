@@ -63,11 +63,12 @@ class ProblemSubmitView(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pid).sort([('_id', -1)]).to_list(10)
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], None))
-    self.render('problem_submit.html', pdoc=pdoc,
-                page_title=pdoc['title'], path_components=path_components)
+    self.json_or_render('problem_submit.html', pdoc=pdoc, rdocs=rdocs,
+                        page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)

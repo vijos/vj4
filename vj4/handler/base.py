@@ -211,6 +211,12 @@ class Handler(web.View, HandlerBase):
     else:
       self.redirect(redirect_url)
 
+  def json_or_render(self, template_name, **kwargs):
+    if self.prefer_json:
+      self.json(kwargs)
+    else:
+      self.render(template_name, **kwargs)
+
   @property
   def ui_context(self):
     return {'csrf_token': self.csrf_token,
