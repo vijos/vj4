@@ -25,6 +25,7 @@ globals:
 rules:
   no-unused-vars: warn
   no-console: off
+  no-underscore-dangle: off
   indent:
     - error
     - 2
