@@ -184,8 +184,8 @@ $toolbar-secondary-height = rem(2.1875)
         padding-left: 5px
         i
           padding: 5px
-      .result__title__text
-        color: $small-color
+      .result__title__text--pretest
+        color: $small-color !important
       .result__state
         display: inline-block
         min-width: 200px
@@ -194,6 +194,11 @@ $toolbar-secondary-height = rem(2.1875)
       .result__state__items__item
         display: inline-block
         padding: 0 5px
+      .result__state__items__item--pass
+        color: $record-status-color.pass !important
+      .result__state__items__item--fail
+        color: $record-status-color.fail !important
+      .result__state__items__item--normal
         color: $small-color
       .result__statistics
         display: inline-block
@@ -210,11 +215,15 @@ $toolbar-secondary-height = rem(2.1875)
         &:before
           content: $record-status-icon.pending
         color: $record-status-color.pending
+      .result__title__text, .result__state__items__item
+        color: $record-status-color.pending
     .result--progress
       border-left: 5px solid $record-status-color.progress
       .result__title__icon
         &:before
           content: $record-status-icon.progress
+        color: $record-status-color.progress
+      .result__title__text, .result__state__items__item
         color: $record-status-color.progress
     .result--pass
       border-left: 5px solid $record-status-color.pass
@@ -222,11 +231,15 @@ $toolbar-secondary-height = rem(2.1875)
         &:before
           content: $record-status-icon.pass
         color: $record-status-color.pass
+      .result__title__text, .result__state__items__item
+        color: $record-status-color.pass
     .result--fail
       border-left: 5px solid $record-status-color.fail
       .result__title__icon
         &:before
           content: $record-status-icon.fail
+        color: $record-status-color.fail
+      .result__title__text, .result__state__items__item
         color: $record-status-color.fail
     .result--ignore
       border-left: 5px solid $record-status-color.ignored
@@ -234,6 +247,9 @@ $toolbar-secondary-height = rem(2.1875)
         &:before
           content: $record-status-icon.ignored
         color: $record-status-color.ignored
+      .result__title__text, .result__state__items__item
+        color: $record-status-color.ignored
+
 
   /* CodeMirror style fixes */
   .ReactCodeMirror
