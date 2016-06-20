@@ -58,11 +58,14 @@
 <!-- IDE Mode -->
 <div class="ide ide-container">
   <div class="ide-layout--table">
-    <div class="ide-layout--table-row">
-      <!-- problem --><div class="ide-layout--table-cell section">
-        <div class="section__indent top bottom left right">
-          <h1>{{ pdoc['title'] }}</h1>
-          <div class="typo">{{ pdoc['content']|markdown }}</div>
+    <div class="ide-layout--table-row" style="max-height: 100%;">
+      <!-- problem -->
+      <div class="ide-layout--table-cell section">
+        <div class="ide-problem-detail">
+          <div class="section__indent top bottom left right">
+            <h1>{{ pdoc['title'] }}</h1>
+            <div class="typo">{{ pdoc['content']|markdown }}</div>
+          </div>
         </div>
       </div><!-- problem END -->
       <!-- codearea -->
