@@ -207,10 +207,15 @@ class Handler(web.View, HandlerBase):
 
   def json_or_redirect(self, redirect_url, **kwargs):
     if self.prefer_json:
-      self.response.content_type = 'application/json'
-      self.response.text = json.encode(kwargs)
+      self.json(kwargs)
     else:
       self.redirect(redirect_url)
+
+  def json_or_render(self, template_name, **kwargs):
+    if self.prefer_json:
+      self.json(kwargs)
+    else:
+      self.render(template_name, **kwargs)
 
   @property
   def ui_context(self):

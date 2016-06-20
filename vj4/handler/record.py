@@ -1,5 +1,4 @@
 import asyncio
-import json
 
 from bson import objectid
 from aiohttp import web
@@ -51,7 +50,7 @@ STATUS_CODES = {
 class RecordMainView(base.Handler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
-    rdocs = await record.get_multi().sort([('_id', -1)]).to_list(50)
+    rdocs = await record.get_all_multi().sort([('_id', -1)]).to_list(50)
     # TODO(iceboy): projection.
     await asyncio.gather(user.attach_udocs(rdocs, 'uid'),
                          problem.attach_pdocs(rdocs, 'domain_id', 'pid'))
@@ -71,7 +70,7 @@ class RecordMainConnection(base.Connection):
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     # TODO(iceboy): check permission for visibility. (e.g. test).
-    self.send(html=self.render_html('record_tr.html', rdoc=rdoc))
+    self.send(html=self.render_html('record_tr.html', rdoc=rdoc), rdoc=rdoc)
 
   async def on_close(self):
     bus.unsubscribe(self.on_record_change)
@@ -88,15 +87,3 @@ class RecordDetailView(base.Handler):
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     self.render('record_detail.html', rdoc=rdoc)
-
-  @base.route_argument
-  @base.sanitize
-  async def post(self, *, rid: objectid.ObjectId):
-    rdoc = await record.get(rid)
-    if rdoc:
-      rdoc['_id'] = str(rdoc['_id'])
-      if 'judge_at' in rdoc:
-        rdoc['judge_at'] = rdoc['judge_at'].strftime("%Y-%m-%d %H:%M:%S")
-    else:
-      rdoc = {}
-    self.json(rdoc)
