@@ -224,6 +224,10 @@ class Handler(web.View, HandlerBase):
             'cdn_prefix': options.options.cdn_prefix,
             'url_prefix': options.options.url_prefix}
 
+  @property
+  def user_context(self):
+    return {'uid': self.user['_id'],
+            'domain': self.domain_id}
 
 class OperationView(Handler):
   async def post(self):
