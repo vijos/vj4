@@ -7,6 +7,6 @@ export function post(url, data = {}) {
     url,
     method: 'post',
     dataType: 'json',
-    data: postData,
+    data: $.param(postData, true),
   });
 }

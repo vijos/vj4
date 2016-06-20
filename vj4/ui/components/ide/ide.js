@@ -4,6 +4,7 @@ import Codemirror from 'react-codemirror';
 import ResultItem from './resultitem';
 import _ from 'lodash';
 import SockJS from 'sockjs-client';
+import { post } from '../../misc/Util';
 
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/pascal/pascal';
@@ -28,33 +29,33 @@ class Ide extends React.Component {
     };
     this.supportLangTypes = {
       'c': 'C',
-      'cpp': 'C++',
-      'pascal': 'Pascal',
+      'cc': 'C++',
+      'pas': 'Pascal',
       'java': 'Java',
       'cs': 'C#',
-      'python2': 'Python 2.x',
-      'python3': 'Python 3',
-      'javascript': 'JavaScript',
+      'py': 'Python 2.x',
+      'py3': 'Python 3',
+      'js': 'JavaScript',
       'php': 'PHP',
       'ruby': 'Ruby',
     };
     this.mapLangToMode = {
       'c': 'text/x-csrc',
-      'cpp': 'text/x-c++src',
-      'pascal': 'text/x-pascal',
+      'cc': 'text/x-c++src',
+      'pas': 'text/x-pascal',
       'java': 'text/x-java',
       'cs': 'text/x-csharp',
-      'python2': {
+      'py': {
         name: 'text/x-cython',
         version: 2,
         singleLineStringErrors: false,
       },
-      'python3': {
+      'py3': {
         name: 'python',
         version: 3,
         singleLineStringErrors: false,
       },
-      'javascript': 'text/javascript',
+      'js': 'text/javascript',
       'php': 'text/x-php',
       'ruby': 'text/x-ruby',
     };
@@ -212,7 +213,7 @@ class Ide extends React.Component {
 
     const dataInput = this.state.testingData.map(el => el.input);
     const dataOutput = this.state.testingData.map(el => el.output);
-    $.post({
+    /*$.post({
       url: '/p/test',
       data: {
         lang: this.state.language,
@@ -220,6 +221,28 @@ class Ide extends React.Component {
         data_input: dataInput,
         data_output: dataOutput,
       },
+    });*/
+    post('/p/test', {
+      lang: this.state.language,
+      code: this.state.code,
+      data_input: dataInput,
+      data_output: dataOutput,
+    });
+  }
+
+  onProblemSubmit() {
+    if (!this.sock) {
+      this.sock = SockJS('/records-conn');
+      console.log('sock on, sock = ', this.sock);
+      this.sock.onmessage = (message) => {
+        const msg = JSON.parse(message.data);
+        console.log('received sock message: ', msg);
+      };
+    }
+    const pid = window.location.pathname.split('/').pop();
+    post(`/p/${pid}/submit`, {
+      lang: this.state.language,
+      code: this.state.code,
     });
   }
 
@@ -247,7 +270,8 @@ class Ide extends React.Component {
                   <i className="icon-debug" style={{color: 'rgb(252, 93, 95)'}} />
                   <span>测试</span>
                 </button
-                ><button className="ide__code-area__toolbar__btn">
+                ><button className="ide__code-area__toolbar__btn"
+                         onClick={this.onProblemSubmit.bind(this)}>
                 <i className="icon-play" style={{color: 'rgb(21, 151, 71)'}} />
                 <span>递交代码</span>
               </button>
@@ -280,7 +304,7 @@ class Ide extends React.Component {
           </div>
         </div>
 
-        <div className="ide-layout--table-row" style={{ display: this.state.displayTesting ? undefined : 'none' }}>
+        <div className="ide-layout--table-row" style={{display: this.state.displayTesting ? undefined : 'none'}}>
           <div className="ide-layout--table ide__testing-area">
             <div className="ide-layout--table-row ide__testing-area__toolbar">
               <div className="float-layout--left">
@@ -331,7 +355,7 @@ class Ide extends React.Component {
           </div>
         </div>
 
-        <div className="ide-layout--table-row" style={{ display: this.state.displayEvalutating ? undefined : 'none' }}>
+        <div className="ide-layout--table-row" style={{display: this.state.displayEvalutating ? undefined : 'none'}}>
           <div className="ide__evaluating-area">
             <div className="ide-layout--table">
               <div className="ide-layout--table-row ide__evaluating-area__toolbar">
