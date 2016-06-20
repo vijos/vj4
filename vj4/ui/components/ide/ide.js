@@ -62,8 +62,8 @@ class Ide extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayTesting: false,
-      displayEvalutating: false,
+      displayTesting: true,
+      displayEvalutating: true,
       code: '',
       currentTestingInputText: '',
       currentTestingOutputText: '',
