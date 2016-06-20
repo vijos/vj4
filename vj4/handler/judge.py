@@ -52,7 +52,7 @@ class JudgeDataListView(base.Handler):
 
 @app.route('/judge/data/{rid}', 'data_detail')
 class JudgeDataDetailView(base.Handler):
-  # @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
+  @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_READ_PRETEST_DATA)
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):
@@ -63,23 +63,24 @@ class JudgeDataDetailView(base.Handler):
     if not ddoc:
       raise error.ProblemDataNotFoundError(rdoc['pid'])
 
-    inMemoryOutputFile = BytesIO()
-    zipFile = ZipFile(inMemoryOutputFile, 'a', zipfile.ZIP_DEFLATED)
+    output_buffer = BytesIO()
+    zip_file = ZipFile(output_buffer, 'a', ZipFile.ZIP_DEFLATED)
     config_content = str(len(ddoc['data_input'])) + "\n"
     for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
       input_file = 'input' + str(i) + '.txt'
-      output_file = 'output' + str(i) + '.txt'
-      config_content += input_file + '|' + output_file + '|' + str("1|10|1024\n")
-      zipFile.writestr('Input/' + input_file, data_input)
-      zipFile.writestr('Output/' + output_file, data_output)
-    zipFile.writestr('Config.ini', config_content)
+      output_buffer = 'output' + str(i) + '.txt'
+      config_content += input_file + '|' + output_buffer + '|' + str("1|10|1024\n")
+      zip_file.writestr('Input/' + input_file, data_input)
+      zip_file.writestr('Output/' + output_buffer, data_output)
+    zip_file.writestr('Config.ini', config_content)
 
-    for zfile in zipFile.filelist:
+    # mark all files as created in Windows
+    for zfile in zip_file.filelist:
       zfile.create_system = 0
 
-    inMemoryOutputFile.seek(0)
-    zipFile.close()
-    await self.binary_stream(inMemoryOutputFile)
+    output_buffer.seek(0)
+    zip_file.close()
+    await self.binary(output_buffer.getvalue())
 
 @app.connection_route('/judge/consume-conn', 'judge_consume-conn')
 class JudgeNotifyConnection(base.Connection):

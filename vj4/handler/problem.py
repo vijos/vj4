@@ -56,7 +56,7 @@ class ProblemDetailView(base.Handler):
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
-class ProblemSubmissionView(base.Handler):
+class ProblemSubmitView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
