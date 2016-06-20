@@ -6,7 +6,6 @@ from vj4 import app
 from vj4.model import builtin
 from vj4.model import queue
 from vj4.model import record
-from vj4.model import document
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import training

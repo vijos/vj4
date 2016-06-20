@@ -1,16 +1,16 @@
 import asyncio
-import zipfile
 import io
+import zipfile
 
-from bson import objectid
 from aiohttp import web
+from bson import objectid
 
 from vj4 import app
 from vj4 import error
 from vj4.model import builtin
+from vj4.model import document
 from vj4.model import record
 from vj4.model import user
-from vj4.model import document
 from vj4.model.adaptor import problem
 from vj4.service import bus
 from vj4.handler import base
@@ -49,6 +49,11 @@ STATUS_CODES = {
   record.STATUS_IGNORED: 'ignored',
 }
 
+TYPE_TEXTS = {
+  record.TYPE_SUBMISSION: 'Submission',
+  record.TYPE_PRETEST: 'Pretest',
+}
+
 
 @app.route('/records', 'record_main')
 class RecordMainView(base.Handler):
@@ -80,7 +85,7 @@ class RecordMainConnection(base.Connection):
     bus.unsubscribe(self.on_record_change)
 
 
-@app.route(r'/records/{rid}', 'record_detail')
+@app.route('/records/{rid}', 'record_detail')
 class RecordDetailView(base.Handler):
   @base.route_argument
   @base.sanitize
@@ -93,7 +98,7 @@ class RecordDetailView(base.Handler):
     self.render('record_detail.html', rdoc=rdoc)
 
 
-@app.route(r'/records/{rid}/pretest_data', 'record_pretest_data')
+@app.route('/records/{rid}/pretest_data', 'record_pretest_data')
 class RecordPretestDataView(base.Handler):
   @base.require_priv(builtin.PRIV_READ_PRETEST_DATA)
   @base.route_argument
@@ -110,17 +115,16 @@ class RecordPretestDataView(base.Handler):
     zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
     config_content = str(len(ddoc['data_input'])) + "\n"
     for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
-      input_file = 'input' + str(i) + '.txt'
-      output_file = 'output' + str(i) + '.txt'
-      config_content += input_file + '|' + output_file + '|' + str("1|10|1024\n")
-      zip_file.writestr('Input/' + input_file, data_input)
-      zip_file.writestr('Output/' + output_file, data_output)
+      input_file = 'input{0}.txt'.format(i)
+      output_file = 'output{0}.txt'.format(i)
+      config_content += '{0}|{1}|1|10|1024\n'.format(input_file, output_file)
+      zip_file.writestr('Input/{0}'.format(input_file), data_input)
+      zip_file.writestr('Output/{0}'.format(output_file), data_output)
     zip_file.writestr('Config.ini', config_content)
 
     # mark all files as created in Windows
     for zfile in zip_file.filelist:
       zfile.create_system = 0
 
-    output_buffer.seek(0)
     zip_file.close()
     await self.binary(output_buffer.getvalue())

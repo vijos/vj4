@@ -68,6 +68,12 @@
             <p>{{ _('Submit By') }}: {% with noModBadge = true, user = rdoc['udoc'] %}
                 {% include "components/inline_user.html" %}
               {% endwith %}</p>
+            <p>
+              {{ _('Type') }}: {{ vj4.handler.record.TYPE_TEXTS[rdoc['type']] }}
+              {% if rdoc['type'] == vj4.model.record.TYPE_PRETEST %}
+              / <a href="{{ reverse_url('record_pretest_data', rid=rdoc['_id']) }}">{{ _('Download Dataset') }}</a>
+              {% endif %}
+            </p>
             <p>{{ _('Problem') }}: <a href="{{ reverse_url('problem_detail', pid=rdoc['pdoc']['doc_id']) }}">{{ rdoc['pdoc']['title'] }}</a></p>
             <p>{{ _('Submit At') }}: {{ datetime_span(rdoc['_id'].generation_time) }}</p>
             {% if rdoc['judge_at'] %}
