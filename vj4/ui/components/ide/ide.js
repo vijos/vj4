@@ -96,6 +96,13 @@ class Ide extends React.Component {
     }
   }
 
+  onLeaveIDEMode() {
+    if (window.confirm('确认退出IDE模式吗？')) {
+      $('body').removeClass('ide-mode');
+      window.location.hash = '';
+    }
+  }
+
   onLanguageChange(ev) {
     // console.log(this.refs.editor.getCodeMirror());
     this.setState({
@@ -284,12 +291,17 @@ class Ide extends React.Component {
                         onClick={this.onTestingSubmit.bind(this)} >
                   <i className="icon-debug" style={{color: 'rgb(252, 93, 95)'}} />
                   <span>测试</span>
-                </button
-                ><button className="ide__code-area__toolbar__btn"
+                </button>
+                <button className="ide__code-area__toolbar__btn"
                          onClick={this.onProblemSubmit.bind(this)}>
-                <i className="icon-play" style={{color: 'rgb(21, 151, 71)'}} />
+                  <i className="icon-play" style={{color: 'rgb(21, 151, 71)'}} />
                 <span>递交代码</span>
-              </button>
+                </button>
+                <button className="ide__code-area__toolbar__btn"
+                        onClick={this.onLeaveIDEMode}>
+                  <i className="icon-close" style={{color: 'rgb(90, 88, 88)'}} />
+                  <span>退出IDE模式</span>
+                </button>
               </div>
               <div className="float-layout--right">
                 <label className={'ide__code-area__toolbar__label ' + (this.state.displayTesting ? 'ide__code-area__toolbar__label--active': '')} onClick={this.toggleDisplayTesting.bind(this)}>
