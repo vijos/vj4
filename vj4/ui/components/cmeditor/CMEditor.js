@@ -1,5 +1,5 @@
 import SimpleMDE from 'simple-cmeditor';
-import assign from 'lodash/assign';
+import _ from 'lodash';
 
 export default class CMEditor extends SimpleMDE {
 
@@ -75,6 +75,6 @@ export default class CMEditor extends SimpleMDE {
       },
     };
 
-    super(assign({}, defaultOptions, options));
+    super(_.assign({}, defaultOptions, options));
   }
 }

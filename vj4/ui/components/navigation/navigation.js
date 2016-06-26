@@ -1,4 +1,4 @@
-import values from 'lodash/values';
+import _ from 'lodash';
 
 class Navigation {
   constructor($nav, $navShadow) {
@@ -25,7 +25,7 @@ class Navigation {
   }
 
   update() {
-    const shouldFloat = values(this.state).indexOf(true) > -1;
+    const shouldFloat = _.values(this.state).indexOf(true) > -1;
     if (shouldFloat) {
       this.float();
     } else {

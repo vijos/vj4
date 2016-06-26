@@ -1,5 +1,5 @@
 import Drop from 'tether-drop';
-import assign from 'lodash/assign';
+import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Dropdown extends DOMAttachedObject {
@@ -47,4 +47,4 @@ export default class Dropdown extends DOMAttachedObject {
 }
 
 Dropdown.DOMAttachKey = 'vjDropdownInstance';
-assign(Dropdown, DOMAttachedObject);
+_.assign(Dropdown, DOMAttachedObject);

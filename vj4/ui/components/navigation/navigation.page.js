@@ -1,6 +1,6 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import * as util from '../../misc/Util';
-import throttle from 'lodash/throttle';
+import _ from 'lodash';
 import Slideout from 'slideout';
 import nav from './navigation.js';
 
@@ -32,7 +32,7 @@ const navigationPage = new AutoloadPage(() => {
     && document.documentElement.getAttribute('data-layout') === 'basic'
     && window.innerWidth >= 450
   ) {
-    $(window).on('scroll', throttle(onScroll, 100));
+    $(window).on('scroll', _.throttle(onScroll, 100));
     $nav.hover(
       () => nav.setState('hover', true),
       () => nav.setState('hover', false)

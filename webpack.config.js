@@ -56,6 +56,7 @@ var config = {
         loader: 'babel',
         query: {
           cacheDirectory: true,
+          plugins: ['lodash'],
           presets: ['es2015', 'stage-0', 'react'],
         }
       },
