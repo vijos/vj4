@@ -8,4 +8,3 @@ aioamqp
 smtplibaio
 pytz
 colorlog
-uvloop

@@ -6,7 +6,6 @@ import signal
 import socket
 import sys
 import urllib.parse
-import uvloop
 
 from vj4 import app
 from vj4.util import options
@@ -42,7 +41,6 @@ def main():
       break
     else:
       atexit.register(lambda: os.kill(pid, signal.SIGTERM))
-  asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
   loop = asyncio.get_event_loop()
   loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
   loop.run_forever()
