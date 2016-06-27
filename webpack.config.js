@@ -24,9 +24,8 @@ var config = {
     chunkFilename: '[name].chunk.js',
   },
   resolve: {
-    root: [root('node_modules'), root('vj4/ui')],
+    modules: [root('node_modules'), root('vj4/ui')],
     extensions: ['.js', ''],
-    unsafeCache: true,
   },
   devtool: 'source-map',
   module: {
@@ -40,13 +39,20 @@ var config = {
     loaders: [
       {
         // fonts
-        test: /\.(ttf|eot|svg|woff|woff2)(\?[0-9a-z#]*)?$/,
-        loader: 'file?name=[path][name].[ext]?[sha512:hash:base62:7]'
+        test: /\.(ttf|eot|svg|woff|woff2)$/,
+        loader: 'file',
+        query: {
+          name: '[path][name].[ext]?[sha512:hash:base62:7]',
+        },
       },
       {
         // images
         test: /\.(png|jpg)$/,
-        loader: 'url?limit=4024&name=[path][name].[ext]?[sha512:hash:base62:7]'
+        loader: 'url',
+        query: {
+          limit: 4024,
+          name: '[path][name].[ext]?[sha512:hash:base62:7]',
+        }
       },
       {
         // ES2015 scripts
@@ -55,26 +61,28 @@ var config = {
         loader: 'babel',
         query: {
           cacheDirectory: true,
-          plugins: ['lodash'],
-          presets: ['es2015', 'stage-0', 'react'],
+          plugins: ['lodash', 'transform-runtime'],
+          presets: ['es2015-webpack', 'stage-0', 'react'],
         }
       },
       {
         // vendors stylesheets
         test: /\.css$/,
         include: /node_modules\//,
-        loader: extractVendorCSS.extract(['css'])
+        loader: extractVendorCSS.extract(['css']),
       },
       {
         // project stylesheets
         test: /\.css$/,
         exclude: /node_modules\//,
-        loader: extractProjectCSS.extract(['css', 'postcss'])
+        loader: extractProjectCSS.extract(['css', 'postcss']),
       },
       {
         // project stylus stylesheets
         test: /\.styl$/,
-        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus?resolve url'])
+        // TODO: stylus-loader requires 'resolve url' query.
+        // to be added once extract-text-webpack-plugin#196 is fixed
+        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus']),
       },
     ]
   },
@@ -89,8 +97,12 @@ var config = {
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
     // extract 3rd-party libraries into a standalone file
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js', function (module, count) {
-      return module.resource && module.resource.indexOf(root('vj4/ui/')) === -1;
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendors',
+      filename: 'vendors.js',
+      minChunks: function (module, count) {
+        return module.resource && module.resource.indexOf(root('vj4/ui/')) === -1;
+      },
     }),
 
     // extract stylesheets into a standalone file
