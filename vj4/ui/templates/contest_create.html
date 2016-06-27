@@ -1,11 +1,11 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <h2>{{ _('contest_create') }}</h2>
     {{ tdoc }}
   </div>
-  <div class="layout--2col__side">
+  <div class="large-3 columns">
     <div>
       <ul>
         <li><a href="{{ reverse_url('contest_status', tid=tdoc['doc_id']) }}">{{ _('contest_status') }}</a></li>

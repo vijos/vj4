@@ -8,7 +8,6 @@ var extractProjectCSS = new ExtractTextPlugin('vj4.css', { allChunks: true });
 var extractVendorCSS = new ExtractTextPlugin('vendors.css', { allChunks: true });
 var postcssAutoprefixerPlugin = require('autoprefixer');
 var stylusRupturePlugin = require('rupture');
-var stylusJeetPlugin = require('jeet');
 
 var root = function (fn) {
   return path.resolve(__dirname, fn);
@@ -107,7 +106,6 @@ var config = {
   },
   stylus: {
     use: [
-      stylusJeetPlugin(),
       stylusRupturePlugin(),
     ],
     import: [

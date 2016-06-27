@@ -1,5 +1,5 @@
 <nav class="nav slideout-menu" id="menu">
-  <div class="content-container clearfix">
+  <div class="row"><div class="columns clearfix">
     <ol class="nav__list nav__list--main clearfix">
       <li class="nav__list-item"><a href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
       <li class="nav__list-item"><a href="{{ reverse_url('main') }}" class="nav__item">{{ _('main') }}</a></li>
@@ -27,6 +27,6 @@
       </li>
     {% endif %}
     </ol>
-  </div>
+  </div></div>
 </nav>
 <nav class="nav--shadow"></nav>

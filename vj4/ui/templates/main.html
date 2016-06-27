@@ -1,8 +1,8 @@
 {% set header_collapsed = true %}
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
     <code class="lang-math">$$E=mc^2$$</code>
     <h1>{{ (_('Swx Good!') + ' ') * 23 }}</h1>
@@ -11,7 +11,7 @@
     <code class="lang-math">$$F=ma$$</code>
     {% endif %}
   </div>
-  <div class="layout--2col__side">
+  <div class="large-3 columns">
     {% include 'discussion_nodes_widget.html' %}
   </div>
 </div>

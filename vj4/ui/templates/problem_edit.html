@@ -1,7 +1,7 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <div class="section">
       <div class="section__indent top bottom">
         <h1 class="section__title">{% if page_name == 'problem_edit' %}Edit Problem{% else %}Create Problem{% endif %}</h1>
@@ -37,7 +37,7 @@
       </div>
     </div>
   </div>
-  <div class="layout--2col__side">
+  <div class="large-3 columns">
     {% if page_name == 'problem_edit' %}
       {% include "components/problem_sidebar.html" %}
     {% endif %}

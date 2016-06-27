@@ -5,54 +5,16 @@
   display: none
 
 .main
-  padding: 50px 0
+  padding: 20px 0
+  flex: 1
 
-+below(rupture.desktop-cutoff)
++above(rupture.desktop-cutoff)
   .main
-    padding: 20px 0
-
-.content-container
-  center(100%)
-  margin: 0 20px
-
-+desktop()
-  .content-container
-    margin: 0
-    center(980px)
-
-+above(1250px)
-  .content-container
-    center(1200px)
-
-.float-layout--left
-  float: left
-
-.float-layout--right
-  float: right
-
-.text-center
-  text-align: center
-
-.text-right
-  text-align: right
+    padding: 30px 0
 
 .v-center
   display: inline-block
   vertical-align: middle
-
-.layout--2col
-  .layout--2col__main
-    col(3/4)
-  .layout--2col__side
-    col(1/4)
-
-+below(rupture.desktop-cutoff)
-  .layout--2col
-    .layout--2col__main, .layout--2col__side
-      stack()
-
-    .layout--2col__main
-      margin-bottom: 20px
 
 // Media Object
 // Heavily borrowed from http://csswizardry.com/2013/05/the-flag-object/

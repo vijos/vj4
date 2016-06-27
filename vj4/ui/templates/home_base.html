@@ -1,7 +1,7 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__side">
+<div class="row">
+  <div class="large-3 columns">
     <div class="section side">
       <ul class="menu">
         <li class="menu__item"><a href="{{ reverse_url('home_messages') }}" class="menu__link active">{{ _('home_messages') }}</a></li>
@@ -11,7 +11,7 @@
       </ul>
     </div>
   </div>
-  <div class="layout--2col__main">
+  <div class="large-9 columns">
     {% block home_content %}{% endblock %}
   </div>
 </div>

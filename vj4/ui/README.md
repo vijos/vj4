@@ -2,72 +2,15 @@
 
 ## Layout
 
-### Content Container
+### Grid
 
-By using a content container, you can adapt contents to a standard width for different browser window sizes. The container itself is always horizontally center-aligned to the parent. Nested content containers are not supported.
+See [Foundation Grid](http://foundation.zurb.com/sites/docs/grid.html)
 
-| Window Width | Container Width | Size Description |
-|--------------|-----------------|------------------|
-| >= 1250px    | 1200px          | Desktop HD       |
-| >= 1000px    | 980px           | Desktop          |
-| < 1000px     | 100% (*)        | Tablet or Mobile |
+### Float
 
-\* The container contains 20px padding horizontally.
+See [Foundation Float](http://foundation.zurb.com/sites/docs/float-classes.html)
 
-```html
-<div class="content-container">
-  Content here
-</div>
-```
-
-### Auto-Expand Container
-
-The auto-expand container can expand the height of one of its children (marked as `autoexpand__expand`) so that the height of the whole container is always equal to or larger than the height of the browser window.
-
-```html
-<div class="autoexpand__container">
-  <div class="autoexpand__collapse">
-    Header
-  </div>
-  <div class="autoexpand__expand">
-    The height of this element will be expanded to fill
-    the extra space of the window.
-  </div>
-  <div class="autoexpand__collapse">
-    Footer
-  </div>
-</div>
-```
-
-### Two-Column
-
-The most-commonly-used two-column layout (aka sidebar) is supported natively. The layout is responsive, which is, for desktop (width >= 1000px), the sidebar and the main content is arranged horizontally and the sidebar always occupies 75% width of the parent container. For tablet or mobile (width < 1000px), they are arranged vertically and they both occupy 100% width of the parent container.
-
-Sidebar at right (in desktop) / below the main content (in non-desktop):
-
-```html
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
-    Main
-  </div>
-  <div class="layout--2col__side">
-    Right Sidebar
-  </div>
-</div>
-```
-
-Sidebar at left (in desktop) / above the main content (in non-desktop):
-
-```html
-<div class="layout--2col clearfix">
-  <div class="layout--2col__side">
-    Left Sidebar
-  </div>
-  <div class="layout--2col__main">
-    Main
-  </div>
-</div>
-```
+> NOTE: `.float-center` is not implemented.
 
 ## Typography
 
@@ -83,6 +26,15 @@ HTML elements such as headings (`h1`, `h2`, ...), lists (`ol`, `ul`, `li`, ...) 
     <li>Item</li>
   </ul>
 </div>
+```
+
+### Text Alignment
+
+```html
+<ANY class="text-left"></ANY>
+<ANY class="text-center"></ANY>
+<ANY class="text-right"></ANY>
+<ANY class="text-justify"></ANY>
 ```
 
 ## Prototype Components
@@ -178,7 +130,7 @@ If the main content of the section is a data table (or additionally with a title
 ```
 
 > If you want to specify the width of a column, you should add `col--xxx` to the class name list (as shown above) and specify its width in a CSS rule like:
-> 
+>
 > ```css
 > .col--1 { width: 120px; }
 > ```
@@ -298,11 +250,3 @@ TODO
 ```html
 <ANY class="hasjs--hide"></ANY>
 ```
-
-### Text Alignment
-
-```html
-<ANY class="text-center"></ANY>
-<ANY class="text-right"></ANY>
-```
-

@@ -1,7 +1,7 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <div class="section">
       {% if not ddocs %}
         <div class="section__indent top bottom left right">
@@ -45,7 +45,7 @@
       {% endif %}
     </div>
   </div>
-  <div class="layout--2col__side">
+  <div class="large-3 columns">
     <div class="section side">
       {% if vnode and (vnode['title'] == '问答' or vnode['title'] == '分享' or vnode['title'] == 'Vijos') %}
       <div class="dcznode-bg{% if vnode['title'] == '问答' %} qa{% elif vnode['title'] == '分享' %} share{% elif vnode['title'] == 'Vijos' %} vijos{% endif %}"></div>

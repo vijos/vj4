@@ -12,9 +12,12 @@
   h1, h2, h3, h4, h5, h6
     color: $immersive-header-color
 
-.immersive--center
-  center(200px)
++above(rupture.mobile-cutoff)
+  .immersive--center
+    width: 200px
+    margin: 0 auto
 
+.immersive--center
   h1
     text-align: center
     margin: 2em 0

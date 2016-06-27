@@ -3,40 +3,29 @@
 {% block body %}
 {% include "components/nav.html" %}
 
-<div class="slideout-panel-container">
-<div class="autoexpand__container slideout-panel" id="panel">
-  <div class="autoexpand__collapse">
-    {% include "components/nav-hamburger.html" %}
-    <div class="header{% if header_collapsed %} collapsed{% endif %}">
-      <div class="header-content content-container">
-        <a class="header__logo" href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
+<div class="slideout-panel" id="panel">
+  {% include "components/nav-hamburger.html" %}
+  <div class="header{% if header_collapsed %} collapsed{% endif %}">
+    <div class="header-content"><div class="row"><div class="columns">
+      <a class="header__logo" href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
+    </div></div></div>
+    <div class="header__layer"><div class="row"><div class="columns">
+    {% block collapsed_header %}
+      <div class="location-path">
+        {% for c in path_components %}
+          / {% if c[1] %}<a href="{{ c[1] }}">{{ c[0] }}</a>{% endif %}
+        {%- endfor %}
       </div>
-      <div class="header__layer">
-        <div class="content-container">
-          {% block collapsed_header %}
-            <div class="location-path">
-              {% for c in path_components %}
-                / {% if c[1] %}<a href="{{ c[1] }}">{{ c[0] }}</a>{% endif %}
-              {%- endfor %}
-            </div>
-            <h1 class="location-current">{{ path_components[-1][0] }}</h1>
-          {% endblock %}
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="autoexpand__expand">
-    <div class="main">
-      <div class="content-container">
-        {% block content %}{% endblock %}
-      </div>
-    </div>
+      <h1 class="location-current">{{ path_components[-1][0] }}</h1>
+    {% endblock %}
+    </div></div></div>
   </div>
 
-  <div class="autoexpand__collapse">
-    {% include "components/footer.html" %}
+  <div class="main">
+    {% block content %}{% endblock %}
   </div>
-</div>
+
+  {% include "components/footer.html" %}
 </div>
 
 {% include "components/login_dialog.html" %}

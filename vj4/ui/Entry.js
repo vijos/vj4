@@ -7,11 +7,14 @@ import 'normalize.css/normalize.css';
 import 'jqmath-build/webpack.js';
 import 'codemirror/lib/codemirror.css';
 
-import './misc/clearfix.styl';
+import './misc/float.styl';
 import './misc/typography.styl';
+import './misc/textalign.styl';
+import './misc/grid.styl';
+import './misc/slideout.styl';
+
 import './misc/webicon.css';
 import './misc/immersive.styl';
-import './misc/autoexpand.styl';
 import './misc/structure.styl';
 import './misc/section.styl';
 import './misc/nothing.styl';

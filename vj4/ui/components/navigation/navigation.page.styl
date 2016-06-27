@@ -138,9 +138,6 @@
 .nav--shadow.floating
   box-shadow: 0 0 6px rgba(#000, 0.3)
 
-.slideout-panel-container
-  height: 100%
-
 // For Mobile: show a slideout vertical arranged menu
 +below(rupture.mobile-cutoff)
 
@@ -151,21 +148,7 @@
     display: none
 
   .nav.slideout-menu
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 0;
-    width: 256px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    display: none;
-    background: #1D1F20;
-    height: auto;
-
-    .content-container
-      margin: 0
+    background: #1D1F20
 
   .nav__list
     float: none
@@ -214,15 +197,3 @@
 
   .nav__list--secondary
     border-top: 1px solid #666
-
-  .slideout-panel
-    position: relative;
-    z-index: 1;
-
-  .slideout-open .slideout-menu
-    display: block;
-
-  .slideout-open body,
-  .slideout-open .slideout-panel-container,
-  .slideout-open .slideout-panel
-    overflow: hidden;

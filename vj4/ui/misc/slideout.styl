@@ -1,0 +1,39 @@
+html
+  height: 100%
+
+body
+  width: 100%
+
+#panel
+  display: flex
+  flex-direction: column
+
+body, #panel
+  min-height: 100%
+  min-height: 100vh
+
++below(rupture.mobile-cutoff)
+  .nav.slideout-menu
+    position: fixed
+    left: 0
+    top: 0
+    bottom: 0
+    right: 0
+    z-index: 0
+    width: 256px
+    overflow-y: auto
+    -webkit-overflow-scrolling: touch
+    display: none
+    height: auto
+
+  .slideout-panel
+    position: relative
+    z-index: 1
+
+  .slideout-open,
+  .slideout-open body,
+  .slideout-open .slideout-panel
+    overflow: hidden
+
+  .slideout-open .slideout-menu
+    display: block !important

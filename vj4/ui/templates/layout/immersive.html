@@ -3,25 +3,17 @@
 {% block body %}
 {% include "components/nav.html" %}
 
-<div class="slideout-panel-container">
-<div class="autoexpand__container slideout-panel" id="panel">
-  <div class="autoexpand__collapse">
-    {% include "components/nav-hamburger.html" %}
-    <div class="nav--placeholder"></div>
+<div class="slideout-panel" id="panel">
+  {% include "components/nav-hamburger.html" %}
+  <div class="nav--placeholder"></div>
+
+  <div class="main">
+    {% block content %}{% endblock %}
   </div>
-  <div class="autoexpand__expand">
-    <div class="main">
-      <div class="content-container">
-        {% block content %}{% endblock %}
-      </div>
-    </div>
-  </div>
-  <div class="autoexpand__collapse">
-    {% with show_topics = false %}
-      {% include "components/footer.html" %}
-    {% endwith %}
-  </div>
-</div>
+
+  {% with show_topics = false %}
+    {% include "components/footer.html" %}
+  {% endwith %}
 </div>
 
 {% include "components/login_dialog.html" %}
