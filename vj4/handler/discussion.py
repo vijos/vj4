@@ -46,8 +46,9 @@ class DiscussionNodeView(base.Handler):
     path_components = self.build_path(
       (self.translate('discussion_main'), self.reverse_url('discussion_main')),
       (vnode['title'], None))
-    self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode, ddocs=ddocs,
-                page=page, dcount=dcount, path_components=path_components)
+    self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode,
+                ddocs=ddocs, page=page, dcount=dcount,
+                path_components=path_components, nav_category='discussion_main')
 
 
 @app.route('/discuss/{node_or_pid}/create', 'discussion_create')
@@ -62,7 +63,8 @@ class DiscussionCreateView(base.Handler):
       (self.translate('discussion_main'), self.reverse_url('discussion_main')),
       (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
       (self.translate('discussion_create'), None))
-    self.render('discussion_create.html', vnode=vnode, path_components=path_components)
+    self.render('discussion_create.html', vnode=vnode,
+                path_components=path_components, nav_category='discussion_main')
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_DISCUSSION)
@@ -90,7 +92,7 @@ class DiscussionDetailView(base.OperationView):
       (ddoc['title'], None))
     drdocs = await discussion.get_list_reply(self.domain_id, ddoc['doc_id'])
     self.render('discussion_detail.html', ddoc=ddoc, udoc=udoc, drdocs=drdocs, vnode=vnode,
-                page_title=ddoc['title'], path_components=path_components)
+                page_title=ddoc['title'], path_components=path_components, nav_category='discussion_main')
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_REPLY_DISCUSSION)

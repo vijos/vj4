@@ -2,11 +2,11 @@
   <div class="row"><div class="columns clearfix">
     <ol class="nav__list nav__list--main clearfix">
       <li class="nav__list-item"><a href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
-      <li class="nav__list-item"><a href="{{ reverse_url('main') }}" class="nav__item">{{ _('main') }}</a></li>
-      <li class="nav__list-item"><a href="{{ reverse_url('problem_main') }}" class="nav__item">{{ _('problem_main') }}</a></li>
-      <li class="nav__list-item"><a href="{{ reverse_url('training_main') }}" class="nav__item">{{ _('training_main') }}</a></li>
-      <li class="nav__list-item"><a href="{{ reverse_url('discussion_main') }}" class="nav__item">{{ _('discussion_main') }}</a></li>
-      <li class="nav__list-item"><a href="{{ reverse_url('contest_main') }}" class="nav__item">{{ _('contest_main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('main') }}" class="nav__item{% if nav_category == 'main' %} nav--active{% endif %}">{{ _('main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('problem_main') }}" class="nav__item{% if nav_category == 'problem_main' %} nav--active{% endif %}">{{ _('problem_main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('training_main') }}" class="nav__item{% if nav_category == 'training_main' %} nav--active{% endif %}">{{ _('training_main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('discussion_main') }}" class="nav__item{% if nav_category == 'discussion_main' %} nav--active{% endif %}">{{ _('discussion_main') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('contest_main') }}" class="nav__item{% if nav_category == 'contest_main' %} nav--active{% endif %}">{{ _('contest_main') }}</a></li>
     </ol>
     <ol class="nav__list nav__list--secondary clearfix">
     {% if handler.user == vj4.model.builtin.USER_GUEST %}

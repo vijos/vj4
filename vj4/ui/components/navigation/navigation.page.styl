@@ -55,10 +55,14 @@
 
   &:visited, &:active
     color: #FFF
+
+  &.nav--active
+    border-color: lighten($nav-item-active-color, 60%)
+
   &:hover
     text-decoration: none
-    border-color: $nav-item-hover-color
-    background: rgba(#FFF, 0.15)
+    border-color: lighten($nav-item-hover-color, 80%)
+    background: rgba(#FFF, 0.3)
 
 .nav__list--secondary
   float: right
@@ -117,9 +121,12 @@
 
   .nav__item
     color: $text-color
+    &.nav--active
+      border-color: $nav-item-active-color
     &:visited, &:active
       color: $text-color
     &:hover
+      border-color: $nav-item-hover-color
       background: #F8F8F8
 
   .nav__item--round
@@ -141,6 +148,9 @@
 // For Mobile: show a slideout vertical arranged menu
 +below(rupture.mobile-cutoff)
 
+  .nav .columns
+    padding: 0
+
   .nav--slideout-trigger
     display: block
 
@@ -157,8 +167,8 @@
     float: none
 
   .nav__logo
-    width: auto
-    opacity: 1
+    width: auto !important
+    opacity: 1 !important
     background-position: center center
     margin: 0
     height: rem($nav-logo-height + 40px)
@@ -170,17 +180,22 @@
     line-height: rem($nav-item-height - 6)
     padding: rem(0 20px 3px 20px)
     border: 0
+    border-left: 3px solid transparent
     margin: 0
     border-radius: 0
     background: none
     color: #FFF
+
+    &.nav--active
+      border-color: $nav-item-active-color
 
     &:visited, &:active
       background: none
       color: #FFF
 
     &:hover
-      background: rgba(#FFF, 0.15)
+      border-color: $nav-item-hover-color
+      background: rgba(#FFF, 0.10)
       color: #FFF
 
   .nav .dropdown-target.menu
