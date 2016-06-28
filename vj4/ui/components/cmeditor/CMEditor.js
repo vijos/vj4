@@ -2,7 +2,6 @@ import SimpleMDE from 'simple-cmeditor';
 import _ from 'lodash';
 
 export default class CMEditor extends SimpleMDE {
-
   constructor(options = {}) {
     const defaultOptions = {
       toolbar: [
