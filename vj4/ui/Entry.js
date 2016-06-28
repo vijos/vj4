@@ -26,8 +26,20 @@ const pageLoader = new PageLoader();
 const currentPage = pageLoader.getNamedPage(document.documentElement.getAttribute('data-page'));
 const includedPages = pageLoader.getAutoloadPages();
 
-includedPages.forEach(p => p.beforeLoading());
-currentPage.beforeLoading();
+async function load() {
+  const loadSequence = [
+    ...includedPages.map(p => [p.beforeLoading, p]),
+    [currentPage.beforeLoading, currentPage],
+    ...includedPages.map(p => [p.afterLoading, p]),
+    [currentPage.afterLoading, currentPage],
+  ];
+  for (const [func, page] of loadSequence) {
+    try {
+      await func();
+    } catch (e) {
+      console.error(`Failed to load page ${page.name}\n${e.stack}`);
+    }
+  }
+}
 
-includedPages.forEach(p => p.afterLoading());
-currentPage.afterLoading();
+load();
