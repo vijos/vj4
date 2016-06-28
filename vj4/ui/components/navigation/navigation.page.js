@@ -2,21 +2,16 @@ import { AutoloadPage } from '../../misc/PageLoader';
 import * as util from '../../misc/Util';
 import _ from 'lodash';
 import Slideout from 'slideout';
-import nav from './navigation.js';
+import Navigation from './navigation.js';
 
+const nav = Navigation.instance;
 const $nav = nav.$nav;
 
 function onScroll() {
-  if ($(window).scrollTop() > 30) {
-    if (!nav.state.nonTop) {
-      nav.setState('nonTop', true);
-      $nav.addClass('showlogo');
-    }
-  } else {
-    if (nav.state.nonTop) {
-      nav.setState('nonTop', false);
-      $nav.removeClass('showlogo');
-    }
+  const currentState = $(window).scrollTop() > 20;
+  if (nav.floating.get('nonTop') !== currentState) {
+    nav.floating.set('nonTop', currentState);
+    nav.logoVisible.set('nonTop', currentState);
   }
 }
 
@@ -34,11 +29,11 @@ const navigationPage = new AutoloadPage(() => {
   ) {
     $(window).on('scroll', _.throttle(onScroll, 100));
     $nav.hover(
-      () => nav.setState('hover', true),
-      () => nav.setState('hover', false)
+      () => nav.floating.set('hover', true),
+      () => nav.floating.set('hover', false)
     );
-    $nav.on('vjDropdownShow', () => nav.setState('dropdown', true));
-    $nav.on('vjDropdownHide', () => nav.setState('dropdown', false));
+    $nav.on('vjDropdownShow', () => nav.floating.set('dropdown', true));
+    $nav.on('vjDropdownHide', () => nav.floating.set('dropdown', false));
     onScroll();
   }
 

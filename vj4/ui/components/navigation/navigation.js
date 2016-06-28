@@ -1,43 +1,80 @@
 import _ from 'lodash';
 
-class Navigation {
-  constructor($nav, $navShadow) {
-    this.$nav = $nav;
-    this.$navShadow = $navShadow;
-    this.isFloating = false;
-    this.state = {};
+class MultipleStateContainer {
+  constructor(onStateChange, initialState = false) {
+    this.onStateChange = onStateChange;
+    this.states = {};
+    this.currentState = initialState;
   }
 
-  float() {
-    if (!this.isFloating) {
-      this.$nav.addClass('floating');
-      this.$navShadow.addClass('floating');
-      this.isFloating = true;
+  set(name, value, update = true) {
+    this.states[name] = value;
+    if (update) {
+      this.update();
     }
   }
 
-  unfloat() {
-    if (this.isFloating) {
-      this.$nav.removeClass('floating');
-      this.$navShadow.removeClass('floating');
-      this.isFloating = false;
-    }
+  get() {
+    return this.states[name];
   }
 
   update() {
-    const shouldFloat = _.values(this.state).indexOf(true) > -1;
-    if (shouldFloat) {
-      this.float();
-    } else {
-      this.unfloat();
+    const newState = this.getState();
+    if (newState !== this.currentState) {
+      this.onStateChange(newState);
+      this.currentState = newState;
     }
   }
 
-  setState(name, value) {
-    this.state[name] = value;
-    this.update();
+  getState() {
+    return _.values(this.states).indexOf(true) > -1;
   }
 }
 
-const nav = new Navigation($('.nav'), $('.nav--shadow'));
-export default nav;
+class Navigation {
+  constructor($nav, $navShadow) {
+    this.updateExpandWidth = _.throttle(this.updateExpandWidthImmediate.bind(this), 200);
+    this.$nav = $nav;
+    this.$navRow = $nav.children('.row');
+    this.$navShadow = $navShadow;
+    this.floating = new MultipleStateContainer(this.updateFloating.bind(this));
+    this.logoVisible = new MultipleStateContainer(this.updateLogoVisibility.bind(this));
+    this.expanded = new MultipleStateContainer(this.updateExpandState.bind(this));
+  }
+
+  updateFloating(state) {
+    if (state) {
+      this.$nav.addClass('floating');
+      this.$navShadow.addClass('floating');
+    } else {
+      this.$nav.removeClass('floating');
+      this.$navShadow.removeClass('floating');
+    }
+  }
+
+  updateLogoVisibility(state) {
+    if (state) {
+      this.$nav.addClass('showlogo');
+    } else {
+      this.$nav.removeClass('showlogo');
+    }
+  }
+
+  updateExpandWidthImmediate() {
+    this.$navRow.css('max-width', `${window.innerWidth}px`);
+  }
+
+  updateExpandState(state) {
+    if (state) {
+      $(window).on('resize', this.updateExpandWidth);
+      this.updateExpandWidthImmediate();
+    } else {
+      $(window).off('resize', this.updateExpandWidth);
+      this.$navRow.css('max-width', '');
+    }
+  }
+}
+
+Navigation.instance = new Navigation($('.nav'), $('.nav--shadow'));
+
+export default Navigation;
