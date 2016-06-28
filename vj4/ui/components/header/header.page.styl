@@ -1,11 +1,11 @@
 @import './var.inc.styl'
 @import '../navigation/var.inc.styl'
 
-$header-gap-collapsed = ($header-bg-height-collapsed - $nav-item-height - $header-logo-height) / 2
+$header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-height) / 2
 
 .header
   position: relative
-  padding-top: rem($header-gap-collapsed + $nav-item-height)
+  padding-top: rem($header-gap-mini + $nav-item-height)
   height: rem($header-bg-height)
   background: #5eafca url(./header-background.png) no-repeat center top
   +retina()
@@ -15,8 +15,8 @@ $header-gap-collapsed = ($header-bg-height-collapsed - $nav-item-height - $heade
     .header-content
       text-align: center
 
-  &.collapsed
-    height: rem($header-bg-height-collapsed)
+  &.mini
+    height: rem($header-bg-height-mini)
 
 .header__layer
   position: absolute
@@ -26,7 +26,7 @@ $header-gap-collapsed = ($header-bg-height-collapsed - $nav-item-height - $heade
   height: rem($header-layer-height)
   background: rgba(#000, 0.5)
 
-.header.collapsed .header__layer
+.header.mini .header__layer
   display: none
 
 .header__logo
