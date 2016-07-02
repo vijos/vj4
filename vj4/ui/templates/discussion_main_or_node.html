@@ -4,11 +4,9 @@
   <div class="large-9 columns">
     <div class="section">
       {% if not ddocs %}
-        <div class="section__indent top bottom left right">
-          {% with text = _('no discussion yet...') %}
-            {% include "components/nothing.html" %}
-          {% endwith %}
-        </div>
+        {% with text = _('no discussion yet...') %}
+          {% include "components/nothing.html" %}
+        {% endwith %}
       {% else %}
         <ol class="dczlist">
         {% for ddoc in ddocs %}
@@ -50,18 +48,21 @@
       {% if vnode and (vnode['title'] == '问答' or vnode['title'] == '分享' or vnode['title'] == 'Vijos') %}
       <div class="dcznode-bg{% if vnode['title'] == '问答' %} qa{% elif vnode['title'] == '分享' %} share{% elif vnode['title'] == 'Vijos' %} vijos{% endif %}"></div>
       {% endif %}
-      <div class="section__indent top bottom">
+      <div class="section__header">
+        <h1 class="section__title">
         {% if vnode %}
-          <h1 class="section__title">{{ vnode['title'] }}</h1>
-          <div class="section__indent left right">
-            <p><a href="{{ reverse_url('discussion_create', node_or_pid=vnode['doc_id']) }}" class="expanded primary button">{{ _('Create a discussion') }}</a></p>
-          </div>
+          {{ vnode['title'] }}
         {% else %}
-          <h1 class="section__title">{{ _('Create Discussion') }}</h1>
-          <div class="section__indent left right">
-            <p>{{ _('Select a node to create discussion.') }}</p>
-          </div>
+          {{ _('Create Discussion') }}
         {% endif %}
+        </h1>
+      </div>
+      <div class="section__body">
+      {% if vnode %}
+        <p><a href="{{ reverse_url('discussion_create', node_or_pid=vnode['doc_id']) }}" class="expanded primary button">{{ _('Create a discussion') }}</a></p>
+      {% else %}
+        <p>{{ _('Select a node to create discussion.') }}</p>
+      {% endif %}
       </div>
     </div>
 

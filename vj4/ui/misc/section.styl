@@ -14,11 +14,28 @@
   background: #FFF
   box-shadow: 0 2px 2px rgba(#000, 0.2)
 
+.section__header
+  padding: rem($section-gap-v) rem($section-gap-h) 0.7em
+
+.section__body
+  padding: 0.7em rem($section-gap-h)
+
+  &:first-child
+    padding-top: rem($section-gap-v)
+
+  &:last-child
+    padding-bottom: rem($section-gap-v)
+
+  &.no-padding
+    padding-left: 0
+    padding-right: 0
+
+.section__footer
+  border-top: 1px solid $bg-color
+  padding: rem($section-gap-h)
+
 .section__title
   color: #666
-  margin-left: rem($section-gap-h)
-  margin-right: rem($section-gap-h)
-  margin-bottom: 0.7em
 
 h1.section__title
   font-size: 1.4rem
@@ -28,29 +45,3 @@ h2.section__title
 
 h3.section__title
   font-size: 1rem
-
-.section__indent
-  &.left
-    margin-left: rem($section-gap-h)
-
-  &.right
-    margin-right: rem($section-gap-h)
-
-  &.top
-    margin-top: rem($section-gap-v)
-
-  &.bottom
-    margin-bottom: rem($section-gap-v)
-
-.section__inner-indent
-  &.left
-    padding-left: rem($section-gap-h)
-
-  &.right
-    padding-right: rem($section-gap-h)
-
-  &.top
-    padding-top: rem($section-gap-v)
-
-  &.bottom
-    padding-bottom: rem($section-gap-v)

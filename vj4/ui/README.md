@@ -57,43 +57,26 @@ TODO
 
 Section is served as an entry to more detailed contents. By default, each section has a white background and drop-shadow.
 
-```html
-<div class="section">
-  Section content
-</div>
-```
-
-#### Indent
-
-Because some section elements (for example, table) should occupy all horizontal space, the section element itself doesn't contain spacings.
-
-If you want to add spacings for contents, you can wrap contents with `<div class="section__indent"></div>`. It must be used along with class name `left`, `right`, `top`, `bottom`.
+A section should contain a section-header and one or more section-body.
 
 ```html
 <div class="section">
-  <div class="section__indent top">
-    top padding
+  <div class="section__header">
+    <!-- header -->
   </div>
-  <div class="section__indent left right">
-    left and right padding
-  </div>
-  <div class="section__indent bottom">
-    bottom padding
+  <div class="section__body">
+    <!-- body -->
   </div>
 </div>
 ```
-
-Notice that the spacing of adjacent `section__indent` element will be collapsed. See [margin collapsing](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing) for details.
 
 #### Title
 
-You can use `<X class="section__title"></X>` to specify the title for a section (`X` is `h1` to `h3`). The font size and the color of the section title is different from normal headings.
-
-The section title itself contains left and right paddings and the amount is exactly the same as `section__indent`, which means that the section title should not be put inside a horizontal-padding container (`section__indent left right`).
+You can use `<X class="section__title"></X>` to specify the title for a section (`X` is from `h1` to `h3`). The font size and the color of the section title is different from normal headings.
 
 ```html
 <div class="section">
-  <div class="section__indent top bottom">
+  <div class="section__header">
     <h1 class="section__title">Section title</h1>
   </div>
 </div>
@@ -101,13 +84,14 @@ The section title itself contains left and right paddings and the amount is exac
 
 #### Table
 
-If the main content of the section is a data table (or additionally with a title and a paginator), it is suggested to apply `section__table` to the table. Section table should not be put inside a horizontal-padding container as well.
+If the main content of the section is a data table (or additionally with a title and a paginator), it is suggested to apply `section__table` to the table. Section table should be put inside a section-body with `no-padding` decoration.
 
 3 * 2 table sample:
 
 ```html
 <div class="section">
-  <div class="section__indent top bottom">
+  <!-- ... -->
+  <div class="section__body no-padding">
     <table class="section__table">
       <colgroup>
         <col class="col--1">
@@ -141,7 +125,7 @@ Section with content:
 
 ```html
 <div class="section">
-  <div class="section__indent top bottom left right">
+  <div class="section__body">
     Section content
   </div>
 </div>
@@ -151,11 +135,11 @@ Section with title and content:
 
 ```html
 <div class="section">
-  <div class="section__indent top bottom">
+  <div class="section__header">
     <h1 class="section__title">Section title</h1>
-    <div class="section__indent left right">
-      Section content
-    </div>
+  </div>
+  <div class="section__body">
+    Section content
   </div>
 </div>
 ```
@@ -164,10 +148,12 @@ Section with title and table content:
 
 ```html
 <div class="section">
-  <div class="section__indent top bottom">
+  <div class="section__header">
     <h1 class="section__title">Section title</h1>
+  </div>
+  <div class="section__body no-padding">
     <table class="section__table">
-      ...
+      <!-- ... -->
     </table>
   </div>
 </div>

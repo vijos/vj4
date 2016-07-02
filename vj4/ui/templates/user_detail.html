@@ -4,7 +4,7 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="profile-header user-profile-bg--12">
-        <div class="section__inner-indent left top right clearfix">
+        <div class="profile-header__content clearfix">
           <div class="media">
             <div class="media__left">
               <img src="{{ udoc['gravatar']|gravatar_url }}" width="120" height="120" class="large user-profile-avatar">
@@ -28,31 +28,31 @@
       <div class="profile-content">
         <div class="section__tab-container immersive">
           <ul class="section__tabs">
-            <li class="section__tab-item section__inner-indent left right bottom">
+            <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Submissions') }} (10)</h1>
               <div class="section__tab-main">
                 blabla
               </div>
             </li>
-            <li class="section__tab-item section__inner-indent left right bottom">
+            <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Problems') }} (5)</h1>
               <div class="section__tab-main">
                 blabla
               </div>
             </li>
-            <li class="section__tab-item section__inner-indent left right bottom">
+            <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Solutions') }} (2)</h1>
               <div class="section__tab-main">
                 blabla
               </div>
             </li>
-            <li class="section__tab-item section__inner-indent left right bottom">
+            <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Problems Sets') }} (1)</h1>
               <div class="section__tab-main">
                 blabla
               </div>
             </li>
-            <li class="section__tab-item section__inner-indent left right bottom">
+            <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Discussions') }}</h1>
               <div class="section__tab-main">
                 blabla
@@ -65,8 +65,11 @@
   </div>
   <div class="large-3 columns">
     <div class="section side">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Recent Activities') }}</h1>
+      </div>
+      <div class="section__body">
+        <p>foo bar</p>
       </div>
     </div>
   </div>

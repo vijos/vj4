@@ -1,4 +1,5 @@
 @import '~components/tab/var.inc.styl'
+@import '~misc/section.inc.styl'
 
 .page--user_detail
 
@@ -17,14 +18,15 @@
         padding-top: 0
         padding-bottom: rem($tab-item-height)
 
-    .section__inner-indent
-      position: absolute
-      left: 0
-      top: 0
-      width: 100%
+  .profile-header__content
+    position: absolute
+    left: 0
+    top: 0
+    width: 100%
+    padding: rem($section-gap-v) rem($section-gap-h) 0
 
-      +mobile()
-        position: relative
+    +mobile()
+      position: relative
 
     .media__left
       padding-right: rem(30px)
