@@ -1,17 +1,17 @@
 <div class="section side">
-  <div class="section__indent top bottom">
+  <div class="section__header">
     <h1 class="section__title">{{ _('Discussion Nodes') }}</h1>
-    <div>
-    {% for category, nodes in discussion_nodes.items() %}
-      <div class="topic--widget__section">
-        <h2 class="section__title">{{ category }}</h2>
-        <ol class="section__indent left right">
-        {% for node in nodes %}
-          <li><a href="{{ reverse_url('discussion_node', node_or_pid=node) }}">{{ node }}</a></li>
-        {% endfor %}
-        </ol>
-      </div>
-    {% endfor %}
+  </div>
+  <div class="section__body">
+  {% for category, nodes in discussion_nodes.items() %}
+    <div class="topic--widget__section">
+      <h2 class="section__title">{{ category }}</h2>
+      <ol>
+      {% for node in nodes %}
+        <li><a href="{{ reverse_url('discussion_node', node_or_pid=node) }}">{{ node }}</a></li>
+      {% endfor %}
+      </ol>
     </div>
+  {% endfor %}
   </div>
 </div>

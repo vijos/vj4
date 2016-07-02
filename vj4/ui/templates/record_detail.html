@@ -3,17 +3,19 @@
 <div class="row">
   <div class="large-9 columns">
     <div class="section">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">
           <i class="record-status--icon {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}"></i>
           <span class="record-status--text {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}">
             {{ vj4.handler.record.STATUS_TEXTS[rdoc['status']] }}
           </span>
         </h1>
-        <div class="section__indent left right">
-          <pre class="compiler-text">{{ rdoc['compiler_texts']|join('\n') }}</pre>
-        </div>
-        {% if rdoc['cases'] %}
+      </div>
+      <div class="section__body">
+        <pre class="compiler-text">{{ rdoc['compiler_texts']|join('\n') }}</pre>
+      </div>
+      {% if rdoc['cases'] %}
+      <div class="section__body no-padding">
         <table class="section__table record_detail__table">
           <colgroup>
             <col class="col--case">
@@ -47,53 +49,52 @@
           {% endfor %}
           </tbody>
         </table>
-        {% endif %}
       </div>
+      {% endif %}
     </div>
     <div class="section">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Code') }}</h1>
-        <div class="section__indent left right">
-          <pre><code class="language-{{ rdoc['lang'] }}">{{ rdoc['code'] }}</code></pre>
-        </div>
+      </div>
+      <div class="section__body">
+        <pre><code class="language-{{ rdoc['lang'] }}">{{ rdoc['code'] }}</code></pre>
       </div>
     </div>
   </div>
   <div class="large-3 columns">
     <div class="section">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Information') }}</h1>
-        <div class="section__indent left right">
-          <div class="typo">
-            <p>{{ _('Submit By') }}: {% with noModBadge = true, user = rdoc['udoc'] %}
-                {% include "components/inline_user.html" %}
-              {% endwith %}</p>
-            <p>{{ _('Problem') }}: <a href="{{ reverse_url('problem_detail', pid=rdoc['pdoc']['doc_id']) }}">{{ rdoc['pdoc']['title'] }}</a></p>
-            <p>{{ _('Submit At') }}: {{ datetime_span(rdoc['_id'].generation_time) }}</p>
-            {% if rdoc['judge_at'] %}
-            <p>{{ _('Judged At') }}: {{ datetime_span(rdoc['judge_at']) }}</p>
-            {% endif %}
-            {% if rdoc['score'] %}
-            <p>{{ _('Score') }}: {{ rdoc['score'] }}%</p>
-            {% endif %}
-            {% if rdoc['time_ms'] %}
-            <p>{{ _('Time Cost') }}: {{ rdoc['time_ms'] }}ms</p>
-            {% endif %}
-            {% if rdoc['memory_kb'] %}
-            <p>{{ _('Memory Cost') }}: {{ rdoc['memory_kb'] / 1000 }}MiB</p>
-            {% endif %}
-          </div>
-        </div>
+      </div>
+      <div class="section__body typo">
+        <p>
+          {{ _('Submit By') }}:
+          {% with noModBadge = true, user = rdoc['udoc'] %}
+            {% include "components/inline_user.html" %}
+          {% endwith %}
+        </p>
+        <p>{{ _('Problem') }}: <a href="{{ reverse_url('problem_detail', pid=rdoc['pdoc']['doc_id']) }}">{{ rdoc['pdoc']['title'] }}</a></p>
+        <p>{{ _('Submit At') }}: {{ datetime_span(rdoc['_id'].generation_time) }}</p>
+        {% if rdoc['judge_at'] %}
+        <p>{{ _('Judged At') }}: {{ datetime_span(rdoc['judge_at']) }}</p>
+        {% endif %}
+        {% if rdoc['score'] %}
+        <p>{{ _('Score') }}: {{ rdoc['score'] }}%</p>
+        {% endif %}
+        {% if rdoc['time_ms'] %}
+        <p>{{ _('Time Cost') }}: {{ rdoc['time_ms'] }}ms</p>
+        {% endif %}
+        {% if rdoc['memory_kb'] %}
+        <p>{{ _('Memory Cost') }}: {{ rdoc['memory_kb'] / 1000 }}MiB</p>
+        {% endif %}
       </div>
     </div>
     <div class="section">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
-        <div class="section__indent left right">
-          <div class="typo">
-            <p>{{ _('Boom!') }} </p>
-          </div>
-        </div>
+      </div>
+      <div class="section__body typo">
+        <p>{{ _('Boom!') }} </p>
       </div>
     </div>
   </div>
