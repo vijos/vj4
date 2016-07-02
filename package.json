@@ -45,8 +45,11 @@
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
     "normalize.css": "^4.1.1",
+    "rc-tabs": "^5.9.2",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
+    "react-split-pane": "^0.1.42",
+    "redux": "^3.5.2",
     "slideout": "^0.1.12",
     "sockjs-client": "^1.1.1",
     "tether-drop": "^1.4.2"
