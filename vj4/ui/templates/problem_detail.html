@@ -3,7 +3,7 @@
 <div class="row">
   <div class="large-9 columns">
     <div class="section">
-      <div class="section__indent top bottom left right">
+      <div class="section__indent top bottom left right problem-content">
         <h1>{{ pdoc['title'] }}</h1>
         <div class="typo">{{ pdoc['content']|markdown }}</div>
       </div>
@@ -53,4 +53,5 @@
     </div>
   </div>
 </div>
+<div class="ide-container" style="display:none"><div id="ide"></div></div>
 {% endblock %}

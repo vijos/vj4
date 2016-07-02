@@ -12,6 +12,10 @@ body, #panel
   min-height: 100%
   min-height: 100vh
 
+.slideout-panel
+  position: relative
+  z-index: 1
+
 +below(rupture.mobile-cutoff)
   .nav.slideout-menu
     position: fixed
@@ -25,10 +29,6 @@ body, #panel
     -webkit-overflow-scrolling: touch
     display: none
     height: auto
-
-  .slideout-panel
-    position: relative
-    z-index: 1
 
   .slideout-open,
   .slideout-open body,
