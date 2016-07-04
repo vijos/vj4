@@ -5,22 +5,7 @@ from bson import objectid
 from vj4 import db
 from vj4.model import document
 from vj4.util import argmethod
-
-# TODO(iceboy): Remove unused status after deprecating VJ2.
-STATUS_WAITING = 0
-STATUS_ACCEPTED = 1
-STATUS_WRONG_ANSWER = 2
-STATUS_TIME_LIMIT_EXCEEDED = 3
-STATUS_MEMORY_LIMIT_EXCEEDED = 4
-STATUS_OUTPUT_LIMIT_EXCEEDED = 5
-STATUS_RUNTIME_ERROR = 6
-STATUS_COMPILE_ERROR = 7
-STATUS_SYSTEM_ERROR = 8
-STATUS_CANCELED = 9
-STATUS_ETC = 10
-STATUS_JUDGING = 20
-STATUS_COMPILING = 21
-STATUS_IGNORED = 30
+from vj4.constant.record import *
 
 
 @argmethod.wrap

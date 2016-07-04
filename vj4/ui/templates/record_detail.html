@@ -5,9 +5,9 @@
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">
-          <i class="record-status--icon {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}"></i>
-          <span class="record-status--text {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}">
-            {{ vj4.handler.record.STATUS_TEXTS[rdoc['status']] }}
+          <i class="record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></i>
+          <span class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
+            {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
           </span>
         </h1>
       </div>
@@ -34,13 +34,13 @@
           <tbody>
           {% for rcdoc in rdoc['cases'] %}
             <tr>
-              <td class="col--case record-status--border {{ vj4.handler.record.STATUS_CODES[rcdoc['status']] }}">
+              <td class="col--case record-status--border {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}">
                 #{{ loop.index }}
               </td>
               <td class="col--status">
-                <i class="record-status--icon {{ vj4.handler.record.STATUS_CODES[rcdoc['status']] }}"></i>
-                <span class="record-status--text {{ vj4.handler.record.STATUS_CODES[rcdoc['status']] }}">
-                  {{ vj4.handler.record.STATUS_TEXTS[rcdoc['status']] }}
+                <i class="record-status--icon {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}"></i>
+                <span class="record-status--text {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}">
+                  {{ vj4.constant.record.STATUS_TEXTS[rcdoc['status']] }}
                 </span>
               </td>
               <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>

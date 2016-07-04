@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var _ = require('lodash');
 
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -59,11 +60,9 @@ var config = {
         test: /\.js$/,
         exclude: /node_modules\//,
         loader: 'babel',
-        query: {
+        query: _.merge({}, require('./package.json').babel, {
           cacheDirectory: true,
-          plugins: ['lodash', 'transform-runtime'],
-          presets: ['es2015-webpack', 'stage-0', 'react'],
-        }
+        }),
       },
       {
         // vendors stylesheets
