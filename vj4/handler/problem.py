@@ -149,7 +149,7 @@ class ProblemDataView(base.Handler):
   @base.route_argument
   @base.sanitize
   async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool = False):
-    # Judge will have PRIV_READ_PROBLEM_DATA, domain administrator will have PERM_READ_PROBLEM_DATA.
+    # Judges will have PRIV_READ_PROBLEM_DATA, domain administrators will have PERM_READ_PROBLEM_DATA.
     if not self.has_priv(builtin.PRIV_READ_PROBLEM_DATA):
       self.check_perm(builtin.PERM_READ_PROBLEM_DATA)
     grid_out = await problem.get_data(self.domain_id, pid)
@@ -185,6 +185,12 @@ class ProblemCreateView(base.Handler):
   async def get(self):
     self.render('problem_edit.html', nav_category='problem_main')
 
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_CREATE_PROBLEM)
+  async def post(self):
+    # TODO(twd2)
+    pass
+
 
 @app.route('/p/{pid}/edit', 'problem_edit')
 class ProblemEditView(base.Handler):
@@ -202,3 +208,9 @@ class ProblemEditView(base.Handler):
       (self.translate('problem_edit'), None))
     self.render('problem_edit.html', pdoc=pdoc,
                 page_title=pdoc['title'], path_components=path_components, nav_category='problem_main')
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  async def post(self):
+    # TODO(twd2)
+    pass

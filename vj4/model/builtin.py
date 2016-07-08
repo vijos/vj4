@@ -53,9 +53,7 @@ DEFAULT_PERMISSIONS = (PERM_VIEW_PROBLEM |
                        PERM_VIEW_CONTEST |
                        PERM_VIEW_CONTEST_STATUS |
                        PERM_VIEW_TRAINING)
-ADMIN_PERMISSIONS = (DEFAULT_PERMISSIONS |
-                     PERM_CREATE_PROBLEM |
-                     PERM_EDIT_PROBLEM)
+ADMIN_PERMISSIONS = PERM_ALL - PERM_SET_PERM
 DOMAIN_SYSTEM = {'_id': DOMAIN_ID_SYSTEM,
                  'owner_uid': 0,
                  'roles': {ROLE_DEFAULT: DEFAULT_PERMISSIONS,

@@ -57,7 +57,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
               begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               pids=[]):
-  if rule not in [RULE_OI, RULE_ACM]:
+  if rule not in _RULES:
     raise error.ValidationError('rule')
   if begin_at >= end_at:
     raise error.ValidationError('begin_at', 'end_at')
@@ -130,7 +130,6 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
   tsdoc = await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, uid, tsdoc['rev'],
                                         journal=journal, **stats)
   return tsdoc
-
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()
