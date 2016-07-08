@@ -1,4 +1,5 @@
 import time
+import datetime
 from bson import objectid
 
 from vj4 import app
@@ -67,7 +68,10 @@ class ContestMainView(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, title: str, content: str, rule: int, begin_at: int, end_at: int, pids: str):
+  async def post(self, *, title: str, content: str, rule: int,
+                 begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
+                 end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
+                 pids: str):
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
                             rule, begin_at, end_at, list(map(int, pids.split(','))))
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))

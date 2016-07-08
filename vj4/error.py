@@ -169,7 +169,7 @@ class ContestNotAttendedError(UserFacingError):
 class ContestStatusHiddenError(UserFacingError):
   @property
   def message(self):
-    return "Status of contest {0} is hidden."
+    return "Contest status is hidden."
 
 
 class TrainingRequirementNotSatisfiedError(UserFacingError):
