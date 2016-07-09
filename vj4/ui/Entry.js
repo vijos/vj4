@@ -13,7 +13,7 @@ import './misc/textalign.styl';
 import './misc/grid.styl';
 import './misc/slideout.styl';
 
-import './misc/webicon.css';
+import './misc/webicon.styl';
 import './misc/immersive.styl';
 import './misc/structure.styl';
 import './misc/section.styl';

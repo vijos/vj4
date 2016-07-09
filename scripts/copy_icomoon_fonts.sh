@@ -8,9 +8,11 @@ if [ ! -f "$CURRENT_DIR"/selection.json ]; then
     exit 1
 fi
 
-BASE_DIR="$PROJECT_DIR"/vj4/ui/misc
+BASE_DIR="$PROJECT_DIR"/vj4/ui
 
-cp selection.json "$BASE_DIR"/fonts/.icomoon_selection.json
-cp fonts/icomoon.* "$BASE_DIR"/fonts/
-cp style.css "$BASE_DIR"/webicon.css
-chmod 600 "$BASE_DIR"/fonts/*
+find . -type f -exec chmod 0644 {} \; && find . -type d -exec chmod 0755 {} \;
+
+cp selection.json "$BASE_DIR"/misc/fonts/.icomoon_selection.json
+cp variables.styl "$BASE_DIR"/common/webicon.inc.styl
+cp fonts/icomoon.* "$BASE_DIR"/misc/fonts/
+tail -n +3 style.styl > "$BASE_DIR"/misc/webicon.styl

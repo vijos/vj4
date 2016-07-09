@@ -5,7 +5,7 @@
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">
-          <i class="record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></i>
+          <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
           <span class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
             {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
           </span>
@@ -38,7 +38,7 @@
                 #{{ loop.index }}
               </td>
               <td class="col--status">
-                <i class="record-status--icon {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}"></i>
+                <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}"></span>
                 <span class="record-status--text {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}">
                   {{ vj4.constant.record.STATUS_TEXTS[rcdoc['status']] }}
                 </span>

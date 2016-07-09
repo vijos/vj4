@@ -1,7 +1,7 @@
 <tr data-rid="{{ rdoc['_id'] }}">
   <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
     <div class="col--status__text">
-      <i class="record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></i>
+      <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
       <a href="{{ reverse_url('record_detail', rid=rdoc['_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
         {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
       </a>
