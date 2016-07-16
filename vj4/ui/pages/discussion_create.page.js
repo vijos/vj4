@@ -1,7 +1,7 @@
 import { NamedPage } from '../misc/PageLoader';
 
 const page = new NamedPage('discussion_create', async () => {
-  const CMEditor = (await System.import('../components/cmeditor/CMEditor')).default;
+  const { default: CMEditor } = await System.import('../components/cmeditor');
   // TODO
   // eslint-disable-next-line no-new
   new CMEditor({

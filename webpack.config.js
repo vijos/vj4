@@ -6,7 +6,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var extractProjectCSS = new ExtractTextPlugin('vj4.css', { allChunks: true });
-var extractVendorCSS = new ExtractTextPlugin('vendors.css', { allChunks: true });
+//var extractVendorCSS = new ExtractTextPlugin('vendors.css', { allChunks: true });
 var postcssAutoprefixerPlugin = require('autoprefixer');
 var stylusRupturePlugin = require('rupture');
 
@@ -60,21 +60,7 @@ var config = {
         test: /\.js$/,
         exclude: /node_modules\//,
         loader: 'babel',
-        query: _.merge({}, require('./package.json').babel, {
-          cacheDirectory: true,
-        }),
-      },
-      {
-        // vendors stylesheets
-        test: /\.css$/,
-        include: /node_modules\//,
-        loader: extractVendorCSS.extract(['css']),
-      },
-      {
-        // project stylesheets
-        test: /\.css$/,
-        exclude: /node_modules\//,
-        loader: extractProjectCSS.extract(['css', 'postcss']),
+        query: _.merge({}, require('./package.json').babel),
       },
       {
         // project stylus stylesheets
@@ -82,6 +68,18 @@ var config = {
         // TODO: stylus-loader requires 'resolve url' query.
         // to be added once extract-text-webpack-plugin#196 is fixed
         loader: extractProjectCSS.extract(['css', 'postcss', 'stylus']),
+      },
+      /*{
+        // vendors stylesheets
+        test: /\.css$/,
+        include: /node_modules\//,
+        loader: extractVendorCSS.extract(['css']),
+      },*/
+      {
+        // project stylesheets
+        test: /\.css$/,
+        //exclude: /node_modules\//,
+        loader: extractProjectCSS.extract(['css', 'postcss']),
       },
     ]
   },
@@ -95,18 +93,21 @@ var config = {
     // don't include locale files in momentjs
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
-    // extract 3rd-party libraries into a standalone file
+    // extract stylesheets into a standalone file
+    // extractVendorCSS,
+    extractProjectCSS,
+
+    // extract 3rd-party JavaScript libraries into a standalone file
+    /*
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendors',
       filename: 'vendors.js',
       minChunks: function (module, count) {
-        return module.resource && module.resource.indexOf(root('vj4/ui/')) === -1;
+        return module.resource
+          && module.resource.indexOf(root('vj4/ui/')) === -1
+          && module.resource.match(/\.js$/);
       },
-    }),
-
-    // extract stylesheets into a standalone file
-    extractProjectCSS,
-    extractVendorCSS,
+    }),*/
 
     // copy static assets
     new CopyWebpackPlugin([{ from: root('vj4/ui/static') }]),
