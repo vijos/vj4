@@ -5,8 +5,8 @@ var _ = require('lodash');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
-var extractProjectCSS = new ExtractTextPlugin('vj4.css', { allChunks: true });
-//var extractVendorCSS = new ExtractTextPlugin('vendors.css', { allChunks: true });
+var extractProjectCSS = new ExtractTextPlugin({ filename: 'vj4.css', allChunks: true });
+var extractVendorCSS = new ExtractTextPlugin({ filename: 'vendors.css', allChunks: true });
 var postcssAutoprefixerPlugin = require('autoprefixer');
 var stylusRupturePlugin = require('rupture');
 
@@ -67,18 +67,18 @@ var config = {
         test: /\.styl$/,
         // TODO: stylus-loader requires 'resolve url' query.
         // to be added once extract-text-webpack-plugin#196 is fixed
-        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus']),
+        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus?resolve url']),
       },
-      /*{
+      {
         // vendors stylesheets
         test: /\.css$/,
         include: /node_modules\//,
         loader: extractVendorCSS.extract(['css']),
-      },*/
+      },
       {
         // project stylesheets
         test: /\.css$/,
-        //exclude: /node_modules\//,
+        exclude: /node_modules\//,
         loader: extractProjectCSS.extract(['css', 'postcss']),
       },
     ]
@@ -94,11 +94,10 @@ var config = {
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
     // extract stylesheets into a standalone file
-    // extractVendorCSS,
+    extractVendorCSS,
     extractProjectCSS,
 
     // extract 3rd-party JavaScript libraries into a standalone file
-    /*
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendors',
       filename: 'vendors.js',
@@ -107,7 +106,7 @@ var config = {
           && module.resource.indexOf(root('vj4/ui/')) === -1
           && module.resource.match(/\.js$/);
       },
-    }),*/
+    }),
 
     // copy static assets
     new CopyWebpackPlugin([{ from: root('vj4/ui/static') }]),
