@@ -1,3 +1,5 @@
+import time
+import datetime
 from bson import objectid
 
 from vj4 import app
@@ -27,7 +29,7 @@ class ContestMainView(base.Handler):
 
 
 @app.route('/tests/{tid:\w{24}}', 'contest_detail')
-class ContestDetailView(base.Handler):
+class ContestDetailView(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.route_argument
   @base.sanitize
@@ -39,6 +41,13 @@ class ContestDetailView(base.Handler):
     self.render('contest_detail.html', tdoc=tdoc,
                 path_components=path_components, nav_category='contest_main')
 
+  @base.require_perm(builtin.PERM_ATTEND_CONTEST)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_attend(self, *, tid: objectid.ObjectId):
+    await contest.attend(self.domain_id, tid, self.user['_id'])
+    self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
 
 @app.route('/tests/{tid:\w{24}}/status', 'contest_status')
 class ContestStatusView(base.Handler):
@@ -59,5 +68,17 @@ class ContestStatusView(base.Handler):
 class ContestMainView(base.Handler):
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
-    self.render('contest_create.html',
+    self.render('contest_create.html', now=int(time.time()),
                 nav_category='contest_main')
+
+  @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, title: str, content: str, rule: int,
+                 begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
+                 end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
+                 pids: str):
+    tid = await contest.add(self.domain_id, title, content, self.user['_id'],
+                            rule, begin_at, end_at, list(map(int, pids.split(','))))
+    self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))

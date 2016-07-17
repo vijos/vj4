@@ -9,7 +9,16 @@
     </ol>
   </div>
   <div class="large-3 columns">
-    <h1>{{ _('Swx Template!') }}</h1>
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">
+          {{ _('Create Contest') }}
+        </h1>
+      </div>
+      <div class="section__body">
+        <p><a href="{{ reverse_url('contest_create') }}" class="expanded primary button">{{ _('Create a contest') }}</a></p>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

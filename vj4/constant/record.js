@@ -1,7 +1,3 @@
-// This file is referenced in:
-// - generate_constant script
-// - UI
-
 export const STATUS_WAITING = 0;
 export const STATUS_ACCEPTED = 1;
 export const STATUS_WRONG_ANSWER = 2;
@@ -16,6 +12,9 @@ export const STATUS_ETC = 10;
 export const STATUS_JUDGING = 20;
 export const STATUS_COMPILING = 21;
 export const STATUS_IGNORED = 30;
+
+export const TYPE_SUBMISSION = 0;
+export const TYPE_PRETEST = 1;
 
 // For JavaScript only
 export const STATUSES = {
@@ -70,3 +69,9 @@ export const STATUS_CODES = {
   [STATUS_IGNORED]: 'ignored',
 };
 STATUS_CODES.__intKey = true;
+
+export const TYPE_TEXTS = {
+  [TYPE_SUBMISSION]: 'Submission',
+  [TYPE_PRETEST]: 'Pretest',
+};
+TYPE_TEXTS.__intKey = true;

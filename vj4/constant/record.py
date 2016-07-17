@@ -34,6 +34,10 @@ STATUS_COMPILING = 21
 
 STATUS_IGNORED = 30
 
+TYPE_SUBMISSION = 0
+
+TYPE_PRETEST = 1
+
 STATUSES = {
 "STATUS_WAITING": 0,
 "STATUS_ACCEPTED": 1,
@@ -83,5 +87,10 @@ STATUS_CODES = {
 20: "progress",
 21: "progress",
 30: "ignored",
+}
+
+TYPE_TEXTS = {
+0: "Submission",
+1: "Pretest",
 }
 

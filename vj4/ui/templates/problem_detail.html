@@ -1,5 +1,10 @@
 {% extends "layout/basic.html" %}
 {% block content %}
+<script>
+  var Context = {{ {
+    'problemId': pdoc['doc_id']|string(),
+  }|json|safe }};
+</script>
 <div class="row">
   <div class="large-9 columns">
     <div class="section">
