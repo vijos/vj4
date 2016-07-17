@@ -145,7 +145,7 @@ class HandlerBase(setting.SettingMixin):
     kwargs['handler'] = self
     kwargs['_'] = self.translate
     kwargs['domain_id'] = self.domain_id
-    if not 'page_name' in kwargs:
+    if 'page_name' not in kwargs:
       kwargs['page_name'] = self.NAME
     if 'page_title' not in kwargs:
       kwargs['page_title'] = self.translate(self.TITLE)
