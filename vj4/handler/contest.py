@@ -29,7 +29,7 @@ class ContestMainView(base.Handler):
 
 
 @app.route('/tests/{tid:\w{24}}', 'contest_detail')
-class ContestDetailView(base.Handler):
+class ContestDetailView(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.route_argument
   @base.sanitize
@@ -41,6 +41,13 @@ class ContestDetailView(base.Handler):
     self.render('contest_detail.html', tdoc=tdoc,
                 path_components=path_components, nav_category='contest_main')
 
+  @base.require_perm(builtin.PERM_ATTEND_CONTEST)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_attend(self, *, tid: objectid.ObjectId):
+    await contest.attend(self.domain_id, tid, self.user['_id'])
+    self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
 
 @app.route('/tests/{tid:\w{24}}/status', 'contest_status')
 class ContestStatusView(base.Handler):

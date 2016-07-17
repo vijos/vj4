@@ -215,7 +215,7 @@ class Handler(web.View, HandlerBase):
             'url_prefix': options.options.url_prefix}
 
 
-class OperationView(Handler):
+class OperationHandler(Handler):
   async def post(self):
     arguments = (await self.request.post()).copy()
     operation = arguments.pop('operation')

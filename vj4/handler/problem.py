@@ -13,7 +13,7 @@ from vj4.handler import base
 
 
 @app.route('/p', 'problem_main')
-class ProblemMainView(base.OperationView):
+class ProblemMainView(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
@@ -55,7 +55,7 @@ class ProblemDetailView(base.Handler):
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
-class ProblemDetailView(base.Handler):
+class ProblemSubmitView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -82,7 +82,7 @@ class ProblemDetailView(base.Handler):
 
 
 @app.route(r'/p/{pid}/solution', 'problem_solution')
-class ProblemSolutionView(base.OperationView):
+class ProblemSolutionView(base.OperationHandler):
   SOLUTIONS_PER_PAGE = 30
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
