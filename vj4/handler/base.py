@@ -185,6 +185,12 @@ class Handler(web.View, HandlerBase):
     self.response.content_type = 'application/json'
     self.response.text = json.encode(obj)
 
+  async def binary(self, data):
+    self.response = web.StreamResponse()
+    self.response.content_length = len(data)
+    await self.response.prepare(self.request)
+    self.response.write(data)
+
   @property
   def prefer_json(self):
     for d in accept.parse(self.request.headers.get('Accept')):
@@ -208,12 +214,22 @@ class Handler(web.View, HandlerBase):
     else:
       self.redirect(redirect_url)
 
+  def json_or_render(self, template_name, **kwargs):
+    if self.prefer_json:
+      self.json(kwargs)
+    else:
+      self.render(template_name, **kwargs)
+
   @property
   def ui_context(self):
     return {'csrf_token': self.csrf_token,
             'cdn_prefix': options.options.cdn_prefix,
             'url_prefix': options.options.url_prefix}
 
+  @property
+  def user_context(self):
+    return {'uid': self.user['_id'],
+            'domain': self.domain_id}
 
 class OperationHandler(Handler):
   async def post(self):

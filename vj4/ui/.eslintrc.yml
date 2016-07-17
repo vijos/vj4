@@ -21,9 +21,12 @@ globals:
   __webpack_public_path__: true
   __webpack_require__: true
   UiContext: true
+  UserContext: true
+  Context: true
 rules:
   no-unused-vars: warn
   no-console: off
+  no-underscore-dangle: off
   indent:
     - error
     - 2
