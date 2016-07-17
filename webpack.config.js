@@ -4,8 +4,8 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
-var extractProjectCSS = new ExtractTextPlugin('vj4.css', { allChunks: true });
-var extractVendorCSS = new ExtractTextPlugin('vendors.css', { allChunks: true });
+var extractProjectCSS = new ExtractTextPlugin({ filename: 'vj4.css', allChunks: true });
+var extractVendorCSS = new ExtractTextPlugin({ filename: 'vendors.css', allChunks: true });
 var postcssAutoprefixerPlugin = require('autoprefixer');
 var stylusRupturePlugin = require('rupture');
 
@@ -80,9 +80,7 @@ var config = {
       {
         // project stylus stylesheets
         test: /\.styl$/,
-        // TODO: stylus-loader requires 'resolve url' query.
-        // to be added once extract-text-webpack-plugin#196 is fixed
-        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus']),
+        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus?resolve url']),
       },
     ]
   },

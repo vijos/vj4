@@ -21,7 +21,7 @@ TYPE_TEXTS = {
 
 
 @app.route('/tests', 'contest_main')
-class ContestMainView(base.Handler):
+class ContestMainHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   async def get(self):
     tdocs = await contest.get_list(self.domain_id)
@@ -29,7 +29,7 @@ class ContestMainView(base.Handler):
 
 
 @app.route('/tests/{tid:\w{24}}', 'contest_detail')
-class ContestDetailView(base.Handler):
+class ContestDetailHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.route_argument
   @base.sanitize
@@ -41,9 +41,18 @@ class ContestDetailView(base.Handler):
     self.render('contest_detail.html', tdoc=tdoc,
                 path_components=path_components, nav_category='contest_main')
 
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_ATTEND_CONTEST)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_attend(self, *, tid: objectid.ObjectId):
+    await contest.attend(self.domain_id, tid, self.user['_id'])
+    self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
+
 
 @app.route('/tests/{tid:\w{24}}/status', 'contest_status')
-class ContestStatusView(base.Handler):
+class ContestStatusHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
   @base.sanitize
@@ -58,13 +67,13 @@ class ContestStatusView(base.Handler):
 
 
 @app.route('/tests/create', 'contest_create')
-class ContestMainView(base.Handler):
+class ContestCreateHandler(base.Handler):
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
     self.render('contest_create.html', now=int(time.time()),
                 nav_category='contest_main')
 
-  @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
+  @base.require_perm(builtin.PERM_CREATE_CONTEST)
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
