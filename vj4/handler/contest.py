@@ -68,11 +68,13 @@ class ContestStatusHandler(base.Handler):
 
 @app.route('/tests/create', 'contest_create')
 class ContestCreateHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
     self.render('contest_create.html', now=int(time.time()),
                 nav_category='contest_main')
 
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   @base.post_argument
   @base.require_csrf_token
