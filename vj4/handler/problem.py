@@ -3,7 +3,6 @@ import functools
 
 from vj4 import app
 from vj4 import error
-from vj4 import constant
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import queue
@@ -78,7 +77,7 @@ class ProblemSubmitView(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
     pdoc = await problem.get(self.domain_id, pid)
-    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION, self.user['_id'], lang, code)
+    rid = await record.add(self.domain_id, pdoc['doc_id'], vj4.constant.record.TYPE_SUBMISSION, self.user['_id'], lang, code)
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
     self.json_or_redirect(self.reverse_url('record_main'))
 
@@ -95,7 +94,7 @@ class ProblemPretestView(base.Handler):
     tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
                              data_input = self.request.POST.getall('data_input'),
                              data_output = self.request.POST.getall('data_output'))
-    rid = await record.add(self.domain_id, pid, constant.record.TYPE_PRETEST, self.user['_id'], lang, code, tid)
+    rid = await record.add(self.domain_id, pid, vj4.constant.record.TYPE_PRETEST, self.user['_id'], lang, code, tid)
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
     self.json_or_redirect(self.reverse_url('record_main'))
 

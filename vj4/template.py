@@ -10,7 +10,7 @@ from jinja2 import ext
 import vj4
 from vj4.util import json
 from vj4.util import options
-
+from vj4.constant import *
 
 class Environment(jinja2.Environment):
   def __init__(self):
