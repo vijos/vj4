@@ -55,18 +55,19 @@ class ProblemDetailView(base.Handler):
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
-class ProblemDetailView(base.Handler):
+class ProblemSubmitView(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pid).sort([('_id', -1)]).to_list(10)
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], None))
-    self.render('problem_submit.html', pdoc=pdoc,
-                page_title=pdoc['title'], path_components=path_components, nav_category='problem_main')
+    self.json_or_render('problem_submit.html', pdoc=pdoc, rdocs=rdocs,
+                        page_title=pdoc['title'], path_components=path_components, nav_category='problem_main')
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
@@ -76,12 +77,29 @@ class ProblemDetailView(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
     pdoc = await problem.get(self.domain_id, pid)
-    rid = await record.add(self.domain_id, pdoc['doc_id'], self.user['_id'], lang, code)
+    rid = await record.add(self.domain_id, pdoc['doc_id'], record.TYPE_SUBMISSION, self.user['_id'], lang, code)
     await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
     self.json_or_redirect(self.reverse_url('record_main'))
 
 
-@app.route(r'/p/{pid}/solution', 'problem_solution')
+@app.route('/p/{pid}/pretest', 'problem_pretest')
+class ProblemPretestView(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, pid: document.convert_doc_id, lang: str, code: str, data_input: str, data_output: str):
+    tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
+                             data_input = self.request.POST.getall('data_input'),
+                             data_output = self.request.POST.getall('data_output'))
+    rid = await record.add(self.domain_id, pid, record.TYPE_PRETEST, self.user['_id'], lang, code, tid)
+    await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
+    self.json_or_redirect(self.reverse_url('record_main'))
+
+
+@app.route('/p/{pid}/solution', 'problem_solution')
 class ProblemSolutionView(base.OperationView):
   SOLUTIONS_PER_PAGE = 30
 

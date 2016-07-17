@@ -60,8 +60,8 @@ class JudgeNotifyConnection(base.Connection):
       rdoc = await record.begin_judge(rid, self.user['_id'], self.id, record.STATUS_COMPILING)
       if rdoc:
         self.rids[tag] = rdoc['_id']
-        self.send(tag=tag, pid=rdoc['pid'], domain_id=rdoc['domain_id'],
-                  lang=rdoc['lang'], code=rdoc['code'])
+        self.send(id=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
+                  lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])
         await bus.publish('record_change', rdoc['_id'])
       else:
         # Record not found, eat it.
