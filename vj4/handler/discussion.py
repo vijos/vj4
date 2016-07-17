@@ -78,7 +78,7 @@ class DiscussionCreateView(base.Handler):
 
 
 @app.route('/discuss/{did:\w{24}}', 'discussion_detail')
-class DiscussionDetailView(base.OperationView):
+class DiscussionDetailView(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
   @base.sanitize

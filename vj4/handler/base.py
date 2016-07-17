@@ -231,7 +231,7 @@ class Handler(web.View, HandlerBase):
     return {'uid': self.user['_id'],
             'domain': self.domain_id}
 
-class OperationView(Handler):
+class OperationHandler(Handler):
   async def post(self):
     arguments = (await self.request.post()).copy()
     operation = arguments.pop('operation')
