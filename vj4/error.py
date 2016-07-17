@@ -68,11 +68,15 @@ class LoginError(UserFacingError):
 
 
 class DocumentNotFoundError(NotFoundError):
-  pass
+  @property
+  def message(self):
+    return "Document {0} not found."
 
 
 class ProblemDataNotFoundError(NotFoundError):
-  pass
+  @property
+  def message(self):
+    return "Problem {0} data not found."
 
 
 class PermissionError(UserFacingError):
@@ -131,19 +135,27 @@ class DiscussionNodeNotFoundError(NotFoundError):
 
 
 class DiscussionNotFoundError(DocumentNotFoundError):
-  pass
+  @property
+  def message(self):
+    return "Discussion {0} not found."
 
 
 class MessageNotFoundError(NotFoundError):
-  pass
+  @property
+  def message(self):
+    return "Message {0} not found."
 
 
 class DomainNotFoundError(NotFoundError):
-  pass
+  @property
+  def message(self):
+    return "Domain {0} not found."
 
 
 class DomainAlreadyExistError(UserFacingError):
-  pass
+  @property
+  def message(self):
+    return "Domain {0} already exists."
 
 
 class ContestAlreadyAttendedError(UserFacingError):
@@ -155,7 +167,9 @@ class ContestNotAttendedError(UserFacingError):
 
 
 class ContestStatusHiddenError(UserFacingError):
-  pass
+  @property
+  def message(self):
+    return "Contest status is hidden."
 
 
 class TrainingRequirementNotSatisfiedError(UserFacingError):
@@ -163,4 +177,6 @@ class TrainingRequirementNotSatisfiedError(UserFacingError):
 
 
 class RecordNotFoundError(NotFoundError):
-  pass
+  @property
+  def message(self):
+    return "Record {0} not found."

@@ -1,17 +1,68 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
-    <h2>{{ _('contest_create') }}</h2>
-    {{ tdoc }}
+<div class="row">
+  <div class="large-9 columns">
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Create Contest') }}</h1>
+      </div>
+      <div class="section__body">
+        <form method="post">
+          <div class="form__row">
+            <label class="form__group">
+              {{ _('Title') }}
+              <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
+            </label>
+          </div>
+          <div class="form__row">
+            <label class="form__group">
+              {{ _('Rule') }}
+              <select name="rule">
+                <option value="2">OI</option>
+                <option value="3">ACM/ICPC</option>
+              </select>
+            </label>
+          </div>
+          <div class="form__row">
+            <label class="form__group">
+              {{ _('Begin At') }}
+              <input name="begin_at" value="{{ now + 600 }}" class="textbox">
+            </label>
+          </div>
+          <div class="form__row">
+            <label class="form__group">
+              {{ _('End At') }}
+              <input name="end_at" value="{{ now + 600 + 3 * 3600 }}" class="textbox">
+            </label>
+          </div>
+          <div class="form__row">
+            <label class="form__group">
+              {{ _('Problems') }}
+              <input name="pids" value="1000,1001" class="textbox">
+            </label>
+          </div>
+          <div class="form__row">
+            <label class="form__group">
+              {{ _('Content') }}
+              <textarea id="markdown-textarea" name="content" class="expanded textbox"></textarea>
+            </label>
+          </div>
+          <div class="form__row">
+            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+            <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-  <div class="layout--2col__side">
-    <div>
-      <ul>
-        <li><a href="{{ reverse_url('contest_status', tid=tdoc['doc_id']) }}">{{ _('contest_status') }}</a></li>
-        <li>{{ _('Swx Template') }}</li>
-        <li>{{ _('Swx Template') }}</li>
-      </ul>
+  <div class="large-3 columns">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Information') }}</h1>
+      </div>
+      <div class="section__body">
+        <p>foo bar</p>
+      </div>
     </div>
   </div>
 </div>

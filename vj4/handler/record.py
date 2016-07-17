@@ -59,6 +59,7 @@ TYPE_TEXTS = {
 class RecordMainView(base.Handler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
+    # TODO(twd2): check permission for visibility. (e.g. test).
     rdocs = await record.get_all_multi().sort([('_id', -1)]).to_list(50)
     # TODO(iceboy): projection.
     await asyncio.gather(user.attach_udocs(rdocs, 'uid'),
@@ -90,6 +91,7 @@ class RecordDetailView(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):
+    # TODO(twd2): check permission for visibility. (e.g. test).
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)

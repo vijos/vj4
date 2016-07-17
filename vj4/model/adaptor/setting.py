@@ -20,7 +20,7 @@ SETTINGS = [
   Setting('info', 'signature', str, ui='textarea'),
   Setting('privacy', 'show_mail', int, range=PRIVACY_RANGE, ui='option'),
   Setting('privacy', 'show_qq', int, range=PRIVACY_RANGE, ui='option'),
-  Setting('preference', 'view_lang', str, range=['zh_CN', 'en'], ui='option'),
+  Setting('preference', 'view_lang', str, range=builtin.VIEW_LANGS, ui='option'),
   Setting('preference', 'code_lang', str, range=builtin.LANGS, ui='option'),
   Setting('preference', 'show_tags', int),
   Setting('preference', 'send_code', int)]

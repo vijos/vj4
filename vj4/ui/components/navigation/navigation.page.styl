@@ -14,6 +14,9 @@
   transition-timing-function: ease-out-cubic
   z-index: 500
 
+.nav > .row
+  transition: max-width .3s ease-out-cubic
+
 .nav--slideout-trigger
   position: absolute
   display: none
@@ -55,10 +58,14 @@
 
   &:visited, &:active
     color: #FFF
+
+  &.nav--active
+    border-color: lighten($nav-item-active-color, 60%)
+
   &:hover
     text-decoration: none
-    border-color: $nav-item-hover-color
-    background: rgba(#FFF, 0.15)
+    border-color: lighten($nav-item-hover-color, 80%)
+    background: rgba(#FFF, 0.3)
 
 .nav__list--secondary
   float: right
@@ -117,9 +124,12 @@
 
   .nav__item
     color: $text-color
+    &.nav--active
+      border-color: $nav-item-active-color
     &:visited, &:active
       color: $text-color
     &:hover
+      border-color: $nav-item-hover-color
       background: #F8F8F8
 
   .nav__item--round
@@ -138,11 +148,11 @@
 .nav--shadow.floating
   box-shadow: 0 0 6px rgba(#000, 0.3)
 
-.slideout-panel-container
-  height: 100%
-
 // For Mobile: show a slideout vertical arranged menu
 +below(rupture.mobile-cutoff)
+
+  .nav .columns
+    padding: 0
 
   .nav--slideout-trigger
     display: block
@@ -151,21 +161,7 @@
     display: none
 
   .nav.slideout-menu
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 0;
-    width: 256px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    display: none;
-    background: #1D1F20;
-    height: auto;
-
-    .content-container
-      margin: 0
+    background: #1D1F20
 
   .nav__list
     float: none
@@ -174,8 +170,8 @@
     float: none
 
   .nav__logo
-    width: auto
-    opacity: 1
+    width: auto !important
+    opacity: 1 !important
     background-position: center center
     margin: 0
     height: rem($nav-logo-height + 40px)
@@ -187,17 +183,22 @@
     line-height: rem($nav-item-height - 6)
     padding: rem(0 20px 3px 20px)
     border: 0
+    border-left: 3px solid transparent
     margin: 0
     border-radius: 0
     background: none
     color: #FFF
+
+    &.nav--active
+      border-color: $nav-item-active-color
 
     &:visited, &:active
       background: none
       color: #FFF
 
     &:hover
-      background: rgba(#FFF, 0.15)
+      border-color: $nav-item-hover-color
+      background: rgba(#FFF, 0.10)
       color: #FFF
 
   .nav .dropdown-target.menu
@@ -214,15 +215,3 @@
 
   .nav__list--secondary
     border-top: 1px solid #666
-
-  .slideout-panel
-    position: relative;
-    z-index: 1;
-
-  .slideout-open .slideout-menu
-    display: block;
-
-  .slideout-open body,
-  .slideout-open .slideout-panel-container,
-  .slideout-open .slideout-panel
-    overflow: hidden;

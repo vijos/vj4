@@ -1,4 +1,4 @@
-import assign from 'lodash/assign';
+import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Tab extends DOMAttachedObject {
@@ -53,4 +53,4 @@ export default class Tab extends DOMAttachedObject {
 }
 
 Tab.DOMAttachKey = 'vjTabInstance';
-assign(Tab, DOMAttachedObject);
+_.assign(Tab, DOMAttachedObject);

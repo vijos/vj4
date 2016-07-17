@@ -1,16 +1,23 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <ol>
     {% for tdoc in tdocs %}
       <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">{{ tdoc }}</a>
     {% endfor %}
     </ol>
   </div>
-  <div class="layout--2col__side">
-    <div>
-      <h1>{{ _('Swx Template!') }}</h1>
+  <div class="large-3 columns">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">
+          {{ _('Create Contest') }}
+        </h1>
+      </div>
+      <div class="section__body">
+        <p><a href="{{ reverse_url('contest_create') }}" class="expanded primary button">{{ _('Create a contest') }}</a></p>
+      </div>
     </div>
   </div>
 </div>

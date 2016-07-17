@@ -1,73 +1,18 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import * as util from '../../misc/Util';
-import throttle from 'lodash/throttle';
+import _ from 'lodash';
 import Slideout from 'slideout';
+import Navigation from './navigation.js';
 
-let $nav = null;
-let $navShadow = null;
-let isNavFloating = false;
-let isNonTop = false;
-let isHover = false;
-let isDropdownShow = false;
-
-function floatNav() {
-  if (!isNavFloating) {
-    $nav.addClass('floating');
-    $navShadow.addClass('floating');
-    isNavFloating = true;
-  }
-}
-
-function unfloatNav() {
-  if (isNavFloating) {
-    $nav.removeClass('floating');
-    $navShadow.removeClass('floating');
-    isNavFloating = false;
-  }
-}
-
-function updateNavFloating() {
-  if (isNonTop || isHover || isDropdownShow) {
-    floatNav();
-  } else {
-    unfloatNav();
-  }
-}
+const nav = Navigation.instance;
+const $nav = nav.$nav;
 
 function onScroll() {
-  if ($(window).scrollTop() > 30) {
-    if (!isNonTop) {
-      isNonTop = true;
-      updateNavFloating();
-      $nav.addClass('showlogo');
-    }
-  } else {
-    if (isNonTop) {
-      isNonTop = false;
-      updateNavFloating();
-      $nav.removeClass('showlogo');
-    }
+  const currentState = $(window).scrollTop() > 20;
+  if (nav.floating.get('nonTop') !== currentState) {
+    nav.floating.set('nonTop', currentState);
+    nav.logoVisible.set('nonTop', currentState);
   }
-}
-
-function onNavEnter() {
-  isHover = true;
-  updateNavFloating();
-}
-
-function onNavLeave() {
-  isHover = false;
-  updateNavFloating();
-}
-
-function onNavDropdownShow() {
-  isDropdownShow = true;
-  updateNavFloating();
-}
-
-function onNavDropdownHide() {
-  isDropdownShow = false;
-  updateNavFloating();
 }
 
 function onNavLogoutClick() {
@@ -78,17 +23,17 @@ function onNavLogoutClick() {
 }
 
 const navigationPage = new AutoloadPage(() => {
-  $nav = $('.nav');
-  $navShadow = $('.nav--shadow');
-
   if ($nav.length > 0
     && document.documentElement.getAttribute('data-layout') === 'basic'
     && window.innerWidth >= 450
   ) {
-    $(window).on('scroll', throttle(onScroll, 100));
-    $nav.hover(onNavEnter, onNavLeave);
-    $nav.on('vjDropdownShow', onNavDropdownShow);
-    $nav.on('vjDropdownHide', onNavDropdownHide);
+    $(window).on('scroll', _.throttle(onScroll, 100));
+    $nav.hover(
+      () => nav.floating.set('hover', true),
+      () => nav.floating.set('hover', false)
+    );
+    $nav.on('vjDropdownShow', () => nav.floating.set('dropdown', true));
+    $nav.on('vjDropdownHide', () => nav.floating.set('dropdown', false));
     onScroll();
   }
 

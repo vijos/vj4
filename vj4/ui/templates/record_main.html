@@ -1,10 +1,12 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <div class="section">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Judging Queue') }}</h1>
+      </div>
+      <div class="section__body no-padding">
         <table class="section__table record_main__table">
           <colgroup>
             <col class="col--status">
@@ -35,10 +37,13 @@
       </div>
     </div>
   </div>
-  <div class="layout--2col__side">
+  <div class="large-3 columns">
     <div class="section">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
+      </div>
+      <div class="section__body">
+        <p>foo bar</p>
       </div>
     </div>
   </div>

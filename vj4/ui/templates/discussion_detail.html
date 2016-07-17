@@ -1,41 +1,39 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <div class="section">
-      <div class="section__indent top">
-        <div class="section__indent left right">
-          <h1>{{ ddoc['title'] }}</h1>
-          <div class="dczdetail__supplementary">
-            <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><i class="icon-tag"></i>{{ vnode['title'] }}</a>
-            <span class="v-center"> · </span>
-            {% with user = udoc %}
-              {% include "components/inline_user.html" %}
-            {% endwith %}
-            <span class="v-center"> · </span>
-            <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
-          </div>
-          <div class="typo topic__content">
-            {{ ddoc['content']|markdown }}
-          </div>
+      <div class="section__header">
+        <h1>{{ ddoc['title'] }}</h1>
+      </div>
+      <div class="section__body">
+        <div class="dczdetail__supplementary">
+          <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><i class="icon-tag"></i>{{ vnode['title'] }}</a>
+          <span class="v-center"> · </span>
+          {% with user = udoc %}
+            {% include "components/inline_user.html" %}
+          {% endwith %}
+          <span class="v-center"> · </span>
+          <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
+        </div>
+        <div class="typo topic__content">
+          {{ ddoc['content']|markdown }}
         </div>
       </div>
-      <div class="topic__footer">
-        <div class="section__indent left right">
-          {{ _('{0} views').format(ddoc['views']) }} · <i class="icon-star--outline"></i> 收藏主题 · <a href="#"><i class="icon-warning"></i> 举报</a>
-        </div>
+      <div class="section__footer topic__footer">
+        {{ _('{0} views').format(ddoc['views']) }} · <i class="icon-star--outline"></i> 收藏主题 · <a href="#"><i class="icon-warning"></i> 举报</a>
       </div>
     </div>
     <div class="section">
-      <div class="section__indent top">
-        <div class="section__indent left right">
-          <h1 class="dczdetail__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
-        </div>
+      <div class="section__header">
+        <h1 class="dczdetail__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
+      </div>
+      <div class="section__body">
         <ul class="dczcomments__list">
           <!-- TODO (iceboy): privilege/permission based -->
           {% if handler.user != vj4.model.builtin.USER_GUEST %}
           <li class="dczcomments__item">
-            <div class="section__indent left right"><div class="media">
+            <div class="media">
               <div class="media__left top">
                 <img src="{{ handler.user['gravatar']|gravatar_url }}" width="60" height="60" class="medium user-profile-avatar">
               </div>
@@ -66,12 +64,12 @@
                   </li>
                 </ul>
               </div>
-            </div></div>
+            </div>
           </li>
           {% endif %}
           {% for drdoc in drdocs %}
           <li class="dczcomments__item">
-            <div class="section__indent left right"><div class="media">
+            <div class="media">
               <div class="media__left top">
                 <img src="{{ drdoc['udoc']['gravatar']|gravatar_url }}" width="60" height="60" class="medium user-profile-avatar">
               </div>
@@ -116,59 +114,59 @@
                   {% endfor %}<!--
              --></ul>
               </div>
-            </div></div>
+            </div>
           </li>
           {% endfor %}
         </ul>
       </div>
     </div>
   </div>
-  <div class="layout--2col__side">
+  <div class="large-3 columns">
     <div class="section side">
-      <div class="section__indent bottom">
-        <div class="profile__bg user-profile-bg--12"></div>
-        <div class="section__indent left right">
-          <div class="media sidebar-user-profile">
-            <div class="media__left">
-              <img src="{{ udoc['gravatar']|gravatar_url }}" width="80" height="80" class="medium user-profile-avatar">
-            </div>
-            <div class="media__body">
-              <p>
-                {% with noAvatar = true, noModBadge = true, user = udoc %}
-                {% include "components/inline_user.html" %}
-                {% endwith %}
-              </p>
+      <div class="profile__bg user-profile-bg--12"></div>
+      <div class="section__body">
+        <div class="media sidebar-user-profile">
+          <div class="media__left">
+            <img src="{{ udoc['gravatar']|gravatar_url }}" width="80" height="80" class="medium user-profile-avatar">
+          </div>
+          <div class="media__body">
+            <p>
+              {% with noAvatar = true, noModBadge = true, user = udoc %}
+              {% include "components/inline_user.html" %}
+              {% endwith %}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="section__body">
+        <div class="balancer sidebar-user-stat">
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">52</div>
+              <div class="numbox__text">通过题目</div>
             </div>
           </div>
-          <div class="balancer sidebar-user-stat">
-            <div class="balancer__body">
-              <div class="numbox">
-                <div class="numbox__num medium">52</div>
-                <div class="numbox__text">通过题目</div>
-              </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">14</div>
+              <div class="numbox__text">题解被赞</div>
             </div>
-            <div class="balancer__body">
-              <div class="numbox">
-                <div class="numbox__num medium">14</div>
-                <div class="numbox__text">题解被赞</div>
-              </div>
-            </div>
-            <div class="balancer__body">
-              <div class="numbox">
-                <div class="numbox__num medium">5</div>
-                <div class="numbox__text">上传题目</div>
-              </div>
+          </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">5</div>
+              <div class="numbox__text">上传题目</div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="section side">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Related Discussions') }}</h1>
-        <div class="section__indent left right">
-          <p>1</p>
-        </div>
+      </div>
+      <div class="section__body">
+        <p>foo bar</p>
       </div>
     </div>
   </div>

@@ -27,7 +27,7 @@ npm install   # cnpm install
 You don't need root privilege to run `npm install`. It installs stuffs in the project directory.
 
 You may want to use [cnpm](https://npm.taobao.org/) and [tuna](https://pypi.tuna.tsinghua.edu.cn/)
-if you are in China.
+if you are in China. Make sure to use `cnpm` by adding `alias` to `npm` instead of installing cnpm cli-tool.
 
 ## Development
 

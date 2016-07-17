@@ -18,7 +18,7 @@ export class NamedPage extends Page {
 
 export class AutoloadPage extends Page {
   constructor(beforeLoading = function () {}, afterLoading = function () {}) {
-    super(null, true, beforeLoading, afterLoading);
+    super('(autoload)', true, beforeLoading, afterLoading);
   }
 }
 

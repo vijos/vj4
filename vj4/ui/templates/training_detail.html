@@ -1,17 +1,11 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     {{ tdoc }}
   </div>
-  <div class="layout--2col__side">
-    <div>
-      <ul>
-        <li>{{ _('Swx Template') }}</li>
-        <li>{{ _('Swx Template') }}</li>
-        <li>{{ _('Swx Template') }}</li>
-      </ul>
-    </div>
+  <div class="large-3 columns">
+    <h1>{{ _('Swx Template!') }}</h1>
   </div>
 </div>
 {% endblock %}

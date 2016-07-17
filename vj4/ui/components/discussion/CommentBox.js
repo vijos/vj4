@@ -1,4 +1,4 @@
-import assign from 'lodash/assign';
+import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 import * as util from '../../misc/Util';
 
@@ -93,4 +93,4 @@ export default class CommentBox extends DOMAttachedObject {
 }
 
 CommentBox.DOMAttachKey = 'vjCommentBoxInstance';
-assign(CommentBox, DOMAttachedObject);
+_.assign(CommentBox, DOMAttachedObject);

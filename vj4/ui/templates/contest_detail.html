@@ -1,16 +1,19 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     {{ tdoc }}
   </div>
-  <div class="layout--2col__side">
-    <div>
-      <ul>
-        <li><a href="{{ reverse_url('contest_status', tid=tdoc['doc_id']) }}">{{ _('contest_status') }}</a></li>
-        <li>{{ _('Swx Template') }}</li>
-        <li>{{ _('Swx Template') }}</li>
-      </ul>
+  <div class="large-3 columns">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">
+          {{ _('Contest Status') }}
+        </h1>
+      </div>
+      <div class="section__body">
+        <p><a href="{{ reverse_url('contest_status', tid=tdoc['_id']) }}" class="expanded primary button">{{ _('Status') }}</a></p>
+      </div>
     </div>
   </div>
 </div>

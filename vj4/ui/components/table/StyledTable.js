@@ -1,4 +1,4 @@
-import assign from 'lodash/assign';
+import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
@@ -44,4 +44,4 @@ export default class StyledTable extends DOMAttachedObject {
 }
 
 StyledTable.DOMAttachKey = 'vjStyledTableInstance';
-assign(StyledTable, DOMAttachedObject);
+_.assign(StyledTable, DOMAttachedObject);
