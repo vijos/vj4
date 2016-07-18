@@ -47,8 +47,6 @@ export default function reducer(state = {
     if (newIndex >= newItems.length) {
       newIndex--;
     }
-    console.log(newIndex);
-    console.log(newItems);
     return {
       ...state,
       current: newItems[newIndex].id,
