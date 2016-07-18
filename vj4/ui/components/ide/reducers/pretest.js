@@ -6,9 +6,10 @@ const initialId = uuid.v4();
 export default function reducer(state = {
   counter: 1,
   current: initialId,
-  items: [
-    { id: initialId, title: '#1', input: '', output: '' },
-  ]
+  tabs: [initialId],
+  items: {
+    [initialId]: { id: initialId, title: '#1', input: '', output: '' },
+  },
 }, action) {
   switch (action.type) {
   case 'IDE_PRETEST_SWITCH_TO_DATA': {
@@ -25,32 +26,54 @@ export default function reducer(state = {
       ...state,
       counter: newCounter,
       current: newId,
-      items: [...state.items, {
-        id: newId,
-        title: `#${newCounter}`,
-        input: '',
-        output: '',
-      }],
+      tabs: [...state.tabs, newId],
+      items: {
+        ...state.items,
+        [newId]: {
+          id: newId,
+          title: `#${newCounter}`,
+          input: '',
+          output: '',
+        },
+      },
     };
   }
   case 'IDE_PRETEST_REMOVE_DATA': {
-    const originalIndex = _.findIndex(state.items, item => item.id === state.current);
-    let newItems = _.clone(state.items);
-    _.pullAt(newItems, originalIndex);
-    if (newItems.length === 0) {
+    const orgIdx = state.tabs.indexOf(state.current);
+    let newCounter = state.counter;
+    const newTabs = _.without(state.tabs, state.current);
+    const newItems = _.omit(state.items, state.current);
+    if (newTabs.length === 0) {
       // keep at least one data
-      newItems = [
-        { id: uuid.v4(), title: `#${++state.counter}`, input: '', output: '' },
-      ];
+      const id = uuid.v4();
+      newTabs.push(id);
+      newItems[id] = {
+        id,
+        title: `#${++newCounter}`,
+        input: '',
+        output: '',
+      };
     }
-    let newIndex = originalIndex;
-    if (newIndex >= newItems.length) {
-      newIndex--;
-    }
+    const newIdx = (orgIdx < newTabs.length) ? orgIdx : orgIdx - 1;
     return {
       ...state,
-      current: newItems[newIndex].id,
+      counter: newCounter,
+      current: newTabs[newIdx],
+      tabs: newTabs,
       items: newItems,
+    };
+  }
+  case 'IDE_PRETEST_DATA_CHANGE': {
+    const { id, type, value } = action.payload;
+    return {
+      ...state,
+      items: {
+        ...state.items,
+        [id]: {
+          ...state.items[id],
+          [type]: value,
+        },
+      },
     };
   }
   default:

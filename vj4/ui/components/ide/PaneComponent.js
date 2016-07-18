@@ -7,4 +7,9 @@ const PaneComponent = (props) => (
   </div>
 );
 
+PaneComponent.propTypes = {
+  title: React.PropTypes.node,
+  children: React.PropTypes.node,
+};
+
 export default PaneComponent;

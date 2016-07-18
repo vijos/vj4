@@ -3,6 +3,8 @@
 .ide-pane-tab
   flex: 1
   margin-top: rem(-($pane-header-height))
+  display: flex
+  flex-direction: column
 
   .rc-tabs-ink-bar
     background: $tab-color
@@ -48,3 +50,13 @@
   .rc-tabs-nav div.rc-tabs-tab-active > .rc-tabs-tab-inner,
   .rc-tabs-nav div.rc-tabs-tab-active > .rc-tabs-tab-inner:hover
     color: $tab-color
+
+  .rc-tabs-content,
+  .rc-tabs-content > div,
+  .rc-tabs-tabpane
+    flex: 1
+    display: flex
+    flex-direction: column
+
+  .rc-tabs-tabpane-hidden
+    display: none

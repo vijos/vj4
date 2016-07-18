@@ -6,4 +6,8 @@ const PaneButtonComponent = (props) => (
   </button>
 );
 
+PaneButtonComponent.propTypes = {
+  children: React.PropTypes.node,
+};
+
 export default PaneButtonComponent;

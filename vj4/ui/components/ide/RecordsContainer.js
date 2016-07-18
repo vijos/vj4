@@ -12,9 +12,10 @@ const RecordsContainer = (props) => (
     <Tabs
       className="ide-pane-tab"
       activeKey={"all"}
+      animation="slide-horizontal"
       tabBarExtraContent={
         <span>
-          <PaneButton onClick={props.onClickClose}><span className="icon icon-close"></span></PaneButton>
+          <PaneButton onClick={props.handleClickClose}><span className="icon icon-close"></span></PaneButton>
         </span>
       }
     >
@@ -29,7 +30,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onClickClose() {
+  handleClickClose() {
     dispatch({
       type: 'IDE_UI_SET_VISIBILITY',
       payload: {
@@ -44,3 +45,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(RecordsContainer);
+

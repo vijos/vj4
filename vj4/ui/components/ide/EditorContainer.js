@@ -19,7 +19,7 @@ const getOptions = (lang) => ({
 const EditorContainer = (props) => (
   <CodeMirror
     value={props.code}
-    onChange={props.updateCode}
+    onChange={props.handleUpdateCode}
     options={getOptions(props.lang)}
   />
 );
@@ -30,7 +30,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  updateCode: (code) => {
+  handleUpdateCode: (code) => {
     dispatch({
       type: 'IDE_EDITOR_UPDATE_CODE',
       payload: code,

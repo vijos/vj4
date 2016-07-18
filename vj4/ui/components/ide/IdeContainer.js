@@ -46,19 +46,19 @@ const IdeContainer = (props) => (
     minSize={250}
     split="vertical"
     primary="second"
-    onChange={size => props.onChangeSize('main', size)}
+    onChange={size => props.handleChangeSize('main', size)}
   >
     <div>Problem Content</div>
     {buildNestedPane([
       <IdeEditor key="editor" />,
       {
         props: props.ui.pretest,
-        onChange: size => props.onChangeSize('pretest', size),
+        onChange: size => props.handleChangeSize('pretest', size),
         element: <IdePretest key="pretest" />,
       },
       {
         props: props.ui.records,
-        onChange: size => props.onChangeSize('records', size),
+        onChange: size => props.handleChangeSize('records', size),
         element: <IdeRecords key="records" />,
       },
     ])}
@@ -70,7 +70,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onChangeSize: _.debounce((uiElement, size) => {
+  handleChangeSize: _.debounce((uiElement, size) => {
     dispatch({
       type: 'IDE_UI_CHANGE_SIZE',
       payload: {
@@ -85,3 +85,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(IdeContainer);
+
