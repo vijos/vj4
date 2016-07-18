@@ -1,34 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Pane from './PaneComponent';
+import PaneButton from './PaneButtonComponent';
 
 import Tabs, { TabPane } from 'rc-tabs';
 
 const RecordsContainer = (props) => (
   <Pane
-    title={<span><span className="icon icon-flag"></span>Records</span>}
+    title={<span><span className="icon icon-flag"></span> Records</span>}
   >
     <Tabs
-      activeKey={"a"}
-      tabBarExtraContent={<button>+添加</button>}
+      className="ide-pane-tab"
+      activeKey={"all"}
+      tabBarExtraContent={
+        <span>
+          <PaneButton onClick={props.onClickClose}><span className="icon icon-close"></span></PaneButton>
+        </span>
+      }
     >
-      <TabPane
-        tab={<span>A</span>}
-        key="a"
-      >
-        Content A
-      </TabPane>
-      <TabPane
-        tab={<span>B</span>}
-        key="b"
-      >
-        Content B
-      </TabPane>
-      <TabPane
-        tab={<span>C</span>}
-        key="c"
-      >
-        Content C
+      <TabPane tab={<span>All</span>} key="all">
+        Hello World!
       </TabPane>
     </Tabs>
   </Pane>
@@ -38,6 +29,15 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  onClickClose() {
+    dispatch({
+      type: 'IDE_UI_SET_VISIBILITY',
+      payload: {
+        uiElement: 'records',
+        visibility: false,
+      },
+    });
+  },
 });
 
 export default connect(

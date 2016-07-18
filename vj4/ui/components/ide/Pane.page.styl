@@ -1,14 +1,19 @@
+@import './var.inc.styl'
+
 .ide-pane
   display: flex
   flex-direction: column
   flex: 1
+  width: 100%
 
-.ide-pane__title
+.ide-pane-title
   background: $primary-color
-  line-height: rem(34px)
-  padding: 0 5px
-  font-size: 0.9rem
+  line-height: rem($pane-header-height)
+  padding: rem(0 5px)
+  font-size: 0.8rem
   color: #FFF
 
-.ide-pane__content
+.ide-pane-content
+  display: flex
+  flex-direction: column
   flex: 1

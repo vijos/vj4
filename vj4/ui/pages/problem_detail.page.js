@@ -125,7 +125,7 @@ const page = new NamedPage('problem_detail', async () => {
     const { Provider } = await System.import('react-redux');
     const { createStore, applyMiddleware } = await System.import('redux');
     const { default: reduxThunk } = await System.import('redux-thunk');
-    const { default: reduxPromise } = await System.import('redux-promise-middleware');
+    const reduxPromise = await System.import('redux-promise-middleware');
     const reduxLogger = await System.import('redux-logger');
     const { default: IdeApp } = await System.import('../components/ide');
     const { default: IdeReducer } = await System.import('../components/ide/reducers');

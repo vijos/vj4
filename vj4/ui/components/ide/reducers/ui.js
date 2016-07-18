@@ -22,6 +22,26 @@ export default function reducer(state = {
       },
     };
   }
+  case 'IDE_UI_SET_VISIBILITY': {
+    const { uiElement, visibility } = action.payload;
+    return {
+      ...state,
+      [uiElement]: {
+        ...state[uiElement],
+        visible: visibility,
+      },
+    };
+  }
+  case 'IDE_UI_TOGGLE_VISIBILITY': {
+    const { uiElement } = action.payload;
+    return {
+      ...state,
+      [uiElement]: {
+        ...state[uiElement],
+        visible: !state[uiElement].visible,
+      },
+    };
+  }
   default:
     return state;
   }
