@@ -16,13 +16,21 @@ const getOptions = (lang) => ({
   mode: 'text/x-c++src',
 });
 
-const EditorContainer = (props) => (
-  <CodeMirror
-    value={props.code}
-    onChange={props.handleUpdateCode}
-    options={getOptions(props.lang)}
-  />
-);
+class EditorContainer extends React.Component {
+  componentDidMount() {
+    this.refs.editor.getCodeMirror().setOption('theme', 'vjcm');
+  }
+  render() {
+    return (
+      <CodeMirror
+        value={this.props.code}
+        onChange={this.props.handleUpdateCode}
+        options={getOptions(this.props.lang)}
+        ref="editor"
+      />
+    );
+  }
+}
 
 const mapStateToProps = (state) => ({
   code: state.editor.code,

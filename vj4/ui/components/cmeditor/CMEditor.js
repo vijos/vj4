@@ -2,6 +2,13 @@ import SimpleMDE from 'vj-simplemde';
 import commonmark from 'commonmark';
 import _ from 'lodash';
 
+import 'codemirror/mode/clike/clike';
+import 'codemirror/mode/pascal/pascal';
+import 'codemirror/mode/python/python';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/ruby/ruby';
+import 'codemirror/mode/php/php';
+
 export default class CMEditor extends SimpleMDE {
   constructor(options = {}) {
     const defaultOptions = {
