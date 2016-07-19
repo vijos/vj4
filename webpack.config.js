@@ -63,6 +63,11 @@ var config = {
         query: _.merge({}, require('./package.json').babel),
       },
       {
+        // JSON loader for commonmark.js
+        test: /\.json$/,
+        loader: 'json',
+      },
+      {
         // project stylus stylesheets
         test: /\.styl$/,
         // TODO: stylus-loader requires 'resolve url' query.

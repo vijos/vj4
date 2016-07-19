@@ -29,6 +29,7 @@
     "file-loader": "^0.9.0",
     "fs-promise": "^0.5.0",
     "glob-promise": "^1.0.6",
+    "json-loader": "^0.5.4",
     "postcss-loader": "^0.9.1",
     "rupture": "^0.6.1",
     "style-loader": "^0.13.1",
@@ -42,6 +43,7 @@
     "babel-runtime": "^6.9.2",
     "classnames": "^2.2.5",
     "codemirror": "^5.16.0",
+    "commonmark": "^0.26.0",
     "diff-dom": "^2.0.3",
     "highlight.js": "^9.5.0",
     "jqmath-build": "^0.0.4",
@@ -60,11 +62,11 @@
     "redux-logger": "^2.6.1",
     "redux-promise-middleware": "^3.3.0",
     "redux-thunk": "^2.1.0",
-    "simple-cmeditor": "^1.11.4",
     "slideout": "^0.1.12",
     "sockjs-client": "^1.1.1",
     "tether-drop": "^1.4.2",
-    "uuid": "^2.0.2"
+    "uuid": "^2.0.2",
+    "vj-simplemde": "0.0.3"
   },
   "scripts": {
     "generate:_run": "babel-node --presets es2015,stage-0 --plugins transform-runtime",
