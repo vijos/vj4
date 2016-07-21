@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ToolbarComponent = (props) => (
-  <div className="ide-toolbar">
+  <div className="ide-toolbar flex-row flex-cross-center">
     {props.children}
   </div>
 );
