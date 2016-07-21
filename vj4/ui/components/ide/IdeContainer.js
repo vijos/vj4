@@ -2,9 +2,11 @@ import React from 'react';
 import SplitPane from 'react-split-pane';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import IdeToolbar from './ToolbarContainer';
 import IdeEditor from './EditorContainer';
 import IdePretest from './PretestContainer';
 import IdeRecords from './RecordsContainer';
+import Overlay from './OverlayComponent';
 
 /*
 a: React.Component
@@ -50,7 +52,10 @@ const IdeContainer = (props) => (
   >
     <div>Problem Content</div>
     {buildNestedPane([
-      <IdeEditor key="editor" />,
+      <Overlay key="editor" className="flex-col flex-fill">
+        <IdeToolbar />
+        <IdeEditor />
+      </Overlay>,
       {
         props: props.ui.pretest,
         onChange: size => props.handleChangeSize('pretest', size),

@@ -1,14 +1,14 @@
 import React from 'react';
 
 const PretestDataInputComponent = (props) => (
-  <div className="ide-pretest__data">
+  <div className="flex-col flex-fill">
     <textarea
       className="ide-pretest__data-input"
       wrap="off"
       value={props.value}
       onChange={ev => props.onChange(ev.target.value)}
+      placeholder={props.title}
     />
-    <div className="ide-pretest__data-name">{props.title}</div>
   </div>
 );
 

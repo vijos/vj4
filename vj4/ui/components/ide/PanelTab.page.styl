@@ -1,10 +1,7 @@
 @import './var.inc.styl'
 
-.ide-pane-tab
-  flex: 1
-  margin-top: rem(-($pane-header-height))
-  display: flex
-  flex-direction: column
+.ide-panel-tab
+  margin-top: rem(-($panel-header-height))
 
   .rc-tabs-ink-bar
     background: $tab-color
@@ -28,7 +25,7 @@
   &.rc-tabs-top .rc-tabs-tab-prev-icon,
   &.rc-tabs-top .rc-tabs-tab-next-icon
     font-family: 'icomoon' !important
-    line-height: rem($pane-header-height)
+    line-height: rem($panel-header-height)
     font-size: 1rem
 
   &.rc-tabs-top .rc-tabs-tab-prev-icon:before
@@ -41,7 +38,7 @@
     margin-right: 0
 
   .rc-tabs-nav .rc-tabs-tab > .rc-tabs-tab-inner
-    line-height: rem($pane-header-height)
+    line-height: rem($panel-header-height)
     padding: rem(0 5px)
 
   .rc-tabs-nav .rc-tabs-tab > .rc-tabs-tab-inner:hover

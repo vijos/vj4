@@ -1,32 +1,32 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Pane from './PaneComponent';
-import PaneButton from './PaneButtonComponent';
+import Panel from './PanelComponent';
+import PanelButton from './PanelButtonComponent';
 import PretestDataInput from './PretestDataInputComponent';
 
 import Tabs, { TabPane } from 'rc-tabs';
 
 const PretestContainer = (props) => (
-  <Pane
+  <Panel
     title={<span><span className="icon icon-edit"></span> Pretest</span>}
   >
     <Tabs
-      className="ide-pane-tab"
+      className="ide-panel-tab flex-col flex-fill"
       activeKey={props.current}
       onChange={props.handleSwitchData}
       animation="slide-horizontal"
       tabBarExtraContent={
         <span>
-          <PaneButton data-tooltip="Add Data" onClick={props.handleClickAdd}>Add</PaneButton>
-          <PaneButton data-tooltip="Remove Data" onClick={props.handleClickRemove}>Remove</PaneButton>
-          <PaneButton onClick={props.handleClickClose}><span className="icon icon-close"></span></PaneButton>
+          <PanelButton data-tooltip="Add Data" onClick={props.handleClickAdd}>Add</PanelButton>
+          <PanelButton data-tooltip="Remove Data" onClick={props.handleClickRemove}>Remove</PanelButton>
+          <PanelButton onClick={props.handleClickClose}><span className="icon icon-close"></span></PanelButton>
         </span>
       }
     >
       {props.tabs.map(id => {
         const item = props.items[id];
         return (
-          <TabPane tab={item.title} key={id}><div className="ide-pretest__data-container">
+          <TabPane tab={item.title} key={id}><div className="flex-row flex-fill">
             <PretestDataInput
               title="Sample Input"
               value={item.input}
@@ -41,7 +41,7 @@ const PretestContainer = (props) => (
         );
       })}
     </Tabs>
-  </Pane>
+  </Panel>
 );
 
 const mapStateToProps = (state) => ({

@@ -1,21 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Pane from './PaneComponent';
-import PaneButton from './PaneButtonComponent';
+import Panel from './PanelComponent';
+import PanelButton from './PanelButtonComponent';
 
 import Tabs, { TabPane } from 'rc-tabs';
 
 const RecordsContainer = (props) => (
-  <Pane
+  <Panel
     title={<span><span className="icon icon-flag"></span> Records</span>}
   >
     <Tabs
-      className="ide-pane-tab"
+      className="ide-panel-tab flex-col flex-fill"
       activeKey={"all"}
       animation="slide-horizontal"
       tabBarExtraContent={
         <span>
-          <PaneButton onClick={props.handleClickClose}><span className="icon icon-close"></span></PaneButton>
+          <PanelButton onClick={props.handleClickClose}><span className="icon icon-close"></span></PanelButton>
         </span>
       }
     >
@@ -23,7 +23,7 @@ const RecordsContainer = (props) => (
         Hello World!
       </TabPane>
     </Tabs>
-  </Pane>
+  </Panel>
 );
 
 const mapStateToProps = (state) => ({
