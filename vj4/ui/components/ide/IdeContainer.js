@@ -2,11 +2,11 @@ import React from 'react';
 import SplitPane from 'react-split-pane';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import IdeToolbar from './ToolbarContainer';
-import IdeEditor from './EditorContainer';
-import IdePretest from './PretestContainer';
-import IdeRecords from './RecordsContainer';
 import Overlay from './OverlayComponent';
+import IdeToolbar from './IdeToolbarContainer';
+import IdeEditor from './IdeEditorContainer';
+import IdePretest from './IdePretestContainer';
+import IdeRecords from './IdeRecordsContainer';
 
 /*
 a: React.Component

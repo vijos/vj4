@@ -16,7 +16,7 @@ const getOptions = (lang) => ({
   mode: 'text/x-c++src',
 });
 
-class EditorContainer extends React.Component {
+class IdeEditorContainer extends React.Component {
   componentDidMount() {
     this.refs.editor.getCodeMirror().setOption('theme', 'vjcm');
   }
@@ -49,4 +49,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(EditorContainer);
+)(IdeEditorContainer);

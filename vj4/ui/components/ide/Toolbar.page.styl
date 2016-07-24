@@ -1,3 +1,43 @@
+@import '../toolbar/var.inc.styl';
+
 .ide-toolbar
-  background: #F0F0F0
-  height: 30px
+  background: $toolbar-bg
+  padding: rem(5px)
+  font-size: 0.8rem
+  font-weight: normal
+
+.ide-toolbar__button
+  padding: rem(5px)
+  margin-right: rem(5px)
+  font-size: 0.8rem
+  font-weight: normal
+  background: none
+  border: 1px solid transparent
+  color: $toolbar-fore
+  display: flex
+  flex-direction: row
+  align-items: center
+  outline: 0
+
+  &:not(.disabled)
+    cursor: pointer
+
+  .icon
+    font-size: 1rem
+    margin-right: 2px
+
+  &:not(.disabled):hover
+    color: $toolbar-fore-hover
+
+  &.activated
+    color: $toolbar-fore-selected !important
+    background: $toolbar-bg-selected
+
+  &.disabled
+    opacity: $toolbar-disabled-opacity
+
+.ide-toolbar__split
+  width: 1px
+  height: 1rem
+  background: #DDD
+  margin-right: rem(5px)

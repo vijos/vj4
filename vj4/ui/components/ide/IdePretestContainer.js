@@ -1,14 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import Icon from './IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
-import PretestDataInput from './PretestDataInputComponent';
+import DataInput from './DataInputComponent';
 
 import Tabs, { TabPane } from 'rc-tabs';
 
-const PretestContainer = (props) => (
+const IdePretestContainer = (props) => (
   <Panel
-    title={<span><span className="icon icon-edit"></span> Pretest</span>}
+    title={<span><Icon name="edit" /> Pretest</span>}
   >
     <Tabs
       className="ide-panel-tab flex-col flex-fill"
@@ -19,7 +20,7 @@ const PretestContainer = (props) => (
         <span>
           <PanelButton data-tooltip="Add Data" onClick={props.handleClickAdd}>Add</PanelButton>
           <PanelButton data-tooltip="Remove Data" onClick={props.handleClickRemove}>Remove</PanelButton>
-          <PanelButton onClick={props.handleClickClose}><span className="icon icon-close"></span></PanelButton>
+          <PanelButton onClick={props.handleClickClose}><Icon name="close" /></PanelButton>
         </span>
       }
     >
@@ -27,12 +28,12 @@ const PretestContainer = (props) => (
         const item = props.items[id];
         return (
           <TabPane tab={item.title} key={id}><div className="flex-row flex-fill">
-            <PretestDataInput
+            <DataInput
               title="Sample Input"
               value={item.input}
               onChange={v => props.handleDataChange(id, 'input', v)}
             />
-            <PretestDataInput
+            <DataInput
               title="Sample Output"
               value={item.output}
               onChange={v => props.handleDataChange(id, 'output', v)}
@@ -91,5 +92,5 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PretestContainer);
+)(IdePretestContainer);
 

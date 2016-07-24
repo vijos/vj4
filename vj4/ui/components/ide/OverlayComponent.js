@@ -1,20 +1,21 @@
 import React from 'react';
+import classNames from 'classnames';
 
 const OverlayComponent = (props) => {
-  let className = 'ide-overlay';
-  if (props.className) {
-    className += ` ${props.className}`;
-  }
+  const {
+    className,
+    children,
+    ...rest,
+  } = props;
+  const cn = classNames(className, 'ide-overlay');
   return (
-    <div className={className}>
-      {props.children}
-    </div>
+    <div {...rest} className={cn}>{children}</div>
   );
 };
 
 OverlayComponent.propTypes = {
-  children: React.PropTypes.node,
   className: React.PropTypes.string,
+  children: React.PropTypes.node,
 };
 
 export default OverlayComponent;

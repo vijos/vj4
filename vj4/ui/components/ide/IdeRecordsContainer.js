@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import Icon from './IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
 
 import Tabs, { TabPane } from 'rc-tabs';
 
-const RecordsContainer = (props) => (
+const IdeRecordsContainer = (props) => (
   <Panel
-    title={<span><span className="icon icon-flag"></span> Records</span>}
+    title={<span><Icon name="flag" /> Records</span>}
   >
     <Tabs
       className="ide-panel-tab flex-col flex-fill"
@@ -15,7 +16,7 @@ const RecordsContainer = (props) => (
       animation="slide-horizontal"
       tabBarExtraContent={
         <span>
-          <PanelButton onClick={props.handleClickClose}><span className="icon icon-close"></span></PanelButton>
+          <PanelButton onClick={props.handleClickClose}><Icon name="close" /></PanelButton>
         </span>
       }
     >
@@ -44,5 +45,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(RecordsContainer);
-
+)(IdeRecordsContainer);
