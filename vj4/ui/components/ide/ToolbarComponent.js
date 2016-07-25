@@ -29,7 +29,7 @@ export const ToolbarButtonComponent = (props) => {
     children,
     ...rest,
   } = props;
-  const cn = classNames(className, 'ide-toolbar__button', {
+  const cn = classNames(className, 'ide-toolbar__item ide-toolbar__button', {
     activated,
     disabled,
   });
@@ -63,7 +63,7 @@ export const ToolbarSplitComponent = (props) => {
     className,
     ...rest,
   } = props;
-  const cn = classNames(className, 'ide-toolbar__split');
+  const cn = classNames(className, 'ide-toolbar__item ide-toolbar__split');
   return (
     <div {...rest} className={cn} />
   );
@@ -71,4 +71,21 @@ export const ToolbarSplitComponent = (props) => {
 
 ToolbarSplitComponent.propTypes = {
   className: React.PropTypes.string,
+};
+
+export const ToolbarItemComponent = (props) => {
+  const {
+    className,
+    children,
+    ...rest,
+  } = props;
+  const cn = classNames(className, 'ide-toolbar__item');
+  return (
+    <div {...rest} className={cn}>{children}</div>
+  );
+};
+
+ToolbarItemComponent.propTypes = {
+  className: React.PropTypes.string,
+  children: React.PropTypes.node,
 };

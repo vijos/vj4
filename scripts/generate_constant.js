@@ -27,6 +27,9 @@ async function processBody(content, src, dest) {
   const emit = (...argv) => fsp.write(fd, ...argv);
   await emitBanner(emit, src);
   for (const [name, val] of _.toPairs(content)) {
+    if (typeof val === 'object' && val.__exportToPython === false) {
+      continue;
+    }
     await emitVariable(emit, name, val);
   }
   await fsp.close(fd);

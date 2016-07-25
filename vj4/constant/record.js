@@ -1,3 +1,5 @@
+import attachObjectMeta from './util/objectMeta';
+
 export const STATUS_WAITING = 0;
 export const STATUS_ACCEPTED = 1;
 export const STATUS_WRONG_ANSWER = 2;
@@ -33,6 +35,7 @@ export const STATUSES = {
   STATUS_COMPILING: STATUS_COMPILING,
   STATUS_IGNORED: STATUS_IGNORED,
 };
+attachObjectMeta(STATUSES, 'exportToPython', false);
 
 export const STATUS_TEXTS = {
   [STATUS_WAITING]: 'Waiting',
@@ -50,7 +53,7 @@ export const STATUS_TEXTS = {
   [STATUS_COMPILING]: 'Compiling',
   [STATUS_IGNORED]: 'Ignored',
 };
-STATUS_TEXTS.__intKey = true;
+attachObjectMeta(STATUS_TEXTS, 'intKey', true);
 
 export const STATUS_CODES = {
   [STATUS_WAITING]: 'pending',
@@ -68,10 +71,10 @@ export const STATUS_CODES = {
   [STATUS_COMPILING]: 'progress',
   [STATUS_IGNORED]: 'ignored',
 };
-STATUS_CODES.__intKey = true;
+attachObjectMeta(STATUS_CODES, 'intKey', true);
 
 export const TYPE_TEXTS = {
   [TYPE_SUBMISSION]: 'Submission',
   [TYPE_PRETEST]: 'Pretest',
 };
-TYPE_TEXTS.__intKey = true;
+attachObjectMeta(TYPE_TEXTS, 'intKey', true);

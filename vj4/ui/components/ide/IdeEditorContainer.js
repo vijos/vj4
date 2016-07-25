@@ -6,14 +6,13 @@ import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/pascal/pascal';
 import 'codemirror/mode/python/python';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/ruby/ruby';
-import 'codemirror/mode/php/php';
+
+import * as languageEnum from '../../../constant/language';
 
 const getOptions = (lang) => ({
   lineNumbers: true,
   tabSize: 4,
-  mode: 'text/x-c++src',
+  mode: languageEnum.LANG_CODEMIRROR_MODES[lang],
 });
 
 class IdeEditorContainer extends React.Component {

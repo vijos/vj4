@@ -20,6 +20,12 @@ export default function reducer(state = {
       code: action.payload,
     };
   }
+  case 'IDE_EDITOR_SET_LANG': {
+    return {
+      ...state,
+      lang: action.payload,
+    };
+  }
   default:
     return state;
   }

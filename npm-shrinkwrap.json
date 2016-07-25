@@ -2499,6 +2499,11 @@
       "from": "jsesc@>=0.5.0 <0.6.0",
       "resolved": "https://registry.npm.taobao.org/jsesc/download/jsesc-0.5.0.tgz"
     },
+    "json-loader": {
+      "version": "0.5.4",
+      "from": "json-loader@latest",
+      "resolved": "https://registry.npm.taobao.org/json-loader/download/json-loader-0.5.4.tgz"
+    },
     "json-schema": {
       "version": "0.2.2",
       "from": "json-schema@0.2.2",
