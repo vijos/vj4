@@ -32,6 +32,7 @@ export const ToolbarButtonComponent = (props) => {
   const cn = classNames(className, 'ide-toolbar__item ide-toolbar__button', {
     activated,
     disabled,
+    enabled: !disabled,
   });
   return (
     <button

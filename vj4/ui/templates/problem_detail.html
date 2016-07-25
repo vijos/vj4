@@ -3,6 +3,8 @@
 <script>
   var Context = {{ {
     'problemId': pdoc['doc_id']|string(),
+    'pretestUrl': reverse_url('problem_pretest', pid=pdoc['doc_id'])|string(),
+    'submitUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string(),
   }|json|safe }};
 </script>
 <div class="row">

@@ -52,6 +52,7 @@
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
     "normalize.css": "^4.1.1",
+    "promise.prototype.finally": "^1.0.1",
     "rc-tabs": "^5.9.2",
     "react": "^15.1.0",
     "react-codemirror": "^0.2.6",

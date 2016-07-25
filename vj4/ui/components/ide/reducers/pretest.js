@@ -3,13 +3,29 @@ import _ from 'lodash';
 
 const initialId = uuid.v4();
 
+function isPretestValid(state) {
+  for (const id of state.tabs) {
+    const item = state.items[id];
+    if (item.input.trim().length > 0 && item.output.trim().length > 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export default function reducer(state = {
   counter: 1,
   current: initialId,
   tabs: [initialId],
   items: {
-    [initialId]: { id: initialId, title: '#1', input: '', output: '' },
+    [initialId]: {
+      id: initialId,
+      title: '#1',
+      input: '',
+      output: '',
+    },
   },
+  valid: false,
 }, action) {
   switch (action.type) {
   case 'IDE_PRETEST_SWITCH_TO_DATA': {
@@ -55,17 +71,19 @@ export default function reducer(state = {
       };
     }
     const newIdx = (orgIdx < newTabs.length) ? orgIdx : orgIdx - 1;
-    return {
+    const newState = {
       ...state,
       counter: newCounter,
       current: newTabs[newIdx],
       tabs: newTabs,
       items: newItems,
     };
+    newState.valid = isPretestValid(newState);
+    return newState;
   }
   case 'IDE_PRETEST_DATA_CHANGE': {
     const { id, type, value } = action.payload;
-    return {
+    const newState = {
       ...state,
       items: {
         ...state.items,
@@ -75,6 +93,8 @@ export default function reducer(state = {
         },
       },
     };
+    newState.valid = isPretestValid(newState);
+    return newState;
   }
   default:
     return state;

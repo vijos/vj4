@@ -2,7 +2,7 @@
 
 .ide-toolbar
   background: $toolbar-bg
-  padding: rem(5px)
+  padding: rem(8px)
   font-size: 0.8rem
   font-weight: normal
 
@@ -20,22 +20,25 @@
   flex-direction: row
   align-items: center
   outline: 0
+  transition: .2s linear opacity
 
-  &:not(.disabled)
+  &.enabled
     cursor: pointer
 
   .icon
     font-size: 1rem
     margin-right: 2px
 
-  &:not(.disabled):hover
+  &.enabled:hover
     color: $toolbar-fore-hover
+    background: $toolbar-bg-hover
 
   &.activated
     color: $toolbar-fore-selected !important
-    background: $toolbar-bg-selected
+    background: $toolbar-bg-selected !important
 
   &.disabled
+    pointer-events: none
     opacity: $toolbar-disabled-opacity
 
 .ide-toolbar__split

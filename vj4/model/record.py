@@ -3,6 +3,7 @@ import datetime
 from bson import objectid
 
 from vj4 import db
+from vj4 import constant
 from vj4.model import document
 from vj4.util import argmethod
 
@@ -12,7 +13,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
               hidden=False):
   coll = db.Collection('record')
   return await coll.insert({'hidden': hidden,
-                            'status': vj4.constant.record.STATUS_WAITING,
+                            'status': constant.record.STATUS_WAITING,
                             'score': 0,
                             'time_ms': 0,
                             'memory_kb': 0,

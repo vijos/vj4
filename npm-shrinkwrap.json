@@ -3255,6 +3255,11 @@
       "from": "promise@>=7.1.1 <8.0.0",
       "resolved": "https://registry.npm.taobao.org/promise/download/promise-7.1.1.tgz"
     },
+    "promise.prototype.finally": {
+      "version": "1.0.1",
+      "from": "promise.prototype.finally@latest",
+      "resolved": "https://registry.npm.taobao.org/promise.prototype.finally/download/promise.prototype.finally-1.0.1.tgz"
+    },
     "prr": {
       "version": "0.0.0",
       "from": "prr@>=0.0.0 <0.1.0",
