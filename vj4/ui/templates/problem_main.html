@@ -7,7 +7,7 @@
         <h1 class="section__title">{{ _('Problem List') }}</h1>
       </div>
       <div class="section__body no-padding">
-        <table class="section__table">
+        <table class="data-table">
           <colgroup>
             <col class="col--status">
             <col class="col--name">
@@ -26,7 +26,7 @@
           </thead>
           <tbody>
           {% if not pdocs %}
-            <tr class="section__table-row--empty">
+            <tr class="empty-row">
               <td colspan="5">{{ _('Sorry, there is no problem in the problem set.') }}</td>
             </tr>
           {% else %}

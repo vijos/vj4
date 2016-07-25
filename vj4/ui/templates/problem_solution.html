@@ -7,7 +7,7 @@
         <h1 class="section__title">{{ _('Problem Solution List') }}</h1>
       </div>
       <div class="section__body no-padding">
-        <table class="section__table">
+        <table class="data-table">
           <colgroup>
             <col class="col--name">
           </colgroup>
@@ -18,7 +18,7 @@
           </thead>
           <tbody>
           {% if not psdocs %}
-            <tr class="section__table-row--empty">
+            <tr class="empty-row">
               <td colspan="1">{{ _('Sorry, there is no problem solution for this problem.') }}</td>
             </tr>
           {% else %}
