@@ -28,7 +28,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(null, mapDispatchToProps)
-//@visualizeRender
+@visualizeRender
 export default class IdeRecordsContainer extends React.Component {
   componentDidMount() {
     this.props.loadSubmissions();

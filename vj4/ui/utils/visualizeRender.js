@@ -1,6 +1,6 @@
 import visualizeRenderDecorator from 'react-render-visualizer-decorator';
 
-const ENABLED = true;
+const ENABLED = false;
 
 export default function visualizeRender(...argv) {
   if (ENABLED) {

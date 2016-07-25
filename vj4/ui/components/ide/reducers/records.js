@@ -9,7 +9,7 @@ export default function reducer(state = {
     const { rdocs } = action.payload;
     return {
       ...state,
-      rows: _.map(rdocs, '_id').reverse(),
+      rows: _.map(rdocs, '_id'),
       items: _.keyBy(rdocs, '_id'),
     };
   }
