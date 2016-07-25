@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const ToolbarComponent = (props) => {
+export default function ToolbarComponent(props) {
   const {
     className,
     children,
@@ -11,16 +11,14 @@ const ToolbarComponent = (props) => {
   return (
     <div {...rest} className={cn}>{children}</div>
   );
-};
+}
 
 ToolbarComponent.propTypes = {
   className: React.PropTypes.string,
   children: React.PropTypes.node,
 };
 
-export default ToolbarComponent;
-
-export const ToolbarButtonComponent = (props) => {
+export function ToolbarButtonComponent(props) {
   const {
     activated,
     disabled,
@@ -44,7 +42,7 @@ export const ToolbarButtonComponent = (props) => {
       {children}
     </button>
   );
-};
+}
 
 ToolbarButtonComponent.propTypes = {
   activated: React.PropTypes.bool,
@@ -59,7 +57,7 @@ ToolbarButtonComponent.defaultProps = {
   disabled: false,
 };
 
-export const ToolbarSplitComponent = (props) => {
+export function ToolbarSplitComponent(props) {
   const {
     className,
     ...rest,
@@ -68,13 +66,13 @@ export const ToolbarSplitComponent = (props) => {
   return (
     <div {...rest} className={cn} />
   );
-};
+}
 
 ToolbarSplitComponent.propTypes = {
   className: React.PropTypes.string,
 };
 
-export const ToolbarItemComponent = (props) => {
+export function ToolbarItemComponent(props) {
   const {
     className,
     children,
@@ -84,7 +82,7 @@ export const ToolbarItemComponent = (props) => {
   return (
     <div {...rest} className={cn}>{children}</div>
   );
-};
+}
 
 ToolbarItemComponent.propTypes = {
   className: React.PropTypes.string,

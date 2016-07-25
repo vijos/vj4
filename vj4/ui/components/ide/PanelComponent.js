@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const PanelComponent = (props) => {
+export default function PanelComponent(props) {
   const {
     title,
     className,
@@ -15,12 +15,10 @@ const PanelComponent = (props) => {
       <div className="flex-col flex-fill">{props.children}</div>
     </div>
   );
-};
+}
 
 PanelComponent.propTypes = {
   title: React.PropTypes.node,
   className: React.PropTypes.string,
   children: React.PropTypes.node,
 };
-
-export default PanelComponent;

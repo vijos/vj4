@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const DataInputComponent = (props) => {
+export default function DataInputComponent(props) {
   const {
     title,
     value,
@@ -21,7 +21,7 @@ const DataInputComponent = (props) => {
       />
     </div>
   );
-};
+}
 
 DataInputComponent.propTypes = {
   title: React.PropTypes.node,
@@ -29,5 +29,3 @@ DataInputComponent.propTypes = {
   onChange: React.PropTypes.func,
   className: React.PropTypes.string,
 };
-
-export default DataInputComponent;

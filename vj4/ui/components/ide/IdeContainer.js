@@ -2,6 +2,7 @@ import React from 'react';
 import SplitPane from 'react-split-pane';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import visualizeRender from '../../utils/visualizeRender';
 import Overlay from './OverlayComponent';
 import IdeToolbar from './IdeToolbarContainer';
 import IdeEditor from './IdeEditorContainer';
@@ -42,34 +43,6 @@ function buildNestedPane([a, ...panes]) {
     ));
 }
 
-const IdeContainer = (props) => (
-  <SplitPane
-    defaultSize={props.ui.main.size}
-    minSize={250}
-    split="vertical"
-    primary="second"
-    onChange={size => props.handleChangeSize('main', size)}
-  >
-    <div>Problem Content</div>
-    {buildNestedPane([
-      <Overlay key="editor" className="flex-col flex-fill">
-        <IdeToolbar />
-        <IdeEditor />
-      </Overlay>,
-      {
-        props: props.ui.pretest,
-        onChange: size => props.handleChangeSize('pretest', size),
-        element: <IdePretest key="pretest" />,
-      },
-      {
-        props: props.ui.records,
-        onChange: size => props.handleChangeSize('records', size),
-        element: <IdeRecords key="records" />,
-      },
-    ])}
-  </SplitPane>
-);
-
 const mapStateToProps = (state) => ({
   ui: state.ui,
 });
@@ -86,8 +59,36 @@ const mapDispatchToProps = (dispatch) => ({
   }, 500),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(IdeContainer);
-
+@connect(mapStateToProps, mapDispatchToProps)
+@visualizeRender
+export default class IdeContainer extends React.Component {
+  render() {
+    return (
+      <SplitPane
+        defaultSize={this.props.ui.main.size}
+        minSize={250}
+        split="vertical"
+        primary="second"
+        onChange={size => this.props.handleChangeSize('main', size)}
+      >
+        <div>Problem Content</div>
+        {buildNestedPane([
+          <Overlay key="editor" className="flex-col flex-fill">
+            <IdeToolbar />
+            <IdeEditor />
+          </Overlay>,
+          {
+            props: this.props.ui.pretest,
+            onChange: size => this.props.handleChangeSize('pretest', size),
+            element: <IdePretest key="pretest" />,
+          },
+          {
+            props: this.props.ui.records,
+            onChange: size => this.props.handleChangeSize('records', size),
+            element: <IdeRecords key="records" />,
+          },
+        ])}
+      </SplitPane>
+    );
+  }
+}

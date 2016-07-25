@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const PanelButtonComponent = (props) => {
+export default function PanelButtonComponent(props) {
   const {
     className,
     children,
@@ -11,11 +11,9 @@ const PanelButtonComponent = (props) => {
   return (
     <button {...rest} className={cn}>{children}</button>
   );
-};
+}
 
 PanelButtonComponent.propTypes = {
   className: React.PropTypes.string,
   children: React.PropTypes.node,
 };
-
-export default PanelButtonComponent;

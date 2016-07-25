@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
+import visualizeRender from '../../utils/visualizeRender';
 import Icon from './IconComponent';
 import Toolbar, {
   ToolbarItemComponent as ToolbarItem,
@@ -11,59 +12,23 @@ import Toolbar, {
 import * as util from '../../misc/Util';
 import * as languageEnum from '../../../constant/language';
 
-const IdeToolbarContainer = (props, context) => (
-  <Toolbar>
-    <ToolbarButton
-      disabled={props.submitting || !props.pretestValid}
-      className="ide-toolbar__pretest"
-      onClick={() => props.postPretest(context)}
-    >
-      <Icon name="debug" />Run Pretest
-    </ToolbarButton>
-    <ToolbarButton
-      disabled={props.submitting}
-      className="ide-toolbar__submit"
-      onClick={() => props.postSubmit(context)}
-    >
-      <Icon name="play" />Submit Solution
-    </ToolbarButton>
-    <ToolbarItem>
-      <select
-        disabled={props.submitting}
-        value={props.editorLang}
-        onChange={ev => props.setEditorLanguage(ev.target.value)}
-      >
-        {_.map(languageEnum.LANG_TEXTS, (val, key) => (
-          <option value={key} key={key}>{val}</option>
-        ))}
-      </select>
-    </ToolbarItem>
-    <ToolbarSplit />
-    <ToolbarButton
-      activated={props.pretestVisible}
-      onClick={() => props.togglePanel('pretest')}
-    >
-      <Icon name="edit" />Pretest
-    </ToolbarButton>
-    <ToolbarButton
-      activated={props.recordsVisible}
-      onClick={() => props.togglePanel('records')}
-    >
-      <Icon name="flag" />Records
-    </ToolbarButton>
-  </Toolbar>
-);
+function isTestCaseDataValid(data) {
+  return data.input.trim().length > 0 && data.output.trim().length > 0;
+}
 
-IdeToolbarContainer.contextTypes = {
-  store: React.PropTypes.object,
-};
+function isPretestValid(state) {
+  for (const id of state.tabs) {
+    return isTestCaseDataValid(state.data[id]);
+  }
+  return false;
+}
 
 const mapStateToProps = (state) => ({
   pretestVisible: state.ui.pretest.visible,
   recordsVisible: state.ui.records.visible,
   submitting: state.ui.submitting,
   editorLang: state.editor.lang,
-  pretestValid: state.pretest.valid,
+  pretestValid: isPretestValid(state.pretest),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -83,14 +48,11 @@ const mapDispatchToProps = (dispatch) => ({
     const state = context.store.getState();
     const pretest = state.pretest;
     const testCases = pretest.tabs
-      .filter(tabId => {
-        const item = pretest.items[tabId];
-        return item.input.trim().length > 0 && item.output.trim().length > 0;
-      });
-    // const titles = testCases.map(tabId => pretest.items[tabId].title);
-    const inputs = testCases.map(tabId => pretest.items[tabId].input);
-    const outputs = testCases.map(tabId => pretest.items[tabId].output);
-    const req = util.post(Context.pretestUrl, {
+      .filter(tabId => isTestCaseDataValid(pretest.data[tabId]));
+    // const titles = testCases.map(tabId => pretest.meta[tabId].title);
+    const inputs = testCases.map(tabId => pretest.data[tabId].input);
+    const outputs = testCases.map(tabId => pretest.data[tabId].output);
+    const req = util.post(Context.postPretestUrl, {
       lang: state.editor.lang,
       code: state.editor.code,
       data_input: inputs,
@@ -103,7 +65,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   postSubmit(context) {
     const state = context.store.getState();
-    const req = util.post(Context.submitUrl, {
+    const req = util.post(Context.postSubmitUrl, {
       lang: state.editor.lang,
       code: state.editor.code,
     });
@@ -114,8 +76,54 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(IdeToolbarContainer);
-
+@connect(mapStateToProps, mapDispatchToProps)
+@visualizeRender
+export default class IdeToolbarContainer extends React.Component {
+  static contextTypes = {
+    store: React.PropTypes.object,
+  };
+  render() {
+    return (
+      <Toolbar>
+        <ToolbarButton
+          disabled={this.props.submitting || !this.props.pretestValid}
+          className="ide-toolbar__pretest"
+          onClick={() => this.props.postPretest(this.context)}
+        >
+          <Icon name="debug" />Run Pretest
+        </ToolbarButton>
+        <ToolbarButton
+          disabled={this.props.submitting}
+          className="ide-toolbar__submit"
+          onClick={() => this.props.postSubmit(this.context)}
+        >
+          <Icon name="play" />Submit Solution
+        </ToolbarButton>
+        <ToolbarItem>
+          <select
+            disabled={this.props.submitting}
+            value={this.props.editorLang}
+            onChange={ev => this.props.setEditorLanguage(ev.target.value)}
+          >
+            {_.map(languageEnum.LANG_TEXTS, (val, key) => (
+              <option value={key} key={key}>{val}</option>
+            ))}
+          </select>
+        </ToolbarItem>
+        <ToolbarSplit />
+        <ToolbarButton
+          activated={this.props.pretestVisible}
+          onClick={() => this.props.togglePanel('pretest')}
+        >
+          <Icon name="edit" />Pretest
+        </ToolbarButton>
+        <ToolbarButton
+          activated={this.props.recordsVisible}
+          onClick={() => this.props.togglePanel('records')}
+        >
+          <Icon name="flag" />Records
+        </ToolbarButton>
+      </Toolbar>
+    );
+  }
+}

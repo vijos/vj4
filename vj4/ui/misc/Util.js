@@ -27,3 +27,10 @@ export function post(url, data = {}) {
     data: $.param(postData, true),
   });
 }
+
+export function get(url) {
+  return ajax({
+    url,
+    method: 'get',
+  });
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const OverlayComponent = (props) => {
+export default function OverlayComponent(props) {
   const {
     className,
     children,
@@ -11,11 +11,9 @@ const OverlayComponent = (props) => {
   return (
     <div {...rest} className={cn}>{children}</div>
   );
-};
+}
 
 OverlayComponent.propTypes = {
   className: React.PropTypes.string,
   children: React.PropTypes.node,
 };
-
-export default OverlayComponent;

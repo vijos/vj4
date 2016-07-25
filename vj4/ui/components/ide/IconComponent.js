@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const IconComponent = (props) => {
+export default function IconComponent(props) {
   const {
     name,
     className,
@@ -11,11 +11,9 @@ const IconComponent = (props) => {
   return (
     <span {...rest} className={cn} />
   );
-};
+}
 
 IconComponent.propTypes = {
   name: React.PropTypes.string.isRequired,
   className: React.PropTypes.string,
 };
-
-export default IconComponent;

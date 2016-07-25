@@ -3345,6 +3345,11 @@
       "from": "react-redux@>=4.4.5 <5.0.0",
       "resolved": "https://registry.npm.taobao.org/react-redux/download/react-redux-4.4.5.tgz"
     },
+    "react-render-visualizer-decorator": {
+      "version": "0.3.0",
+      "from": "react-render-visualizer-decorator@latest",
+      "resolved": "https://registry.npm.taobao.org/react-render-visualizer-decorator/download/react-render-visualizer-decorator-0.3.0.tgz"
+    },
     "react-split-pane": {
       "version": "0.1.43",
       "from": "react-split-pane@>=0.1.42 <0.2.0",

@@ -44,8 +44,7 @@ export default function reducer(state = {
     };
   }
   case 'IDE_POST_PRETEST_PENDING':
-  case 'IDE_POST_SUBMIT_PENDING':
-  {
+  case 'IDE_POST_SUBMIT_PENDING': {
     return {
       ...state,
       submitting: true,
@@ -54,8 +53,7 @@ export default function reducer(state = {
   case 'IDE_POST_PRETEST_FULFILLED':
   case 'IDE_POST_PRETEST_REJECTED':
   case 'IDE_POST_SUBMIT_FULFILLED':
-  case 'IDE_POST_SUBMIT_REJECTED':
-  {
+  case 'IDE_POST_SUBMIT_REJECTED': {
     return {
       ...state,
       submitting: false,

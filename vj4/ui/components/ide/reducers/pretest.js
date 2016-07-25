@@ -3,21 +3,17 @@ import _ from 'lodash';
 
 const initialId = uuid.v4();
 
-function isPretestValid(state) {
-  for (const id of state.tabs) {
-    const item = state.items[id];
-    if (item.input.trim().length > 0 && item.output.trim().length > 0) {
-      return true;
-    }
-  }
-  return false;
-}
-
 export default function reducer(state = {
   counter: 1,
   current: initialId,
   tabs: [initialId],
-  items: {
+  meta: {
+    [initialId]: {
+      id: initialId,
+      title: '#1',
+    },
+  },
+  data: {
     [initialId]: {
       id: initialId,
       title: '#1',
@@ -25,7 +21,6 @@ export default function reducer(state = {
       output: '',
     },
   },
-  valid: false,
 }, action) {
   switch (action.type) {
   case 'IDE_PRETEST_SWITCH_TO_DATA': {
@@ -43,11 +38,17 @@ export default function reducer(state = {
       counter: newCounter,
       current: newId,
       tabs: [...state.tabs, newId],
-      items: {
-        ...state.items,
+      meta: {
+        ...state.meta,
         [newId]: {
           id: newId,
           title: `#${newCounter}`,
+        },
+      },
+      data: {
+        ...state.data,
+        [newId]: {
+          id: newId,
           input: '',
           output: '',
         },
@@ -58,43 +59,43 @@ export default function reducer(state = {
     const orgIdx = state.tabs.indexOf(state.current);
     let newCounter = state.counter;
     const newTabs = _.without(state.tabs, state.current);
-    const newItems = _.omit(state.items, state.current);
+    const newMeta = _.omit(state.meta, state.current);
+    const newData = _.omit(state.data, state.current);
     if (newTabs.length === 0) {
       // keep at least one data
       const id = uuid.v4();
       newTabs.push(id);
-      newItems[id] = {
+      newMeta[id] = {
         id,
         title: `#${++newCounter}`,
+      };
+      newData[id] = {
         input: '',
         output: '',
       };
     }
     const newIdx = (orgIdx < newTabs.length) ? orgIdx : orgIdx - 1;
-    const newState = {
+    return {
       ...state,
       counter: newCounter,
       current: newTabs[newIdx],
       tabs: newTabs,
-      items: newItems,
+      meta: newMeta,
+      data: newData,
     };
-    newState.valid = isPretestValid(newState);
-    return newState;
   }
   case 'IDE_PRETEST_DATA_CHANGE': {
     const { id, type, value } = action.payload;
-    const newState = {
+    return {
       ...state,
-      items: {
-        ...state.items,
+      data: {
+        ...state.data,
         [id]: {
-          ...state.items[id],
+          ...state.data[id],
           [type]: value,
         },
       },
     };
-    newState.valid = isPretestValid(newState);
-    return newState;
   }
   default:
     return state;
