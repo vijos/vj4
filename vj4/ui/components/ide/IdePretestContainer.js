@@ -52,24 +52,24 @@ export default class IdePretestContainer extends React.Component {
         <Tabs
           className="ide-panel-tab flex-col flex-fill"
           activeKey={this.props.current}
-          onChange={this.props.handleSwitchData}
+          onChange={tabId => this.props.handleSwitchData(tabId)}
           animation="slide-horizontal"
           tabBarExtraContent={
             <span>
               <PanelButton
                 data-tooltip="Add Data"
-                onClick={this.props.handleClickAdd}
+                onClick={() => this.props.handleClickAdd()}
               >
                 Add
               </PanelButton>
               <PanelButton
                 data-tooltip="Remove Data"
-                onClick={this.props.handleClickRemove}
+                onClick={() => this.props.handleClickRemove()}
               >
                 Remove
               </PanelButton>
               <PanelButton
-                onClick={this.props.handleClickClose}
+                onClick={() => this.props.handleClickClose()}
               >
                 <Icon name="close" />
               </PanelButton>

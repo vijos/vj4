@@ -26,7 +26,7 @@ function isPretestValid(state) {
 const mapStateToProps = (state) => ({
   pretestVisible: state.ui.pretest.visible,
   recordsVisible: state.ui.records.visible,
-  submitting: state.ui.submitting,
+  isPosting: state.ui.isPosting,
   editorLang: state.editor.lang,
   pretestValid: isPretestValid(state.pretest),
 });
@@ -86,14 +86,14 @@ export default class IdeToolbarContainer extends React.Component {
     return (
       <Toolbar>
         <ToolbarButton
-          disabled={this.props.submitting || !this.props.pretestValid}
+          disabled={this.props.isPosting || !this.props.pretestValid}
           className="ide-toolbar__pretest"
           onClick={() => this.props.postPretest(this.context)}
         >
           <Icon name="debug" />Run Pretest
         </ToolbarButton>
         <ToolbarButton
-          disabled={this.props.submitting}
+          disabled={this.props.isPosting}
           className="ide-toolbar__submit"
           onClick={() => this.props.postSubmit(this.context)}
         >
@@ -101,7 +101,7 @@ export default class IdeToolbarContainer extends React.Component {
         </ToolbarButton>
         <ToolbarItem>
           <select
-            disabled={this.props.submitting}
+            disabled={this.props.isPosting}
             value={this.props.editorLang}
             onChange={ev => this.props.setEditorLanguage(ev.target.value)}
           >

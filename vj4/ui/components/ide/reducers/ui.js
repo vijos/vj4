@@ -9,8 +9,9 @@ export default function reducer(state = {
   records: {
     visible: true,
     size: 200,
+    isLoading: false,
   },
-  submitting: false,
+  isPosting: false,
 }, action) {
   switch (action.type) {
   case 'IDE_UI_CHANGE_SIZE': {
@@ -47,7 +48,7 @@ export default function reducer(state = {
   case 'IDE_POST_SUBMIT_PENDING': {
     return {
       ...state,
-      submitting: true,
+      isPosting: true,
     };
   }
   case 'IDE_POST_PRETEST_FULFILLED':
@@ -56,7 +57,26 @@ export default function reducer(state = {
   case 'IDE_POST_SUBMIT_REJECTED': {
     return {
       ...state,
-      submitting: false,
+      isPosting: false,
+    };
+  }
+  case 'IDE_RECORDS_LOAD_SUBMISSIONS_PENDING': {
+    return {
+      ...state,
+      records: {
+        ...state.records,
+        isLoading: true,
+      },
+    };
+  }
+  case 'IDE_RECORDS_LOAD_SUBMISSIONS_FULFILLED':
+  case 'IDE_RECORDS_LOAD_SUBMISSIONS_REJECTED': {
+    return {
+      ...state,
+      records: {
+        ...state.records,
+        isLoading: false,
+      },
     };
   }
   default:

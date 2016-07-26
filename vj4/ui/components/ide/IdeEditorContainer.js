@@ -40,7 +40,7 @@ export default class IdeEditorContainer extends React.Component {
     return (
       <CodeMirror
         value={this.props.code}
-        onChange={this.props.handleUpdateCode}
+        onChange={code => this.props.handleUpdateCode(code)}
         options={getOptions(this.props.lang)}
         ref="editor"
       />

@@ -25,6 +25,9 @@ const mapDispatchToProps = (dispatch) => ({
       payload: util.get(Context.getSubmissionsUrl),
     });
   },
+  handleClickRefresh() {
+    this.loadSubmissions();
+  },
 });
 
 @connect(null, mapDispatchToProps)
@@ -45,7 +48,13 @@ export default class IdeRecordsContainer extends React.Component {
           tabBarExtraContent={
             <span>
               <PanelButton
-                onClick={this.props.handleClickClose}
+                data-tooltip="Refresh Records"
+                onClick={() => this.props.handleClickRefresh()}
+              >
+                Refresh
+              </PanelButton>
+              <PanelButton
+                onClick={() => this.props.handleClickClose()}
               >
                 <Icon name="close" />
               </PanelButton>

@@ -18,6 +18,11 @@
   color: green
 
 .ide-records__table
+  &.loading
+    // make a flash by setting opacity, otherwise users
+    // won't think that refreshing is completed!
+    opacity: 0.6
+
   .col--at
     width: 120px
 

@@ -1,18 +1,23 @@
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import visualizeRender from '../../utils/visualizeRender';
 import IdeRecordsRow from './IdeRecordsRowContainer';
 
 const mapStateToProps = (state) => ({
   rows: state.records.rows,
+  isLoading: state.ui.records.isLoading,
 });
 
 @connect(mapStateToProps)
 @visualizeRender
 export default class IdeRecordsTableContainer extends React.Component {
   render() {
+    const cn = classNames('data-table ide-records__table', {
+      loading: this.props.isLoading,
+    });
     return (
-      <table className="data-table ide-records__table">
+      <table className={cn}>
         <colgroup>
           <col className="col--detail" />
           <col className="col--memory" />
