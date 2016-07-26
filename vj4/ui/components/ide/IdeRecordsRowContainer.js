@@ -3,18 +3,15 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
-import visualizeRender from '../../utils/visualizeRender';
 import { parse as parseMongoId } from '../../utils/mongoId';
 
 import * as recordEnum from '../../../constant/record';
 
-const shouldShowDetail = (data) => {
-  return recordEnum.STATUS_IDE_SHOW_DETAIL_FLAGS[data.status];
-}
+const shouldShowDetail = (data) =>
+  recordEnum.STATUS_IDE_SHOW_DETAIL_FLAGS[data.status];
 
-const isPretest = (data) => {
-  return data.type === recordEnum.TYPE_PRETEST;
-}
+const isPretest = (data) =>
+  data.type === recordEnum.TYPE_PRETEST;
 
 const getRecordDetail = (data) => {
   if (!shouldShowDetail(data)) {
@@ -52,29 +49,39 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 @connect(mapStateToProps, null, mergeProps)
-@visualizeRender
 export default class IdeRecordsRowContainer extends React.Component {
+  static propTypes = {
+    data: React.PropTypes.shape({
+      _id: React.PropTypes.string,
+      status: React.PropTypes.number,
+      type: React.PropTypes.number,
+      time_ms: React.PropTypes.number,
+      memory_kb: React.PropTypes.number,
+      cases: React.PropTypes.arrayOf(React.PropTypes.shape({
+        status: React.PropTypes.number,
+      })),
+    }),
+  };
   render() {
     const { data } = this.props;
-    const { _id, status, memory_kb, time_ms } = data;
-    const submitAt = moment(parseMongoId(_id).timestamp * 1000);
+    const submitAt = moment(parseMongoId(data._id).timestamp * 1000);
     return (
       <tr>
-        <td className={`col--detail record-status--border ${recordEnum.STATUS_CODES[status]}`}>
-          <span className={`icon record-status--icon ${recordEnum.STATUS_CODES[status]}`}></span>
+        <td className={`col--detail record-status--border ${recordEnum.STATUS_CODES[data.status]}`}>
+          <span className={`icon record-status--icon ${recordEnum.STATUS_CODES[data.status]}`}></span>
           <span className="icol icol--pretest">
             {isPretest(data)
-              ? <span className={`flag record-status--background ${recordEnum.STATUS_CODES[status]}`}>Pretest</span>
+              ? <span className={`flag record-status--background ${recordEnum.STATUS_CODES[data.status]}`}>Pretest</span>
               : ''
             }
           </span>
           {getRecordDetail(data)}
         </td>
         <td className="col--memory">
-          {shouldShowDetail(data) ? `${Math.ceil(memory_kb / 1000)} MB` : '-'}
+          {shouldShowDetail(data) ? `${Math.ceil(data.memory_kb / 1000)} MB` : '-'}
         </td>
         <td className="col--time">
-          {shouldShowDetail(data) ? `${(time_ms / 1000).toFixed(1)}s` : '-'}
+          {shouldShowDetail(data) ? `${(data.time_ms / 1000).toFixed(1)}s` : '-'}
         </td>
         <td className="col--at">
           {submitAt.fromNow()}

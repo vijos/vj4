@@ -2,7 +2,6 @@ import React from 'react';
 import SplitPane from 'react-split-pane';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import visualizeRender from '../../utils/visualizeRender';
 import Overlay from './OverlayComponent';
 import IdeToolbar from './IdeToolbarContainer';
 import IdeEditor from './IdeEditorContainer';
@@ -60,8 +59,11 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-@visualizeRender
 export default class IdeContainer extends React.Component {
+  static propTypes = {
+    ui: React.PropTypes.object,
+    handleChangeSize: React.PropTypes.func,
+  };
   render() {
     return (
       <SplitPane

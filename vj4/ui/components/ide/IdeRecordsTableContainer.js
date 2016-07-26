@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import visualizeRender from '../../utils/visualizeRender';
 import IdeRecordsRow from './IdeRecordsRowContainer';
 
 const mapStateToProps = (state) => ({
@@ -10,8 +9,11 @@ const mapStateToProps = (state) => ({
 });
 
 @connect(mapStateToProps)
-@visualizeRender
 export default class IdeRecordsTableContainer extends React.Component {
+  static propTypes = {
+    rows: React.PropTypes.arrayOf(React.PropTypes.string),
+    isLoading: React.PropTypes.bool,
+  };
   render() {
     const cn = classNames('data-table ide-records__table', {
       loading: this.props.isLoading,

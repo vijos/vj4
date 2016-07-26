@@ -11,8 +11,8 @@ export default function PanelComponent(props) {
   const cn = classNames(className, 'flex-col flex-fill');
   return (
     <div {...rest} className={cn}>
-      <div className="ide-panel-title">{props.title}</div>
-      <div className="flex-col flex-fill">{props.children}</div>
+      <div className="ide-panel-title">{title}</div>
+      <div className="flex-col flex-fill">{children}</div>
     </div>
   );
 }

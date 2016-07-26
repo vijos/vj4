@@ -27,9 +27,12 @@ rules:
   no-unused-vars: warn
   no-console: off
   no-underscore-dangle: off
+  func-names: off
   indent:
     - error
     - 2
     - { SwitchCase: 0 }
-  func-names:
-    - off
+  max-len:
+    - error
+    - 150
+  react/prefer-stateless-function: off

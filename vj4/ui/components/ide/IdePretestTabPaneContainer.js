@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import DataInput from './DataInputComponent';
-import visualizeRender from '../../utils/visualizeRender';
 
 const mapStateToProps = (state) => ({
   data: state.pretest.data,
@@ -28,8 +27,13 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps, mergeProps)
-@visualizeRender
 export default class IdePretestTabPaneContainer extends React.Component {
+  static propTypes = {
+    id: React.PropTypes.string,
+    input: React.PropTypes.string,
+    output: React.PropTypes.string,
+    handleDataChange: React.PropTypes.func,
+  };
   render() {
     return (
       <div className="flex-row flex-fill">

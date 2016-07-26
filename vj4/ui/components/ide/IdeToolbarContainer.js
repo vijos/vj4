@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import visualizeRender from '../../utils/visualizeRender';
 import Icon from './IconComponent';
 import Toolbar, {
   ToolbarItemComponent as ToolbarItem,
@@ -77,10 +76,20 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-@visualizeRender
 export default class IdeToolbarContainer extends React.Component {
   static contextTypes = {
     store: React.PropTypes.object,
+  };
+  static propTypes = {
+    pretestVisible: React.PropTypes.bool,
+    recordsVisible: React.PropTypes.bool,
+    isPosting: React.PropTypes.bool,
+    editorLang: React.PropTypes.string,
+    pretestValid: React.PropTypes.bool,
+    togglePanel: React.PropTypes.func,
+    setEditorLanguage: React.PropTypes.func,
+    postPretest: React.PropTypes.func,
+    postSubmit: React.PropTypes.func,
   };
   render() {
     return (

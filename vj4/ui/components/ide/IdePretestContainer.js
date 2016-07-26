@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Tabs, { TabPane } from 'rc-tabs';
-import visualizeRender from '../../utils/visualizeRender';
 import Icon from './IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
@@ -42,8 +41,18 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-@visualizeRender
 export default class IdePretestContainer extends React.Component {
+  static propTypes = {
+    current: React.PropTypes.string,
+    tabs: React.PropTypes.arrayOf(React.PropTypes.string),
+    meta: React.PropTypes.arrayOf(React.PropTypes.shape({
+      title: React.PropTypes.string,
+    })),
+    handleClickAdd: React.PropTypes.func,
+    handleClickRemove: React.PropTypes.func,
+    handleSwitchData: React.PropTypes.func,
+    handleClickClose: React.PropTypes.func,
+  };
   render() {
     return (
       <Panel

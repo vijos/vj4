@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Tabs, { TabPane } from 'rc-tabs';
-import visualizeRender from '../../utils/visualizeRender';
 import Icon from './IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
@@ -10,6 +9,12 @@ import IdeRecordsTable from './IdeRecordsTableContainer';
 import * as util from '../../misc/Util';
 
 const mapDispatchToProps = (dispatch) => ({
+  loadSubmissions() {
+    dispatch({
+      type: 'IDE_RECORDS_LOAD_SUBMISSIONS',
+      payload: util.get(Context.getSubmissionsUrl),
+    });
+  },
   handleClickClose() {
     dispatch({
       type: 'IDE_UI_SET_VISIBILITY',
@@ -19,20 +24,18 @@ const mapDispatchToProps = (dispatch) => ({
       },
     });
   },
-  loadSubmissions() {
-    dispatch({
-      type: 'IDE_RECORDS_LOAD_SUBMISSIONS',
-      payload: util.get(Context.getSubmissionsUrl),
-    });
-  },
   handleClickRefresh() {
     this.loadSubmissions();
   },
 });
 
 @connect(null, mapDispatchToProps)
-@visualizeRender
 export default class IdeRecordsContainer extends React.Component {
+  static propTypes = {
+    loadSubmissions: React.PropTypes.func,
+    handleClickClose: React.PropTypes.func,
+    handleClickRefresh: React.PropTypes.func,
+  };
   componentDidMount() {
     this.props.loadSubmissions();
   }

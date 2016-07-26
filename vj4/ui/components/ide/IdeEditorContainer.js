@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import CodeMirror from 'react-codemirror';
-import visualizeRender from '../../utils/visualizeRender';
 
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/mode/clike/clike';
@@ -31,8 +30,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-@visualizeRender
 export default class IdeEditorContainer extends React.Component {
+  static propTypes = {
+    code: React.PropTypes.string,
+    lang: React.PropTypes.string,
+    handleUpdateCode: React.PropTypes.func,
+  };
   componentDidMount() {
     this.refs.editor.getCodeMirror().setOption('theme', 'vjcm');
   }
