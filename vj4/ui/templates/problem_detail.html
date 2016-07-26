@@ -2,7 +2,7 @@
 {% block content %}
 <script>
   var Context = {{ {
-    'problemId': pdoc['doc_id']|string(),
+    'problemId': pdoc['doc_id'],
     'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['doc_id'])|string(),
     'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string(),
     'getSubmissionsUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string(),

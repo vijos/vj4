@@ -13,6 +13,23 @@ export default function reducer(state = {
       items: _.keyBy(rdocs, '_id'),
     };
   }
+  case 'IDE_RECORDS_PUSH': {
+    const { rdoc } = action.payload;
+    if (rdoc.uid !== UserContext.uid
+      || rdoc.domain_id !== UserContext.domain
+      || rdoc.pid !== Context.problemId
+    ) {
+      return state;
+    }
+    return {
+      ...state,
+      rows: [rdoc._id, ...state.rows],
+      items: {
+        ...state.items,
+        [rdoc._id]: rdoc,
+      },
+    };
+  }
   default:
     return state;
   }

@@ -120,6 +120,8 @@ const page = new NamedPage('problem_detail', async () => {
     if (componentMounted) {
       return;
     }
+
+    const SockJs = await System.import('sockjs-client');
     const React = await System.import('react');
     const { render } = await System.import('react-dom');
     const { Provider } = await System.import('react-redux');
@@ -139,6 +141,15 @@ const page = new NamedPage('problem_detail', async () => {
     }));
 
     const store = createStore(IdeReducer, applyMiddleware(...reduxMiddlewares));
+
+    const sock = new SockJs('/records-conn');
+    sock.onmessage = (message) => {
+      const msg = JSON.parse(message.data);
+      store.dispatch({
+        type: 'IDE_RECORDS_PUSH',
+        payload: msg,
+      });
+    };
 
     render(
       <Provider store={store}>
