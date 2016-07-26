@@ -12,12 +12,12 @@ const mapStateToProps = (state) => ({
 export default class IdeRecordsTableContainer extends React.Component {
   render() {
     return (
-      <table className="data-table">
+      <table className="data-table ide-records__table">
         <colgroup>
-          <col />
-          <col />
-          <col />
-          <col />
+          <col className="col--detail" />
+          <col className="col--memory" />
+          <col className="col--time" />
+          <col className="col--at" />
         </colgroup>
         <tbody>
           {this.props.rows.map(rowId => (

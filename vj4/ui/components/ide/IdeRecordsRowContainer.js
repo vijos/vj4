@@ -8,8 +8,16 @@ import { parse as parseMongoId } from '../../utils/mongoId';
 
 import * as recordEnum from '../../../constant/record';
 
-const getRecordDetail = (data, showDetail) => {
-  if (!showDetail) {
+const shouldShowDetail = (data) => {
+  return recordEnum.STATUS_IDE_SHOW_DETAIL_FLAGS[data.status];
+}
+
+const isPretest = (data) => {
+  return data.type === recordEnum.TYPE_PRETEST;
+}
+
+const getRecordDetail = (data) => {
+  if (!shouldShowDetail(data)) {
     return (
       <span className={`record-status--text ${recordEnum.STATUS_CODES[data.status]}`}>
         {recordEnum.STATUS_TEXTS[data.status]}
@@ -22,7 +30,7 @@ const getRecordDetail = (data, showDetail) => {
   );
   return _.map(recordEnum.STATUS_IDE_SHORT_TEXTS, (text, status) => {
     const count = (stat[status] && stat[status].length) || 0;
-    const cn = classNames({
+    const cn = classNames('icol icol--stat', {
       'record-status--text': count > 0,
       [recordEnum.STATUS_CODES[data.status]]: count > 0,
     });
@@ -47,22 +55,28 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 @visualizeRender
 export default class IdeRecordsRowContainer extends React.Component {
   render() {
-    const { status, memory_kb, time_ms } = this.props.data;
-    const submitAt = moment(parseMongoId(this.props.data._id).timestamp * 1000);
-    const showDetail = recordEnum.STATUS_IDE_SHOW_DETAIL_FLAGS[status];
+    const { data } = this.props;
+    const { _id, status, memory_kb, time_ms } = data;
+    const submitAt = moment(parseMongoId(_id).timestamp * 1000);
     return (
       <tr>
-        <td className={`record-status--border ${recordEnum.STATUS_CODES[status]}`}>
+        <td className={`col--detail record-status--border ${recordEnum.STATUS_CODES[status]}`}>
           <span className={`icon record-status--icon ${recordEnum.STATUS_CODES[status]}`}></span>
-          {getRecordDetail(this.props.data, showDetail)}
+          <span className="icol icol--pretest">
+            {isPretest(data)
+              ? <span className={`flag record-status--background ${recordEnum.STATUS_CODES[status]}`}>Pretest</span>
+              : ''
+            }
+          </span>
+          {getRecordDetail(data)}
         </td>
-        <td>
-          {showDetail ? `${Math.ceil(memory_kb / 1000)} MB` : ''}
+        <td className="col--memory">
+          {shouldShowDetail(data) ? `${Math.ceil(memory_kb / 1000)} MB` : '-'}
         </td>
-        <td>
-          {showDetail ? `${(time_ms / 1000).toFixed(1)}s` : ''}
+        <td className="col--time">
+          {shouldShowDetail(data) ? `${(time_ms / 1000).toFixed(1)}s` : '-'}
         </td>
-        <td>
+        <td className="col--at">
           {submitAt.fromNow()}
         </td>
       </tr>
