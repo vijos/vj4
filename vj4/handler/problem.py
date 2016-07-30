@@ -51,7 +51,7 @@ class ProblemDetailView(base.Handler):
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], None))
     self.render('problem_detail.html', pdoc=pdoc,
-                page_title=pdoc['title'], path_components=path_components, nav_category='problem_main')
+                page_title=pdoc['title'], path_components=path_components)
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
@@ -67,7 +67,7 @@ class ProblemSubmitView(base.Handler):
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], None))
     self.json_or_render('problem_submit.html', pdoc=pdoc, rdocs=rdocs,
-                        page_title=pdoc['title'], path_components=path_components, nav_category='problem_main')
+                        page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
@@ -117,8 +117,7 @@ class ProblemSolutionView(base.OperationHandler):
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
       (self.translate('problem_solution'), None))
-    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs,
-                path_components=path_components, nav_category='problem_main')
+    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs, path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
@@ -201,7 +200,7 @@ class ProblemCreateView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
   async def get(self):
-    self.render('problem_edit.html', nav_category='problem_main')
+    self.render('problem_edit.html')
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
@@ -225,7 +224,7 @@ class ProblemEditView(base.Handler):
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
       (self.translate('problem_edit'), None))
     self.render('problem_edit.html', pdoc=pdoc,
-                page_title=pdoc['title'], path_components=path_components, nav_category='problem_main')
+                page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
