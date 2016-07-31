@@ -63,6 +63,9 @@ const mapDispatchToProps = (dispatch) => ({
 export default class IdeContainer extends React.Component {
   static propTypes = {
     ui: React.PropTypes.object,
+    problem: React.PropTypes.shape({
+      html: React.PropTypes.string,
+    }),
     handleChangeSize: React.PropTypes.func,
   };
   render() {
@@ -76,7 +79,8 @@ export default class IdeContainer extends React.Component {
       >
         <div
           className="ide-problem"
-          dangerouslySetInnerHTML={{__html: this.props.problem.html}}
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: this.props.problem.html }}
         ></div>
         {buildNestedPane([
           <Overlay key="editor" className="flex-col flex-fill">

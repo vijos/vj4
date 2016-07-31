@@ -3,7 +3,7 @@ export default function reducer(state = {
     size: '50%',
   },
   pretest: {
-    visible: true,
+    visible: false,
     size: 200,
   },
   records: {

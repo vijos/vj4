@@ -1,4 +1,4 @@
-<div class="section side">
+<div class="section side section--problem-sidebar">
   {% if page_name != 'problem_detail' %}
   <div class="section__header">
     <h1 class="section__title">{{ pdoc['title'] }}</h1>
@@ -7,8 +7,11 @@
   <div>
     <ul class="menu">
       {% if page_name == 'problem_detail' %}
-      <li class="menu__item"><a class="menu__link action--problem-sidebar__ide" href="javascript:;">
+      <li class="menu__item ide--hide"><a class="menu__link action--problem-sidebar__ide" href="javascript:;">
         <span class="icon icon-enlarge"></span> {{ _('Enter IDE Mode') }}
+      </a></li>
+      <li class="menu__item non-ide--hide"><a class="menu__link action--problem-sidebar__leave-ide" href="javascript:;">
+        <span class="icon icon-enlarge"></span> {{ _('Leave IDE Mode') }}
       </a></li>
       {% else %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
@@ -16,24 +19,24 @@
       </a></li>
       {% endif %}
       <li class="menu__seperator"></li>
-      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
+      <li class="menu__item ide--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
         <span class="icon icon-send"></span> {{ _('Test or Submit') }}
       </a></li>
       <li class="menu__item"><a class="menu__link" href="#">
         <span class="icon icon-statistics"></span> {{ _('Submission Statistics') }}
       </a></li>
       <li class="menu__seperator"></li>
-      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_solution' %} active{% endif %}" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_solution' %} active{% endif %}" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}" target="_blank">
         <span class="icon icon-bubble--outline"></span> {{ _('Solutions') }}
       </a></li>
-      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
+      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}" target="_blank">
         <span class="icon icon-bubble--outline"></span> {{ _('Discussions') }}
       </a></li>
       <li class="menu__seperator"></li>
-      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}" target="_blank">
         <span class="icon icon-edit"></span>  {{ _('Edit') }}
       </a></li>
-      <li class="menu__item"><a class="menu__link" href="#">
+      <li class="menu__item"><a class="menu__link" href="#" target="_blank">
         <span class="icon icon-wrench"></span> {{ _('Settings') }}
       </a></li>
     </ul>

@@ -1,5 +1,18 @@
 @import '../navigation/var.inc.styl';
 
+.ide__sidebar
+  z-index: 9999
+  opacity: 0
+  transition: opacity .1s linear
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0) 50%)
+
+  &.visible
+    opacity: 0.3
+
+  &:hover
+    opacity: 1
+    mask-image: none
+
 .ide-container
   position: absolute
   background: #FFF

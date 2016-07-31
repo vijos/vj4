@@ -1,3 +1,4 @@
+import Tether from 'tether';
 import { NamedPage } from '../misc/PageLoader';
 import Navigation from '../components/navigation/navigation';
 
@@ -49,7 +50,7 @@ class ProblemPageExtender {
     Navigation.instance.logoVisible.set('ide', true);
     Navigation.instance.expanded.set('ide', true);
 
-    $('body').addClass('header--collapsed');
+    $('body').addClass('header--collapsed mode--ide');
     await delay(500);
 
     $('.main > .row').hide();
@@ -92,7 +93,7 @@ class ProblemPageExtender {
     Navigation.instance.logoVisible.set('ide', false);
     Navigation.instance.expanded.set('ide', false);
 
-    $('body').removeClass('header--collapsed');
+    $('body').removeClass('header--collapsed mode--ide');
     await delay(500);
 
     this.$ideContainer.hide();
@@ -114,7 +115,50 @@ class ProblemPageExtender {
 
 const page = new NamedPage('problem_detail', async () => {
   let componentMounted = false;
+  let $floatingSidebar = null;
   const extender = new ProblemPageExtender();
+
+  async function ideFadeIn() {
+    $('#ide').transition({
+      opacity: 1,
+    }, {
+      duration: 200,
+      easing: 'easeOutCubic',
+    });
+    await delay(200);
+  }
+
+  async function ideFadeOut() {
+    $('#ide').transition({
+      opacity: 0,
+    }, {
+      duration: 200,
+      easing: 'easeOutCubic',
+    });
+    await delay(200);
+  }
+
+  async function createSidebar() {
+    $floatingSidebar = $('.section--problem-sidebar')
+      .clone()
+      .addClass('ide__sidebar')
+      .appendTo('body');
+    $floatingSidebar.tether = new Tether({
+      element: $floatingSidebar,
+      offset: '-20px 20px',
+      target: '.ide-problem',
+      attachment: 'top right',
+      targetAttachment: 'top right',
+    });
+    $floatingSidebar.tether.position();
+    $floatingSidebar.addClass('visible');
+  }
+
+  async function removeSidebar() {
+    $floatingSidebar.tether.destroy();
+    $floatingSidebar.remove();
+    $floatingSidebar = null;
+  }
 
   async function mountComponent() {
     if (componentMounted) {
@@ -172,26 +216,18 @@ const page = new NamedPage('problem_detail', async () => {
   async function enterIdeMode() {
     await extender.extend();
     await mountComponent();
-    $('#ide').transition({
-      opacity: 1,
-    }, {
-      duration: 200,
-      easing: 'easeOutCubic',
-    });
+    await ideFadeIn();
+    await createSidebar();
   }
 
   async function leaveIdeMode() {
-    $('#ide').transition({
-      opacity: 0,
-    }, {
-      duration: 200,
-      easing: 'easeOutCubic',
-    });
-    await delay(200);
+    await removeSidebar();
+    await ideFadeOut();
     await extender.collapse();
   }
 
-  $('.action--problem-sidebar__ide').click(enterIdeMode);
+  $(document).on('click', '.action--problem-sidebar__ide', enterIdeMode);
+  $(document).on('click', '.action--problem-sidebar__leave-ide', leaveIdeMode);
 });
 
 export default page;
