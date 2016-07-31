@@ -3020,6 +3020,11 @@
       "from": "pbkdf2@>=3.0.3 <4.0.0",
       "resolved": "https://registry.npm.taobao.org/pbkdf2/download/pbkdf2-3.0.4.tgz"
     },
+    "pickadate": {
+      "version": "3.5.6",
+      "from": "pickadate@latest",
+      "resolved": "https://registry.npm.taobao.org/pickadate/download/pickadate-3.5.6.tgz"
+    },
     "pify": {
       "version": "2.3.0",
       "from": "pify@>=2.0.0 <3.0.0",
