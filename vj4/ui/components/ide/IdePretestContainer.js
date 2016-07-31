@@ -45,7 +45,7 @@ export default class IdePretestContainer extends React.Component {
   static propTypes = {
     current: React.PropTypes.string,
     tabs: React.PropTypes.arrayOf(React.PropTypes.string),
-    meta: React.PropTypes.arrayOf(React.PropTypes.shape({
+    meta: React.PropTypes.objectOf(React.PropTypes.shape({
       title: React.PropTypes.string,
     })),
     handleClickAdd: React.PropTypes.func,

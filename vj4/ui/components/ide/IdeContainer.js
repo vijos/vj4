@@ -44,6 +44,7 @@ function buildNestedPane([a, ...panes]) {
 
 const mapStateToProps = (state) => ({
   ui: state.ui,
+  problem: state.problem,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -73,7 +74,10 @@ export default class IdeContainer extends React.Component {
         primary="second"
         onChange={size => this.props.handleChangeSize('main', size)}
       >
-        <div>Problem Content</div>
+        <div
+          className="ide-problem"
+          dangerouslySetInnerHTML={{__html: this.props.problem.html}}
+        ></div>
         {buildNestedPane([
           <Overlay key="editor" className="flex-col flex-fill">
             <IdeToolbar />

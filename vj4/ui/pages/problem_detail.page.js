@@ -121,6 +121,8 @@ const page = new NamedPage('problem_detail', async () => {
       return;
     }
 
+    $('.loader-container').show();
+
     const SockJs = await System.import('sockjs-client');
     const React = await System.import('react');
     const { render } = await System.import('react-dom');
@@ -151,6 +153,11 @@ const page = new NamedPage('problem_detail', async () => {
       });
     };
 
+    store.dispatch({
+      type: 'IDE_PROBLEM_SET_HTML',
+      payload: $('.problem-content').html(),
+    });
+
     render(
       <Provider store={store}>
         <IdeApp />
@@ -158,14 +165,29 @@ const page = new NamedPage('problem_detail', async () => {
       $('#ide').get(0)
     );
     componentMounted = true;
+
+    $('.loader-container').hide();
   }
 
   async function enterIdeMode() {
     await extender.extend();
     await mountComponent();
+    $('#ide').transition({
+      opacity: 1,
+    }, {
+      duration: 200,
+      easing: 'easeOutCubic',
+    });
   }
 
   async function leaveIdeMode() {
+    $('#ide').transition({
+      opacity: 0,
+    }, {
+      duration: 200,
+      easing: 'easeOutCubic',
+    });
+    await delay(200);
     await extender.collapse();
   }
 
