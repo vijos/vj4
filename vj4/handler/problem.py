@@ -5,10 +5,8 @@ from vj4 import app
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
-from vj4.model import queue
 from vj4.model import record
 from vj4.model.adaptor import problem
-from vj4.service import bus
 from vj4.handler import base
 
 
@@ -56,17 +54,21 @@ class ProblemDetailView(base.Handler):
 
 @app.route('/p/{pid}/submit', 'problem_submit')
 class ProblemSubmitView(base.Handler):
-  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pid).sort([('_id', -1)]).to_list(10)
+    # TODO(iceboy): Uncomment the following line when needed. Note that uid may be None, pdoc['_id']
+    # should be used instead of pid, needs to be in sync with contest_detail_problem_submit, and
+    # line width should be <= 100.
+    #rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pid).sort([('_id', -1)]).to_list(10)
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
-      (pdoc['title'], None))
-    self.json_or_render('problem_submit.html', pdoc=pdoc, rdocs=rdocs,
+      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+      (self.translate('problem_submit'), None))
+    self.json_or_render('problem_submit.html', pdoc=pdoc,
                         page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -77,9 +79,9 @@ class ProblemSubmitView(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
     pdoc = await problem.get(self.domain_id, pid)
-    rid = await record.add(self.domain_id, pdoc['doc_id'], record.TYPE_SUBMISSION, self.user['_id'], lang, code)
-    await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
-    self.json_or_redirect(self.reverse_url('record_main'))
+    rid = await record.add(self.domain_id, pdoc['doc_id'], record.TYPE_SUBMISSION, self.user['_id'],
+                           lang, code)
+    self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
 @app.route('/p/{pid}/pretest', 'problem_pretest')
@@ -94,9 +96,10 @@ class ProblemPretestView(base.Handler):
     tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
                              data_input = self.request.POST.getall('data_input'),
                              data_output = self.request.POST.getall('data_output'))
-    rid = await record.add(self.domain_id, pid, record.TYPE_PRETEST, self.user['_id'], lang, code, tid)
-    await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
-    self.json_or_redirect(self.reverse_url('record_main'))
+    # TODO(iceboy): Use pdoc['doc_id'] -- never trust user input.
+    rid = await record.add(self.domain_id, pid, record.TYPE_PRETEST, self.user['_id'],
+                           lang, code, tid)
+    self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
 @app.route('/p/{pid}/solution', 'problem_solution')
