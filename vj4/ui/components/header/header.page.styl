@@ -7,7 +7,7 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
   position: relative
   height: rem($header-bg-height)
   background: #5eafca url(./header-background.png) no-repeat center top
-  transition: height .3s
+  transition: height .5s
   transition-timing-function: ease-out-cubic
   overflow: hidden
   +retina()
@@ -37,7 +37,7 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
   height: rem($header-logo-height + $header-gap-mini + $nav-item-height)
   background: url(header-logo.png) no-repeat
   background-position: 0 rem($header-gap-mini + $nav-item-height)
-  transition: transform .3s, opacity .3s
+  transition: transform .5s, opacity .5s
   transition-timing-function: ease-out-cubic
   transform-origin: 0 0
   opacity: 1
@@ -64,7 +64,15 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
   text-overflow: ellipsis
 
 .header--collapsed
+
+  #panel
+    padding-top: $header-bg-height
+
   .header
+    position: absolute
+    left: 0
+    top: 0
+    width: 100%
     height: 0
 
   .header__logo

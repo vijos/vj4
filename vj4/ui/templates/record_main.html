@@ -7,7 +7,7 @@
         <h1 class="section__title">{{ _('Judging Queue') }}</h1>
       </div>
       <div class="section__body no-padding">
-        <table class="section__table record_main__table">
+        <table class="data-table record_main__table">
           <colgroup>
             <col class="col--status">
             <col class="col--problem">
@@ -24,7 +24,7 @@
           </thead>
           <tbody>
           {% if not rdocs %}
-            <tr class="section__table-row--empty">
+            <tr class="empty-row">
               <td colspan="4">{{ _('Good, there is no task in the queue!') }}</td>
             </tr>
           {% else %}

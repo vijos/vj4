@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var _ = require('lodash');
 
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -59,11 +60,19 @@ var config = {
         test: /\.js$/,
         exclude: /node_modules\//,
         loader: 'babel',
-        query: {
-          cacheDirectory: true,
-          plugins: ['lodash', 'transform-runtime'],
-          presets: ['es2015-webpack', 'stage-0', 'react'],
-        }
+        query: _.merge({}, require('./package.json').babel),
+      },
+      {
+        // JSON loader for commonmark.js
+        test: /\.json$/,
+        loader: 'json',
+      },
+      {
+        // project stylus stylesheets
+        test: /\.styl$/,
+        // TODO: stylus-loader requires 'resolve url' query.
+        // to be added once extract-text-webpack-plugin#196 is fixed
+        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus?resolve url']),
       },
       {
         // vendors stylesheets
@@ -77,11 +86,6 @@ var config = {
         exclude: /node_modules\//,
         loader: extractProjectCSS.extract(['css', 'postcss']),
       },
-      {
-        // project stylus stylesheets
-        test: /\.styl$/,
-        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus?resolve url']),
-      },
     ]
   },
   plugins: [
@@ -94,18 +98,20 @@ var config = {
     // don't include locale files in momentjs
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
-    // extract 3rd-party libraries into a standalone file
+    // extract stylesheets into a standalone file
+    extractVendorCSS,
+    extractProjectCSS,
+
+    // extract 3rd-party JavaScript libraries into a standalone file
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendors',
       filename: 'vendors.js',
       minChunks: function (module, count) {
-        return module.resource && module.resource.indexOf(root('vj4/ui/')) === -1;
+        return module.resource
+          && module.resource.indexOf(root('vj4/ui/')) === -1
+          && module.resource.match(/\.js$/);
       },
     }),
-
-    // extract stylesheets into a standalone file
-    extractProjectCSS,
-    extractVendorCSS,
 
     // copy static assets
     new CopyWebpackPlugin([{ from: root('vj4/ui/static') }]),

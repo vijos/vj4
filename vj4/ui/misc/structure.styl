@@ -4,6 +4,18 @@
 .nojs .nojs--hide
   display: none
 
+.non-ide--hide
+  display: none
+
+.mode--ide .non-ide--hide
+  display: block
+
+.ide--hide
+  display: block
+
+.mode--ide .ide--hide
+  display: none
+
 .main
   padding: 20px 0
   flex: 1
@@ -76,3 +88,38 @@
 
   &.bottom
     vertical-align: bottom
+
+// Flexbox helper
+.flex-row
+  display: flex
+  flex-direction: row
+
+.flex-col
+  display: flex
+  flex-direction: column
+
+.flex-fill
+  flex: 1
+  min-width: 0
+  min-height: 0
+
+.flex-main-start
+  justify-content: flex-start
+
+.flex-main-end
+  justify-content: flex-end
+
+.flex-main-center
+  justify-content: center
+
+.flex-cross-start
+  align-items: flex-start
+
+.flex-cross-end
+  align-items: flex-end
+
+.flex-cross-center
+  align-items: center
+
+.flex-cross-stretch
+  align-items: stretch

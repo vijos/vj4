@@ -7,7 +7,7 @@
         <h1 class="section__title">{{ _('Problem List') }}</h1>
       </div>
       <div class="section__body no-padding">
-        <table class="section__table">
+        <table class="data-table">
           <colgroup>
             <col class="col--status">
             <col class="col--name">
@@ -26,24 +26,24 @@
           </thead>
           <tbody>
           {% if not pdocs %}
-            <tr class="section__table-row--empty">
+            <tr class="empty-row">
               <td colspan="5">{{ _('Sorry, there is no problem in the problem set.') }}</td>
             </tr>
           {% else %}
           {% for pdoc in pdocs %}
             <tr data-pid="{{ pdoc['doc_id'] }}">
               <td class="col--status">
-                {{ vj4.handler.record.STATUS_TEXTS[pdoc['psdoc'].get('status')] }}
+                {{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc'].get('status')] }}
               </td>
               <td class="col--name">
                 <form method="post">
                   <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
                   {% if not pdoc['psdoc'].get('star') %}
                   <input type="hidden" name="operation" value="star">
-                  <button class="star" type="submit"><i class="icon-star--outline"></i></button>
+                  <button class="star" type="submit"><span class="icon icon-star--outline"></span></button>
                   {% else %}
                   <input type="hidden" name="operation" value="unstar">
-                  <button class="star activated" type="submit"><i class="icon-star"></i></button>
+                  <button class="star activated" type="submit"><span class="icon icon-star"></span></button>
                   {% endif %}
                   <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                   <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">

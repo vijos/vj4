@@ -12,14 +12,15 @@ const votePage = new AutoloadPage(() => {
     const $tr = $button.closest('tr');
     const operation = $button.hasClass('vote--upvote') ? 'upvote' : 'downvote';
     const psid = $tr.attr('data-psid');
-    util.post($button.closest('form').attr('action'), {
-      operation,
-      psid,
-    })
-      .done((data) => {
+    util
+      .post($button.closest('form').attr('action'), {
+        operation,
+        psid,
+      })
+      .then(data => {
         setVoteState($tr, data.vote);
       })
-      .fail(() => {
+      .catch(() => {
         // TODO(iceboy): notify failure
       });
     return false;

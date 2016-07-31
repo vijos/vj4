@@ -3,29 +3,11 @@ import datetime
 from bson import objectid
 
 from vj4 import db
+from vj4 import constant
 from vj4.model import document
 from vj4.model import queue
 from vj4.service import bus
 from vj4.util import argmethod
-
-# TODO(iceboy): Remove unused status after deprecating VJ2.
-STATUS_WAITING = 0
-STATUS_ACCEPTED = 1
-STATUS_WRONG_ANSWER = 2
-STATUS_TIME_LIMIT_EXCEEDED = 3
-STATUS_MEMORY_LIMIT_EXCEEDED = 4
-STATUS_OUTPUT_LIMIT_EXCEEDED = 5
-STATUS_RUNTIME_ERROR = 6
-STATUS_COMPILE_ERROR = 7
-STATUS_SYSTEM_ERROR = 8
-STATUS_CANCELED = 9
-STATUS_ETC = 10
-STATUS_JUDGING = 20
-STATUS_COMPILING = 21
-STATUS_IGNORED = 30
-
-TYPE_SUBMISSION = 0
-TYPE_PRETEST = 1
 
 @argmethod.wrap
 async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
@@ -33,7 +15,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
               hidden=False):
   coll = db.Collection('record')
   rid = await coll.insert({'hidden': hidden,
-                           'status': STATUS_WAITING,
+                           'status': constant.record.STATUS_WAITING,
                            'score': 0,
                            'time_ms': 0,
                            'memory_kb': 0,

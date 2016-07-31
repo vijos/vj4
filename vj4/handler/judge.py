@@ -3,6 +3,7 @@ import logging
 import time
 
 from vj4 import app
+from vj4 import constant
 from vj4.model import builtin
 from vj4.model import queue
 from vj4.model import record
@@ -57,7 +58,7 @@ class JudgeNotifyConnection(base.Connection):
     # This callback runs in the receiver loop of the amqp connection. Should not block here.
     async def start():
       # TODO(iceboy): Error handling?
-      rdoc = await record.begin_judge(rid, self.user['_id'], self.id, record.STATUS_COMPILING)
+      rdoc = await record.begin_judge(rid, self.user['_id'], self.id, constant.record.STATUS_COMPILING)
       if rdoc:
         self.rids[tag] = rdoc['_id']
         self.send(id=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],

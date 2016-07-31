@@ -1,6 +1,6 @@
 @import '~misc/section.inc.styl'
 
-.section__table
+.data-table
   width: 100%
   table-layout: fixed
   white-space: nowrap
@@ -31,11 +31,9 @@
     text-overflow: ellipsis
     padding: 0.8em 0.7em
 
-    &:first-child
-      padding-left: rem($section-gap-h)
-
-    &:last-child
-      padding-right: rem($section-gap-h)
+  .empty-row
+    color: #AAA
+    font-size: 0.8rem
 
 .section__table-container
   overflow: hidden
@@ -43,6 +41,12 @@
 .section__table-header
   box-shadow: 0 3px 2px rgba(#000, 0.03)
 
-.section__table-row--empty
-  color: #AAA
-  font-size: 0.8rem
+.section__table-container,
+.section__body
+  & > .data-table
+    td, th
+      &:first-child
+        padding-left: rem($section-gap-h)
+
+      &:last-child
+        padding-right: rem($section-gap-h)

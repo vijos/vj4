@@ -8,7 +8,7 @@
       </div>
       <div class="section__body">
         <div class="dczdetail__supplementary">
-          <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><i class="icon-tag"></i>{{ vnode['title'] }}</a>
+          <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
           <span class="v-center"> · </span>
           {% with user = udoc %}
             {% include "components/inline_user.html" %}
@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="section__footer topic__footer">
-        {{ _('{0} views').format(ddoc['views']) }} · <i class="icon-star--outline"></i> 收藏主题 · <a href="#"><i class="icon-warning"></i> 举报</a>
+        {{ _('{0} views').format(ddoc['views']) }} · <span class="icon icon-star--outline"></span> 收藏主题 · <a href="#"><span class="icon icon-warning"></span> 举报</a>
       </div>
     </div>
     <div class="section">
@@ -82,7 +82,7 @@
                     <span class="v-center">@ {{ datetime_span(drdoc['_id'].generation_time) }}</span>
                   </div>
                   <div class="dczcomments__operations nojs--hide">
-                    <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><i class="icon-reply"></i></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><i class="icon-edit"></i></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><i class="icon-delete"></i></a>
+                    <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
                   </div>
                 </div>
                 <div class="typo no-heading">
@@ -103,7 +103,7 @@
                           <span class="v-center">@ {{ datetime_span(drrdoc['at']) }}</span>
                         </div>
                         <div class="dczcomments__operations nojs--hide">
-                          <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply"><i class="icon-reply"></i></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><i class="icon-edit"></i></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><i class="icon-delete"></i></a>
+                          <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
                         </div>
                       </div>
                       <div class="typo no-heading">

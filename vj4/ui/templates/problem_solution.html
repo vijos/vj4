@@ -7,7 +7,7 @@
         <h1 class="section__title">{{ _('Problem Solution List') }}</h1>
       </div>
       <div class="section__body no-padding">
-        <table class="section__table">
+        <table class="data-table">
           <colgroup>
             <col class="col--name">
           </colgroup>
@@ -18,7 +18,7 @@
           </thead>
           <tbody>
           {% if not psdocs %}
-            <tr class="section__table-row--empty">
+            <tr class="empty-row">
               <td colspan="1">{{ _('Sorry, there is no problem solution for this problem.') }}</td>
             </tr>
           {% else %}
@@ -75,7 +75,7 @@
       <div class="section__body typo">
         <p>状态：????</p>
         <p>难度：4</p>
-        <p>评分：<i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star--outline"></i> (30)</p>
+        <p>评分：<span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</p>
         <p>分类：动态规划|树形动规、高精度</p>
         <p>递交次数：140</p>
         <p>通过次数：30</p>

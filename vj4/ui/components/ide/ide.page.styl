@@ -1,0 +1,70 @@
+@import '../navigation/var.inc.styl';
+
+.ide__sidebar
+  z-index: 9999
+  opacity: 0
+  transition: opacity .1s linear
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0) 50%)
+
+  &.visible
+    opacity: 0.3
+
+  &:hover
+    opacity: 1
+    mask-image: none
+
+.ide-container
+  position: absolute
+  background: #FFF
+
+#ide
+  position: absolute
+  left: 0
+  top: $nav-item-height
+  width: 100%
+  bottom: 0
+
+.ide-problem
+  position: absolute
+  left: 0
+  top: 0
+  width: 100%
+  height: 100%
+  overflow: auto
+
+.ide-toolbar__pretest.enabled:hover .icon
+  color: red
+
+.ide-toolbar__submit.enabled:hover .icon
+  color: green
+
+.ide-records__table
+  &.loading
+    // make a flash by setting opacity, otherwise users
+    // won't think that refreshing is completed!
+    opacity: 0.6
+
+  .col--at
+    width: 120px
+
+  .col--time,
+  .col--memory
+    width: 70px
+
+  .col--detail
+    border-right: 1px solid $table-border-color
+
+  .icol
+    display: inline-block
+
+  .icol--pretest
+    width: 60px
+
+    .flag
+      font-size: 10px
+      color: #FFF
+      padding: 2px 3px
+
+  .icol--stat
+    color: #AAA
+    width: 60px

@@ -5,9 +5,9 @@
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">
-          <i class="record-status--icon {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}"></i>
-          <span class="record-status--text {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}">
-            {{ vj4.handler.record.STATUS_TEXTS[rdoc['status']] }}
+          <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
+          <span class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
+            {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
           </span>
         </h1>
       </div>
@@ -16,7 +16,7 @@
       </div>
       {% if rdoc['cases'] %}
       <div class="section__body no-padding">
-        <table class="section__table record_detail__table">
+        <table class="data-table record_detail__table">
           <colgroup>
             <col class="col--case">
             <col class="col--status">
@@ -34,13 +34,13 @@
           <tbody>
           {% for rcdoc in rdoc['cases'] %}
             <tr>
-              <td class="col--case record-status--border {{ vj4.handler.record.STATUS_CODES[rcdoc['status']] }}">
+              <td class="col--case record-status--border {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}">
                 #{{ loop.index }}
               </td>
               <td class="col--status">
-                <i class="record-status--icon {{ vj4.handler.record.STATUS_CODES[rcdoc['status']] }}"></i>
-                <span class="record-status--text {{ vj4.handler.record.STATUS_CODES[rcdoc['status']] }}">
-                  {{ vj4.handler.record.STATUS_TEXTS[rcdoc['status']] }}
+                <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}"></span>
+                <span class="record-status--text {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}">
+                  {{ vj4.constant.record.STATUS_TEXTS[rcdoc['status']] }}
                 </span>
               </td>
               <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
@@ -74,8 +74,8 @@
           {% endwith %}
         </p>
         <p>
-          {{ _('Type') }}: {{ vj4.handler.record.TYPE_TEXTS[rdoc['type']] }}
-          {% if rdoc['type'] == vj4.model.record.TYPE_PRETEST %}
+          {{ _('Type') }}: {{ vj4.constant.record.TYPE_TEXTS[rdoc['type']] }}
+          {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
           / <a href="{{ reverse_url('record_pretest_data', rid=rdoc['_id']) }}">{{ _('Download Dataset') }}</a>
           {% endif %}
         </p>

@@ -1,5 +1,5 @@
 import { AutoloadPage } from '../../misc/PageLoader';
-import Dialog from '../dialog/Dialog';
+import Dialog from '../dialog';
 
 const signinDialogPage = new AutoloadPage(() => {}, () => {
   const signInDialog = Dialog.getOrConstruct($('.dialog--signin'), {

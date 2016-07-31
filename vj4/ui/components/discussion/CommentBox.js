@@ -73,13 +73,12 @@ export default class CommentBox extends DOMAttachedObject {
   }
 
   onSubmit() {
-    util.post('', {
-      ...this.options.form,
-      content: this.$box.find('textarea').val(),
-    })
-      .done(() => {
-        window.location.reload();
-      });
+    util
+      .post('', {
+        ...this.options.form,
+        content: this.$box.find('textarea').val(),
+      })
+      .then(() => window.location.reload());
   }
 
   onCancel(ev) {

@@ -1,0 +1,62 @@
+@import './var.inc.styl'
+
+.ide-panel-tab
+  margin-top: rem(-($panel-header-height))
+
+  .rc-tabs-ink-bar
+    background: $tab-color
+
+  &.rc-tabs-top
+    border: 0
+
+  &.rc-tabs-top .rc-tabs-bar
+    border: 0
+
+  .rc-tabs-bar
+    padding-left: rem(120px)
+
+  .rc-tabs-nav-container
+    color: #FFF
+    font-size: 0.8rem
+
+  .rc-tabs-tab-btn-disabled
+    color: rgba(#FFF, 0.7)
+
+  &.rc-tabs-top .rc-tabs-tab-prev-icon,
+  &.rc-tabs-top .rc-tabs-tab-next-icon
+    font-family: 'icomoon' !important
+    line-height: rem($panel-header-height)
+    font-size: 1rem
+
+  &.rc-tabs-top .rc-tabs-tab-prev-icon:before
+    content: icon-chevron_left
+
+  &.rc-tabs-top .rc-tabs-tab-next-icon:before
+    content: icon-chevron_right
+
+  &.rc-tabs-top .rc-tabs-nav .rc-tabs-tab
+    margin-right: 0
+
+  .rc-tabs-nav .rc-tabs-tab > .rc-tabs-tab-inner
+    line-height: rem($panel-header-height)
+    padding: rem(0 5px)
+
+  .rc-tabs-nav .rc-tabs-tab > .rc-tabs-tab-inner:hover
+    color: $tab-color
+
+  .rc-tabs-nav div.rc-tabs-tab-active > .rc-tabs-tab-inner,
+  .rc-tabs-nav div.rc-tabs-tab-active > .rc-tabs-tab-inner:hover
+    color: $tab-color
+
+  .rc-tabs-content,
+  .rc-tabs-content > div,
+  .rc-tabs-tabpane
+    flex: 1
+    display: flex
+    flex-direction: column
+
+  .rc-tabs-tabpane-hidden
+    display: none
+
+  .rc-tabs-tabpane
+    overflow: auto

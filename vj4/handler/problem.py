@@ -3,6 +3,7 @@ import functools
 
 from vj4 import app
 from vj4 import error
+from vj4 import constant
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import record
@@ -79,7 +80,7 @@ class ProblemSubmitView(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
     pdoc = await problem.get(self.domain_id, pid)
-    rid = await record.add(self.domain_id, pdoc['doc_id'], record.TYPE_SUBMISSION, self.user['_id'],
+    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION, self.user['_id'],
                            lang, code)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
@@ -97,7 +98,7 @@ class ProblemPretestView(base.Handler):
                              data_input = self.request.POST.getall('data_input'),
                              data_output = self.request.POST.getall('data_output'))
     # TODO(iceboy): Use pdoc['doc_id'] -- never trust user input.
-    rid = await record.add(self.domain_id, pid, record.TYPE_PRETEST, self.user['_id'],
+    rid = await record.add(self.domain_id, pid, constant.record.TYPE_PRETEST, self.user['_id'],
                            lang, code, tid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 

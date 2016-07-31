@@ -2,17 +2,22 @@
 {% block content %}
 <script>
   var Context = {{ {
-    'problemId': pdoc['doc_id']|string(),
+    'problemId': pdoc['doc_id'],
+    'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['doc_id'])|string(),
+    'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string(),
+    'getSubmissionsUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string(),
   }|json|safe }};
 </script>
 <div class="row">
   <div class="large-9 columns">
     <div class="section">
-      <div class="section__header">
-        <h1>{{ pdoc['title'] }}</h1>
-      </div>
-      <div class="section__body typo">
-        {{ pdoc['content']|markdown }}
+      <div class="problem-content">
+        <div class="section__header">
+          <h1>{{ pdoc['title'] }}</h1>
+        </div>
+        <div class="section__body typo">
+          {{ pdoc['content']|markdown }}
+        </div>
       </div>
     </div>
   </div>
@@ -31,9 +36,9 @@
         <h1 class="section__title">{{ _('Information') }}</h1>
       </div>
       <div class="section__body typo">
-          <p>状态：{{ vj4.handler.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</p>
+          <p>状态：{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</p>
           <p>难度：4</p>
-          <p>评分：<i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star--outline"></i> (30)</p>
+          <p>评分：<span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</p>
           <p>分类：动态规划|树形动规、高精度</p>
           <p>递交次数：140</p>
           <p>通过次数：30</p>
@@ -53,5 +58,9 @@
       </div>
     </div>
   </div>
+</div>
+<div class="ide-container" style="display:none">
+  <div style="display:none" class="loader-container"><div class="loader"></div></div>
+  <div id="ide" style="opacity:0"></div>
 </div>
 {% endblock %}

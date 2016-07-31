@@ -34,6 +34,7 @@ if you are in China. Make sure to use `cnpm` by adding `alias` to `npm` instead 
 In the root of the repository:
 
 ```bash
+npm run generate:constant
 npm run build  # to watch modifications: npm run watch
 python3.5 -m vj4.server --debug
 ```
@@ -51,6 +52,7 @@ pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 777
 ## Production
 
 ```bash
+npm run generate:constant
 npm run build:production
 python3.5 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
 ```

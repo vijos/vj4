@@ -13,45 +13,6 @@ from vj4.model.adaptor import problem
 from vj4.service import bus
 from vj4.handler import base
 
-STATUS_TEXTS = {
-  record.STATUS_WAITING: 'Waiting',
-  record.STATUS_ACCEPTED: 'Accepted',
-  record.STATUS_WRONG_ANSWER: 'Wrong Answer',
-  record.STATUS_TIME_LIMIT_EXCEEDED: 'Time Exceeded',
-  record.STATUS_MEMORY_LIMIT_EXCEEDED: 'Memory Exceeded',
-  record.STATUS_OUTPUT_LIMIT_EXCEEDED: 'Output Exceeded',
-  record.STATUS_RUNTIME_ERROR: 'Runtime Error',
-  record.STATUS_COMPILE_ERROR: 'Compile Error',
-  record.STATUS_SYSTEM_ERROR: 'System Error',
-  record.STATUS_CANCELED: 'Cancelled',
-  record.STATUS_ETC: 'Unknown Error',
-  record.STATUS_JUDGING: 'Running',
-  record.STATUS_COMPILING: 'Compiling',
-  record.STATUS_IGNORED: 'Ignored',
-}
-
-STATUS_CODES = {
-  record.STATUS_WAITING: 'pending',
-  record.STATUS_ACCEPTED: 'pass',
-  record.STATUS_WRONG_ANSWER: 'fail',
-  record.STATUS_TIME_LIMIT_EXCEEDED: 'fail',
-  record.STATUS_MEMORY_LIMIT_EXCEEDED: 'fail',
-  record.STATUS_OUTPUT_LIMIT_EXCEEDED: 'fail',
-  record.STATUS_RUNTIME_ERROR: 'fail',
-  record.STATUS_COMPILE_ERROR: 'fail',
-  record.STATUS_SYSTEM_ERROR: 'fail',
-  record.STATUS_CANCELED: 'ignored',
-  record.STATUS_ETC: 'fail',
-  record.STATUS_JUDGING: 'progress',
-  record.STATUS_COMPILING: 'progress',
-  record.STATUS_IGNORED: 'ignored',
-}
-
-TYPE_TEXTS = {
-  record.TYPE_SUBMISSION: 'Submission',
-  record.TYPE_PRETEST: 'Pretest',
-}
-
 
 @app.route('/records', 'record_main')
 class RecordMainView(base.Handler):

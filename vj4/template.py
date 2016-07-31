@@ -8,9 +8,9 @@ import markupsafe
 from jinja2 import ext
 
 import vj4
+import vj4.constant
 from vj4.util import json
 from vj4.util import options
-
 
 class Environment(jinja2.Environment):
   def __init__(self):

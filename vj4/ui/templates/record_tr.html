@@ -1,19 +1,19 @@
 <tr data-rid="{{ rdoc['_id'] }}">
-  <td class="col--status record-status--border {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}">
+  <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
     <div class="col--status__text">
-      <i class="record-status--icon {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}"></i>
-      <a href="{{ reverse_url('record_detail', rid=rdoc['_id']) }}" class="record-status--text {{ vj4.handler.record.STATUS_CODES[rdoc['status']] }}">
-        {{ vj4.handler.record.STATUS_TEXTS[rdoc['status']] }}
+      <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
+      <a href="{{ reverse_url('record_detail', rid=rdoc['_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
+        {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
       </a>
     </div>
-    {% if rdoc['status'] == vj4.model.record.STATUS_JUDGING %}
+    {% if rdoc['status'] == vj4.constant.record.STATUS_JUDGING %}
     <div class="col--status__progress-container">
       <div class="col--status__progress" style="width: 50%"></div>
     </div>
     {% endif %}
   </td>
   <td class="col--problem">
-    {% if rdoc['type'] == vj4.model.record.TYPE_PRETEST %}
+    {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
     (Pretest)
     {% endif %}
     <a href="{{ reverse_url('problem_detail', pid=rdoc['pid'], domain_id=rdoc['domain_id']) }}">

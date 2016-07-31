@@ -17,7 +17,8 @@ function onScroll() {
 
 function onNavLogoutClick() {
   const $logoutLink = $('.command--nav-logout');
-  util.post($logoutLink.attr('href'))
+  util
+    .post($logoutLink.attr('href'))
     .then(() => window.location.reload());
   return false;
 }

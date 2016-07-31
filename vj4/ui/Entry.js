@@ -1,6 +1,7 @@
 // eslint-disable-next-line camelcase
 __webpack_public_path__ = UiContext.cdn_prefix;
 
+import 'promise.prototype.finally';
 import 'jquery.transit';
 
 import 'normalize.css/normalize.css';
@@ -13,7 +14,7 @@ import './misc/textalign.styl';
 import './misc/grid.styl';
 import './misc/slideout.styl';
 
-import './misc/webicon.css';
+import './misc/webicon.styl';
 import './misc/immersive.styl';
 import './misc/structure.styl';
 import './misc/section.styl';

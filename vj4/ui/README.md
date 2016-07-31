@@ -84,7 +84,7 @@ You can use `<X class="section__title"></X>` to specify the title for a section 
 
 #### Table
 
-If the main content of the section is a data table (or additionally with a title and a paginator), it is suggested to apply `section__table` to the table. Section table should be put inside a section-body with `no-padding` decoration.
+If the main content of the section is a data table (or additionally with a title and a paginator), it is suggested to apply `data-table` to the table. Table should be put inside a section-body with `no-padding` decoration.
 
 3 * 2 table sample:
 
@@ -92,7 +92,7 @@ If the main content of the section is a data table (or additionally with a title
 <div class="section">
   <!-- ... -->
   <div class="section__body no-padding">
-    <table class="section__table">
+    <table class="data-table">
       <colgroup>
         <col class="col--1">
         <col class="col--2">
@@ -152,7 +152,7 @@ Section with title and table content:
     <h1 class="section__title">Section title</h1>
   </div>
   <div class="section__body no-padding">
-    <table class="section__table">
+    <table class="data-table">
       <!-- ... -->
     </table>
   </div>

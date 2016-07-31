@@ -1,53 +1,60 @@
-import SimpleMDE from 'simple-cmeditor';
+import SimpleMDE from 'vj-simplemde';
+import commonmark from 'commonmark';
 import _ from 'lodash';
 
-export default class CMEditor extends SimpleMDE {
+import 'codemirror/mode/clike/clike';
+import 'codemirror/mode/pascal/pascal';
+import 'codemirror/mode/python/python';
+
+export default class CmEditor extends SimpleMDE {
   constructor(options = {}) {
     const defaultOptions = {
+      autoDownloadFontAwesome: false,
+      spellChecker: false,
       toolbar: [
         {
           name: 'bold',
           action: SimpleMDE.toggleBold,
-          iconClassName: 'icon-bold',
+          className: 'icon icon-bold',
           title: 'Bold',
         },
         {
           name: 'italic',
           action: SimpleMDE.toggleItalic,
-          iconClassName: 'icon-italic',
+          className: 'icon icon-italic',
           title: 'Italic',
         },
         '|',
         {
           name: 'quote',
           action: SimpleMDE.toggleBlockquote,
-          iconClassName: 'icon-quote',
+          className: 'icon icon-quote',
           title: 'Quote',
         },
         {
           name: 'unordered-list',
           action: SimpleMDE.toggleUnorderedList,
-          iconClassName: 'icon-unordered_list',
+          className: 'icon icon-unordered_list',
           title: 'Unordered List',
         },
         {
           name: 'ordered-list',
           action: SimpleMDE.toggleOrderedList,
-          iconClassName: 'icon-ordered_list',
+          className: 'icon icon-ordered_list',
           title: 'Ordered List',
         },
         '|',
         {
           name: 'link',
           action: SimpleMDE.drawLink,
-          iconClassName: 'icon-link',
+          className: 'icon icon-link',
           title: 'Create Link',
           default: true,
         },
         {
           name: 'image',
           action: SimpleMDE.drawImage,
-          iconClassName: 'icon-insert--image',
+          className: 'icon icon-insert--image',
           title: 'Insert Image',
           default: true,
         },
@@ -55,17 +62,8 @@ export default class CMEditor extends SimpleMDE {
         {
           name: 'preview',
           action: SimpleMDE.togglePreview,
-          iconClassName: 'icon-preview',
-          className: 'no-disable',
+          className: 'icon icon-preview no-disable',
           title: 'Toggle Preview',
-          default: true,
-        },
-        {
-          name: 'guide',
-          action: 'https://simplemde.com/markdown-guide',
-          iconClassName: 'icon-help',
-          className: 'no-disable',
-          title: 'Markdown Guide',
           default: true,
         },
       ],
@@ -73,7 +71,14 @@ export default class CMEditor extends SimpleMDE {
         safe: true,
       },
     };
-
     super(_.assign({}, defaultOptions, options));
   }
+
+  markdown(text) {
+    const reader = new commonmark.Parser();
+    const writer = new commonmark.HtmlRenderer(this.options.commonmark);
+    const parsed = reader.parse(text);
+    return writer.render(parsed);
+  }
+
 }
