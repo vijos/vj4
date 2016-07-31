@@ -25,14 +25,15 @@
           </div>
           <div class="form__row">
             <label class="form__group">
-              {{ _('Begin At') }}
-              <input name="begin_at" value="{{ now + 600 }}" class="textbox">
+              {{ _('Begin At') }} (YYYY-MM-DD, HH:mm)
+              <input name="begin_at_date" value="1980-1-1" class="textbox" placeholder="YYYY-MM-DD" data-pick-date>
+              <input name="begin_at_time" value="13:00" class="textbox" placeholder="HH:mm" data-pick-time>
             </label>
           </div>
           <div class="form__row">
             <label class="form__group">
-              {{ _('End At') }}
-              <input name="end_at" value="{{ now + 600 + 3 * 3600 }}" class="textbox">
+              {{ _('Duration') }} (hours)
+              <input name="duration" value="3" class="textbox">
             </label>
           </div>
           <div class="form__row">

@@ -68,6 +68,12 @@ var config = {
         loader: 'json',
       },
       {
+        // fix pickadate loading
+        test: /pickadate/,
+        loader: 'imports',
+        query: { define: '>false' },
+      },
+      {
         // project stylus stylesheets
         test: /\.styl$/,
         // TODO: stylus-loader requires 'resolve url' query.
