@@ -1,10 +1,12 @@
+import asyncio
 import datetime
-
 from bson import objectid
 
 from vj4 import db
 from vj4 import constant
 from vj4.model import document
+from vj4.model import queue
+from vj4.service import bus
 from vj4.util import argmethod
 
 @argmethod.wrap
@@ -12,19 +14,22 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
               lang: str, code: str, data_id: objectid.ObjectId=None, tid: objectid.ObjectId=None,
               hidden=False):
   coll = db.Collection('record')
-  return await coll.insert({'hidden': hidden,
-                            'status': constant.record.STATUS_WAITING,
-                            'score': 0,
-                            'time_ms': 0,
-                            'memory_kb': 0,
-                            'domain_id': domain_id,
-                            'pid': pid,
-                            'uid': uid,
-                            'lang': lang,
-                            'code': code,
-                            'tid': tid,
-                            'data_id': data_id,
-                            'type': type})
+  rid = await coll.insert({'hidden': hidden,
+                           'status': constant.record.STATUS_WAITING,
+                           'score': 0,
+                           'time_ms': 0,
+                           'memory_kb': 0,
+                           'domain_id': domain_id,
+                           'pid': pid,
+                           'uid': uid,
+                           'lang': lang,
+                           'code': code,
+                           'tid': tid,
+                           'data_id': data_id,
+                           'type': type})
+  await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
+  return rid
+
 
 @argmethod.wrap
 async def get(record_id: objectid.ObjectId):

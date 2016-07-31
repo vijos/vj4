@@ -1,8 +1,6 @@
 import asyncio
 import io
 import zipfile
-
-from aiohttp import web
 from bson import objectid
 
 from vj4 import app

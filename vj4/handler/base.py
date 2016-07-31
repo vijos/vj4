@@ -151,8 +151,6 @@ class HandlerBase(setting.SettingMixin):
       kwargs['page_title'] = self.translate(self.TITLE)
     if 'path_components' not in kwargs:
       kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
-    if 'nav_category' not in kwargs:
-      kwargs['nav_category'] = self.NAME
     kwargs['reverse_url'] = self.reverse_url
     kwargs['datetime_span'] = self.datetime_span
     return template.Environment().get_template(template_name).render(kwargs)
@@ -230,6 +228,7 @@ class Handler(web.View, HandlerBase):
   def user_context(self):
     return {'uid': self.user['_id'],
             'domain': self.domain_id}
+
 
 class OperationHandler(Handler):
   async def post(self):

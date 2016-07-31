@@ -1,6 +1,6 @@
-{% macro nav_item(target_page_name) %}
+{% macro nav_item(target_page_name, target_page_prefix) %}
 <li class="nav__list-item">
-  <a href="{{ reverse_url(target_page_name) }}" class="nav__item{% if nav_category == target_page_name %} nav--active{% endif %}">
+  <a href="{{ reverse_url(target_page_name) }}" class="nav__item{% if page_name.startswith(target_page_prefix) %} nav--active{% endif %}">
     {{ _(target_page_name) }}
   </a>
 </li>
@@ -9,11 +9,11 @@
   <div class="row"><div class="columns clearfix">
     <ol class="nav__list nav__list--main clearfix">
       <li class="nav__list-item"><a href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
-      {{ nav_item('main') }}
-      {{ nav_item('problem_main') }}
-      {{ nav_item('training_main') }}
-      {{ nav_item('discussion_main') }}
-      {{ nav_item('contest_main') }}
+      {{ nav_item('main', 'main') }}
+      {{ nav_item('problem_main', 'problem') }}
+      {{ nav_item('training_main', 'training') }}
+      {{ nav_item('discussion_main', 'discussion') }}
+      {{ nav_item('contest_main', 'contest') }}
     </ol>
     <ol class="nav__list nav__list--secondary clearfix">
     {% if handler.user == vj4.model.builtin.USER_GUEST %}

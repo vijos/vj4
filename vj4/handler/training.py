@@ -26,5 +26,4 @@ class TrainingDetailView(base.Handler):
     path_components = self.build_path(
       (self.translate('training_main'), self.reverse_url('training_main')),
       (tdoc['title'], None))
-    self.render('training_detail.html', tdoc=tdoc,
-                path_components=path_components, nav_category='training_main')
+    self.render('training_detail.html', tdoc=tdoc, path_components=path_components)
