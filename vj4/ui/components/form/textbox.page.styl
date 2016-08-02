@@ -2,47 +2,33 @@
 
 // Normal Textbox
 input.textbox, textarea.textbox
-  color: $text-color
-  font-size: 0.9rem
-  border: 1px solid #DDD
-  background: #FFF
-  margin: 0
-  outline: 2px solid transparent
-  padding: 5px
-  line-height: 1.2
+  form-styles()
+  background-color: $input-background-color
+  outline: $input-outline
   transition: outline-color .2s, border-color .2s
   transition-timing-function: ease-out-cubic
 
   &:focus
     border-color: $primary-color
-    outline: 2px solid #C1E0FF
+    outline: $input-focus-outline
     outline-offset: 0
 
-  &.expanded
-    width: 100%
-
 input.textbox
-  width: rem(400px)
   height: rem($form-standard-height)
 
-textarea
-  width: rem(500px)
-  height: rem(unit(500 * 0.618, 'px'))
+textarea.textbox
+  height: rem(200px)
 
 // Material Textbox
 label.textbox.material
-  width: rem(120px)
-
   input
-    color: $text-color
-    display: block
-    width: 100%
-    height: rem($form-standard-height)
-    font-size: 0.9rem
+    form-styles()
     border: 0
     background: none
-    margin: 0
     outline: 0
+    padding-left: 0
+    padding-right: 0
+    color: $text-color
     border-bottom: 2px solid rgba($text-color, 0.4)
     transition: border-color .2s ease-out-cubic
 
@@ -57,9 +43,6 @@ label.textbox.material
 
   &.focus
     color: $primary-color
-
-  &.expanded
-    width: 100%
 
 label.textbox.material.inverse
   color: rgba($immersive-text-color, 0.8)
@@ -79,4 +62,3 @@ label.textbox.material.inverse
 
   &.focus
     color: $immersive-primary-color
-

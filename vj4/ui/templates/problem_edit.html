@@ -8,31 +8,30 @@
       </div>
       <div class="section__body">
         <form method="post">
-          <div class="form__row">
-            <label class="form__group">
+          <div class="row"><div class="medium-4 columns">
+            <label>
               所属账户
-              <select>
+              <select class="select">
                 <option value="123">当前账户</option>
                 <option value="123456">同济大学</option>
               </select>
             </label>
-          </div>
-          <div class="form__row">
-            <label class="form__group">
+          </div><div class="medium-8 columns">
+            <label>
               名称
               <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
             </label>
-          </div>
-          <div class="form__row">
-            <label class="form__group">
+          </div></div>
+          <div class="row"><div class="columns">
+            <label>
               内容
-              <textarea id="markdown-textarea" name="content" class="expanded textbox"></textarea>
+              <textarea id="markdown-textarea" name="content" class="textbox"></textarea>
             </label>
-          </div>
-          <div class="form__row">
+          </div></div>
+          <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
-          </div>
+          </div></div>
         </form>
       </div>
     </div>

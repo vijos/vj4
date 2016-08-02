@@ -41,9 +41,9 @@
                 <form method="post" class="hasjs--hide">
                   <div class="dczcomments__box">
                     <div>
-                      <textarea name="content" class="expanded textbox"></textarea>
+                      <textarea name="content" class="textbox"></textarea>
                     </div>
-                    <div class="compact form__row">
+                    <div>
                       <input type="submit" class="rounded primary button dczcomments__box__submit" value="{{ _('Comment') }}" data-value-reply="{{ _('Reply') }}" data-value-comment="{{ _('Comment') }}" data-value-update="{{ _('Update') }}">
                       <input type="button" class="rounded button nojs--hide dczcomments__box__cancel" value="{{ _('Cancel') }}">
                     </div>
@@ -52,7 +52,7 @@
                   <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                 </form>
                 <div class="nojs--hide">
-                  <textarea class="expanded dczcomments__dummy-box textbox" data-form="{{ {"operation": "reply"}|json }}" placeholder="Write Your Comments"></textarea>
+                  <textarea class="dczcomments__dummy-box textbox" data-form="{{ {"operation": "reply"}|json }}" placeholder="Write Your Comments"></textarea>
                 </div>
                 <div class="commentbox-placeholder"></div>
                 <ul style="display:none">

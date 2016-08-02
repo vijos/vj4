@@ -1,0 +1,19 @@
+@import './var.inc.styl'
+
+.select
+  form-styles()
+  padding-right: 1.5rem
+  background-color: $input-background-color
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='32' height='24' viewBox='0 0 32 24'><polygon points='0,0 32,0 16,24' style='fill: rgb%28138, 138, 138%29'></polygon></svg>")
+  background-size: 9px 6px
+  background-position: right -1rem center
+  background-origin: content-box
+  background-repeat: no-repeat
+  outline: $input-outline
+  transition: outline-color .2s, border-color .2s
+  transition-timing-function: ease-out-cubic
+
+  &:focus
+    border-color: $primary-color
+    outline: $input-focus-outline
+    outline-offset: 0

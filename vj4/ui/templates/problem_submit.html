@@ -8,20 +8,26 @@
       </div>
       <div class="section__body">
         <form method="post">
-          <div class="compact form__row">
-            <label>代码语言: </label><select name="lang">
-            {% for key, value in vj4.model.builtin.LANGS.items() %}
-              <option value="{{ key }}">{{ value }}</option>
-            {% endfor %}
-            </select>
-          </div>
-          <div class="compact form__row">
-            <textarea class="expanded monospace textbox" name="code" autofocus></textarea>
-          </div>
-          <div class="compact form__row">
+          <div class="row"><div class="medium-4 columns">
+            <label>
+              代码语言:
+              <select name="lang" class="select">
+              {% for key, value in vj4.model.builtin.LANGS.items() %}
+                <option value="{{ key }}">{{ value }}</option>
+              {% endfor %}
+              </select>
+            </label>
+          </div></div>
+          <div class="row"><div class="columns">
+            <label>
+              代码:
+              <textarea class="monospace textbox" name="code" autofocus></textarea>
+            </label>
+          </div></div>
+          <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <input type="submit" class="rounded primary button" value="{{ _('Submit') }}">
-          </div>
+          </div></div>
         </form>
       </div>
     </div>

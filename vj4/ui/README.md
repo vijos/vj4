@@ -185,8 +185,6 @@ Additional class names:
 
 Additional class names:
 
-`expanded`: The input would occupy full width of the parent.
-
 `material`: TODO
 
 `inverse`: TODO

@@ -10,10 +10,12 @@
     <div class="section__body">
       <h2 class="section__title">{{ _(family) }}</h2>
       {% for setting in settings[family] %}
-      <div class="compact form__row">
-        <label for="input-{{ setting['key'] }}">{{ _(setting['key']) }}</label>
-        <input id="input-{{ setting['key'] }}" class="textbox" name="{{ setting['key'] }}" value="{{ handler.get_setting(setting['key']) }}">
-      </div>
+      <div class="row"><div class="medium-6 columns">
+        <label>
+          {{ _(setting['key']) }}
+          <input class="textbox" name="{{ setting['key'] }}" value="{{ handler.get_setting(setting['key']) }}">
+        </label>
+      </div></div>
       {% endfor %}
     </div>
     {% endfor %}

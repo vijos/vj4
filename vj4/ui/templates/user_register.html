@@ -4,15 +4,17 @@
   <div class="immersive--content immersive--center">
     <h1>{{ _('Sign Up') }}</h1>
     <form method="POST">
-      <div class="form__row">
-        <label class="inverse expanded material textbox">
+      <div class="row"><div class="columns">
+        <label class="inverse material textbox">
           {{ _('Email') }}
           <input name="mail" type="text" autofocus>
         </label>
-      </div>
-      <div class="form__row text-center">
-        <input type="submit" value="{{ _('Send Verification Email') }}" class="inverse rounded primary button">
-      </div>
+      </div></div>
+      <div class="row"><div class="columns">
+        <div class="text-center">
+          <input type="submit" value="{{ _('Send Verification Email') }}" class="inverse rounded primary button">
+        </div>
+      </div></div>
     </form>
   </div>
 </div></div>
