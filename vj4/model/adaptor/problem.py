@@ -4,11 +4,11 @@ import itertools
 from bson import objectid
 from pymongo import errors
 
+from vj4 import constant
 from vj4 import db
 from vj4 import error
 from vj4.model import document
 from vj4.model import fs
-from vj4.model import record
 from vj4.util import argmethod
 
 
@@ -157,7 +157,7 @@ async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
                         rid: objectid.ObjectId, status: int):
   try:
     await document.set_if_not_status(domain_id, document.TYPE_PROBLEM, pid, uid,
-                                     'status', status, record.STATUS_ACCEPTED, rid=rid)
+                                     'status', status, constant.record.STATUS_ACCEPTED, rid=rid)
   except errors.DuplicateKeyError:
     pass
 

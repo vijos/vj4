@@ -97,7 +97,7 @@ class JudgeNotifyConnection(base.Connection):
                                                       int(kwargs['time_ms']),
                                                       int(kwargs['memory_kb'])),
                                      self.channel.basic_client_ack(tag))
-      accept = True if rdoc['status'] == record.STATUS_ACCEPTED else False
+      accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
       # TODO(twd2): update problem
       post_coros = [problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
                                           rdoc['_id'], rdoc['status']),
@@ -115,7 +115,7 @@ class JudgeNotifyConnection(base.Connection):
   async def on_close(self):
     async def close():
       await asyncio.gather(*[record.end_judge(rid, self.user['_id'], self.id,
-                                              record.STATUS_CANCELED, 0, 0, 0)
+                                              constant.record.STATUS_CANCELED, 0, 0, 0)
                              for rid in self.rids.values()])
       await asyncio.gather(*[bus.publish('record_change', rid)
                              for rid in self.rids.values()])
