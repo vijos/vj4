@@ -47,6 +47,7 @@
     "codemirror": "^5.16.0",
     "commonmark": "^0.26.0",
     "diff-dom": "^2.0.3",
+    "emojify.js": "^1.1.0",
     "highlight.js": "^9.5.0",
     "jqmath-build": "^0.0.4",
     "jquery": "^3.0.0",

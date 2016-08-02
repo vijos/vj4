@@ -1135,6 +1135,11 @@
       "from": "git+https://github.com/Mango/emitter.git#0.0.7",
       "resolved": "git+https://github.com/Mango/emitter.git#41ab8a3956269c7ed468bde50203e15b3274152f"
     },
+    "emojify.js": {
+      "version": "1.1.0",
+      "from": "emojify.js@latest",
+      "resolved": "https://registry.npm.taobao.org/emojify.js/download/emojify.js-1.1.0.tgz"
+    },
     "emojis-list": {
       "version": "2.0.1",
       "from": "emojis-list@>=2.0.0 <3.0.0",
@@ -2251,6 +2256,18 @@
       "version": "3.8.1",
       "from": "immutable@>=3.7.6 <4.0.0",
       "resolved": "https://registry.npm.taobao.org/immutable/download/immutable-3.8.1.tgz"
+    },
+    "imports-loader": {
+      "version": "0.6.5",
+      "from": "imports-loader@latest",
+      "resolved": "https://registry.npm.taobao.org/imports-loader/download/imports-loader-0.6.5.tgz",
+      "dependencies": {
+        "source-map": {
+          "version": "0.1.43",
+          "from": "source-map@>=0.1.0 <0.2.0",
+          "resolved": "https://registry.npm.taobao.org/source-map/download/source-map-0.1.43.tgz"
+        }
+      }
     },
     "imurmurhash": {
       "version": "0.1.4",

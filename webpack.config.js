@@ -122,6 +122,9 @@ var config = {
     // copy static assets
     new CopyWebpackPlugin([{ from: root('vj4/ui/static') }]),
 
+    // copy emoji images
+    new CopyWebpackPlugin([{ from: root('node_modules/emojify.js/dist/images/basic'), to: 'img/emoji/' }]),
+
   ],
   postcss: function () {
     return [postcssAutoprefixerPlugin];

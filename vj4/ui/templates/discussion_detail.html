@@ -4,7 +4,7 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__header">
-        <h1>{{ ddoc['title'] }}</h1>
+        <h1 class="emoji--enabled">{{ ddoc['title'] }}</h1>
       </div>
       <div class="section__body">
         <div class="dczdetail__supplementary">
@@ -16,7 +16,7 @@
           <span class="v-center"> · </span>
           <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
         </div>
-        <div class="typo topic__content">
+        <div class="typo topic__content emoji--enabled">
           {{ ddoc['content']|markdown }}
         </div>
       </div>
@@ -85,7 +85,7 @@
                     <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
                   </div>
                 </div>
-                <div class="typo no-heading">
+                <div class="typo no-heading emoji--enabled">
                   {{ drdoc['content']|markdown }}
                 </div>
                 <ul class="dczcomments__replies commentbox-prepend-target"><!--
@@ -106,7 +106,7 @@
                           <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
                         </div>
                       </div>
-                      <div class="typo no-heading">
+                      <div class="typo no-heading emoji--enabled">
                         {{ drrdoc['content']|markdown }}
                       </div>
                     </div>
