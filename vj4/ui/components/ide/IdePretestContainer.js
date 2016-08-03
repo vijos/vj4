@@ -41,7 +41,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class IdePretestContainer extends React.Component {
+export default class IdePretestContainer extends React.PureComponent {
   static propTypes = {
     current: React.PropTypes.string,
     tabs: React.PropTypes.arrayOf(React.PropTypes.string),

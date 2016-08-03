@@ -30,7 +30,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(null, mapDispatchToProps)
-export default class IdeRecordsContainer extends React.Component {
+export default class IdeRecordsContainer extends React.PureComponent {
   static propTypes = {
     loadSubmissions: React.PropTypes.func,
     handleClickClose: React.PropTypes.func,

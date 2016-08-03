@@ -9,7 +9,6 @@ env:
   commonjs: true
 extends:
   - airbnb
-  - plugin:react/recommended
 parserOptions:
   sourceType: module
   ecmaVersion: 7

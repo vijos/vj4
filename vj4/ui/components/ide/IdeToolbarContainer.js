@@ -76,7 +76,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class IdeToolbarContainer extends React.Component {
+export default class IdeToolbarContainer extends React.PureComponent {
   static contextTypes = {
     store: React.PropTypes.object,
   };

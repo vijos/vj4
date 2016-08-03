@@ -9,7 +9,7 @@ const mapStateToProps = (state) => ({
 });
 
 @connect(mapStateToProps)
-export default class IdeRecordsTableContainer extends React.Component {
+export default class IdeRecordsTableContainer extends React.PureComponent {
   static propTypes = {
     rows: React.PropTypes.arrayOf(React.PropTypes.string),
     isLoading: React.PropTypes.bool,

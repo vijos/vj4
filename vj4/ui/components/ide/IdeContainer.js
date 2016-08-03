@@ -60,7 +60,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class IdeContainer extends React.Component {
+export default class IdeContainer extends React.PureComponent {
   static propTypes = {
     ui: React.PropTypes.object,
     problem: React.PropTypes.shape({

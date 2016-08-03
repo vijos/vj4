@@ -49,7 +49,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 @connect(mapStateToProps, null, mergeProps)
-export default class IdeRecordsRowContainer extends React.Component {
+export default class IdeRecordsRowContainer extends React.PureComponent {
   static propTypes = {
     data: React.PropTypes.shape({
       _id: React.PropTypes.string,

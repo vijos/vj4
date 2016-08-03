@@ -27,7 +27,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps, mergeProps)
-export default class IdePretestTabPaneContainer extends React.Component {
+export default class IdePretestTabPaneContainer extends React.PureComponent {
   static propTypes = {
     id: React.PropTypes.string,
     input: React.PropTypes.string,
