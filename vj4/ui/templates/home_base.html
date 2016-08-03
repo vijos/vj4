@@ -1,8 +1,8 @@
 {% extends "layout/basic.html" %}
-{% macro menu_item(target_page_name) %}
+{% macro menu_item(icon_name, target_page_name) %}
 <li class="menu__item">
   <a href="{{ reverse_url(target_page_name) }}" class="menu__link{% if page_name == target_page_name %} active{% endif %}">
-    {{ _(target_page_name) }}
+    <span class="icon icon-{{ icon_name }}"></span> {{ _(target_page_name) }}
   </a>
 </li>
 {% endmacro %}
@@ -11,10 +11,10 @@
   <div class="large-3 columns">
     <div class="section side">
       <ul class="menu">
-        {{ menu_item('home_messages') }}
+        {{ menu_item('message', 'home_messages') }}
         <li class="menu__seperator"></li>
-        {{ menu_item('home_account') }}
-        {{ menu_item('home_security') }}
+        {{ menu_item('user', 'home_account') }}
+        {{ menu_item('security', 'home_security') }}
       </ul>
     </div>
   </div>
