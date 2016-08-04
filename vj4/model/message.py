@@ -14,9 +14,11 @@ async def add(sender_uid: int, sendee_uid: int, content: str):
   coll = db.Collection('message')
   await coll.insert({'sender_uid': sender_uid,
                      'sendee_uid': sendee_uid,
-                     'content': content,
                      'status': 0,
-                     'reply': []})
+                     'reply': [{'sender_uid': sender_uid,
+                                'content': content,
+                                'status': 0,
+                                'at': datetime.datetime.utcnow()}]})
 
 
 @argmethod.wrap
