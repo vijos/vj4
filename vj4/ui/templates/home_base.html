@@ -8,6 +8,9 @@
 {% endmacro %}
 {% block content %}
 <div class="row">
+  <div class="large-9 columns">
+    {% block home_content %}{% endblock %}
+  </div>
   <div class="large-3 columns">
     <div class="section side">
       <ul class="menu">
@@ -17,9 +20,6 @@
         {{ menu_item('security', 'home_security') }}
       </ul>
     </div>
-  </div>
-  <div class="large-9 columns">
-    {% block home_content %}{% endblock %}
   </div>
 </div>
 {% endblock %}
