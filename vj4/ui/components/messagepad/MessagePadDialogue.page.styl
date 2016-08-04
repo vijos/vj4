@@ -1,0 +1,60 @@
+$corner-size = 10px
+
+.messagepad__dialogue-container
+  overflow: hidden
+  display: flex
+  margin-bottom: rem(30px)
+
+  &.side--self
+    justify-content: flex-end
+
+.messagepad__dialogue__msg
+  font-size: rem($font-size-secondary)
+  line-height: 1.5
+  padding: rem(15px)
+  margin-bottom: rem(8px)
+  position: relative
+  min-width: rem(100px)
+  word-break: break-all
+
+  time
+    opacity: 0.6
+    font-size: rem($font-size-small)
+
+  &:after
+    position: absolute
+    width: 0
+    height: 0
+    content: ''
+    top: 0
+
+.side--other
+  .messagepad__dialogue__msg
+    margin-left: rem($corner-size + 10px)
+    background: $primary-color
+    color: #FFF
+    order: 1
+
+    &:after
+      left: rem(-($corner-size))
+      border-top: $corner-size solid $primary-color
+      border-right: 0 solid transparent
+      border-bottom: 0 solid transparent
+      border-left: $corner-size solid transparent
+
+.side--self
+  .messagepad__dialogue__msg
+    margin-right: rem($corner-size + 10px)
+    background: #F0F0F0
+    color: #222
+    order: -1
+
+    time
+      text-align: right
+
+    &:after
+      right: rem(-($corner-size))
+      border-top: $corner-size solid #F0F0F0
+      border-right: $corner-size solid transparent
+      border-bottom: 0 solid transparent
+      border-left: 0 solid transparent

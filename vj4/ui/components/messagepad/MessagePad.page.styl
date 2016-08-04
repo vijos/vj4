@@ -1,0 +1,22 @@
+$sidebar-width = 250px
+
+.messagepad
+  position: relative
+
+.messagepad__sidebar
+  border-right: 1px solid #EEE
+  float: left
+  width: rem($sidebar-width)
+
+.messagepad__content
+  position: absolute
+  left: rem($sidebar-width)
+  top: 0
+  right: 0
+  height: 100%
+  overflow: auto
+  padding: rem(30px)
+
+.messagepad__list
+  overflow: auto
+  height: rem(500px)

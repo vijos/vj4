@@ -84,7 +84,7 @@ class HomeMessagesView(base.OperationHandler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
     messages = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
-    self.render('home_messages.html', messages=messages)
+    self.json_or_render('home_messages.html', messages=messages)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token

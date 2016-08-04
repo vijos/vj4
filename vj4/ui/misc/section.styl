@@ -16,6 +16,7 @@
 
 .section__header
   padding: rem($section-gap-v) rem($section-gap-h) 0.7em
+  position: relative
 
 .section__body
   padding: 0.7em rem($section-gap-h)
@@ -45,3 +46,22 @@ h2.section__title
 
 h3.section__title
   font-size: 1rem
+
+.section__tools
+  position: absolute
+  right: rem($section-gap-h)
+  top: rem($section-gap-v)
+
+  .tool-button
+    appearance: none
+    border: 0
+    background: none
+    color: #AAA
+    margin-left: rem(5px)
+    padding: rem(0 5px)
+    line-height: rem(24px)
+    font-size: rem($font-size-small)
+    outline: 0
+
+    &:hover
+      color: #444
