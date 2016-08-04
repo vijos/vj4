@@ -1,8 +1,7 @@
 import Tether from 'tether';
 import { NamedPage } from '../misc/PageLoader';
 import Navigation from '../components/navigation/navigation';
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import delay from '../utils/delay';
 
 class ProblemPageExtender {
   constructor() {
@@ -143,6 +142,7 @@ const page = new NamedPage('problem_detail', async () => {
       .clone()
       .addClass('ide__sidebar')
       .appendTo('body');
+    $floatingSidebar.find('a').attr('target', '_blank');
     $floatingSidebar.tether = new Tether({
       element: $floatingSidebar,
       offset: '-20px 20px',

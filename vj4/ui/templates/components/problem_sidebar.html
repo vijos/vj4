@@ -26,17 +26,17 @@
         <span class="icon icon-statistics"></span> {{ _('Submission Statistics') }}
       </a></li>
       <li class="menu__seperator"></li>
-      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_solution' %} active{% endif %}" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}" target="_blank">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_solution' %} active{% endif %}" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
         <span class="icon icon-bubble--outline"></span> {{ _('Solutions') }}
       </a></li>
-      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}" target="_blank">
+      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
         <span class="icon icon-bubble--outline"></span> {{ _('Discussions') }}
       </a></li>
       <li class="menu__seperator"></li>
-      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}" target="_blank">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">
         <span class="icon icon-edit"></span>  {{ _('Edit') }}
       </a></li>
-      <li class="menu__item"><a class="menu__link" href="#" target="_blank">
+      <li class="menu__item"><a class="menu__link" href="#">
         <span class="icon icon-wrench"></span> {{ _('Settings') }}
       </a></li>
     </ul>
