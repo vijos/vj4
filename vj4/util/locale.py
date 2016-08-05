@@ -15,7 +15,7 @@ def load_translations(translation_path):
   for path in os.listdir(translation_path):
     if not path.endswith(".csv"):
       continue
-    with open(os.path.join(translation_path, path)) as csv_file:
+    with open(os.path.join(translation_path, path), encoding='utf-8') as csv_file:
       _locales[path[:-4]] = dict(csv.reader(csv_file))
 
 
