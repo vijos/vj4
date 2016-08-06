@@ -2530,6 +2530,16 @@
       "from": "jquery@>=3.1.0 <4.0.0",
       "resolved": "https://registry.npm.taobao.org/jquery/download/jquery-3.1.0.tgz"
     },
+    "jquery-scroll-lock": {
+      "version": "2.2.0",
+      "from": "jquery-scroll-lock@latest",
+      "resolved": "https://registry.npm.taobao.org/jquery-scroll-lock/download/jquery-scroll-lock-2.2.0.tgz"
+    },
+    "jquery.easing": {
+      "version": "1.4.1",
+      "from": "jquery.easing@latest",
+      "resolved": "https://registry.npm.taobao.org/jquery.easing/download/jquery.easing-1.4.1.tgz"
+    },
     "jquery.transit": {
       "version": "0.9.12",
       "from": "jquery.transit@>=0.9.12 <0.10.0",

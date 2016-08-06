@@ -17,7 +17,7 @@ export default function MessagePadDialogueListItemComponent(props) {
   return (
     <li {...rest} className={cn} onClick={onClick}>
       <div className="media__left middle">
-        <img src={faceUrl} width="50" height="50" className="medium user-profile-avatar" />
+        <img src={faceUrl} alt="avatar" width="50" height="50" className="medium user-profile-avatar" />
       </div>
       <div className="media__body middle">
         <h3 className="messagepad__username">{userName}</h3>

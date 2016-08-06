@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import ListItem from './MessagePadDialogueListItemComponent';
+import 'jquery-scroll-lock';
 
 const mapStateToProps = (state) => ({
   items: state.dialogue.items,
@@ -19,6 +20,17 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class MessagePadDialogueListContainer extends React.PureComponent {
+  static propTypes = {
+    onSwitch: React.PropTypes.func,
+  };
+
+  handleClick(id) {
+    this.props.handleClick(id);
+    if (this.props.onSwitch) {
+      this.props.onSwitch(id);
+    }
+  }
+
   render() {
     const orderedItems = _.orderBy(
       this.props.items,
@@ -26,7 +38,7 @@ export default class MessagePadDialogueListContainer extends React.PureComponent
       'desc'
     );
     return (
-      <ol className="messagepad__list">
+      <ol className="messagepad__list" ref="list">
       {_.map(orderedItems, item => (
         <ListItem
           key={item._id}
@@ -34,10 +46,14 @@ export default class MessagePadDialogueListContainer extends React.PureComponent
           summary={_.last(item.reply).content}
           faceUrl="//gravatar.lug.ustc.edu.cn/avatar/3efe6856c336243c907e2852b0498fcf?d=mm&amp;s=200"
           active={item._id === this.props.activeTab}
-          onClick={() => this.props.handleClick(item._id)}
+          onClick={() => this.handleClick(item._id)}
         />
       ))}
       </ol>
     );
+  }
+
+  componentDidMount() {
+    $(this.refs.list).scrollLock({ strict: true });
   }
 }
