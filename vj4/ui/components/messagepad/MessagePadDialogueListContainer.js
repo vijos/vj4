@@ -46,7 +46,7 @@ export default class MessagePadDialogueListContainer extends React.PureComponent
       {_.map(orderedDialogues, dialogue => (
         <ListItem
           key={dialogue._id}
-          userName={dialogue.sendee_uid !== UserContext.uid ? dialogue.sendee_uid : dialogue.sender_uid}
+          userName={dialogue.sendee_uid !== UserContext.uid ? dialogue.sendee_udoc.uname : dialogue.sender_udoc.uname}
           summary={_.last(dialogue.reply).content}
           faceUrl="//gravatar.lug.ustc.edu.cn/avatar/3efe6856c336243c907e2852b0498fcf?d=mm&amp;s=200"
           active={dialogue._id === this.props.activeId}

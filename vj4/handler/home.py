@@ -1,3 +1,4 @@
+import asyncio
 import hmac
 
 from bson import objectid
@@ -84,6 +85,8 @@ class HomeMessagesView(base.OperationHandler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
     messages = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
+    await asyncio.gather(user.attach_udocs(messages, 'sender_uid', 'sender_udoc'),
+                         user.attach_udocs(messages, 'sendee_uid', 'sendee_udoc'))
     self.json_or_render('home_messages.html', messages=messages)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)

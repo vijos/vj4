@@ -110,7 +110,7 @@ async def set_by_uid(uid, **kwargs):
   return doc
 
 
-async def attach_udocs(docs, field_name):
+async def attach_udocs(docs, field_name, udoc_field_name='udoc'):
   """Attach udoc to docs by uid in the specified field."""
   # TODO(iceboy): projection.
   uids = set(doc[field_name] for doc in docs)
@@ -119,7 +119,7 @@ async def attach_udocs(docs, field_name):
     udocs = await coll.find({'_id': {'$in': list(uids)}}).to_list(None)
     uids = dict((udoc['_id'], udoc) for udoc in udocs)
     for doc in docs:
-      doc['udoc'] = uids.get(doc[field_name])
+      doc[udoc_field_name] = uids.get(doc[field_name])
   return docs
 
 
