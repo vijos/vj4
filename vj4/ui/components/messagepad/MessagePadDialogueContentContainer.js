@@ -1,21 +1,19 @@
 import React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import Dialogue from './MessagePadDialogueComponent';
+import Message from './MessageComponent';
 import moment from 'moment';
 import 'jquery-scroll-lock';
+import 'jquery.easing';
 
 const mapStateToProps = (state) => ({
-  activeTab: state.dialogue.activeTab,
-  item: state.dialogue.activeTab !== null
-    ? state.dialogue.items[state.dialogue.activeTab]
+  activeId: state.activeId,
+  item: state.activeId !== null
+    ? state.dialogues[state.activeId]
     : null,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-});
-
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps, null)
 export default class MessagePadDialogueContentContainer extends React.PureComponent {
   render() {
     return (
@@ -26,18 +24,18 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
   }
 
   renderInner() {
-    if (this.props.activeTab === null) {
+    if (this.props.activeId === null) {
       return [];
     }
     return _.map(this.props.item.reply, (reply, idx) => (
-      <Dialogue
+      <Message
         key={idx}
         isSelf={reply.sender_uid === UserContext.uid}
         faceUrl="//gravatar.lug.ustc.edu.cn/avatar/3efe6856c336243c907e2852b0498fcf?d=mm&amp;s=200"
       >
         <div>{reply.content}</div>
         <time>{moment(reply.at).fromNow()}</time>
-      </Dialogue>
+      </Message>
     ));
   }
 
@@ -46,13 +44,15 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
   }
 
   componentWillUpdate(nextProps) {
-    if (nextProps.activeTab !== this.props.activeTab) {
+    if (nextProps.activeId !== this.props.activeId) {
       this.scrollToBottom = true;
+      this.scrollWithAnimation = false;
       return;
     }
     const node = this.refs.list;
     if (node.scrollTop + node.offsetHeight === node.scrollHeight) {
       this.scrollToBottom = true;
+      this.scrollWithAnimation = true;
       return;
     }
     this.scrollToBottom = false;
@@ -61,7 +61,12 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
   componentDidUpdate() {
     if (this.scrollToBottom) {
       const node = this.refs.list;
-      node.scrollTop = node.scrollHeight;
+      const targetScrollTop = node.scrollHeight - node.offsetHeight;
+      if (this.scrollWithAnimation) {
+        $(node).stop().animate({ scrollTop: targetScrollTop }, 200, 'easeOutCubic');
+      } else {
+        node.scrollTop = targetScrollTop;
+      }
     }
   }
 }

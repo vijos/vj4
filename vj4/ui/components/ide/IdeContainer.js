@@ -2,7 +2,7 @@ import React from 'react';
 import SplitPane from 'react-split-pane';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import Overlay from './OverlayComponent';
+import Overlay from '../react/OverlayComponent';
 import IdeToolbar from './IdeToolbarContainer';
 import IdeEditor from './IdeEditorContainer';
 import IdePretest from './IdePretestContainer';
@@ -78,7 +78,7 @@ export default class IdeContainer extends React.PureComponent {
         onChange={size => this.props.handleChangeSize('main', size)}
       >
         <div
-          className="ide-problem"
+          className="ide__problem"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: this.props.problem.html }}
         ></div>

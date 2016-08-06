@@ -32,12 +32,13 @@ def get_multi(uid: int, *, fields=None):
 async def add_reply(message_id: objectid.ObjectId, sender_uid: int, content: str):
   """Reply a message with specified content."""
   coll = db.Collection('message')
-  return await coll.find_and_modify(query={'_id': message_id},
-                                    update={'$push': {'reply': {'sender_uid': sender_uid,
-                                                                'content': content,
-                                                                'status': 0,
-                                                                'at': datetime.datetime.utcnow()}}},
-                                    new=True)
+  reply = {'sender_uid': sender_uid,
+           'content': content,
+           'status': 0,
+           'at': datetime.datetime.utcnow()}
+  mdoc = await coll.find_and_modify(query={'_id': message_id},
+                                    update={'$push': {'reply': reply}})
+  return (mdoc, reply)
 
 
 @argmethod.wrap

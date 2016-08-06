@@ -15,7 +15,7 @@ export default class IdeRecordsTableContainer extends React.PureComponent {
     isLoading: React.PropTypes.bool,
   };
   render() {
-    const cn = classNames('data-table ide-records__table', {
+    const cn = classNames('data-table ide__records__table', {
       loading: this.props.isLoading,
     });
     return (

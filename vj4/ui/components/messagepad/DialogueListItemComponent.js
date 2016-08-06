@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default function MessagePadDialogueListItemComponent(props) {
+export default function DialogueListItemComponent(props) {
   const {
     userName,
     summary,
@@ -27,7 +27,7 @@ export default function MessagePadDialogueListItemComponent(props) {
   );
 }
 
-MessagePadDialogueListItemComponent.propTypes = {
+DialogueListItemComponent.propTypes = {
   userName: React.PropTypes.string.isRequired,
   summary: React.PropTypes.string.isRequired,
   faceUrl: React.PropTypes.string.isRequired,

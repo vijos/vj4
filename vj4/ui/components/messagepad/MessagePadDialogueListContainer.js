@@ -1,12 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import ListItem from './MessagePadDialogueListItemComponent';
+import ListItem from './DialogueListItemComponent';
 import 'jquery-scroll-lock';
 
 const mapStateToProps = (state) => ({
-  items: state.dialogue.items,
-  activeTab: state.dialogue.activeTab,
+  activeId: state.activeId,
+  dialogues: state.dialogues,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -32,21 +32,25 @@ export default class MessagePadDialogueListContainer extends React.PureComponent
   }
 
   render() {
-    const orderedItems = _.orderBy(
-      this.props.items,
-      dialogue => _.maxBy(dialogue.reply, reply => new Date(reply.at).getTime()),
+    const orderedDialogues = _.orderBy(
+      _.values(this.props.dialogues),
+      dialogue => _.maxBy(dialogue.reply, 'at').at,
       'desc'
     );
+    _.values(this.props.dialogues).forEach(dialogue => {
+      console.log(_.maxBy(dialogue.reply, 'at'));
+    });
+
     return (
       <ol className="messagepad__list" ref="list">
-      {_.map(orderedItems, item => (
+      {_.map(orderedDialogues, dialogue => (
         <ListItem
-          key={item._id}
-          userName={item.sendee_uid !== UserContext.uid ? item.sendee_uid : item.sender_uid}
-          summary={_.last(item.reply).content}
+          key={dialogue._id}
+          userName={dialogue.sendee_uid !== UserContext.uid ? dialogue.sendee_uid : dialogue.sender_uid}
+          summary={_.last(dialogue.reply).content}
           faceUrl="//gravatar.lug.ustc.edu.cn/avatar/3efe6856c336243c907e2852b0498fcf?d=mm&amp;s=200"
-          active={item._id === this.props.activeTab}
-          onClick={() => this.handleClick(item._id)}
+          active={dialogue._id === this.props.activeId}
+          onClick={() => this.handleClick(dialogue._id)}
         />
       ))}
       </ol>

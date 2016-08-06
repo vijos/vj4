@@ -1,6 +1,6 @@
 $corner-size = 10px
 
-.messagepad__dialogue-container
+.messagepad__message
   overflow: hidden
   display: flex
   margin-bottom: rem(30px)
@@ -11,7 +11,7 @@ $corner-size = 10px
   &.side--self
     justify-content: flex-end
 
-.messagepad__dialogue__msg
+.messagepad__message__body
   font-size: rem($font-size-secondary)
   line-height: 1.5
   padding: rem(15px)
@@ -19,6 +19,7 @@ $corner-size = 10px
   position: relative
   min-width: rem(100px)
   word-break: break-all
+  white-space: pre-wrap
 
   time
     opacity: 0.6
@@ -32,7 +33,7 @@ $corner-size = 10px
     top: 0
 
 .side--other
-  .messagepad__dialogue__msg
+  .messagepad__message__body
     margin-left: rem($corner-size + 10px)
     background: $primary-color
     color: #FFF
@@ -46,7 +47,7 @@ $corner-size = 10px
       border-left: $corner-size solid transparent
 
 .side--self
-  .messagepad__dialogue__msg
+  .messagepad__message__body
     margin-right: rem($corner-size + 10px)
     background: #F0F0F0
     color: #222

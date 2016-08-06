@@ -100,11 +100,10 @@ class HomeMessagesView(base.OperationHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post_reply_message(self, *, message_id: objectid.ObjectId, content: str):
-    mdoc = await message.add_reply(message_id, self.user['_id'], content)
+    (mdoc, reply) = await message.add_reply(message_id, self.user['_id'], content)
     if not mdoc:
       return error.MessageNotFoundError(message_id)
-    # TODO(iceboy): Fill in JSON result.
-    self.json_or_redirect(self.referer_or_main)
+    self.json_or_redirect(self.referer_or_main, reply=reply)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token

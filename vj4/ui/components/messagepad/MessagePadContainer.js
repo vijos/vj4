@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import Icon from '../react/IconComponent';
 import MessagePadDialogueList from './MessagePadDialogueListContainer';
 import MessagePadDialogueContent from './MessagePadDialogueContentContainer';
+import MessagePadInput from './MessagePadInputContainer';
 import 'jquery.easing';
 
 import * as util from '../../misc/Util';
@@ -16,7 +18,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(null, mapDispatchToProps)
-export default class IdeContainer extends React.PureComponent {
+export default class MessagePadContainer extends React.PureComponent {
   handleSwitch() {
     const BOUND_TOP = 60;
     const BOUND_BOTTOM = 20;
@@ -43,11 +45,12 @@ export default class IdeContainer extends React.PureComponent {
         <div className="messagepad__sidebar">
           <div className="section__header">
             <h1 className="section__title">Messages</h1>
-            <div className="section__tools"><button type="button" className="tool-button"><span className="icon icon-add"></span> New</button></div>
+            <div className="section__tools"><button type="button" className="tool-button"><Icon name="add" /> New</button></div>
           </div>
           <MessagePadDialogueList onSwitch={() => this.handleSwitch()} />
         </div>
         <MessagePadDialogueContent />
+        <MessagePadInput />
       </div>
     );
   }

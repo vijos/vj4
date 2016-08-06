@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import Icon from './IconComponent';
+import Icon from '../react/IconComponent';
 import Toolbar, {
   ToolbarItemComponent as ToolbarItem,
   ToolbarButtonComponent as ToolbarButton,
@@ -96,14 +96,14 @@ export default class IdeToolbarContainer extends React.PureComponent {
       <Toolbar>
         <ToolbarButton
           disabled={this.props.isPosting || !this.props.pretestValid}
-          className="ide-toolbar__pretest"
+          className="ide__toolbar__pretest"
           onClick={() => this.props.postPretest(this.context)}
         >
           <Icon name="debug" />Run Pretest
         </ToolbarButton>
         <ToolbarButton
           disabled={this.props.isPosting}
-          className="ide-toolbar__submit"
+          className="ide__toolbar__submit"
           onClick={() => this.props.postSubmit(this.context)}
         >
           <Icon name="play" />Submit Solution

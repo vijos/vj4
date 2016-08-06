@@ -146,7 +146,7 @@ const page = new NamedPage('problem_detail', async () => {
     $floatingSidebar.tether = new Tether({
       element: $floatingSidebar,
       offset: '-20px 20px',
-      target: '.ide-problem',
+      target: '.ide__problem',
       attachment: 'top right',
       targetAttachment: 'top right',
     });
