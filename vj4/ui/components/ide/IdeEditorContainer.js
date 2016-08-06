@@ -31,11 +31,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class IdeEditorContainer extends React.PureComponent {
-  static propTypes = {
-    code: React.PropTypes.string,
-    lang: React.PropTypes.string,
-    handleUpdateCode: React.PropTypes.func,
-  };
   componentDidMount() {
     this.refs.editor.getCodeMirror().setOption('theme', 'vjcm');
   }

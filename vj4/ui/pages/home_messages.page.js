@@ -1,5 +1,4 @@
 import { NamedPage } from '../misc/PageLoader';
-import delay from '../utils/delay';
 
 const page = new NamedPage('home_messages', async () => {
   async function mountComponent() {
@@ -30,7 +29,6 @@ const page = new NamedPage('home_messages', async () => {
       $('#messagePad').get(0)
     );
   }
-
   mountComponent();
 });
 

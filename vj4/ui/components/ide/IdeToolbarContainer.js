@@ -80,17 +80,6 @@ export default class IdeToolbarContainer extends React.PureComponent {
   static contextTypes = {
     store: React.PropTypes.object,
   };
-  static propTypes = {
-    pretestVisible: React.PropTypes.bool,
-    recordsVisible: React.PropTypes.bool,
-    isPosting: React.PropTypes.bool,
-    editorLang: React.PropTypes.string,
-    pretestValid: React.PropTypes.bool,
-    togglePanel: React.PropTypes.func,
-    setEditorLanguage: React.PropTypes.func,
-    postPretest: React.PropTypes.func,
-    postSubmit: React.PropTypes.func,
-  };
   render() {
     return (
       <Toolbar>

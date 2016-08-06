@@ -96,8 +96,10 @@ class HomeMessagesView(base.OperationHandler):
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)
-    await message.add(self.user['_id'], udoc['_id'], content)
-    self.json_or_redirect(self.referer_or_main)
+    mdoc = await message.add(self.user['_id'], udoc['_id'], content)
+    mdoc['sender_udoc'] = await user.get_by_uid(mdoc['sender_uid'])
+    mdoc['sendee_udoc'] = await user.get_by_uid(mdoc['sendee_uid'])
+    self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token

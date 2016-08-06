@@ -12,13 +12,15 @@ STATUS_READ = 1
 async def add(sender_uid: int, sendee_uid: int, content: str):
   """Send a message from sender to sendee with specified content."""
   coll = db.Collection('message')
-  await coll.insert({'sender_uid': sender_uid,
-                     'sendee_uid': sendee_uid,
+  mdoc = {'sender_uid': sender_uid,
+          'sendee_uid': sendee_uid,
+          'status': 0,
+          'reply': [{'sender_uid': sender_uid,
+                     'content': content,
                      'status': 0,
-                     'reply': [{'sender_uid': sender_uid,
-                                'content': content,
-                                'status': 0,
-                                'at': datetime.datetime.utcnow()}]})
+                     'at': datetime.datetime.utcnow()}]}
+  await coll.insert(mdoc)
+  return mdoc
 
 
 @argmethod.wrap
@@ -37,7 +39,8 @@ async def add_reply(message_id: objectid.ObjectId, sender_uid: int, content: str
            'status': 0,
            'at': datetime.datetime.utcnow()}
   mdoc = await coll.find_and_modify(query={'_id': message_id},
-                                    update={'$push': {'reply': reply}})
+                                    update={'$push': {'reply': reply}},
+                                    new=True)
   return (mdoc, reply)
 
 

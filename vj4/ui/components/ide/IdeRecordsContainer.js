@@ -31,14 +31,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(null, mapDispatchToProps)
 export default class IdeRecordsContainer extends React.PureComponent {
-  static propTypes = {
-    loadSubmissions: React.PropTypes.func,
-    handleClickClose: React.PropTypes.func,
-    handleClickRefresh: React.PropTypes.func,
-  };
-  componentDidMount() {
-    this.props.loadSubmissions();
-  }
   render() {
     return (
       <Panel
@@ -70,5 +62,8 @@ export default class IdeRecordsContainer extends React.PureComponent {
         </Tabs>
       </Panel>
     );
+  }
+  componentDidMount() {
+    this.props.loadSubmissions();
   }
 }

@@ -2,49 +2,7 @@
 {% block home_content %}
 <div class="section">
   <div id="messagePad">
-  <div class="loader-container"><div class="loader"></div></div>
-  </div>
-</div>
-<div class="row">
-  <div class="medium-4 columns"><div class="dialogue-list">
-    <div class="section__header">
-      <h1 class="section__title">{{ _('Messages') }}</h1>
-      <div class="section__tools"><button type="button" class="tool-button"><span class="icon icon-add"></span> New</button></div>
-    </div>
-    <div class="section__body">
-      <ol>
-        {% for message in messages %}
-        <li>
-          {{ message }}
-          <form method="post">
-            <input type="hidden" name="operation" value="reply_message">
-            <input type="hidden" name="message_id" value="{{ message['_id'] }}">
-            <label for="textarea-content-{{ loop.index0 }}">{{ _('Content') }}</label>
-            <textarea id="textarea-content-{{ loop.index0 }}" name="content"></textarea>
-            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <input type="submit" value="{{ _('Reply') }}">
-          </form>
-          <form method="post">
-            <input type="hidden" name="operation" value="delete_message">
-            <input type="hidden" name="message_id" value="{{ message['_id'] }}">
-            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <input type="submit" value="{{ _('Delete') }}">
-          </form>
-        </li>
-        {% endfor %}
-      </ol>
-    </div>
-  </div></div>
-  <div class="medium-8 columns">
-    <form method="post">
-      <input type="hidden" name="operation" value="send_message">
-      <label for="input-uid">{{ _('UID') }}</label>
-      <input id="input-uid" name="uid">
-      <label for="textarea-content">{{ _('Content') }}</label>
-      <textarea id="textarea-content" name="content"></textarea>
-      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-      <input type="submit" value="{{ _('Send') }}">
-    </form>
+    <div class="loader-container"><div class="loader"></div></div>
   </div>
 </div>
 {% endblock %}

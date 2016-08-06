@@ -1,7 +1,12 @@
+$list-height = 500px
 $sidebar-width = 250px
 $input-height = 80px
 $input-padding = 10px
 $send-button-width = 50px
+
+#messagePad
+  min-height: rem($list-height)
+  position: relative
 
 .messagepad
   position: relative
@@ -13,7 +18,7 @@ $send-button-width = 50px
 
 .messagepad__list
   overflow: auto
-  height: rem(500px)
+  height: rem($list-height)
 
 .messagepad__content
   position: absolute

@@ -17,11 +17,31 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   handleChange(id, value) {
+    if (id === null) {
+      return;
+    }
     dispatch({
       type: 'DIALOGUES_INPUT_CHANGED',
       payload: value,
       meta: {
         dialogueId: id,
+      },
+    });
+  },
+  postSend(placeholderId, uid, value) {
+    if (placeholderId === null) {
+      return;
+    }
+    const req = util.post('', {
+      operation: 'send_message',
+      uid,
+      content: value,
+    });
+    dispatch({
+      type: 'DIALOGUES_POST_SEND',
+      payload: req,
+      meta: {
+        placeholderId,
       },
     });
   },
@@ -46,16 +66,29 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class MessagePadInputContainer extends React.PureComponent {
+  static contextTypes = {
+    store: React.PropTypes.object,
+  };
   submit() {
-    this.props.postReply(this.props.activeId, this.props.inputValue);
+    const state = this.context.store.getState();
+    if (state.dialogues[this.props.activeId].isPlaceholder) {
+      this.props.postSend(
+        this.props.activeId,
+        state.dialogues[this.props.activeId].sendee_uid,
+        this.props.inputValue
+      );
+    } else {
+      this.props.postReply(
+        this.props.activeId,
+        this.props.inputValue
+      );
+    }
   }
-
   handleKeyDown(ev) {
     if (ev.keyCode === 13 && (ev.ctrlKey || ev.metaKey)) {
       this.submit();
     }
   }
-
   render() {
     const cn = classNames('messagepad__input', {
       visible: this.props.activeId !== null,
@@ -80,14 +113,12 @@ export default class MessagePadInputContainer extends React.PureComponent {
       </div>
     );
   }
-
   componentWillUpdate(nextProps) {
     this.focusInput = (
       nextProps.activeId !== this.props.activeId
       || this.props.isPosting !== nextProps.isPosting && nextProps.isPosting === false
     );
   }
-
   componentDidUpdate() {
     if (this.focusInput) {
       this.refs.input.focus();

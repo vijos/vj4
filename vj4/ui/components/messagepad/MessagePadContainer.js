@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import Icon from '../react/IconComponent';
 import MessagePadDialogueList from './MessagePadDialogueListContainer';
@@ -13,6 +14,20 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch({
       type: 'DIALOGUES_LOAD_DIALOGUES',
       payload: util.get(''),
+    });
+  },
+  handleNewDialogue() {
+    // TODO: pop up a dialog and pass udoc to store
+    const uid = parseInt(prompt('UID'), 10);
+    if (isNaN(uid)) {
+      return;
+    }
+    dispatch({
+      type: 'DIALOGUES_CREATE',
+      payload: {
+        id: _.uniqueId('PLACEHOLDER_'),
+        uid,
+      },
     });
   },
 });
@@ -36,16 +51,20 @@ export default class MessagePadContainer extends React.PureComponent {
       }
     }
   }
-  componentDidMount() {
-    this.props.loadDialogues();
-  }
   render() {
     return (
       <div className="messagepad clearfix" ref="container">
         <div className="messagepad__sidebar">
           <div className="section__header">
             <h1 className="section__title">Messages</h1>
-            <div className="section__tools"><button type="button" className="tool-button"><Icon name="add" /> New</button></div>
+            <div className="section__tools">
+              <button
+                onClick={() => this.props.handleNewDialogue()}
+                className="tool-button"
+              >
+                <Icon name="add" /> New
+              </button>
+            </div>
           </div>
           <MessagePadDialogueList onSwitch={() => this.handleSwitch()} />
         </div>
@@ -53,5 +72,8 @@ export default class MessagePadContainer extends React.PureComponent {
         <MessagePadInput />
       </div>
     );
+  }
+  componentDidMount() {
+    this.props.loadDialogues();
   }
 }
