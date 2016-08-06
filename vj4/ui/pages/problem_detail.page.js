@@ -1,6 +1,7 @@
 import Tether from 'tether';
 import { NamedPage } from '../misc/PageLoader';
 import Navigation from '../components/navigation/navigation';
+import loadReactRedux from '../utils/loadReactRedux';
 import delay from '../utils/delay';
 
 class ProblemPageExtender {
@@ -168,25 +169,9 @@ const page = new NamedPage('problem_detail', async () => {
     $('.loader-container').show();
 
     const SockJs = await System.import('sockjs-client');
-    const React = await System.import('react');
-    const { render } = await System.import('react-dom');
-    const { Provider } = await System.import('react-redux');
-    const { createStore, applyMiddleware } = await System.import('redux');
-    const { default: reduxThunk } = await System.import('redux-thunk');
-    const reduxPromise = await System.import('redux-promise-middleware');
-    const reduxLogger = await System.import('redux-logger');
     const { default: IdeApp } = await System.import('../components/ide');
     const { default: IdeReducer } = await System.import('../components/ide/reducers');
-
-    const reduxMiddlewares = [];
-    reduxMiddlewares.push(reduxThunk);
-    reduxMiddlewares.push(reduxPromise());
-    reduxMiddlewares.push(reduxLogger({
-      collapsed: true,
-      duration: true,
-    }));
-
-    const store = createStore(IdeReducer, applyMiddleware(...reduxMiddlewares));
+    const { React, render, Provider, store } = await loadReactRedux(IdeReducer);
 
     const sock = new SockJs('/records-conn');
     sock.onmessage = (message) => {
