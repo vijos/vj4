@@ -22,6 +22,9 @@ const mapDispatchToProps = (dispatch) => ({
     if (isNaN(uid)) {
       return;
     }
+    if (uid === UserContext.uid) {
+      return;
+    }
     dispatch({
       type: 'DIALOGUES_CREATE',
       payload: {
