@@ -12,7 +12,7 @@
             <label>
               代码语言:
               <select name="lang" class="select">
-              {% for key, value in vj4.model.builtin.LANGS.items() %}
+              {% for key, value in vj4.constant.language.LANG_TEXTS.items() %}
                 <option value="{{ key }}">{{ value }}</option>
               {% endfor %}
               </select>
@@ -54,21 +54,4 @@
 
 {# TODO(iceboy): psdoc #}
 
-<!--
-<div>
-  <form method="post">
-    <textarea name="code" rows="25" cols="80"></textarea>
-    <select name="lang">
-    {% for key, value in vj4.model.builtin.LANGS.items() %}
-      <option value="{{ key }}">{{ value }}</option>
-    {% endfor %}
-    </select>
-    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-    <input type="submit" value="{{ _('Submit') }}">
-  </form>
-</div>
--->
-<div>
-
-</div>
 {% endblock %}

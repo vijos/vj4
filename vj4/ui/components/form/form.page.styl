@@ -175,92 +175,13 @@ label
   margin: 0
   font-size: rem($font-size-secondary)
   line-height: 1.8
-  color: lighten($text-color, 20%)
+  color: lighten($text-color, 10%)
 
   input, textarea, select
     display: block
-/*
-[type='text'], [type='password'], [type='date'], [type='datetime'], [type='datetime-local'], [type='month'], [type='week'], [type='email'], [type='number'], [type='search'], [type='tel'], [type='time'], [type='url'], [type='color'],
-textarea
-  display: block
-  box-sizing: border-box
-  width: 100%
-  height: 2.4375rem
-  padding: 0.5rem
-  border: 1px solid #cacaca
-  margin: 0 0 1rem
-  font-family: inherit
-  font-size: 1rem
-  color: #0a0a0a
-  background-color: #fefefe
-  box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1)
-  border-radius: 0px
-  transition: box-shadow 0.5s, border-color 0.25s ease-in-out
-  -webkit-appearance: none
-  -moz-appearance: none
 
-  &:focus
-    border: 1px solid #8a8a8a
-    background-color: #fefefe
-    outline: none
-    box-shadow: 0 0 5px #cacaca
-    transition: box-shadow 0.5s, border-color 0.25s ease-in-out
-
-textarea
-  max-width: 100%
-  textarea[rows]
-    height: auto
-
-input::placeholder,
-textarea::placeholder
-  color: #cacaca
-
-input:disabled, input[readonly],
-textarea:disabled,
-textarea[readonly]
-  background-color: #e6e6e6
-  cursor: not-allowed
-
-[type='submit'],
-[type='button']
-  border-radius: 0px
-  -webkit-appearance: none
-  -moz-appearance: none
-
-input[type='search']
-  box-sizing: border-box
-
-[type='file'],
-[type='checkbox'],
-[type='radio']
-  margin: 0 0 1rem
-
-[type='checkbox'] + label,
-[type='radio'] + label
-  display: inline-block
-  margin-left: 0.5rem
-  margin-right: 1rem
-  margin-bottom: 0
-  vertical-align: baseline
-  [type='checkbox'] + label[for],
-  [type='radio'] + label[for]
-    cursor: pointer
-
-label > [type='checkbox'],
-label > [type='radio']
-  margin-right: 0.5rem
-
-[type='file']
-  width: 100%
-
-label
-  display: block
-  margin: 0
-  font-size: 0.875rem
-  font-weight: normal
-  line-height: 1.8
-  color: #0a0a0a
-  &.middle
-    margin: 0 0 1rem
-    padding: 0.5625rem 0
-*/
+.help-text
+  margin-top: -0.5rem
+  margin-bottom: 1rem
+  font-size: ($font-size-small)
+  color: lighten($text-color, 30%)

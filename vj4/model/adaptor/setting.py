@@ -2,6 +2,7 @@ import collections
 import functools
 import itertools
 
+from vj4 import constant
 from vj4.model import builtin
 from vj4.model import user
 
@@ -9,21 +10,17 @@ Setting = functools.partial(
   collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui']),
   range=None, ui='input')
 
-PRIVACY_RANGE = collections.OrderedDict(
-  [(-1, 'visible_all'), (0, 'visible_user'), (2, 'invisible')])
-
 # Setting keys should not duplicate with user keys or session keys.
 SETTINGS = [
   Setting('info', 'gravatar', str),
   Setting('info', 'qq', str),
-  Setting('info', 'gender', int, range=builtin.USER_GENDERS),
-  Setting('info', 'signature', str, ui='textarea'),
-  Setting('privacy', 'show_mail', int, range=PRIVACY_RANGE, ui='option'),
-  Setting('privacy', 'show_qq', int, range=PRIVACY_RANGE, ui='option'),
-  Setting('preference', 'view_lang', str, range=builtin.VIEW_LANGS, ui='option'),
-  Setting('preference', 'code_lang', str, range=builtin.LANGS, ui='option'),
-  Setting('preference', 'show_tags', int),
-  Setting('preference', 'send_code', int)]
+  Setting('info', 'gender', int, range=constant.builtin.USER_GENDER_RANGE, ui='select'),
+  Setting('privacy', 'show_mail', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
+  Setting('privacy', 'show_qq', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
+  Setting('preference', 'view_lang', str, range=builtin.VIEW_LANGS, ui='select'),
+  Setting('preference', 'code_lang', str, range=constant.language.LANG_TEXTS, ui='select'),
+  Setting('preference', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE, ui='select'),
+  Setting('preference', 'send_code', int, range=constant.setting.SEND_CODE_RANGE, ui='select')]
 
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
 SETTINGS_BY_FAMILY = collections.OrderedDict(

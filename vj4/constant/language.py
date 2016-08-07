@@ -6,11 +6,13 @@ Don't edit directly, otherwise it will be overwritten.
 Run `npm run generate:constant` to update this file.
 """
 
-LANG_TEXTS = {
-"c": "C",
-"cc": "C++",
-"pas": "Pascal",
-"java": "Java",
-"py": "Python",
-}
+import collections
+
+LANG_TEXTS = collections.OrderedDict([
+("c", "C"),
+("cc", "C++"),
+("pas", "Pascal"),
+("java", "Java"),
+("py", "Python"),
+])
 

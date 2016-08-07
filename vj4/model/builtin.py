@@ -1,6 +1,8 @@
 import collections
 import datetime
 
+from vj4 import constant
+
 # Permissions.
 PERM_NONE = 0
 PERM_SET_PERM = 1 << 0
@@ -64,12 +66,6 @@ DOMAIN_SYSTEM = {'_id': DOMAIN_ID_SYSTEM,
 DOMAINS = [DOMAIN_SYSTEM]
 
 # Users.
-USER_GENDER_MALE = 0
-USER_GENDER_FEMALE = 1
-USER_GENDER_OTHER = 2
-
-USER_GENDERS = [USER_GENDER_MALE, USER_GENDER_FEMALE, USER_GENDER_OTHER]
-
 UID_GUEST = 1
 UNAME_GUEST = 'Guest'
 USER_GUEST = {'_id': UID_GUEST,
@@ -79,7 +75,7 @@ USER_GUEST = {'_id': UID_GUEST,
               'mail_lower': '',
               'salt': '',
               'hash': 'vj4|',
-              'gender': USER_GENDER_OTHER,
+              'gender': constant.builtin.USER_GENDER_OTHER,
               'regat': datetime.datetime.utcfromtimestamp(0),
               'regip': '',
               'roles': {},
@@ -88,13 +84,6 @@ USER_GUEST = {'_id': UID_GUEST,
               'loginip': '',
               'gravatar': ''}
 USERS = [USER_GUEST]
-
-# Code langs.
-LANGS = collections.OrderedDict([('c', 'C'),
-                                 ('cc', 'C++'),
-                                 ('pas', 'Pascal'),
-                                 ('java', 'Java'),
-                                 ('py', 'Python')])
 
 # View langs.
 VIEW_LANGS = collections.OrderedDict([('zh_CN', '简体中文'),

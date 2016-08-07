@@ -73,9 +73,13 @@ class HomeAccountView(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, gravatar: str, qq: str, gender: int, signature: str):
+  async def post(self, *, gravatar: str, qq: str, gender: int,
+                 show_mail: int, show_qq: int,
+                 view_lang: str, code_lang: str, show_tags: int, send_code: int):
     # TODO(twd2): check gender
-    await user.set_by_uid(self.user['_id'], g=gravatar, qq=qq, gender=gender, sig=signature)
+    await user.set_by_uid(self.user['_id'], g=gravatar, qq=qq, gender=gender,
+                          show_mail=show_mail, show_qq=show_qq,
+                          view_lang=view_lang, code_lang=code_lang, show_tags=show_tags, send_code=send_code)
     self.json_or_redirect(self.referer_or_main)
 
 

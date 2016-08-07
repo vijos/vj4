@@ -6,6 +6,8 @@ Don't edit directly, otherwise it will be overwritten.
 Run `npm run generate:constant` to update this file.
 """
 
+import collections
+
 STATUS_WAITING = 0
 
 STATUS_ACCEPTED = 1
@@ -38,42 +40,42 @@ TYPE_SUBMISSION = 0
 
 TYPE_PRETEST = 1
 
-STATUS_TEXTS = {
-0: "Waiting",
-1: "Accepted",
-2: "Wrong Answer",
-3: "Time Exceeded",
-4: "Memory Exceeded",
-5: "Output Exceeded",
-6: "Runtime Error",
-7: "Compile Error",
-8: "System Error",
-9: "Cancelled",
-10: "Unknown Error",
-20: "Running",
-21: "Compiling",
-30: "Ignored",
-}
+STATUS_TEXTS = collections.OrderedDict([
+(0, "Waiting"),
+(1, "Accepted"),
+(2, "Wrong Answer"),
+(3, "Time Exceeded"),
+(4, "Memory Exceeded"),
+(5, "Output Exceeded"),
+(6, "Runtime Error"),
+(7, "Compile Error"),
+(8, "System Error"),
+(9, "Cancelled"),
+(10, "Unknown Error"),
+(20, "Running"),
+(21, "Compiling"),
+(30, "Ignored"),
+])
 
-STATUS_CODES = {
-0: "pending",
-1: "pass",
-2: "fail",
-3: "fail",
-4: "fail",
-5: "fail",
-6: "fail",
-7: "fail",
-8: "fail",
-9: "ignored",
-10: "fail",
-20: "progress",
-21: "progress",
-30: "ignored",
-}
+STATUS_CODES = collections.OrderedDict([
+(0, "pending"),
+(1, "pass"),
+(2, "fail"),
+(3, "fail"),
+(4, "fail"),
+(5, "fail"),
+(6, "fail"),
+(7, "fail"),
+(8, "fail"),
+(9, "ignored"),
+(10, "fail"),
+(20, "progress"),
+(21, "progress"),
+(30, "ignored"),
+])
 
-TYPE_TEXTS = {
-0: "Submission",
-1: "Pretest",
-}
+TYPE_TEXTS = collections.OrderedDict([
+(0, "Submission"),
+(1, "Pretest"),
+])
 
