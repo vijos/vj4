@@ -5,7 +5,6 @@ import 'emojify.js/dist/css/basic/emojify.css';
 
 function runEmojify($container) {
   $container.find('.emoji--enabled').each((i, element) => {
-    console.log(element);
     emojify.run(element);
   });
 }
