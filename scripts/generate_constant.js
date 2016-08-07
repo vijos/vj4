@@ -44,6 +44,8 @@ async function emitBanner(emit, srcFilePath) {
     Don't edit directly, otherwise it will be overwritten.
     Run \`npm run generate:constant\` to update this file.
     """
+
+    import collections
   `.split('\n').map(l => l.trim()).join('\n'));
   await emit('\n');
 }
@@ -71,23 +73,26 @@ async function emitLiteralOrObject(emit, v) {
     await emit('[');
     for (let item of v) {
       await emitLiteralOrObject(emit, item);
+      await emit(',');
     }
     await emit(']');
     return;
   }
   if (v instanceof Object) {
     const { __intKey, ...val } = v;
-    await emit('{\n');
+    await emit('collections.OrderedDict([\n');
     for (const [ name, item ] of _.entries(val)) {
+      await emit('(')
       if (__intKey) {
-        await emit(`${name}: `);
+        await emit(name);
       } else {
-        await emit(`${JSON.stringify(name)}: `);
+        await emit(JSON.stringify(name));
       }
+      await emit(', ');
       await emitLiteralOrObject(emit, item);
-      await emit(',\n');
+      await emit('),\n');
     }
-    await emit('}');
+    await emit('])');
     return;
   }
   // null / undefined / cannot recognize
