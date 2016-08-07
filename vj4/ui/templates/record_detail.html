@@ -87,12 +87,8 @@
         {% if rdoc['score'] %}
         <p>{{ _('Score') }}: {{ rdoc['score'] }}%</p>
         {% endif %}
-        {% if rdoc['time_ms'] %}
-        <p>{{ _('Time Cost') }}: {{ rdoc['time_ms'] }}ms</p>
-        {% endif %}
-        {% if rdoc['memory_kb'] %}
-        <p>{{ _('Memory Cost') }}: {{ rdoc['memory_kb'] / 1000 }}MiB</p>
-        {% endif %}
+        <p>{{ _('Total Time') }}: {{ rdoc['time_ms'] }}ms</p>
+        <p>{{ _('Peak Memory') }}: {{ rdoc['memory_kb'] / 1000 }}MiB</p>
       </div>
     </div>
     <div class="section">

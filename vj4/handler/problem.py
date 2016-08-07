@@ -61,15 +61,19 @@ class ProblemSubmitView(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    # TODO(iceboy): Uncomment the following line when needed. Note that uid may be None, pdoc['_id']
-    # should be used instead of pid, needs to be in sync with contest_detail_problem_submit, and
-    # line width should be <= 100.
-    #rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pid).sort([('_id', -1)]).to_list(10)
+    if uid == None:
+      rdocs = []
+    else:
+      # TODO(iceboy): needs to be in sync with contest_detail_problem_submit
+      rdocs = await record \
+          .get_user_in_problem_multi(uid, self.domain_id, pid) \
+          .sort([('_id', -1)]) \
+          .to_list(10)
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
       (self.translate('problem_submit'), None))
-    self.json_or_render('problem_submit.html', pdoc=pdoc,
+    self.json_or_render('problem_submit.html', pdoc=pdoc, rdocs=rdocs,
                         page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)

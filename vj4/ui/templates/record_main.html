@@ -25,11 +25,11 @@
           <tbody>
           {% if not rdocs %}
             <tr class="empty-row">
-              <td colspan="4">{{ _('Good, there is no task in the queue!') }}</td>
+              <td colspan="4">{{ _('Oh, there is no task in the queue!') }}</td>
             </tr>
           {% else %}
             {% for rdoc in rdocs %}
-            {% include 'record_tr.html' %}
+            {% include 'record_main_tr.html' %}
             {% endfor %}
           {% endif %}
           </tbody>

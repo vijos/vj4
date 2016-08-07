@@ -20,7 +20,7 @@
       {% endif %}
       <li class="menu__seperator"></li>
       <li class="menu__item ide--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
-        <span class="icon icon-send"></span> {{ _('Test or Submit') }}
+        <span class="icon icon-send"></span> {{ _('Submit Solution') }}
       </a></li>
       <li class="menu__item"><a class="menu__link" href="#">
         <span class="icon icon-statistics"></span> {{ _('Submission Statistics') }}

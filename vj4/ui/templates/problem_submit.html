@@ -4,6 +4,43 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__header">
+        <h1 class="section__title">历史评测记录 (最近 10 条)</h1>
+      </div>
+      <div class="section__body no-padding">
+        <table class="data-table">
+          <colgroup>
+            <col class="col--status">
+            <col class="col--pretest">
+            <col class="col--memory">
+            <col class="col--time">
+            <col class="col--submit-at">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="col--status record-status--border">{{ _('Status') }}</th>
+              <th class="col--pretest">{{ _('Pretest?') }}</th>
+              <th class="col--memory">{{ _('Peak Memory') }}</th>
+              <th class="col--time">{{ _('Total Time') }}</th>
+              <th class="col--submit-at">{{ _('Submit At') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% if not rdocs %}
+            <tr class="empty-row">
+              <td colspan="5">{{ _('You have not submitted any solutions for this problem') }}</td>
+            </tr>
+          {% else %}
+            {% for rdoc in rdocs %}
+            {% include 'problem_submit_tr.html' %}
+            {% endfor %}
+          {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header">
         <h1 class="section__title">递交代码进行评测</h1>
       </div>
       <div class="section__body">
