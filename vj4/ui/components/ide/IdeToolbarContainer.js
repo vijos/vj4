@@ -99,6 +99,7 @@ export default class IdeToolbarContainer extends React.PureComponent {
         </ToolbarButton>
         <ToolbarItem>
           <select
+            className="select"
             disabled={this.props.isPosting}
             value={this.props.editorLang}
             onChange={ev => this.props.setEditorLanguage(ev.target.value)}
