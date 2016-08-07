@@ -8,3 +8,5 @@ aioamqp
 smtplibaio
 pytz
 colorlog
+httpagentparser
+geoip2

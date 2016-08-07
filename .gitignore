@@ -19,3 +19,6 @@ npm-debug.log
 # Vagrant dirts.
 Vagrantfile
 .vagrant/
+
+# MaxMind DB.
+*.mmdb

@@ -10,10 +10,12 @@ from vj4.model import message
 from vj4.model import token
 from vj4.model import user
 from vj4.handler import base
+from vj4.util import useragent
+from vj4.util import geoip
 
 TOKEN_TYPE_TEXTS = {
   token.TYPE_SAVED_SESSION: 'Saved session',
-  token.TYPE_UNSAVED_SESSION: 'Unsaved session',
+  token.TYPE_UNSAVED_SESSION: 'Temporary session',
 }
 
 
@@ -24,6 +26,8 @@ class HomeSecurityView(base.OperationHandler):
     # TODO(iceboy): pagination? or limit session count for uid?
     sessions = await token.get_session_list_by_uid(self.user['_id'])
     for session in sessions:
+      session['update_ua'] = useragent.parse(session['update_ua'])
+      session['update_geoip'] = geoip.ip2geo(session['update_ip'], self.get_setting('view_lang'))
       session['token_digest'] = hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest()
       session['is_current'] = (session['_id'] == self.session['_id'])
     self.render('home_security.html', sessions=sessions)
