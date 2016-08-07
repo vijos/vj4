@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Tabs, { TabPane } from 'rc-tabs';
-import Icon from './IconComponent';
+import Icon from '../react/IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
 import IdePretestTabPane from './IdePretestTabPaneContainer';
@@ -42,24 +42,13 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class IdePretestContainer extends React.PureComponent {
-  static propTypes = {
-    current: React.PropTypes.string,
-    tabs: React.PropTypes.arrayOf(React.PropTypes.string),
-    meta: React.PropTypes.objectOf(React.PropTypes.shape({
-      title: React.PropTypes.string,
-    })),
-    handleClickAdd: React.PropTypes.func,
-    handleClickRemove: React.PropTypes.func,
-    handleSwitchData: React.PropTypes.func,
-    handleClickClose: React.PropTypes.func,
-  };
   render() {
     return (
       <Panel
         title={<span><Icon name="edit" /> Pretest</span>}
       >
         <Tabs
-          className="ide-panel-tab flex-col flex-fill"
+          className="ide__panel-tab flex-col flex-fill"
           activeKey={this.props.current}
           onChange={tabId => this.props.handleSwitchData(tabId)}
           animation="slide-horizontal"

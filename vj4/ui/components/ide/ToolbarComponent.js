@@ -7,7 +7,7 @@ export default function ToolbarComponent(props) {
     children,
     ...rest,
   } = props;
-  const cn = classNames(className, 'ide-toolbar flex-row flex-cross-center');
+  const cn = classNames(className, 'ide__toolbar flex-row flex-cross-center');
   return (
     <div {...rest} className={cn}>{children}</div>
   );
@@ -27,7 +27,7 @@ export function ToolbarButtonComponent(props) {
     children,
     ...rest,
   } = props;
-  const cn = classNames(className, 'ide-toolbar__item ide-toolbar__button', {
+  const cn = classNames(className, 'ide__toolbar__item ide__toolbar__button', {
     activated,
     disabled,
     enabled: !disabled,
@@ -62,7 +62,7 @@ export function ToolbarSplitComponent(props) {
     className,
     ...rest,
   } = props;
-  const cn = classNames(className, 'ide-toolbar__item ide-toolbar__split');
+  const cn = classNames(className, 'ide__toolbar__item ide__toolbar__split');
   return (
     <div {...rest} className={cn} />
   );
@@ -78,7 +78,7 @@ export function ToolbarItemComponent(props) {
     children,
     ...rest,
   } = props;
-  const cn = classNames(className, 'ide-toolbar__item');
+  const cn = classNames(className, 'ide__toolbar__item');
   return (
     <div {...rest} className={cn}>{children}</div>
   );

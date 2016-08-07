@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Tabs, { TabPane } from 'rc-tabs';
-import Icon from './IconComponent';
+import Icon from '../react/IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
 import IdeRecordsTable from './IdeRecordsTableContainer';
@@ -31,21 +31,13 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(null, mapDispatchToProps)
 export default class IdeRecordsContainer extends React.PureComponent {
-  static propTypes = {
-    loadSubmissions: React.PropTypes.func,
-    handleClickClose: React.PropTypes.func,
-    handleClickRefresh: React.PropTypes.func,
-  };
-  componentDidMount() {
-    this.props.loadSubmissions();
-  }
   render() {
     return (
       <Panel
         title={<span><Icon name="flag" /> Records</span>}
       >
         <Tabs
-          className="ide-panel-tab flex-col flex-fill"
+          className="ide__panel-tab flex-col flex-fill"
           activeKey={"all"}
           animation="slide-horizontal"
           tabBarExtraContent={
@@ -70,5 +62,8 @@ export default class IdeRecordsContainer extends React.PureComponent {
         </Tabs>
       </Panel>
     );
+  }
+  componentDidMount() {
+    this.props.loadSubmissions();
   }
 }

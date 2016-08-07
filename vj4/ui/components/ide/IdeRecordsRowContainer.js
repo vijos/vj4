@@ -50,18 +50,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 
 @connect(mapStateToProps, null, mergeProps)
 export default class IdeRecordsRowContainer extends React.PureComponent {
-  static propTypes = {
-    data: React.PropTypes.shape({
-      _id: React.PropTypes.string,
-      status: React.PropTypes.number,
-      type: React.PropTypes.number,
-      time_ms: React.PropTypes.number,
-      memory_kb: React.PropTypes.number,
-      cases: React.PropTypes.arrayOf(React.PropTypes.shape({
-        status: React.PropTypes.number,
-      })),
-    }),
-  };
   render() {
     const { data } = this.props;
     const submitAt = moment(parseMongoId(data._id).timestamp * 1000);

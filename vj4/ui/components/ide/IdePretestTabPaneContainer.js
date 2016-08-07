@@ -28,12 +28,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 
 @connect(mapStateToProps, mapDispatchToProps, mergeProps)
 export default class IdePretestTabPaneContainer extends React.PureComponent {
-  static propTypes = {
-    id: React.PropTypes.string,
-    input: React.PropTypes.string,
-    output: React.PropTypes.string,
-    handleDataChange: React.PropTypes.func,
-  };
   render() {
     return (
       <div className="flex-row flex-fill">

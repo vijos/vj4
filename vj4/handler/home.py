@@ -1,3 +1,4 @@
+import asyncio
 import hmac
 
 from bson import objectid
@@ -84,7 +85,9 @@ class HomeMessagesView(base.OperationHandler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
     messages = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
-    self.render('home_messages.html', messages=messages)
+    await asyncio.gather(user.attach_udocs(messages, 'sender_uid', 'sender_udoc'),
+                         user.attach_udocs(messages, 'sendee_uid', 'sendee_udoc'))
+    self.json_or_render('home_messages.html', messages=messages)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
@@ -93,18 +96,19 @@ class HomeMessagesView(base.OperationHandler):
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)
-    await message.add(self.user['_id'], udoc['_id'], content)
-    self.json_or_redirect(self.referer_or_main)
+    mdoc = await message.add(self.user['_id'], udoc['_id'], content)
+    mdoc['sender_udoc'] = await user.get_by_uid(mdoc['sender_uid'])
+    mdoc['sendee_udoc'] = await user.get_by_uid(mdoc['sendee_uid'])
+    self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
   @base.sanitize
   async def post_reply_message(self, *, message_id: objectid.ObjectId, content: str):
-    mdoc = await message.add_reply(message_id, self.user['_id'], content)
+    (mdoc, reply) = await message.add_reply(message_id, self.user['_id'], content)
     if not mdoc:
       return error.MessageNotFoundError(message_id)
-    # TODO(iceboy): Fill in JSON result.
-    self.json_or_redirect(self.referer_or_main)
+    self.json_or_redirect(self.referer_or_main, reply=reply)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token

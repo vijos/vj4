@@ -7,7 +7,7 @@ export default function PanelButtonComponent(props) {
     children,
     ...rest,
   } = props;
-  const cn = classNames(className, 'ide-panel-button');
+  const cn = classNames(className, 'ide__panel-button');
   return (
     <button {...rest} className={cn}>{children}</button>
   );
