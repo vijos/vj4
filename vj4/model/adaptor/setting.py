@@ -14,7 +14,7 @@ Setting = functools.partial(
 SETTINGS = [
   Setting('info', 'gravatar', str),
   Setting('info', 'qq', str),
-  Setting('info', 'gender', int, range=constant.builtin.USER_GENDER_RANGE, ui='select'),
+  Setting('info', 'gender', int, range=constant.model.USER_GENDER_RANGE, ui='select'),
   Setting('privacy', 'show_mail', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
   Setting('privacy', 'show_qq', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
   Setting('preference', 'view_lang', str, range=builtin.VIEW_LANGS, ui='select'),

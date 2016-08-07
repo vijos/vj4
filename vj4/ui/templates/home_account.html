@@ -72,7 +72,7 @@
         <label>
           {{ _('Gender') }}
           <select class="select" name="gender">
-          {% for key, value in vj4.constant.builtin.USER_GENDER_RANGE.items() %}
+          {% for key, value in vj4.constant.model.USER_GENDER_RANGE.items() %}
             <option value="{{ key }}"{% if handler.get_setting('gender') == key %} selected{% endif %}>{{ _(value) }}</option>
           {% endfor %}
           </select>

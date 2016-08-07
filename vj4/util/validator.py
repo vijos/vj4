@@ -42,7 +42,7 @@ def check_mail(s):
 
 
 def is_gender(i):
-  return i in constant.builtin.USER_GENDERS
+  return i in constant.model.USER_GENDERS
 
 
 def check_gender(i):
