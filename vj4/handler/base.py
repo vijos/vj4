@@ -181,6 +181,7 @@ class Handler(web.View, HandlerBase):
 
   def json(self, obj):
     self.response.content_type = 'application/json'
+    self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
     self.response.text = json.encode(obj)
 
   async def binary(self, data):
