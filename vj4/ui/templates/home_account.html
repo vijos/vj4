@@ -37,16 +37,22 @@
         </label>
         <p class="help-text">{{ _('Whether to show tags in the problem list.') }}</p>
       </div></div>
+    </div>
+
+    <div class="section__header">
+      <h1 class="section__title">{{ _('Function') }}</h1>
+    </div>
+    <div class="section__body">
       <div class="row"><div class="medium-4 columns">
         <label>
-          {{ _('Send Code after AC') }}
+          {{ _('Send Code after Accepted') }}
           <select class="select" name="send_code">
-          {% for key, value in vj4.constant.setting.SEND_CODE_RANGE.items() %}
+          {% for key, value in vj4.constant.setting.FUNCTION_RANGE.items() %}
             <option value="{{ key }}"{% if handler.get_setting('send_code') == key %} selected{% endif %}>{{ _(value) }}</option>
           {% endfor %}
           </select>
         </label>
-        <p class="help-text">{{ _('Source code will be mailed to you after successful submission.') }}</p>
+        <p class="help-text">{{ _('If enabled, source code will be emailed to you after the submission is accepted.') }}</p>
       </div></div>
     </div>
 

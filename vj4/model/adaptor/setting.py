@@ -20,7 +20,7 @@ SETTINGS = [
   Setting('preference', 'view_lang', str, range=builtin.VIEW_LANGS, ui='select'),
   Setting('preference', 'code_lang', str, range=constant.language.LANG_TEXTS, ui='select'),
   Setting('preference', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE, ui='select'),
-  Setting('preference', 'send_code', int, range=constant.setting.SEND_CODE_RANGE, ui='select')]
+  Setting('function', 'send_code', int, range=constant.setting.FUNCTION_RANGE, ui='select')]
 
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
 SETTINGS_BY_FAMILY = collections.OrderedDict(

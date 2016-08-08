@@ -13,7 +13,7 @@ export default function reducer(state = {}, action) {
         _id: id,
         sendee_uid: uid,
         sendee_udoc: {
-          uname: String(uid),
+          uname: `UID = ${String(uid)}`,
         },
         reply: [],
         isPlaceholder: true,

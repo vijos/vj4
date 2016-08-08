@@ -9,6 +9,12 @@ from vj4.util import argmethod
 from vj4.util import pwhash
 from vj4.util import validator
 
+PROJECTION_PUBLIC = {'_id': 1,
+                     'uname': 1,
+                     'uname_lower': 1,
+                     'mail': 1,
+                     'mail_lower': 1,
+                     'gravatar': 1}
 
 @argmethod.wrap
 async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
@@ -47,35 +53,35 @@ async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
 
 
 @argmethod.wrap
-async def get_by_uid(uid: int):
+async def get_by_uid(uid: int, projection=None):
   """Get a user by uid."""
   for user in builtin.USERS:
     if user['_id'] == uid:
       return user
   coll = db.Collection('user')
-  return await coll.find_one({'_id': uid})
+  return await coll.find_one({'_id': uid}, projection)
 
 
 @argmethod.wrap
-async def get_by_uname(uname: str):
+async def get_by_uname(uname: str, projection=None):
   """Get a user by uname."""
   uname_lower = uname.strip().lower()
   for user in builtin.USERS:
     if user['uname_lower'] == uname_lower:
       return user
   coll = db.Collection('user')
-  return await coll.find_one({'uname_lower': uname_lower})
+  return await coll.find_one({'uname_lower': uname_lower}, projection)
 
 
 @argmethod.wrap
-async def get_by_mail(mail: str):
+async def get_by_mail(mail: str, projection=None):
   """Get a user by mail."""
   mail_lower = mail.strip().lower()
   for user in builtin.USERS:
     if user['mail_lower'] == mail_lower:
       return user
   coll = db.Collection('user')
-  return await coll.find_one({'mail_lower': mail_lower})
+  return await coll.find_one({'mail_lower': mail_lower}, projection)
 
 
 @argmethod.wrap
@@ -110,14 +116,15 @@ async def set_by_uid(uid, **kwargs):
   return doc
 
 
-async def attach_udocs(docs, field_name, udoc_field_name='udoc'):
+async def attach_udocs(docs, field_name, udoc_field_name='udoc', projection=PROJECTION_PUBLIC):
   """Attach udoc to docs by uid in the specified field."""
   # TODO(iceboy): projection.
   uids = set(doc[field_name] for doc in docs)
   if uids:
     coll = db.Collection('user')
-    udocs = await coll.find({'_id': {'$in': list(uids)}}).to_list(None)
+    udocs = await coll.find({'_id': {'$in': list(uids)}}, projection).to_list(None)
     uids = dict((udoc['_id'], udoc) for udoc in udocs)
+    uids.update(dict((udoc['_id'], udoc) for udoc in builtin.USERS))
     for doc in docs:
       doc[udoc_field_name] = uids.get(doc[field_name])
   return docs

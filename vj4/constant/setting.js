@@ -1,21 +1,27 @@
 import attachObjectMeta from './util/objectMeta';
 
+export const PRIVACY_PUBLIC = 0;
+export const PRIVACY_PARTIALLY = 1;
+export const PRIVACY_SECRET = 2;
 export const PRIVACY_RANGE = {
-  0: 'Public',
-  1: 'Visible to users',
-  2: 'Not public',
+  [PRIVACY_PUBLIC]: 'Public',
+  [PRIVACY_PARTIALLY]: 'Visible to all registered users',
+  [PRIVACY_SECRET]: 'Secret',
 };
 attachObjectMeta(PRIVACY_RANGE, 'intKey', true);
 
+export const SHOW_TAGS_ALL = 0;
+export const SHOW_TAGS_PARTIALLY = 1;
+export const SHOW_TAGS_HIDE = 2;
 export const SHOW_TAGS_RANGE = {
-  0: 'Show all tags',
-  1: 'Hide categorical tags',
-  2: 'Hide all tags',
+  [SHOW_TAGS_ALL]: 'Show all tags',
+  [SHOW_TAGS_PARTIALLY]: 'Hide categorical tags',
+  [SHOW_TAGS_HIDE]: 'Hide all tags',
 };
 attachObjectMeta(SHOW_TAGS_RANGE, 'intKey', true);
 
-export const SEND_CODE_RANGE = {
-  0: 'No',
-  1: 'Yes',
+export const FUNCTION_RANGE = {
+  0: 'Disabled',
+  1: 'Enabled',
 };
-attachObjectMeta(SEND_CODE_RANGE, 'intKey', true);
+attachObjectMeta(FUNCTION_RANGE, 'intKey', true);

@@ -22,9 +22,6 @@ const mapDispatchToProps = (dispatch) => ({
     if (isNaN(uid)) {
       return;
     }
-    if (uid === UserContext.uid) {
-      return;
-    }
     dispatch({
       type: 'DIALOGUES_CREATE',
       payload: {
@@ -55,6 +52,7 @@ export default class MessagePadContainer extends React.PureComponent {
     }
   }
   render() {
+    // TODO(twd2): i18n
     return (
       <div className="messagepad clearfix" ref="container">
         <div className="messagepad__sidebar">
