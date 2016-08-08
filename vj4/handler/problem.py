@@ -66,7 +66,7 @@ class ProblemSubmitView(base.Handler):
     else:
       # TODO(iceboy): needs to be in sync with contest_detail_problem_submit
       rdocs = await record \
-          .get_user_in_problem_multi(uid, self.domain_id, pid) \
+          .get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
           .sort([('_id', -1)]) \
           .to_list(10)
     path_components = self.build_path(
