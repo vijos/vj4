@@ -18,16 +18,21 @@
   color: $text-color
   border-left: 3px solid transparent
 
+  &.highlight
+    background: mix($highlight-color, #FFF, 10%)
+
   &:active, &:visited
     color: $text-color
 
   &:hover
+    animation: none
     color: $text-color
     text-decoration: none
     background: #F4F4F4
     border-color: darken($primary-color, 10%)
 
   &.active
+    animation: none
     border-color: darken($primary-color, 10%)
     background: lighten($primary-color, 10%)
     color: #FFF
