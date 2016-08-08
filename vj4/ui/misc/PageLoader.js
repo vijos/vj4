@@ -2,23 +2,23 @@
 require.context('../', true, /\.page\.styl$/i);
 
 export class Page {
-  constructor(name, autoload, beforeLoading, afterLoading) {
+  constructor(name, autoload, afterLoading, beforeLoading) {
     this.name = name;
     this.autoload = autoload;
-    this.beforeLoading = beforeLoading;
     this.afterLoading = afterLoading;
+    this.beforeLoading = beforeLoading;
   }
 }
 
 export class NamedPage extends Page {
-  constructor(name = 'empty', beforeLoading = function () {}, afterLoading = function () {}) {
-    super(name, false, beforeLoading, afterLoading);
+  constructor(name = 'empty', afterLoading = function () {}, beforeLoading = function () {}) {
+    super(name, false, afterLoading, beforeLoading);
   }
 }
 
 export class AutoloadPage extends Page {
-  constructor(beforeLoading = function () {}, afterLoading = function () {}) {
-    super('(autoload)', true, beforeLoading, afterLoading);
+  constructor(afterLoading = function () {}, beforeLoading = function () {}) {
+    super('(autoload)', true, afterLoading, beforeLoading);
   }
 }
 

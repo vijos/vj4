@@ -1,25 +1,50 @@
 @import '~vj-simplemde/src/css/simplemde.css';
 @import '../toolbar/var.inc.styl';
 
+.simplemde
+  border: 1px solid #DDD
+  margin: 0 0 1rem
+  position: relative
+  height: 200px
+  box-sizing: border-box
+  overflow: hidden
+
 .cm-s-simplemde
-  border-radius: 0
-  border-color: #DDD
-  border-top: 0
-  padding: rem(5px)
-  min-height: rem(200px)
+  border: 0
+  min-height: 0
+  height: auto
   font-family: $code-font-family
   font-weight: 300
+  padding: 0
+  position: absolute
+  left: 0
+  top: 40px
+  width: 100%
+  bottom: 0
 
 .simplemde-toolbar
+  position: absolute
+  left: 0
+  top: 0
+  width: 100%
   border-radius: 0
-  border-color: #DDD
-  opacity: 1
+  border: 0
+  opacity: 0
   background: $toolbar-bg
+  transform: translateY(-20px)
+  transition: opacity .5s, transform .5s
+  transition-timing-function: ease-out-cubic
+
   &:hover
     opacity: 1
 
+.toolbar--visible .simplemde-toolbar
+  opacity: 1
+  transform: translateY(0)
+
 .cm-s-simplemde .CodeMirror-scroll
-  min-height: rem(150px)
+  height: 100%
+  min-height: 0
 
 .simplemde-toolbar:before,
 .simplemde-toolbar:after
@@ -55,3 +80,6 @@
 
 .cm-s-simplemde .CodeMirror-code .cm-comment
   background: none
+
+.simplemde-statusbar
+  display: none

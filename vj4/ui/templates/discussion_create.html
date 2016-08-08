@@ -12,7 +12,7 @@
             <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
           </div></div>
           <div class="row"><div class="columns">
-            <textarea id="markdown-textarea" name="content" class="textbox"></textarea>
+            <textarea name="content" class="textbox" data-markdown></textarea>
           </div></div>
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">

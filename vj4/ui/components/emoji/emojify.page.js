@@ -14,7 +14,7 @@ const emojifyPage = new AutoloadPage(() => {
     img_dir: `${UiContext.cdn_prefix}img/emoji`,
   });
   runEmojify($('body'));
-  $(document).on('vj.content.new', e => runEmojify($(e.target)));
+  $(document).on('vjContentNew', e => runEmojify($(e.target)));
 });
 
 export default emojifyPage;

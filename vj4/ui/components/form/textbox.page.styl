@@ -13,6 +13,10 @@ input.textbox, textarea.textbox
     outline: $input-focus-outline
     outline-offset: 0
 
+  // Overwrite, for IE compatibility
+  &:read-only
+    outline: 0
+
 input.textbox
   height: rem($form-standard-height)
 

@@ -1,84 +1,67 @@
-import SimpleMDE from 'vj-simplemde';
-import commonmark from 'commonmark';
 import _ from 'lodash';
+import DOMAttachedObject from '../DOMAttachedObject';
 
-import 'codemirror/mode/clike/clike';
-import 'codemirror/mode/pascal/pascal';
-import 'codemirror/mode/python/python';
+export default class CmEditor extends DOMAttachedObject {
 
-export default class CmEditor extends SimpleMDE {
-  constructor(options = {}) {
-    const defaultOptions = {
-      autoDownloadFontAwesome: false,
-      spellChecker: false,
-      toolbar: [
-        {
-          name: 'bold',
-          action: SimpleMDE.toggleBold,
-          className: 'icon icon-bold',
-          title: 'Bold',
-        },
-        {
-          name: 'italic',
-          action: SimpleMDE.toggleItalic,
-          className: 'icon icon-italic',
-          title: 'Italic',
-        },
-        '|',
-        {
-          name: 'quote',
-          action: SimpleMDE.toggleBlockquote,
-          className: 'icon icon-quote',
-          title: 'Quote',
-        },
-        {
-          name: 'unordered-list',
-          action: SimpleMDE.toggleUnorderedList,
-          className: 'icon icon-unordered_list',
-          title: 'Unordered List',
-        },
-        {
-          name: 'ordered-list',
-          action: SimpleMDE.toggleOrderedList,
-          className: 'icon icon-ordered_list',
-          title: 'Ordered List',
-        },
-        '|',
-        {
-          name: 'link',
-          action: SimpleMDE.drawLink,
-          className: 'icon icon-link',
-          title: 'Create Link',
-          default: true,
-        },
-        {
-          name: 'image',
-          action: SimpleMDE.drawImage,
-          className: 'icon icon-insert--image',
-          title: 'Insert Image',
-          default: true,
-        },
-        '|',
-        {
-          name: 'preview',
-          action: SimpleMDE.togglePreview,
-          className: 'icon icon-preview no-disable',
-          title: 'Toggle Preview',
-          default: true,
-        },
-      ],
-      commonmark: {
-        safe: true,
-      },
-    };
-    super(_.assign({}, defaultOptions, options));
+  constructor($dom, options = {}) {
+    super($dom);
+    this.editor = null;
+    this.options = options;
+    this.init();
   }
 
-  markdown(text) {
-    const reader = new commonmark.Parser();
-    const writer = new commonmark.HtmlRenderer(this.options.commonmark);
-    const parsed = reader.parse(text);
-    return writer.render(parsed);
+  async init() {
+    const { default: VjCmEditor } = await System.import('./vjcmeditor');
+
+    const hasFocus = this.$dom.is(':focus');
+    const srcHeight = this.$dom.outerHeight();
+
+    this.editor = new VjCmEditor({
+      ...this.options,
+      element: this.$dom.get(0),
+    });
+    this.moveToEnd();
+
+    const $editor = $(this.editor.wrapper);
+    $editor.css('height', srcHeight);
+    $editor.addClass('toolbar--visible');
+
+    if (hasFocus) {
+      this.focus();
+    }
+  }
+
+  isValid() {
+    return (this.editor !== null);
+  }
+
+  ensureValid() {
+    if (!this.isValid()) {
+      throw new Error('VjCmEditor is not loaded');
+    }
+  }
+
+  value(...argv) {
+    this.ensureValid();
+    const ret = this.editor.value(...argv);
+    if (argv.length > 0) {
+      this.moveToEnd();
+    }
+    return ret;
+  }
+
+  focus() {
+    this.ensureValid();
+    this.editor.codemirror.focus();
+  }
+
+  moveToEnd() {
+    this.ensureValid();
+    const cm = this.editor.codemirror;
+    cm.setCursor(cm.lineCount(), 0);
   }
 
 }
+
+CmEditor.DOMAttachKey = 'vjCmEditorInstance';
+_.assign(CmEditor, DOMAttachedObject);

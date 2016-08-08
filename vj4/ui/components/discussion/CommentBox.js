@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 import * as util from '../../misc/Util';
+import TextareaHandler from '../cmeditor/textareaHandler';
 
 let initialized = false;
-let $template;
+const $template = $('.dczcomments__box').eq(0).clone();
 
 function getClosestInstance($dom) {
   return $dom.closest('.dczcomments__box').data('instance');
@@ -27,7 +28,6 @@ function init() {
   if (initialized) {
     return;
   }
-  $template = $('.dczcomments__box').eq(0);
   $(document).on('click', '.dczcomments__box__submit', onBoxSubmit);
   $(document).on('click', '.dczcomments__box__cancel', onBoxCancel);
   initialized = true;
@@ -50,25 +50,34 @@ export default class CommentBox extends DOMAttachedObject {
     }
   }
 
+  getTextareaHandler() {
+    const $textarea = this.$box.find('textarea');
+    return TextareaHandler.getOrConstruct($textarea);
+  }
+
   focus() {
-    this.$box.find('textarea').focus();
+    this.getTextareaHandler().focus();
     return this;
   }
 
   setText(text) {
-    const textArea = this.$box.find('textarea');
-    textArea.val(text);
+    this.getTextareaHandler().val(text);
     return this;
   }
 
+  getText() {
+    return this.getTextareaHandler().val();
+  }
+
   insertText(text) {
-    const textArea = this.$box.find('textarea');
-    textArea.val(textArea.val() + text);
+    const handler = this.getTextareaHandler();
+    handler.val(handler.val() + text);
     return this;
   }
 
   appendTo($dom) {
     this.$box.appendTo($dom);
+    this.$box.trigger('vjContentNew');
     return this;
   }
 
@@ -76,7 +85,7 @@ export default class CommentBox extends DOMAttachedObject {
     util
       .post('', {
         ...this.options.form,
-        content: this.$box.find('textarea').val(),
+        content: this.getText(),
       })
       .then(() => window.location.reload());
   }

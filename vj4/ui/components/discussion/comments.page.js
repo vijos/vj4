@@ -1,15 +1,12 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import CommentBox from '../discussion/CommentBox';
 
-let $template;
-
-function init() {
-  $template = $('.commentbox-container').eq(0);
-}
+const $template = $('.commentbox-container').eq(0).clone();
 
 function createCommentBoxContainer($parent) {
   const $container = $template.clone();
   $parent.find('.commentbox-prepend-target').eq(0).prepend($container);
+  $container.trigger('vjContentNew');
   return $container.find('.commentbox-placeholder');
 }
 
@@ -17,13 +14,13 @@ function destroyCommentBoxContainer($parent) {
   $parent.find('.commentbox-container').remove();
 }
 
-function onCommentClickReply(ev, options) {
+function onCommentClickReply(ev, options = {}) {
   const $evTarget = $(ev.currentTarget);
 
   if (CommentBox.get($evTarget)) {
     CommentBox
       .get($evTarget)
-      .insertText(options.initialText)
+      .insertText(options.initialText || '')
       .focus();
     return;
   }
@@ -119,7 +116,6 @@ function onClickDummyBox(ev) {
 }
 
 const commentsPage = new AutoloadPage(() => {
-  init();
   $(document).on('click', '.dczcomments__dummy-box', onClickDummyBox);
   $(document).on('click', '.dczcomments__op-reply', onCommentClickReply);
   $(document).on('click', '.dczcomments__op-edit', onCommentClickEdit);
