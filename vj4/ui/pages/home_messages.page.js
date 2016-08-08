@@ -6,6 +6,7 @@ const page = new NamedPage('home_messages', async () => {
 
   const sock = new SockJs('/home/messages-conn');
   sock.onmessage = (message) => {
+    // TODO(twd2)
     alert(message.data);
   };
 
