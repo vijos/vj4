@@ -19,8 +19,8 @@
                 {% else %}
                 {{ _('currently offline') }}.
                 {% endif %}
+              </p>
               <p>{{ _('Solved {0} problems, rank: {1} (No. {2})').format(1000, 77777, 123) }}</p>
-              {{ udoc['signature']|default('')|markdown }}
             </div>
           </div>
         </div>
@@ -64,6 +64,14 @@
     </div>
   </div>
   <div class="large-3 columns">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Bio') }}</h1>
+      </div>
+      <div class="section__body typo">
+        {{ udoc['bio']|default('')|markdown }}
+      </div>
+    </div>
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Recent Activities') }}</h1>

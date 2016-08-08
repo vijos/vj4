@@ -133,6 +133,7 @@
 "Create a discussion","创建一个讨论"
 "Create Discussion in {0}","在 {0} 下创建讨论"
 "Create","创建"
+"Cancel","取消"
 "Last Update At","最后活动时间"
 "Location","位置"
 "Operating System","操作系统"
@@ -164,3 +165,4 @@
 "Download Dataset","下载测试数据"
 "Unknown","未知"
 "Not available","不可用"
+"Bio","个人简介"
