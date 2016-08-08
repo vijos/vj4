@@ -96,5 +96,5 @@ async function emitLiteralOrObject(emit, v) {
     return;
   }
   // null / undefined / cannot recognize
-  await emit('Null');
+  await emit('None');
 }
