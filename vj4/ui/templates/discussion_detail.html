@@ -56,11 +56,13 @@
                 </div>
                 <div class="commentbox-placeholder"></div>
                 <ul style="display:none">
-                  <li class="dczcomments__reply media commentbox-container">
-                    <div class="media__left top">
-                      <img src="{{ handler.user['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
+                  <li class="dczcomments__reply commentbox-container">
+                    <div class="media">
+                      <div class="media__left top">
+                        <img src="{{ handler.user['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
+                      </div>
+                      <div class="media__body top commentbox-placeholder"></div>
                     </div>
-                    <div class="media__body top commentbox-placeholder"></div>
                   </li>
                 </ul>
               </div>
@@ -82,37 +84,41 @@
                     <span class="v-center">@ {{ datetime_span(drdoc['_id'].generation_time) }}</span>
                   </div>
                   <div class="dczcomments__operations nojs--hide">
-                    <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+                    <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-comment" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit" data-form="{{ {"operation": "edit_reply"}|json }}"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
                   </div>
                 </div>
                 <div class="typo no-heading emoji--enabled">
                   {{ drdoc['content']|markdown }}
                 </div>
-                <ul class="dczcomments__replies commentbox-prepend-target"><!--
-               -->{% for drrdoc in drdoc['reply'] %}
-                  <li class="dczcomments__reply media">
-                    <div class="media__left top">
-                      <img src="{{ drrdoc['udoc']['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
-                    </div>
-                    <div class="media__body top">
-                      <div class="clearfix">
-                        <div class="dczcomments__supplementary">
-                          {% with noAvatar = true, user = drrdoc['udoc'] %}
-                          {% include "components/inline_user.html" %}
-                          {% endwith %}
-                          <span class="v-center">@ {{ datetime_span(drrdoc['at']) }}</span>
-                        </div>
-                        <div class="dczcomments__operations nojs--hide">
-                          <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
-                        </div>
+                <div class="commentbox-edit-target"></div>
+                <ul class="dczcomments__replies commentbox-reply-target">
+                  {% for drrdoc in drdoc['reply'] %}
+                  <li class="dczcomments__reply">
+                    <div class="media">
+                      <div class="media__left top">
+                        <img src="{{ drrdoc['udoc']['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
                       </div>
-                      <div class="typo no-heading emoji--enabled">
-                        {{ drrdoc['content']|markdown }}
+                      <div class="media__body top">
+                        <div class="clearfix">
+                          <div class="dczcomments__supplementary">
+                            {% with noAvatar = true, user = drrdoc['udoc'] %}
+                            {% include "components/inline_user.html" %}
+                            {% endwith %}
+                            <span class="v-center">@ {{ datetime_span(drrdoc['at']) }}</span>
+                          </div>
+                          <div class="dczcomments__operations nojs--hide">
+                            <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit" data-form="{{ {"operation": "edit_tail_reply"}|json }}"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+                          </div>
+                        </div>
+                        <div class="typo no-heading emoji--enabled">
+                          {{ drrdoc['content']|markdown }}
+                        </div>
+                        <div class="commentbox-edit-target"></div>
                       </div>
                     </div>
                   </li>
-                  {% endfor %}<!--
-             --></ul>
+                  {% endfor %}
+                </ul>
               </div>
             </div>
           </li>

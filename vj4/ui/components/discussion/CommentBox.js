@@ -90,11 +90,11 @@ export default class CommentBox extends DOMAttachedObject {
       .then(() => window.location.reload());
   }
 
-  onCancel(ev) {
-    this.$box.remove();
+  async onCancel(ev) {
     if (this.options && this.options.onCancel) {
-      this.options.onCancel(ev);
+      await this.options.onCancel(ev);
     }
+    this.$box.remove();
     this.detach();
   }
 
