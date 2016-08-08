@@ -44,29 +44,31 @@ async def add_category(domain_id: str, category_name: str):
   await _update_nodes(domain_id, nodes)
 
 
-def _is_exist_node(nodes, node_name):
+def _get_exist_node(nodes, node_name):
   for category in nodes.values():
     assert type(category) is list
-    if node_name in category:
-      return True
-  return False
+    for node in category:
+      if node['name'] == node_name:
+        return node
+  return None
 
 
 @argmethod.wrap
-async def add_node(domain_id: str, category_name: str, node_name: str):
+async def add_node(domain_id: str, category_name: str, node_name: str, node_pic: str = None):
   nodes = await get_nodes(domain_id)
   if category_name not in nodes:
     raise error.DiscussionCategoryNotFoundError(domain_id, category_name)
-  if _is_exist_node(nodes, node_name):
+  if _get_exist_node(nodes, node_name):
     raise error.DiscussionNodeAlreadyExistError(domain_id, node_name)
-  nodes[category_name].append(node_name)
+  nodes[category_name].append({'name': node_name,
+                               'pic': node_pic})
   await _update_nodes(domain_id, nodes)
 
 
 @argmethod.wrap
-async def is_exist_node(domain_id: str, node_name: str):
+async def get_exist_node(domain_id: str, node_name: str):
   nodes = await get_nodes(domain_id)
-  return _is_exist_node(nodes, node_name)
+  return _get_exist_node(nodes, node_name)
 
 
 @argmethod.wrap
@@ -75,14 +77,20 @@ async def delete_all_nodes(domain_id: str):
 
 
 async def check_node(domain_id, node_name):
-  if not await is_exist_node(domain_id, node_name):
+  if not await get_exist_node(domain_id, node_name):
     raise error.DiscussionNodeNotFoundError(domain_id, node_name)
 
 
 @argmethod.wrap
-async def get_vnode(domain_id: str, node_or_pid: document.convert_doc_id):
-  if await is_exist_node(domain_id, node_or_pid):
-    return {'doc_id': node_or_pid, 'doc_type': document.TYPE_DISCUSSION_NODE, 'title': node_or_pid}
+async def get_vnode(domain_id: str, node_or_pid: document.convert_doc_id, attach_node: bool = False):
+  node = await get_exist_node(domain_id, node_or_pid)
+  if node:
+    vnode = {'doc_id': node['name'],
+             'doc_type': document.TYPE_DISCUSSION_NODE,
+             'title': node['name']}
+    if attach_node:
+      vnode['node'] = node
+    return vnode
   else:
     return await problem.get(domain_id, node_or_pid)
 
@@ -130,7 +138,7 @@ async def get_list(domain_id: str, *, fields=None, skip: int = 0, limit: int = 0
 async def get_vnode_and_list_and_count_for_node(domain_id: str,
                                                 node_or_pid: document.convert_doc_id, *,
                                                 fields=None, skip: int = 0, limit: int = 0):
-  vnode = await get_vnode(domain_id, node_or_pid)
+  vnode = await get_vnode(domain_id, node_or_pid, True)
   count_future = asyncio.ensure_future(
     document.get_multi(domain_id, document.TYPE_DISCUSSION,
                        parent_doc_type=vnode['doc_type'],
@@ -191,12 +199,12 @@ async def add_tail_reply(domain_id: str, drid: document.convert_doc_id,
 async def attach_vnodes(docs, domain_id, field_name):
   # TODO(iceboy): projection.
   nodes = await get_nodes(domain_id)
-  pids = set(doc[field_name] for doc in docs if not _is_exist_node(nodes, doc[field_name]))
+  pids = set(doc[field_name] for doc in docs if not _get_exist_node(nodes, doc[field_name]))
   pdocs = await document.get_multi(domain_id, document.TYPE_PROBLEM,
                                    doc_id={'$in': list(pids)}).to_list(None)
   pids = dict((pdoc['doc_id'], pdoc) for pdoc in pdocs)
   for doc in docs:
-    if _is_exist_node(nodes, doc[field_name]):
+    if _get_exist_node(nodes, doc[field_name]):
       doc['vnode'] = {'doc_id': doc[field_name],
                       'doc_type': document.TYPE_DISCUSSION_NODE,
                       'title': doc[field_name]}

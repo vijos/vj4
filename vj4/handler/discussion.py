@@ -57,7 +57,7 @@ class DiscussionCreateView(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, node_or_pid: document.convert_doc_id):
-    vnode = await discussion.get_vnode(self.domain_id, node_or_pid)
+    vnode = await discussion.get_vnode(self.domain_id, node_or_pid, True)
     path_components = self.build_path(
       (self.translate('discussion_main'), self.reverse_url('discussion_main')),
       (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),

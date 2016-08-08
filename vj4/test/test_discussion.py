@@ -41,7 +41,7 @@ class NodesTest(base.SmallcacheTestCase):
     await discussion.add_category(DOMAIN_ID_DUMMY, 'cat')
     await discussion.add_node(DOMAIN_ID_DUMMY, 'cat', 'meow')
     nodes = await discussion.get_nodes(DOMAIN_ID_DUMMY)
-    self.assertDictEqual(nodes, {'cat': ['meow']})
+    self.assertDictEqual(nodes, {'cat': [{'name': 'meow', 'pic': None}]})
 
   @base.wrap_coro
   async def test_two_nodes(self):
@@ -49,7 +49,7 @@ class NodesTest(base.SmallcacheTestCase):
     await discussion.add_node(DOMAIN_ID_DUMMY, 'cat', 'meow')
     await discussion.add_node(DOMAIN_ID_DUMMY, 'cat', 'yowl')
     nodes = await discussion.get_nodes(DOMAIN_ID_DUMMY)
-    self.assertDictEqual(nodes, {'cat': ['meow', 'yowl']})
+    self.assertDictEqual(nodes, {'cat': [{'name': 'meow', 'pic': None}, {'name': 'yowl', 'pic': None}]})
 
   @base.wrap_coro
   async def test_duplicate_node(self):
@@ -65,7 +65,7 @@ class NodesTest(base.SmallcacheTestCase):
     await discussion.add_category(DOMAIN_ID_DUMMY, 'dog')
     await discussion.add_node(DOMAIN_ID_DUMMY, 'dog', 'woof')
     nodes = await discussion.get_nodes(DOMAIN_ID_DUMMY)
-    self.assertDictEqual(nodes, {'cat': ['meow'], 'dog': ['woof']})
+    self.assertDictEqual(nodes, {'cat': [{'name': 'meow', 'pic': None}], 'dog': [{'name': 'woof', 'pic': None}]})
 
   @base.wrap_coro
   async def test_separate_duplicate_node(self):

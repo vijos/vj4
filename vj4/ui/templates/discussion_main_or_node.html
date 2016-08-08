@@ -45,8 +45,8 @@
   </div>
   <div class="large-3 columns">
     <div class="section side">
-      {% if vnode and (vnode['title'] == '问答' or vnode['title'] == '分享' or vnode['title'] == 'Vijos') %}
-      <div class="dcznode-bg{% if vnode['title'] == '问答' %} qa{% elif vnode['title'] == '分享' %} share{% elif vnode['title'] == 'Vijos' %} vijos{% endif %}"></div>
+      {% if vnode and vnode['node'] and vnode['node']['pic'] %}
+      <div class="dcznode-bg {{ vnode['node']['pic'] }}"></div>
       {% endif %}
       <div class="section__header">
         <h1 class="section__title">
