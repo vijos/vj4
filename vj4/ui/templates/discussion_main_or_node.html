@@ -44,6 +44,11 @@
     </div>
   </div>
   <div class="large-3 columns">
+    {% if vnode and (not vnode['node']) %}
+      {% with pdoc = vnode %}
+        {% include "components/problem_sidebar.html" %}
+      {% endwith %}
+    {% else %}
     <div class="section side">
       {% if vnode and vnode['node'] and vnode['node']['pic'] %}
       <div class="dcznode-bg {{ vnode['node']['pic'] }}"></div>
@@ -65,6 +70,7 @@
       {% endif %}
       </div>
     </div>
+    {% endif %}
 
     {% include 'discussion_nodes_widget.html' %}
   </div>

@@ -6,6 +6,12 @@
   {% endif %}
   <div>
     <ul class="menu">
+      {% if page_name == 'discussion_node' %}
+      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_create', node_or_pid=pdoc['doc_id']) }}">
+        <span class="icon icon-add"></span> {{ _('Create a discussion') }}
+      </a></li>
+      <li class="menu__seperator"></li>
+      {% endif %}
       {% if page_name == 'problem_detail' %}
       <li class="menu__item ide--hide"><a class="menu__link action--problem-sidebar__ide" href="javascript:;">
         <span class="icon icon-enlarge"></span> {{ _('Enter IDE Mode') }}
@@ -29,7 +35,7 @@
       <li class="menu__item"><a class="menu__link{% if page_name == 'problem_solution' %} active{% endif %}" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
         <span class="icon icon-bubble--outline"></span> {{ _('Solutions') }}
       </a></li>
-      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
         <span class="icon icon-bubble--outline"></span> {{ _('Discussions') }}
       </a></li>
       <li class="menu__seperator"></li>
