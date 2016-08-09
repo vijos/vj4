@@ -129,8 +129,6 @@ async def get_list(domain_id: str, *, fields=None, skip: int = 0, limit: int = 0
                  .skip(skip)
                  .limit(limit)
                  .to_list(None))
-  await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
-                       attach_vnodes(ddocs, domain_id, 'parent_doc_id'))
   return ddocs
 
 
@@ -152,8 +150,6 @@ async def get_vnode_and_list_and_count_for_node(domain_id: str,
                  .skip(skip)
                  .limit(limit)
                  .to_list(None))
-  await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
-                       attach_vnodes(ddocs, domain_id, 'parent_doc_id'))
   return vnode, ddocs, await count_future
 
 

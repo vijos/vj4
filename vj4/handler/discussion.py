@@ -24,6 +24,8 @@ class DiscussionMainView(base.Handler):
                                                                     skip=skip,
                                                                     limit=limit),
                                                 discussion.count(self.domain_id))
+    await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
+                         discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id'))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
                 page=page, dcount=dcount)
 
@@ -43,6 +45,8 @@ class DiscussionNodeView(base.Handler):
       discussion.get_vnode_and_list_and_count_for_node(
         self.domain_id, node_or_pid,
         skip=(page - 1) * self.DISCUSSIONS_PER_PAGE, limit=self.DISCUSSIONS_PER_PAGE))
+    await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
+                         discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id'))
     path_components = self.build_path(
       (self.translate('discussion_main'), self.reverse_url('discussion_main')),
       (vnode['title'], None))
