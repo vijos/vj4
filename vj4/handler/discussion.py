@@ -89,6 +89,11 @@ class DiscussionDetailView(base.OperationHandler):
       (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
       (ddoc['title'], None))
     drdocs = await discussion.get_list_reply(self.domain_id, ddoc['doc_id'])
+    drdocs_with_reply = list(drdocs)
+    for drdoc in drdocs:
+      if 'reply' in drdoc:
+        drdocs_with_reply.extend(drdoc['reply'])
+    await user.attach_udocs(drdocs_with_reply, 'owner_uid')
     self.render('discussion_detail.html', ddoc=ddoc, udoc=udoc, drdocs=drdocs, vnode=vnode,
                 page_title=ddoc['title'], path_components=path_components)
 

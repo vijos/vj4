@@ -122,7 +122,11 @@ class ProblemSolutionView(base.OperationHandler):
     psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
                                              skip=skip,
                                              limit=limit)
-    await user.attach_udocs(psdocs, 'owner_uid')
+    psdocs_with_reply = list(psdocs)
+    for psdoc in psdocs:
+      if 'reply' in psdoc:
+        psdocs_with_reply.extend(psdoc['reply'])
+    await user.attach_udocs(psdocs_with_reply, 'owner_uid')
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),

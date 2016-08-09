@@ -181,11 +181,6 @@ async def get_list_reply(domain_id: str, did: document.convert_doc_id, *, fields
                                      fields=fields)
                   .sort([('doc_id', -1)])
                   .to_list(None))
-  drdocs_with_reply = list(drdocs)
-  for drdoc in drdocs:
-    if 'reply' in drdoc:
-      drdocs_with_reply.extend(drdoc['reply'])
-  await user.attach_udocs(drdocs_with_reply, 'owner_uid')
   return drdocs
 
 
