@@ -16,7 +16,7 @@ PRIVACY_SECRET = 2
 
 PRIVACY_RANGE = collections.OrderedDict([
 (0, "Public"),
-(1, "Visible to all registered users"),
+(1, "Visible to registered users"),
 (2, "Secret"),
 ])
 

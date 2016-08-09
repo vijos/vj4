@@ -19,6 +19,6 @@ USER_GENDERS = [0,1,2,]
 USER_GENDER_RANGE = collections.OrderedDict([
 (0, "Boy ♂"),
 (1, "Girl ♀"),
-(2, "Other"),
+(2, "Other 😱"),
 ])
 

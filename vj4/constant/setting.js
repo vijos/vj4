@@ -5,7 +5,7 @@ export const PRIVACY_PARTIALLY = 1;
 export const PRIVACY_SECRET = 2;
 export const PRIVACY_RANGE = {
   [PRIVACY_PUBLIC]: 'Public',
-  [PRIVACY_PARTIALLY]: 'Visible to all registered users',
+  [PRIVACY_PARTIALLY]: 'Visible to registered users',
   [PRIVACY_SECRET]: 'Secret',
 };
 attachObjectMeta(PRIVACY_RANGE, 'intKey', true);
