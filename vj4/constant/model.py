@@ -17,8 +17,8 @@ USER_GENDER_OTHER = 2
 USER_GENDERS = [0,1,2,]
 
 USER_GENDER_RANGE = collections.OrderedDict([
-(0, "Cis Male / Cis Man ♂"),
-(1, "Cis Female / Cis Woman ♀"),
+(0, "Boy ♂"),
+(1, "Girl ♀"),
 (2, "Other"),
 ])
 

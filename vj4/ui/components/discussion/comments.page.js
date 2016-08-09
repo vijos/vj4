@@ -134,7 +134,9 @@ async function onCommentClickEdit(ev) {
 
   const opt = {
     // TODO: retrive original markdown
-    initialText: $mediaBody.find('.typo').text().trim(),
+    initialText: $mediaBody.find('.typo').eq(0)
+                           .text()
+                           .trim(),
     form: JSON.parse($evTarget.attr('data-form')),
     mode: 'update',
     onCancel: () => {
@@ -143,6 +145,28 @@ async function onCommentClickEdit(ev) {
   };
 
   $mediaBody.addClass('is-editing');
+
+  CommentBox
+    .getOrConstruct($evTarget, opt)
+    .appendTo($mediaBody.find('.commentbox-edit-target').eq(0))
+    .focus();
+}
+
+function onCommentClickDelete(ev) {
+  const $evTarget = $(ev.currentTarget);
+
+  if (CommentBox.get($evTarget)) {
+    return;
+  }
+
+  const $mediaBody = $evTarget.closest('.media__body');
+
+  const opt = {
+    initialText: '',
+    form: JSON.parse($evTarget.attr('data-form')),
+    mode: 'delete',
+    noTextarea: true,
+  };
 
   CommentBox
     .getOrConstruct($evTarget, opt)
@@ -183,6 +207,7 @@ const commentsPage = new AutoloadPage(() => {
   $(document).on('click', '.dczcomments__op-reply-comment', onCommentClickReplyComment);
   $(document).on('click', '.dczcomments__op-reply-reply', onCommentClickReplyReply);
   $(document).on('click', '.dczcomments__op-edit', onCommentClickEdit);
+  $(document).on('click', '.dczcomments__op-delete', onCommentClickDelete);
 });
 
 export default commentsPage;

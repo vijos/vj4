@@ -30,7 +30,7 @@
       </div>
       <div class="section__body">
         <ul class="dczcomments__list">
-          <!-- TODO (iceboy): privilege/permission based -->
+          {# TODO (iceboy): privilege/permission based #}
           {% if handler.user != vj4.model.builtin.USER_GUEST %}
           <li class="dczcomments__item">
             <div class="media">
@@ -40,11 +40,11 @@
               <div class="media__body top">
                 <form method="post" class="hasjs--hide">
                   <div class="dczcomments__box">
-                    <div>
+                    <div class="editarea">
                       <textarea name="content" class="textbox" data-markdown></textarea>
                     </div>
                     <div>
-                      <input type="submit" class="rounded primary button dczcomments__box__submit" value="{{ _('Comment') }}" data-value-reply="{{ _('Reply') }}" data-value-comment="{{ _('Comment') }}" data-value-update="{{ _('Update') }}">
+                      <input type="submit" class="rounded primary button dczcomments__box__submit" value="{{ _('Comment') }}" data-value-reply="{{ _('Reply') }}" data-value-comment="{{ _('Comment') }}" data-value-update="{{ _('Update') }}" data-value-delete="{{ _('Delete') }}">
                       <input type="button" class="rounded button nojs--hide dczcomments__box__cancel" value="{{ _('Cancel') }}">
                     </div>
                   </div>
@@ -52,7 +52,7 @@
                   <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                 </form>
                 <div class="nojs--hide">
-                  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": "reply"}|json }}" placeholder="Write Your Comments"></textarea>
+                  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {'operation': 'reply'}|json }}" placeholder="{{ _('Write Your Comments') }}"></textarea>
                 </div>
                 <div class="commentbox-placeholder"></div>
                 <ul style="display:none">
@@ -84,7 +84,7 @@
                     <span class="v-center">@ {{ datetime_span(drdoc['_id'].generation_time) }}</span>
                   </div>
                   <div class="dczcomments__operations nojs--hide">
-                    <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-comment" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit" data-form="{{ {"operation": "edit_reply"}|json }}"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+                    <a href="javascript:;" data-tooltip="{{ _('Reply') }}" class="dczcomments__op-reply-comment" data-form="{{ {'operation': 'tail_reply', 'drid': drdoc['doc_id']}|json }}"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="{{ _('Edit') }}" class="dczcomments__op-edit" data-form="{{ {'operation': 'edit_reply', 'drid': drdoc['doc_id']}|json }}"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="{{ _('Delete') }}" class="dczcomments__op-delete" data-form="{{ {'operation': 'delete_reply', 'drid': drdoc['doc_id']}|json }}"><span class="icon icon-delete"></span></a>
                   </div>
                 </div>
                 <div class="typo no-heading emoji--enabled">
@@ -107,7 +107,7 @@
                             <span class="v-center">@ {{ datetime_span(drrdoc['at']) }}</span>
                           </div>
                           <div class="dczcomments__operations nojs--hide">
-                            <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit" data-form="{{ {"operation": "edit_tail_reply"}|json }}"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+                            <a href="javascript:;" data-tooltip="{{ _('Reply') }}" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="{{ _('Edit') }}" class="dczcomments__op-edit" data-form="{{ {'operation': 'edit_tail_reply', 'drrid': loop.index0}|json }}"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="{{ _('Delete') }}" class="dczcomments__op-delete" data-form="{{ {'operation': 'delete_tail_reply', 'drrid': loop.index0}|json }}"><span class="icon icon-delete"></span></a>
                           </div>
                         </div>
                         <div class="typo no-heading emoji--enabled">
