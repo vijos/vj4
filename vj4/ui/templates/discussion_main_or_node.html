@@ -42,6 +42,11 @@
         {% endwith %}
       {% endif %}
     </div>
+    {% if vnode %}
+      {% with inline=true %}
+        {% include "components/discussion_create.html" %}
+      {% endwith %}
+    {% endif %}
   </div>
   <div class="large-3 columns">
     {% if vnode and (not vnode['node']) %}

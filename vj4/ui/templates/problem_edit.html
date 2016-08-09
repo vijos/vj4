@@ -10,27 +10,37 @@
         <form method="post">
           <div class="row"><div class="medium-4 columns">
             <label>
-              所属账户
+              {{ _('Belongs to') }}
+              {% if page_name == 'problem_edit' %}
               <select class="select">
-                <option value="123">当前账户</option>
+                <option value="{{ handler.domain_id }}">{{ _('current domain') }} ({{ handler.domain_id }})</option>
+                <option value="thu">Tsinghua University</option>
                 <option value="123456">同济大学</option>
               </select>
+              {% else %}
+              <input value="{{ handler.domain_id }}" class="textbox" disabled>
+              {% endif %}
             </label>
           </div><div class="medium-8 columns">
             <label>
-              名称
-              <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
+              {{ _('Title') }}
+              <input name="title" placeholder="{{ _('title') }}" value="{{ pdoc and pdoc['title'] }}" class="textbox" autofocus>
             </label>
           </div></div>
           <div class="row"><div class="columns">
             <label>
-              内容
-              <textarea name="content" class="textbox" data-markdown></textarea>
+              {{ _('Content') }}
+              <textarea name="content" class="textbox" data-markdown>{{ pdoc and pdoc['content'] }}</textarea>
             </label>
           </div></div>
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+            {% if page_name == 'problem_edit' %}
+              <input type="submit" class="rounded primary button" value="{{ _('Update') }}">
+            {% else %}
+              <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+            {% endif %}
+            <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
           </div></div>
         </form>
       </div>

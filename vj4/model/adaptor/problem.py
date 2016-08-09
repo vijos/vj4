@@ -33,6 +33,14 @@ async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
 
 
 @argmethod.wrap
+async def set(domain_id: str, pid: document.convert_doc_id, **kwargs):
+  pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, **kwargs)
+  if not pdoc:
+    raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
+  return pdoc
+
+
+@argmethod.wrap
 async def count(domain_id: str):
   return await document.get_multi(domain_id, document.TYPE_PROBLEM).count()
 
