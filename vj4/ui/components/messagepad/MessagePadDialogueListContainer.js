@@ -43,7 +43,7 @@ export default class MessagePadDialogueListContainer extends React.PureComponent
             key={dialogue._id}
             userName={udoc.uname}
             summary={dialogue.isPlaceholder ? '' : _.last(dialogue.reply).content}
-            faceUrl="//gravatar.lug.ustc.edu.cn/avatar/3efe6856c336243c907e2852b0498fcf?d=mm&amp;s=200"
+            faceUrl={udoc.gravatar_url}
             active={dialogue._id === this.props.activeId}
             onClick={() => this.handleClick(dialogue._id)}
           />

@@ -110,6 +110,16 @@
           </select>
         </label>
       </div></div>
+      <div class="row"><div class="medium-4 columns">
+        <label>
+          {{ _('Gender Visibility') }}
+          <select class="select" name="show_gender">
+          {% for key, value in vj4.constant.setting.PRIVACY_RANGE.items() %}
+            <option value="{{ key }}"{% if handler.get_setting('show_gender') == key %} selected{% endif %}>{{ _(value) }}</option>
+          {% endfor %}
+          </select>
+        </label>
+      </div></div>
     </div>
     <div class="section__body">
       <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">

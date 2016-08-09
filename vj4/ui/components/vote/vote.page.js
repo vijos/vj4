@@ -1,24 +1,24 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import * as util from '../../misc/Util';
 
-function setVoteState($voteTr, vote) {
-  const $voteCount = $voteTr.find('.vote--count');
+function setVoteState($voteLi, vote) {
+  const $voteCount = $voteLi.find('.vote--count');
   $voteCount.text(vote);
 }
 
 const votePage = new AutoloadPage(() => {
   $(document).on('click', '.vote', (ev) => {
     const $button = $(ev.currentTarget);
-    const $tr = $button.closest('tr');
+    const $li = $button.closest('li');
     const operation = $button.hasClass('vote--upvote') ? 'upvote' : 'downvote';
-    const psid = $tr.attr('data-psid');
+    const psid = $li.attr('data-psid');
     util
       .post($button.closest('form').attr('action'), {
         operation,
         psid,
       })
       .then(data => {
-        setVoteState($tr, data.vote);
+        setVoteState($li, data.vote);
       })
       .catch(() => {
         // TODO(iceboy): notify failure

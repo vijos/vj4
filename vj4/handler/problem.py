@@ -7,6 +7,7 @@ from vj4 import constant
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import record
+from vj4.model import user
 from vj4.model.adaptor import problem
 from vj4.handler import base
 
@@ -121,6 +122,7 @@ class ProblemSolutionView(base.OperationHandler):
     psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
                                              skip=skip,
                                              limit=limit)
+    await user.attach_udocs(psdocs, 'owner_uid')
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),

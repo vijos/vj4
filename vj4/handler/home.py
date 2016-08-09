@@ -5,6 +5,7 @@ from bson import objectid
 
 from vj4 import app
 from vj4 import error
+from vj4 import template
 from vj4.model import builtin
 from vj4.model import message
 from vj4.model import token
@@ -12,6 +13,7 @@ from vj4.model import user
 from vj4.service import bus
 from vj4.handler import base
 from vj4.util import useragent
+from vj4.util import validator
 from vj4.util import geoip
 
 TOKEN_TYPE_TEXTS = {
@@ -79,11 +81,18 @@ class HomeAccountView(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, gravatar: str, qq: str, gender: int,
-                 show_mail: int, show_qq: int,
+                 show_mail: int, show_qq: int, show_gender: int,
                  view_lang: str, code_lang: str, show_tags: int, send_code: int):
-    # TODO(twd2): check gender
+    # TODO(twd2): check show_tags
+    validator.check_gender(gender)
+    validator.check_privacy('show_mail', show_mail)
+    validator.check_privacy('show_qq', show_qq)
+    validator.check_privacy('show_gender', show_gender)
+    validator.check_function('send_code', send_code)
+    validator.check_code_lang('code_lang', code_lang)
+    validator.check_view_lang(view_lang)
     await user.set_by_uid(self.user['_id'], g=gravatar, qq=qq, gender=gender,
-                          show_mail=show_mail, show_qq=show_qq,
+                          show_mail=show_mail, show_qq=show_qq, show_gender=show_gender,
                           view_lang=view_lang, code_lang=code_lang, show_tags=show_tags, send_code=send_code)
     self.json_or_redirect(self.referer_or_main)
 
@@ -98,6 +107,11 @@ class HomeMessagesView(base.OperationHandler):
                                            'sender_udoc', user.PROJECTION_PUBLIC),
                          user.attach_udocs(messages, 'sendee_uid',
                                            'sendee_udoc', user.PROJECTION_PUBLIC))
+    for mdoc in messages:
+      mdoc['sender_udoc']['gravatar_url'] = (
+        template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
+      mdoc['sendee_udoc']['gravatar_url'] = (
+        template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
     self.json_or_render('home_messages.html', messages=messages)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -108,12 +122,16 @@ class HomeMessagesView(base.OperationHandler):
     if not udoc:
       raise error.UserNotFoundError(uid)
     mdoc = await message.add(self.user['_id'], udoc['_id'], content)
-    await bus.publish('message_received-' + str(uid), mdoc)
+    if self.user['_id'] != uid:
+      await bus.publish('message_received-' + str(uid), mdoc)
 
     # projection
     mdoc['sender_udoc'] = await user.get_by_uid(self.user['_id'], user.PROJECTION_PUBLIC)
-
+    mdoc['sender_udoc']['gravatar_url'] = (
+      template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
     mdoc['sendee_udoc'] = udoc
+    mdoc['sendee_udoc']['gravatar_url'] = (
+      template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
     self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -123,11 +141,12 @@ class HomeMessagesView(base.OperationHandler):
     mdoc, reply = await message.add_reply(message_id, self.user['_id'], content)
     if not mdoc:
       return error.MessageNotFoundError(message_id)
-    if mdoc['sender_uid'] == self.user['_id']:
-      sendee_uid = mdoc['sendee_uid']
-    else:
-      sendee_uid = mdoc['sender_uid']
-    await bus.publish('message_received-' + str(sendee_uid), mdoc)
+    if mdoc['sender_uid'] != mdoc['sendee_uid']:
+      if mdoc['sender_uid'] == self.user['_id']:
+        sendee_uid = mdoc['sendee_uid']
+      else:
+        sendee_uid = mdoc['sender_uid']
+      await bus.publish('message_received-' + str(sendee_uid), mdoc)
     self.json_or_redirect(self.referer_or_main, reply=reply)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)

@@ -16,6 +16,8 @@ PROJECTION_PUBLIC = {'_id': 1,
                      'mail_lower': 1,
                      'gravatar': 1}
 
+PROJECTION_VIEW = {'salt': 0, 'hash': 0}
+
 @argmethod.wrap
 async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
   """Add a user."""
@@ -116,7 +118,7 @@ async def set_by_uid(uid, **kwargs):
   return doc
 
 
-async def attach_udocs(docs, field_name, udoc_field_name='udoc', projection=PROJECTION_PUBLIC):
+async def attach_udocs(docs, field_name, udoc_field_name='udoc', projection=PROJECTION_VIEW):
   """Attach udoc to docs by uid in the specified field."""
   # TODO(iceboy): projection.
   uids = set(doc[field_name] for doc in docs)

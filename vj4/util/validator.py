@@ -42,9 +42,45 @@ def check_mail(s):
 
 
 def is_gender(i):
-  return i in constant.model.USER_GENDERS
+  return i in constant.model.USER_GENDER_RANGE
 
 
 def check_gender(i):
   if not is_gender(i):
     raise error.ValidationError('gender')
+
+
+def is_privacy(i):
+  return i in constant.setting.PRIVACY_RANGE
+
+
+def check_privacy(field, i):
+  if not is_privacy(i):
+    raise error.ValidationError(field)
+
+
+def is_function(i):
+  return i in [0, 1]
+
+
+def check_function(field, i):
+  if not is_function(i):
+    raise error.ValidationError(field)
+
+
+def is_code_lang(s):
+  return s in constant.language.LANG_TEXTS
+
+
+def check_code_lang(field, s):
+  if not is_code_lang(s):
+    raise error.ValidationError(field)
+
+
+def is_view_lang(s):
+  return s in builtin.VIEW_LANGS
+
+
+def check_view_lang(s):
+  if not is_view_lang(s):
+    raise error.ValidationError('view_lang')

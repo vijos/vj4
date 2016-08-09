@@ -66,9 +66,9 @@ async def add_node(domain_id: str, category_name: str, node_name: str, node_pic:
 
 
 @argmethod.wrap
-async def get_exist_node(domain_id: str, node_name: str):
+async def get_exist_node(domain_id: str, node_or_pid: document.convert_doc_id):
   nodes = await get_nodes(domain_id)
-  return _get_exist_node(nodes, node_name)
+  return _get_exist_node(nodes, node_or_pid)
 
 
 @argmethod.wrap

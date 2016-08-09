@@ -25,7 +25,7 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
         <Message
           key={idx}
           isSelf={reply.sender_uid === UserContext.uid}
-          faceUrl="//gravatar.lug.ustc.edu.cn/avatar/3efe6856c336243c907e2852b0498fcf?d=mm&amp;s=200"
+          faceUrl={udoc.gravatar_url}
         >
           <div>{reply.content}</div>
           <time>{moment(reply.at).fromNow()}</time>

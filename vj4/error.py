@@ -137,7 +137,7 @@ class DiscussionNodeNotFoundError(NotFoundError):
 class DiscussionNotFoundError(DocumentNotFoundError):
   @property
   def message(self):
-    return "Discussion {0} not found."
+    return "Discussion {1} not found."
 
 
 class MessageNotFoundError(NotFoundError):

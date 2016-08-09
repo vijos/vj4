@@ -82,7 +82,7 @@ class DiscussionDetailView(base.OperationHandler):
   @base.sanitize
   async def get(self, *, did: document.convert_doc_id):
     ddoc = await discussion.inc_views(self.domain_id, did)
-    udoc = await user.get_by_uid(ddoc['owner_uid'])
+    udoc = await user.get_by_uid(ddoc['owner_uid'], user.PROJECTION_VIEW)
     vnode = await discussion.get_vnode(self.domain_id, ddoc['parent_doc_id'])
     path_components = self.build_path(
       (self.translate('discussion_main'), self.reverse_url('discussion_main')),
