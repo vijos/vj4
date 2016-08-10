@@ -11,6 +11,7 @@ export default function reducer(state = {}, action) {
       ...state,
       [id]: {
         _id: id,
+        sender_uid: UserContext.uid,
         sendee_uid: uid,
         sendee_udoc: {
           uname: `UID = ${String(uid)}`,
