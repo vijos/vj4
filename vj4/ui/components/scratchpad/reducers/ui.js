@@ -14,7 +14,7 @@ export default function reducer(state = {
   isPosting: false,
 }, action) {
   switch (action.type) {
-  case 'IDE_UI_CHANGE_SIZE': {
+  case 'SCRATCHPAD_UI_CHANGE_SIZE': {
     const { uiElement, size } = action.payload;
     return {
       ...state,
@@ -24,7 +24,7 @@ export default function reducer(state = {
       },
     };
   }
-  case 'IDE_UI_SET_VISIBILITY': {
+  case 'SCRATCHPAD_UI_SET_VISIBILITY': {
     const { uiElement, visibility } = action.payload;
     return {
       ...state,
@@ -34,7 +34,7 @@ export default function reducer(state = {
       },
     };
   }
-  case 'IDE_UI_TOGGLE_VISIBILITY': {
+  case 'SCRATCHPAD_UI_TOGGLE_VISIBILITY': {
     const { uiElement } = action.payload;
     return {
       ...state,
@@ -44,23 +44,23 @@ export default function reducer(state = {
       },
     };
   }
-  case 'IDE_POST_PRETEST_PENDING':
-  case 'IDE_POST_SUBMIT_PENDING': {
+  case 'SCRATCHPAD_POST_PRETEST_PENDING':
+  case 'SCRATCHPAD_POST_SUBMIT_PENDING': {
     return {
       ...state,
       isPosting: true,
     };
   }
-  case 'IDE_POST_PRETEST_FULFILLED':
-  case 'IDE_POST_PRETEST_REJECTED':
-  case 'IDE_POST_SUBMIT_FULFILLED':
-  case 'IDE_POST_SUBMIT_REJECTED': {
+  case 'SCRATCHPAD_POST_PRETEST_FULFILLED':
+  case 'SCRATCHPAD_POST_PRETEST_REJECTED':
+  case 'SCRATCHPAD_POST_SUBMIT_FULFILLED':
+  case 'SCRATCHPAD_POST_SUBMIT_REJECTED': {
     return {
       ...state,
       isPosting: false,
     };
   }
-  case 'IDE_RECORDS_LOAD_SUBMISSIONS_PENDING': {
+  case 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS_PENDING': {
     return {
       ...state,
       records: {
@@ -69,8 +69,8 @@ export default function reducer(state = {
       },
     };
   }
-  case 'IDE_RECORDS_LOAD_SUBMISSIONS_FULFILLED':
-  case 'IDE_RECORDS_LOAD_SUBMISSIONS_REJECTED': {
+  case 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS_FULFILLED':
+  case 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS_REJECTED': {
     return {
       ...state,
       records: {

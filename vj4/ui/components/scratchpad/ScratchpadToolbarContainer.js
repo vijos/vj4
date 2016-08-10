@@ -33,13 +33,13 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   togglePanel(uiElement) {
     dispatch({
-      type: 'IDE_UI_TOGGLE_VISIBILITY',
+      type: 'SCRATCHPAD_UI_TOGGLE_VISIBILITY',
       payload: { uiElement },
     });
   },
   setEditorLanguage(lang) {
     dispatch({
-      type: 'IDE_EDITOR_SET_LANG',
+      type: 'SCRATCHPAD_EDITOR_SET_LANG',
       payload: lang,
     });
   },
@@ -58,7 +58,7 @@ const mapDispatchToProps = (dispatch) => ({
       data_output: outputs,
     });
     dispatch({
-      type: 'IDE_POST_PRETEST',
+      type: 'SCRATCHPAD_POST_PRETEST',
       payload: req,
     });
   },
@@ -69,14 +69,14 @@ const mapDispatchToProps = (dispatch) => ({
       code: state.editor.code,
     });
     dispatch({
-      type: 'IDE_POST_SUBMIT',
+      type: 'SCRATCHPAD_POST_SUBMIT',
       payload: req,
     });
   },
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class IdeToolbarContainer extends React.PureComponent {
+export default class ScratchpadToolbarContainer extends React.PureComponent {
   static contextTypes = {
     store: React.PropTypes.object,
   };
@@ -85,14 +85,14 @@ export default class IdeToolbarContainer extends React.PureComponent {
       <Toolbar>
         <ToolbarButton
           disabled={this.props.isPosting || !this.props.pretestValid}
-          className="ide__toolbar__pretest"
+          className="scratchpad__toolbar__pretest"
           onClick={() => this.props.postPretest(this.context)}
         >
           <Icon name="debug" />Run Pretest
         </ToolbarButton>
         <ToolbarButton
           disabled={this.props.isPosting}
-          className="ide__toolbar__submit"
+          className="scratchpad__toolbar__submit"
           onClick={() => this.props.postSubmit(this.context)}
         >
           <Icon name="play" />Submit Solution

@@ -4,7 +4,7 @@ import Tabs, { TabPane } from 'rc-tabs';
 import Icon from '../react/IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
-import IdePretestTabPane from './IdePretestTabPaneContainer';
+import ScratchpadPretestTabPane from './ScratchpadPretestTabPaneContainer';
 
 const mapStateToProps = (state) => ({
   current: state.pretest.current,
@@ -15,23 +15,23 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   handleClickAdd() {
     dispatch({
-      type: 'IDE_PRETEST_ADD_DATA',
+      type: 'SCRATCHPAD_PRETEST_ADD_DATA',
     });
   },
   handleClickRemove() {
     dispatch({
-      type: 'IDE_PRETEST_REMOVE_DATA',
+      type: 'SCRATCHPAD_PRETEST_REMOVE_DATA',
     });
   },
   handleSwitchData(id) {
     dispatch({
-      type: 'IDE_PRETEST_SWITCH_TO_DATA',
+      type: 'SCRATCHPAD_PRETEST_SWITCH_TO_DATA',
       payload: id,
     });
   },
   handleClickClose() {
     dispatch({
-      type: 'IDE_UI_SET_VISIBILITY',
+      type: 'SCRATCHPAD_UI_SET_VISIBILITY',
       payload: {
         uiElement: 'pretest',
         visibility: false,
@@ -41,14 +41,14 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class IdePretestContainer extends React.PureComponent {
+export default class ScratchpadPretestContainer extends React.PureComponent {
   render() {
     return (
       <Panel
         title={<span><Icon name="edit" /> Pretest</span>}
       >
         <Tabs
-          className="ide__panel-tab flex-col flex-fill"
+          className="scratchpad__panel-tab flex-col flex-fill"
           activeKey={this.props.current}
           onChange={tabId => this.props.handleSwitchData(tabId)}
           animation="slide-horizontal"
@@ -76,7 +76,7 @@ export default class IdePretestContainer extends React.PureComponent {
         >
           {this.props.tabs.map(tabId => (
             <TabPane tab={this.props.meta[tabId].title} key={tabId}>
-              <IdePretestTabPane id={tabId} />
+              <ScratchpadPretestTabPane id={tabId} />
             </TabPane>
           ))}
         </Tabs>

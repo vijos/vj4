@@ -13,7 +13,7 @@ export default function DataInputComponent(props) {
   return (
     <div {...rest} className={cn}>
       <textarea
-        className="ide__data-input"
+        className="scratchpad__data-input"
         wrap="off"
         value={value}
         onChange={ev => onChange(ev.target.value)}

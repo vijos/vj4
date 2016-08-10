@@ -23,14 +23,14 @@ export default function reducer(state = {
   },
 }, action) {
   switch (action.type) {
-  case 'IDE_PRETEST_SWITCH_TO_DATA': {
+  case 'SCRATCHPAD_PRETEST_SWITCH_TO_DATA': {
     const currentId = action.payload;
     return {
       ...state,
       current: currentId,
     };
   }
-  case 'IDE_PRETEST_ADD_DATA': {
+  case 'SCRATCHPAD_PRETEST_ADD_DATA': {
     const newCounter = state.counter + 1;
     const newId = uuid.v4();
     return {
@@ -55,7 +55,7 @@ export default function reducer(state = {
       },
     };
   }
-  case 'IDE_PRETEST_REMOVE_DATA': {
+  case 'SCRATCHPAD_PRETEST_REMOVE_DATA': {
     const orgIdx = state.tabs.indexOf(state.current);
     let newCounter = state.counter;
     const newTabs = _.without(state.tabs, state.current);
@@ -84,7 +84,7 @@ export default function reducer(state = {
       data: newData,
     };
   }
-  case 'IDE_PRETEST_DATA_CHANGE': {
+  case 'SCRATCHPAD_PRETEST_DATA_CHANGE': {
     const { id, type, value } = action.payload;
     return {
       ...state,

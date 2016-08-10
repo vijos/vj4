@@ -1,6 +1,6 @@
 @import '../navigation/var.inc.styl';
 
-.ide__sidebar
+.scratchpad__sidebar
   z-index: 9999
   opacity: 0
   transition: opacity .2s linear
@@ -13,18 +13,18 @@
     opacity: 1
     mask-image: none
 
-.ide-container
+.scratchpad-container
   position: absolute
   background: #FFF
 
-#ide
+#scratchpad
   position: absolute
   left: 0
   top: $nav-item-height
   width: 100%
   bottom: 0
 
-.ide__problem
+.scratchpad__problem
   position: absolute
   left: 0
   top: 0
@@ -32,13 +32,13 @@
   height: 100%
   overflow: auto
 
-.ide__toolbar__pretest.enabled:hover .icon
+.scratchpad__toolbar__pretest.enabled:hover .icon
   color: red
 
-.ide__toolbar__submit.enabled:hover .icon
+.scratchpad__toolbar__submit.enabled:hover .icon
   color: green
 
-.ide__records__table
+.scratchpad__records__table
   &.loading
     // make a flash by setting opacity, otherwise users
     // won't think that refreshing is completed!

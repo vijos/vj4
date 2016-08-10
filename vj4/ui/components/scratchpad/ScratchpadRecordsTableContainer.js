@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import IdeRecordsRow from './IdeRecordsRowContainer';
+import ScratchpadRecordsRow from './ScratchpadRecordsRowContainer';
 
 const mapStateToProps = (state) => ({
   rows: state.records.rows,
@@ -9,9 +9,9 @@ const mapStateToProps = (state) => ({
 });
 
 @connect(mapStateToProps)
-export default class IdeRecordsTableContainer extends React.PureComponent {
+export default class ScratchpadRecordsTableContainer extends React.PureComponent {
   render() {
-    const cn = classNames('data-table ide__records__table', {
+    const cn = classNames('data-table scratchpad__records__table', {
       loading: this.props.isLoading,
     });
     return (
@@ -24,7 +24,7 @@ export default class IdeRecordsTableContainer extends React.PureComponent {
         </colgroup>
         <tbody>
           {this.props.rows.map(rowId => (
-            <IdeRecordsRow key={rowId} id={rowId} />
+            <ScratchpadRecordsRow key={rowId} id={rowId} />
           ))}
         </tbody>
       </table>

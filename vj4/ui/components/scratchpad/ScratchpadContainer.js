@@ -3,10 +3,10 @@ import SplitPane from 'react-split-pane';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Overlay from '../react/OverlayComponent';
-import IdeToolbar from './IdeToolbarContainer';
-import IdeEditor from './IdeEditorContainer';
-import IdePretest from './IdePretestContainer';
-import IdeRecords from './IdeRecordsContainer';
+import ScratchpadToolbar from './ScratchpadToolbarContainer';
+import ScratchpadEditor from './ScratchpadEditorContainer';
+import ScratchpadPretest from './ScratchpadPretestContainer';
+import ScratchpadRecords from './ScratchpadRecordsContainer';
 
 /*
 a: React.Component
@@ -48,9 +48,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  handleChangeSize: _.debounce((uiElement, size) => {
+  changeUiSize: _.debounce((uiElement, size) => {
     dispatch({
-      type: 'IDE_UI_CHANGE_SIZE',
+      type: 'SCRATCHPAD_UI_CHANGE_SIZE',
       payload: {
         uiElement,
         size,
@@ -60,7 +60,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class IdeContainer extends React.PureComponent {
+export default class ScratchpadContainer extends React.PureComponent {
+  handleChangeSize(uiElement, size) {
+    this.props.changeUiSize(uiElement, size);
+    $('#scratchpad').trigger('vjScratchpadRelayout');
+  }
+
   render() {
     return (
       <SplitPane
@@ -68,27 +73,28 @@ export default class IdeContainer extends React.PureComponent {
         minSize={250}
         split="vertical"
         primary="second"
-        onChange={size => this.props.handleChangeSize('main', size)}
+        onChange={size => this.handleChangeSize('main', size)}
       >
         <div
-          className="ide__problem"
+          className="scratchpad__problem"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: this.props.problem.html }}
         ></div>
         {buildNestedPane([
+          // TODO: in latest Chrome, this layout have bugs
           <Overlay key="editor" className="flex-col flex-fill">
-            <IdeToolbar />
-            <IdeEditor />
+            <ScratchpadToolbar />
+            <ScratchpadEditor />
           </Overlay>,
           {
             props: this.props.ui.pretest,
-            onChange: size => this.props.handleChangeSize('pretest', size),
-            element: <IdePretest key="pretest" />,
+            onChange: size => this.handleChangeSize('pretest', size),
+            element: <ScratchpadPretest key="pretest" />,
           },
           {
             props: this.props.ui.records,
-            onChange: size => this.props.handleChangeSize('records', size),
-            element: <IdeRecords key="records" />,
+            onChange: size => this.handleChangeSize('records', size),
+            element: <ScratchpadRecords key="records" />,
           },
         ])}
       </SplitPane>

@@ -4,20 +4,20 @@ import Tabs, { TabPane } from 'rc-tabs';
 import Icon from '../react/IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
-import IdeRecordsTable from './IdeRecordsTableContainer';
+import ScratchpadRecordsTable from './ScratchpadRecordsTableContainer';
 
 import * as util from '../../misc/Util';
 
 const mapDispatchToProps = (dispatch) => ({
   loadSubmissions() {
     dispatch({
-      type: 'IDE_RECORDS_LOAD_SUBMISSIONS',
+      type: 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS',
       payload: util.get(Context.getSubmissionsUrl),
     });
   },
   handleClickClose() {
     dispatch({
-      type: 'IDE_UI_SET_VISIBILITY',
+      type: 'SCRATCHPAD_UI_SET_VISIBILITY',
       payload: {
         uiElement: 'records',
         visibility: false,
@@ -30,14 +30,14 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 @connect(null, mapDispatchToProps)
-export default class IdeRecordsContainer extends React.PureComponent {
+export default class ScratchpadRecordsContainer extends React.PureComponent {
   render() {
     return (
       <Panel
         title={<span><Icon name="flag" /> Records</span>}
       >
         <Tabs
-          className="ide__panel-tab flex-col flex-fill"
+          className="scratchpad__panel-tab flex-col flex-fill"
           activeKey={"all"}
           animation="slide-horizontal"
           tabBarExtraContent={
@@ -57,7 +57,7 @@ export default class IdeRecordsContainer extends React.PureComponent {
           }
         >
           <TabPane tab={<span>All</span>} key="all">
-            <IdeRecordsTable />
+            <ScratchpadRecordsTable />
           </TabPane>
         </Tabs>
       </Panel>

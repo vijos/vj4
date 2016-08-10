@@ -1,12 +1,12 @@
 @import '../toolbar/var.inc.styl';
 
-.ide__toolbar
+.scratchpad__toolbar
   background: $toolbar-bg
   padding: rem(8px)
   font-size: rem($font-size-small)
   font-weight: normal
 
-.ide__toolbar__item
+.scratchpad__toolbar__item
   margin-right: rem(5px)
 
   .select
@@ -14,18 +14,21 @@
     height: auto
     line-height: 1
 
-.ide__toolbar__button
+.scratchpad__toolbar__button
   padding: rem(5px)
   font-size: rem($font-size-small)
   font-weight: normal
   background: none
   border: 1px solid transparent
   color: $toolbar-fore
-  display: flex
-  flex-direction: row
-  align-items: center
   outline: 0
   transition: .2s linear opacity
+
+  // Hack for Firefox bug #984869
+  &>div
+    display: flex
+    flex-direction: row
+    align-items: center
 
   &.enabled
     cursor: pointer
@@ -46,7 +49,7 @@
     pointer-events: none
     opacity: $toolbar-disabled-opacity
 
-.ide__toolbar__split
+.scratchpad__toolbar__split
   width: 1px
   height: 1rem
   background: #DDD

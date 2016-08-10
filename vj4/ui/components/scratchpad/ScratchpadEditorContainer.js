@@ -23,14 +23,14 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   handleUpdateCode: (code) => {
     dispatch({
-      type: 'IDE_EDITOR_UPDATE_CODE',
+      type: 'SCRATCHPAD_EDITOR_UPDATE_CODE',
       payload: code,
     });
   },
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class IdeEditorContainer extends React.PureComponent {
+export default class ScratchpadEditorContainer extends React.PureComponent {
   componentDidMount() {
     this.refs.editor.getCodeMirror().setOption('theme', 'vjcm');
   }

@@ -9,7 +9,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   handleDataChange(id, type, value) {
     dispatch({
-      type: 'IDE_PRETEST_DATA_CHANGE',
+      type: 'SCRATCHPAD_PRETEST_DATA_CHANGE',
       payload: {
         id,
         type,
@@ -27,7 +27,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps, mergeProps)
-export default class IdePretestTabPaneContainer extends React.PureComponent {
+export default class ScratchpadPretestTabPaneContainer extends React.PureComponent {
   render() {
     return (
       <div className="flex-row flex-fill">

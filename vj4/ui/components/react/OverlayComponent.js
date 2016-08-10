@@ -7,7 +7,7 @@ export default function OverlayComponent(props) {
     children,
     ...rest,
   } = props;
-  const cn = classNames(className, 'ide__overlay');
+  const cn = classNames(className, 'scratchpad__overlay');
   return (
     <div {...rest} className={cn}>{children}</div>
   );

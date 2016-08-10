@@ -8,7 +8,7 @@ import { parse as parseMongoId } from '../../utils/mongoId';
 import * as recordEnum from '../../../constant/record';
 
 const shouldShowDetail = (data) =>
-  recordEnum.STATUS_IDE_SHOW_DETAIL_FLAGS[data.status];
+  recordEnum.STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS[data.status];
 
 const isPretest = (data) =>
   data.type === recordEnum.TYPE_PRETEST;
@@ -23,9 +23,9 @@ const getRecordDetail = (data) => {
   }
   const stat = _.pick(
     _.groupBy(data.cases || [], 'status'),
-    _.keys(recordEnum.STATUS_IDE_SHORT_TEXTS)
+    _.keys(recordEnum.STATUS_SCRATCHPAD_SHORT_TEXTS)
   );
-  return _.map(recordEnum.STATUS_IDE_SHORT_TEXTS, (text, status) => {
+  return _.map(recordEnum.STATUS_SCRATCHPAD_SHORT_TEXTS, (text, status) => {
     const count = (stat[status] && stat[status].length) || 0;
     const cn = classNames('icol icol--stat', {
       'record-status--text': count > 0,
@@ -49,7 +49,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 @connect(mapStateToProps, null, mergeProps)
-export default class IdeRecordsRowContainer extends React.PureComponent {
+export default class ScratchpadRecordsRowContainer extends React.PureComponent {
   render() {
     const { data } = this.props;
     const submitAt = moment(parseMongoId(data._id).timestamp * 1000);

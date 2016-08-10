@@ -14,13 +14,13 @@ export default function reducer(state = {
   code: defaultCode,
 }, action) {
   switch (action.type) {
-  case 'IDE_EDITOR_UPDATE_CODE': {
+  case 'SCRATCHPAD_EDITOR_UPDATE_CODE': {
     return {
       ...state,
       code: action.payload,
     };
   }
-  case 'IDE_EDITOR_SET_LANG': {
+  case 'SCRATCHPAD_EDITOR_SET_LANG': {
     return {
       ...state,
       lang: action.payload,

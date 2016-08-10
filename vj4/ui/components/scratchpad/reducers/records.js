@@ -5,7 +5,7 @@ export default function reducer(state = {
   items: {},
 }, action) {
   switch (action.type) {
-  case 'IDE_RECORDS_LOAD_SUBMISSIONS_FULFILLED': {
+  case 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS_FULFILLED': {
     const { rdocs } = action.payload;
     return {
       ...state,
@@ -13,7 +13,7 @@ export default function reducer(state = {
       items: _.keyBy(rdocs, '_id'),
     };
   }
-  case 'IDE_RECORDS_PUSH': {
+  case 'SCRATCHPAD_RECORDS_PUSH': {
     const { rdoc } = action.payload;
     if (rdoc.uid !== UserContext.uid
       || rdoc.domain_id !== UserContext.domain
