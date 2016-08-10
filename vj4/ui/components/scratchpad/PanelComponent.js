@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import SplitPaneFillOverlay from '../react-splitpane/SplitPaneFillOverlayComponent';
 
 export default function PanelComponent(props) {
   const {
@@ -8,12 +9,12 @@ export default function PanelComponent(props) {
     children,
     ...rest,
   } = props;
-  const cn = classNames(className, 'flex-col flex-fill');
+  const cn = classNames(className, 'flex-col');
   return (
-    <div {...rest} className={cn}>
+    <SplitPaneFillOverlay {...rest} className={cn}>
       <div className="scratchpad__panel-title">{title}</div>
       <div className="flex-col flex-fill">{children}</div>
-    </div>
+    </SplitPaneFillOverlay>
   );
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import SplitPane from 'react-split-pane';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import Overlay from '../react/OverlayComponent';
+import SplitPaneFillOverlay from '../react-splitpane/SplitPaneFillOverlayComponent';
 import ScratchpadToolbar from './ScratchpadToolbarContainer';
 import ScratchpadEditor from './ScratchpadEditorContainer';
 import ScratchpadPretest from './ScratchpadPretestContainer';
@@ -81,11 +81,10 @@ export default class ScratchpadContainer extends React.PureComponent {
           dangerouslySetInnerHTML={{ __html: this.props.problem.html }}
         ></div>
         {buildNestedPane([
-          // TODO: in latest Chrome, this layout have bugs
-          <Overlay key="editor" className="flex-col flex-fill">
+          <SplitPaneFillOverlay key="editor" className="flex-col">
             <ScratchpadToolbar />
             <ScratchpadEditor />
-          </Overlay>,
+          </SplitPaneFillOverlay>,
           {
             props: this.props.ui.pretest,
             onChange: size => this.handleChangeSize('pretest', size),

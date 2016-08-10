@@ -1,19 +1,19 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default function OverlayComponent(props) {
+export default function SplitPaneFillOverlayComponent(props) {
   const {
     className,
     children,
     ...rest,
   } = props;
-  const cn = classNames(className, 'scratchpad__overlay');
+  const cn = classNames(className, 'splitpane-fill');
   return (
     <div {...rest} className={cn}>{children}</div>
   );
 }
 
-OverlayComponent.propTypes = {
+SplitPaneFillOverlayComponent.propTypes = {
   className: React.PropTypes.string,
   children: React.PropTypes.node,
 };
