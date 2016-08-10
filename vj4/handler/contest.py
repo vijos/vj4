@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import time
+import pytz
 from bson import objectid
 
 from vj4 import app
@@ -139,9 +140,14 @@ class ContestCreateHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, title: str, content: str, rule: int,
-                 begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
-                 end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
+                 begin_at_date: str,
+                 begin_at_time: str,
+                 duration: float,
                  pids: str):
+    # TODO(twd2): User's time zone.
+    begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
+    begin_at = begin_at.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
+    end_at = begin_at + datetime.timedelta(hours=duration)
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
                             rule, begin_at, end_at, list(map(int, pids.split(','))))
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))

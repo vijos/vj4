@@ -78,11 +78,11 @@ class HomeAccountView(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, gravatar: str, qq: str, gender: int,
-                 show_mail: int, show_qq: int,
+                 show_mail: int, show_qq: int, show_gender: int,
                  view_lang: str, code_lang: str, show_tags: int, send_code: int):
     # TODO(twd2): check gender
     await user.set_by_uid(self.user['_id'], g=gravatar, qq=qq, gender=gender,
-                          show_mail=show_mail, show_qq=show_qq,
+                          show_mail=show_mail, show_qq=show_qq, show_gender=show_gender,
                           view_lang=view_lang, code_lang=code_lang, show_tags=show_tags, send_code=send_code)
     self.json_or_redirect(self.referer_or_main)
 
@@ -113,7 +113,7 @@ class HomeMessagesView(base.OperationHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post_reply_message(self, *, message_id: objectid.ObjectId, content: str):
-    (mdoc, reply) = await message.add_reply(message_id, self.user['_id'], content)
+    mdoc, reply = await message.add_reply(message_id, self.user['_id'], content)
     if not mdoc:
       return error.MessageNotFoundError(message_id)
     self.json_or_redirect(self.referer_or_main, reply=reply)

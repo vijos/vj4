@@ -24,6 +24,9 @@ def parse(ua: str):
     platform = dresult['os']['name']
   icon = _PLATFORM_ICON_MAP.get(platform.strip().lower(), 'unknown')
   os, browser = httpagentparser.simple_detect(ua)
+  if (ua.lower().find('amd64') >= 0 or ua.lower().find('x86_64') >= 0 or
+      ua.lower().find('x64') >= 0):
+    os += ' x64'
   return {
     'str': ua,
     'icon': icon,
