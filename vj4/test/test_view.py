@@ -1,8 +1,10 @@
 import unittest
-from vj4.view import base
+
+from vj4.handler import base
 
 PERM_DUMMY = 1
 PRIV_DUMMY = 2
+
 
 class DummyHandler(object):
   def __init__(self):
@@ -14,6 +16,7 @@ class DummyHandler(object):
 
   def check_priv(self, priv):
     self.priv_checked = priv
+
 
 class DecoratorTest(unittest.TestCase, DummyHandler):
   def setUp(self):
@@ -34,6 +37,7 @@ class DecoratorTest(unittest.TestCase, DummyHandler):
   def test_require_priv_func(self):
     self.assertIsNone(self.priv_checked)
     self.assert_priv_checked(PRIV_DUMMY)
+
 
 if __name__ == '__main__':
   unittest.main()

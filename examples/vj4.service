@@ -1,13 +1,16 @@
 [Unit]
 Description=Vj4
-After=syslog.target network.target mongodb.service
+After=syslog.target network.target mongodb.service rabbitmq.service
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/vj4
 User=vj4
-ExecStart=
-ExecStart=/home/vj4/start.sh
+Group=vj4
+WorkingDirectory=/home/vj4/vj4
+ExecStart=/home/vj4/python-venv/bin/python3.5 -m vj4.server \
+    --listen=unix:/home/vj4/vj4.sock \
+    --prefork=8 \
+
 Restart=always
 StandardOutput=syslog
 StandardError=syslog

@@ -1,0 +1,43 @@
+@import '~misc/section.inc.styl'
+
+.menu
+  padding: rem(5px 0)
+  font-size: rem($font-size-secondary)
+
+  .icon
+    font-size: rem($font-size-icon)
+    display: inline-block
+    margin-right: rem(5px)
+    line-height: rem(20px)
+    vertical-align: top
+
+.menu__link
+  display: block
+  padding: rem(10px $section-gap-h)
+  line-height: rem(20px)
+  color: $text-color
+  border-left: 3px solid transparent
+
+  &.highlight
+    background: mix($highlight-color, #FFF, 10%)
+
+  &:active, &:visited
+    color: $text-color
+
+  &:hover
+    animation: none
+    color: $text-color
+    text-decoration: none
+    background: #F4F4F4
+    border-color: darken($primary-color, 10%)
+
+  &.active
+    animation: none
+    border-color: darken($primary-color, 10%)
+    background: lighten($primary-color, 10%)
+    color: #FFF
+
+.menu__seperator
+  height: 1px
+  border-top: 1px solid #EEE
+  margin: rem(5px 0)

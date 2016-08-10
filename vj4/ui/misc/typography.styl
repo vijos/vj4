@@ -8,10 +8,12 @@ html
 
 html
   color: $text-color
-  background: $bg-color
   -webkit-text-size-adjust: 100%
   -ms-text-size-adjust: 100%
   text-rendering: optimizelegibility
+
+#panel
+  background: $bg-color
 
 body, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, hr, button, article, aside, details, figcaption, figure, footer, header, menu, nav, section
   margin: 0
@@ -30,11 +32,16 @@ article, aside, details, figcaption, figure, footer, header, menu, nav, section
 audio, canvas, video
   display: inline-block
 
-body, button, input, select, textarea
+body
   font-family: $primary-font-family
   font-weight: 300
   font-size: $font-size
   line-height: 1
+
+button, input, optgroup, select, textarea
+  color: inherit
+  font: inherit
+  margin: 0
 
 table
   border-collapse: collapse

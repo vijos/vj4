@@ -1,14 +1,12 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <div class="section">
       {% if not ddocs %}
-        <div class="section__indent top bottom left right">
-          {% with text = _('no discussion yet...') %}
-            {% include "components/nothing.html" %}
-          {% endwith %}
-        </div>
+        {% with text = _('no discussion yet...') %}
+          {% include "components/nothing.html" %}
+        {% endwith %}
       {% else %}
         <ol class="dczlist">
         {% for ddoc in ddocs %}
@@ -21,9 +19,9 @@
                 </div>
               </div>
               <div class="media__body top">
-                <h1 class="dczlist__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}">{{ ddoc['title'] }}</a></h1>
+                <h1 class="dczlist__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}" class="emoji--enabled">{{ ddoc['title'] }}</a></h1>
                 <div class="dczlist__supplementary">
-                  <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['vnode']['doc_id']) }}"><i class="icon-price-tag"></i>{{ ddoc['vnode']['title'] }}</a>
+                  <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['vnode']['doc_id']) }}">{% if ddoc['parent_doc_type'] == vj4.model.document.TYPE_DISCUSSION_NODE %}<span class="icon icon-tag"></span>{% else %}<span class="icon icon-flag"></span>{% endif %}{{ ddoc['vnode']['title'] }}</a>
                   <span class="v-center"> · </span>
                   {# TODO(iceboy): Handle inexistent user... #}
                   {% with noBadge = true, user = ddoc['udoc'] %}
@@ -32,38 +30,47 @@
                   <span class="v-center"> · </span>
                   <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
                   <span class="v-center"> · </span>
-                  <a class="v-center dczlist__reply-link" href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}"><i class="icon-bubble"></i> {{ _('{0} comments').format(ddoc['num_replies']) }}</a>
+                  <a class="v-center dczlist__reply-link" href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}"><span class="icon icon-bubble"></span> {{ _('{0} comments').format(ddoc['num_replies']) }}</a>
                 </div>
               </div>
             </div>
           </li>
         {% endfor %}
         </ol>
-        {% with num_pages = (dcount + view.DISCUSSIONS_PER_PAGE - 1) // view.DISCUSSIONS_PER_PAGE %}
+        {% with num_pages = (dcount + handler.DISCUSSIONS_PER_PAGE - 1) // handler.DISCUSSIONS_PER_PAGE %}
           {% include "components/paginator.html" %}
         {% endwith %}
       {% endif %}
     </div>
   </div>
-  <div class="layout--2col__side">
+  <div class="large-3 columns">
+    {% if vnode and (not vnode['node']) %}
+      {% with pdoc = vnode %}
+        {% include "components/problem_sidebar.html" %}
+      {% endwith %}
+    {% else %}
     <div class="section side">
-      {% if vnode and (vnode['title'] == '问答' or vnode['title'] == '分享' or vnode['title'] == 'Vijos') %}
-      <div class="dcznode-bg{% if vnode['title'] == '问答' %} qa{% elif vnode['title'] == '分享' %} share{% elif vnode['title'] == 'Vijos' %} vijos{% endif %}"></div>
+      {% if vnode and vnode['node'] and vnode['node']['pic'] %}
+      <div class="dcznode-bg {{ vnode['node']['pic'] }}"></div>
       {% endif %}
-      <div class="section__indent top bottom">
+      <div class="section__header">
+        <h1 class="section__title">
         {% if vnode %}
-          <h1 class="section__title">{{ vnode['title'] }}</h1>
-          <div class="section__indent left right">
-            <p><a href="{{ reverse_url('discussion_create', node_or_pid=vnode['doc_id']) }}" class="expanded primary button">{{ _('Create a discussion') }}</a></p>
-          </div>
+          {{ vnode['title'] }}
         {% else %}
-          <h1 class="section__title">{{ _('Create Discussion') }}</h1>
-          <div class="section__indent left right">
-            <p>{{ _('Select a node to create discussion.') }}</p>
-          </div>
+          {{ _('Create Discussion') }}
         {% endif %}
+        </h1>
+      </div>
+      <div class="section__body">
+      {% if vnode %}
+        <p><a href="{{ reverse_url('discussion_create', node_or_pid=vnode['doc_id']) }}" class="expanded primary button">{{ _('Create a discussion') }}</a></p>
+      {% else %}
+        <p>{{ _('Select a node to create discussion.') }}</p>
+      {% endif %}
       </div>
     </div>
+    {% endif %}
 
     {% include 'discussion_nodes_widget.html' %}
   </div>

@@ -1,0 +1,29 @@
+<tr data-rid="{{ rdoc['_id'] }}">
+  <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
+    <div class="col--status__text">
+      <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
+      <a href="{{ reverse_url('record_detail', rid=rdoc['_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
+        {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
+      </a>
+    </div>
+    {% if rdoc['status'] == vj4.constant.record.STATUS_JUDGING %}
+    <div class="col--status__progress-container">
+      <div class="col--status__progress" style="width: 50%"></div>
+    </div>
+    {% endif %}
+  </td>
+  <td class="col--pretest">
+    {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
+      {{ _('Yes') }}
+    {% else %}
+      {{ _('No') }}
+    {% endif %}
+  </td>
+  <td class="col--memory">
+    {{ (rdoc['memory_kb'] / 1000)|round(0, 'ceil')|int }} MB
+  </td>
+  <td class="col--time">
+    {{ (rdoc['time_ms'] / 1000)|round(1) }}s
+  </td>
+  <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>
+</tr>

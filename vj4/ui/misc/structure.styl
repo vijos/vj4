@@ -4,55 +4,29 @@
 .nojs .nojs--hide
   display: none
 
+.non-scratchpad--hide
+  display: none
+
+.mode--scratchpad .non-scratchpad--hide
+  display: block
+
+.scratchpad--hide
+  display: block
+
+.mode--scratchpad .scratchpad--hide
+  display: none
+
 .main
-  padding: 50px 0
+  padding: 20px 0
+  flex: 1
 
-+below(rupture.desktop-cutoff)
++above(rupture.desktop-cutoff)
   .main
-    padding: 20px 0
-
-.content-container
-  center(100%)
-  margin: 0 20px
-
-+desktop()
-  .content-container
-    margin: 0
-    center(980px)
-
-+above(1250px)
-  .content-container
-    center(1200px)
-
-.float-layout--left
-  float: left
-
-.float-layout--right
-  float: right
-
-.text-center
-  text-align: center
-
-.text-right
-  text-align: right
+    padding: 30px 0
 
 .v-center
   display: inline-block
   vertical-align: middle
-
-.layout--2col
-  .layout--2col__main
-    col(3/4)
-  .layout--2col__side
-    col(1/4)
-
-+below(rupture.desktop-cutoff)
-  .layout--2col
-    .layout--2col__main, .layout--2col__side
-      stack()
-
-    .layout--2col__main
-      margin-bottom: 20px
 
 // Media Object
 // Heavily borrowed from http://csswizardry.com/2013/05/the-flag-object/
@@ -95,7 +69,7 @@
   font-size: 1.3rem
 
 .numbox__text
-  font-size: 0.8rem
+  font-size: rem($font-size-small)
   margin-top: rem(10px)
   color: #AAA
 
@@ -114,3 +88,38 @@
 
   &.bottom
     vertical-align: bottom
+
+// Flexbox helper
+.flex-row
+  display: flex
+  flex-direction: row
+
+.flex-col
+  display: flex
+  flex-direction: column
+
+.flex-fill
+  flex: 1
+  min-width: 0
+  min-height: 0
+
+.flex-main-start
+  justify-content: flex-start
+
+.flex-main-end
+  justify-content: flex-end
+
+.flex-main-center
+  justify-content: center
+
+.flex-cross-start
+  align-items: flex-start
+
+.flex-cross-end
+  align-items: flex-end
+
+.flex-cross-center
+  align-items: center
+
+.flex-cross-stretch
+  align-items: stretch

@@ -1,11 +1,13 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <div class="section">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Judging Queue') }}</h1>
-        <table class="section__table record_main__table">
+      </div>
+      <div class="section__body no-padding">
+        <table class="data-table record_main__table">
           <colgroup>
             <col class="col--status">
             <col class="col--problem">
@@ -22,12 +24,12 @@
           </thead>
           <tbody>
           {% if not rdocs %}
-            <tr class="section__table-row--empty">
-              <td colspan="4">{{ _('Good, there is no task in the queue!') }}</td>
+            <tr class="empty-row">
+              <td colspan="4">{{ _('Oh, there is no task in the queue!') }}</td>
             </tr>
           {% else %}
             {% for rdoc in rdocs %}
-            {% include 'record_tr.html' %}
+            {% include 'record_main_tr.html' %}
             {% endfor %}
           {% endif %}
           </tbody>
@@ -35,10 +37,13 @@
       </div>
     </div>
   </div>
-  <div class="layout--2col__side">
+  <div class="large-3 columns">
     <div class="section">
-      <div class="section__indent top bottom">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
+      </div>
+      <div class="section__body">
+        <p>foo bar</p>
       </div>
     </div>
   </div>

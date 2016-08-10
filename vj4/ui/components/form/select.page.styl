@@ -1,0 +1,19 @@
+@import './var.inc.styl'
+
+.select
+  form-styles()
+  padding-right: 1.1rem
+  background-color: $input-background-color
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNNCA2LjY2N2w0IDQgNC00LTEuMzMzLTEuMzMzTDggOCA1LjMzMyA1LjMzNSA0IDYuNjY3eiIvPjwvc3ZnPg==")
+  background-size: 16px 16px
+  background-position: right -1rem center
+  background-origin: content-box
+  background-repeat: no-repeat
+  outline: $input-outline
+  transition: outline-color .2s, border-color .2s
+  transition-timing-function: ease-out-cubic
+
+  &:focus
+    border-color: $primary-color
+    outline: $input-focus-outline
+    outline-offset: 0

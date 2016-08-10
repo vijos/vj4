@@ -1,17 +1,15 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<div class="row">
+  <div class="large-9 columns">
     <ol>
     {% for tdoc in tdocs %}
       <a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}">{{ tdoc }}</a>
     {% endfor %}
     </ol>
   </div>
-  <div class="layout--2col__side">
-    <div>
-      <h1>{{ _('Swx Template!') }}</h1>
-    </div>
+  <div class="large-3 columns">
+    <h1>{{ _('Swx Template!') }}</h1>
   </div>
 </div>
 {% endblock %}

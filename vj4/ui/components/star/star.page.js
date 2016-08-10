@@ -1,39 +1,38 @@
-import { AutoloadPage } from 'misc/PageLoader';
-import * as util from 'misc/Util';
+import { AutoloadPage } from '../../misc/PageLoader';
+import * as util from '../../misc/Util';
 
 function setStarButtonState($starButton, star) {
-  const $starIcon = $starButton.find('i');
+  const $starIcon = $starButton.find('.icon');
   if (star) {
-    $starButton.removeClass('star--outline').addClass('star--fill');
-    $starIcon.removeClass('icon-star-empty').addClass('icon-star-full');
+    $starButton.addClass('activated');
+    $starIcon.removeClass('icon-star--outline').addClass('icon-star');
   } else {
-    $starButton.removeClass('star--fill').addClass('star--outline');
-    $starIcon.removeClass('icon-star-full').addClass('icon-star-empty');
+    $starButton.removeClass('activated');
+    $starIcon.removeClass('icon-star').addClass('icon-star--outline');
   }
 }
 
 const starPage = new AutoloadPage(() => {
-
   $(document).on('click', '.star', (ev) => {
     const $button = $(ev.currentTarget);
-    const currentState = $button.hasClass('star--fill');
+    const currentState = $button.hasClass('activated');
     const operation = currentState ? 'unstar' : 'star';
     const pid = $button.closest('tr').attr('data-pid');
     setStarButtonState($button, !currentState);
-    util.post($button.closest('form').attr('action'), {
-      operation,
-      pid,
-    })
-      .done(data => {
+    util
+      .post($button.closest('form').attr('action'), {
+        operation,
+        pid,
+      })
+      .then(data => {
         setStarButtonState($button, data.star);
       })
-      .fail(() => {
+      .catch(() => {
         // TODO: notify failure
         setStarButtonState($button, currentState);
       });
     return false;
   });
-
 });
 
 export default starPage;

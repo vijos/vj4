@@ -1,6 +1,7 @@
 import unittest
+
 from vj4 import error
-from vj4.controller import problem
+from vj4.model.adaptor import problem
 from vj4.test import base
 
 DOMAIN_ID = 'dummy_domain'
@@ -10,6 +11,7 @@ UID = 22
 PID = 777
 CONTENT2 = 'dummy_content2'
 UID2 = 222
+
 
 class ProblemTest(base.DatabaseTestCase):
   @base.wrap_coro
@@ -41,6 +43,7 @@ class ProblemTest(base.DatabaseTestCase):
     await problem.set_star(DOMAIN_ID, PID, UID2, False)
     pdocs = await problem.get_list(DOMAIN_ID, uid=UID)
     self.assertTrue(pdocs[0]['psdoc'].get('star'))
+
 
 class ProblemSolutionTest(base.DatabaseTestCase):
   def setUp(self):
@@ -89,6 +92,7 @@ class ProblemSolutionTest(base.DatabaseTestCase):
     self.assertEqual(len(psdoc['reply']), 1)
     self.assertEqual(psdoc['reply'][0]['content'], CONTENT)
     self.assertEqual(psdoc['reply'][0]['owner_uid'], UID)
+
 
 if __name__ == '__main__':
   unittest.main()

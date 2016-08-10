@@ -12,31 +12,30 @@
         <a class="command--dialog--signin__close" href="javascript:;">{{ _('CLOSE') }}</a>
         <h1 class="dialog--signin__title">{{ _('SIGN IN') }}</h1>
         <p class="dialog--signin__note">{{ _('Using your Vijos universal account') }}</p>
-        <div class="form__row">
-          <label class="expanded material textbox">
+        <div class="row"><div class="columns">
+          <label class="material textbox">
             {{ _('Username') }}
             <input name="uname" type="text" data-autofocus>
           </label>
-        </div>
-        <div class="form__row">
-          <label class="expanded material textbox">
+        </div></div>
+        <div class="row"><div class="columns">
+          <label class="material textbox">
             {{ _('Password') }}
             <input name="password" type="password">
           </label>
-        </div>
-        <div class="form__row clearfix">
-          <div class="float-layout--left">
-            <label class="checkbox">
-              <input type="checkbox" name="rememberme">{{ _('Remember me') }}
-            </label>
+        </div></div>
+        <div class="row"><div class="large-6 columns">
+          <label class="checkbox">
+            <input type="checkbox" name="rememberme">{{ _('Remember me') }}
+          </label>
+        </div><div class="large-6 columns">
+          <input type="submit" value="{{ _('Sign In') }}" class="expanded rounded primary button">
+        </div></div>
+        <div class="row"><div class="columns">
+          <div class="dialog--signin__forgotpass">
+            <a href="#">{{ _('Forgot password?') }}</a>
           </div>
-          <div class="float-layout--right">
-            <input type="submit" value="{{ _('Sign In') }}" class="rounded primary button">
-          </div>
-        </div>
-        <div class="form__row dialog--signin__forgotpass">
-          <a href="#">{{ _('Forgot password?') }}</a>
-        </div>
+        </div></div>
       </form>
     </div>
   </div>

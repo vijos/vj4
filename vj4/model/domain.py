@@ -1,8 +1,10 @@
 from pymongo import errors
+
 from vj4 import db
 from vj4 import error
 from vj4.model import builtin
 from vj4.util import argmethod
+
 
 @argmethod.wrap
 async def add(domain_id: str, owner_uid: int,
@@ -17,6 +19,7 @@ async def add(domain_id: str, owner_uid: int,
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
 
+
 @argmethod.wrap
 async def get(domain_id: str):
   for domain in builtin.DOMAINS:
@@ -24,6 +27,7 @@ async def get(domain_id: str):
       return domain
   coll = db.Collection('domain')
   return await coll.find_one(domain_id)
+
 
 @argmethod.wrap
 async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
@@ -36,10 +40,12 @@ async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
                                     update={'$set': {'owner_uid': new_owner_uid}},
                                     new=True)
 
+
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('domain')
   await coll.ensure_index('owner_uid')
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

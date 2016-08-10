@@ -1,37 +1,41 @@
 import collections
 import datetime
 
+from vj4 import constant
+
 # Permissions.
 PERM_NONE = 0
-PERM_SET_PERM = 1
-PERM_CREATE_PROBLEM = 2
-PERM_EDIT_PROBLEM = 4
-PERM_VIEW_PROBLEM = 8
-PERM_SUBMIT_PROBLEM = 16
-PERM_VIEW_PROBLEM_SOLUTION = 32
-PERM_SUBMIT_PROBLEM_SOLUTION = 64
-PERM_VOTE_PROBLEM_SOLUTION = 128
-PERM_REPLY_PROBLEM_SOLUTION = 256
-PERM_VIEW_DISCUSSION = 512
-PERM_CREATE_DISCUSSION = 1024
-PERM_REPLY_DISCUSSION = 2048
-PERM_TAIL_REPLY_DISCUSSION = 4096
-PERM_READ_PROBLEM_DATA = 8192
-PERM_VIEW_CONTEST = 16384
-PERM_VIEW_CONTEST_STATUS = 32768
-PERM_CREATE_CONTEST = 65536
-PERM_VIEW_TRAINING = 131072
+PERM_SET_PERM = 1 << 0
+PERM_CREATE_PROBLEM = 1 << 1
+PERM_EDIT_PROBLEM = 1 << 2
+PERM_VIEW_PROBLEM = 1 << 3
+PERM_SUBMIT_PROBLEM = 1 << 4
+PERM_VIEW_PROBLEM_SOLUTION = 1 << 5
+PERM_SUBMIT_PROBLEM_SOLUTION = 1 << 6
+PERM_VOTE_PROBLEM_SOLUTION = 1 << 7
+PERM_REPLY_PROBLEM_SOLUTION = 1 << 8
+PERM_VIEW_DISCUSSION = 1 << 9
+PERM_CREATE_DISCUSSION = 1 << 10
+PERM_REPLY_DISCUSSION = 1 << 11
+PERM_TAIL_REPLY_DISCUSSION = 1 << 12
+PERM_READ_PROBLEM_DATA = 1 << 13
+PERM_VIEW_CONTEST = 1 << 14
+PERM_VIEW_CONTEST_STATUS = 1 << 15
+PERM_CREATE_CONTEST = 1 << 16
+PERM_ATTEND_CONTEST = 1 << 17
+PERM_VIEW_TRAINING = 1 << 18
 PERM_ALL = -1
 
 # Privileges.
 PRIV_NONE = 0
-PRIV_SET_PRIV = 1
-PRIV_SET_PERM = 2
-PRIV_USER_PROFILE = 4
-PRIV_REGISTER_USER = 8
-PRIV_READ_RECORD_CODE = 16
-PRIV_READ_PROBLEM_DATA = 32
-PRIV_WRITE_RECORD = 64
+PRIV_SET_PRIV = 1 << 0
+PRIV_SET_PERM = 1 << 1
+PRIV_USER_PROFILE = 1 << 2
+PRIV_REGISTER_USER = 1 << 3
+PRIV_READ_RECORD_CODE = 1 << 4
+PRIV_READ_PROBLEM_DATA = 1 << 5
+PRIV_READ_PRETEST_DATA = 1 << 6
+PRIV_WRITE_RECORD = 1 << 7
 PRIV_ALL = -1
 
 # Roles.
@@ -52,23 +56,16 @@ DEFAULT_PERMISSIONS = (PERM_VIEW_PROBLEM |
                        PERM_TAIL_REPLY_DISCUSSION |
                        PERM_VIEW_CONTEST |
                        PERM_VIEW_CONTEST_STATUS |
-                       PERM_VIEW_TRAINING)
-ADMIN_PERMISSIONS = (DEFAULT_PERMISSIONS |
-                     PERM_CREATE_PROBLEM |
-                     PERM_EDIT_PROBLEM)
+                       PERM_VIEW_TRAINING |
+                       PERM_ATTEND_CONTEST)
+ADMIN_PERMISSIONS = PERM_ALL
 DOMAIN_SYSTEM = {'_id': DOMAIN_ID_SYSTEM,
                  'owner_uid': 0,
                  'roles': {ROLE_DEFAULT: DEFAULT_PERMISSIONS,
-                            ROLE_ADMIN: ADMIN_PERMISSIONS}}
+                           ROLE_ADMIN: ADMIN_PERMISSIONS}}
 DOMAINS = [DOMAIN_SYSTEM]
 
 # Users.
-USER_GENDER_MALE = 0
-USER_GENDER_FEMALE = 1
-USER_GENDER_OTHER = 2
-
-USER_GENDERS = [USER_GENDER_MALE, USER_GENDER_FEMALE, USER_GENDER_OTHER]
-
 UID_GUEST = 1
 UNAME_GUEST = 'Guest'
 USER_GUEST = {'_id': UID_GUEST,
@@ -78,7 +75,7 @@ USER_GUEST = {'_id': UID_GUEST,
               'mail_lower': '',
               'salt': '',
               'hash': 'vj4|',
-              'gender': USER_GENDER_OTHER,
+              'gender': constant.model.USER_GENDER_OTHER,
               'regat': datetime.datetime.utcfromtimestamp(0),
               'regip': '',
               'roles': {},
@@ -88,18 +85,11 @@ USER_GUEST = {'_id': UID_GUEST,
               'gravatar': ''}
 USERS = [USER_GUEST]
 
-# Code langs.
-LANGS = collections.OrderedDict([('c', 'C'),
-                                 ('cc', 'C++'),
-                                 ('pas', 'Pascal'),
-                                 ('java', 'Java'),
-                                 ('py', 'Python')])
-
 # View langs.
 VIEW_LANGS = collections.OrderedDict([('zh_CN', '简体中文'),
                                       ('en', 'English')])
 
 # Footer extra HTMLs.
-FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', '{$GIT_REVISION}', 
+FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', '{$GIT_REVISION}',
                       '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
                       '沪ICP备14040537号</a>']

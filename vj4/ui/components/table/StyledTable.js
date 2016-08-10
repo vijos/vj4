@@ -1,10 +1,10 @@
-import assign from 'lodash/assign';
-import DOMAttachedObject from 'components/DOMAttachedObject';
+import _ from 'lodash';
+import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
 
   static attachAll() {
-    $('.section__table').each((index, table) => StyledTable.getOrConstruct($(table)).attach());
+    $('.section__body > .data-table').each((index, table) => StyledTable.getOrConstruct($(table)).attach());
   }
 
   constructor($dom) {
@@ -28,6 +28,7 @@ export default class StyledTable extends DOMAttachedObject {
       .append(this.$dom);
 
     this.update();
+    return true;
   }
 
   update() {
@@ -42,5 +43,5 @@ export default class StyledTable extends DOMAttachedObject {
 
 }
 
-StyledTable._attachKey = 'vjStyledTableInstance';
-assign(StyledTable, DOMAttachedObject);
+StyledTable.DOMAttachKey = 'vjStyledTableInstance';
+_.assign(StyledTable, DOMAttachedObject);

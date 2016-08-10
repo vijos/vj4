@@ -1,10 +1,13 @@
 import bson
+
 from vj4 import mq
+
 
 async def publish(key, **kwargs):
   channel = await mq.channel('queue')
   await channel.queue_declare(key)
   await channel.basic_publish(bson.BSON.encode(kwargs), '', key)
+
 
 async def consume(key, on_message):
   channel = await mq.channel()

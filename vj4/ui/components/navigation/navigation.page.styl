@@ -3,16 +3,33 @@
 .nav--placeholder
   height: $nav-item-height
 
-.nav
+.nav, .nav--slideout-trigger
   position: fixed
   left: 0
   top: 0
   width: 100%
   height: rem($nav-item-height)
-  font-size: 0.9rem
+  font-size: rem($font-size-secondary)
   transition: background .2s
   transition-timing-function: ease-out-cubic
   z-index: 500
+
+.nav > .row
+  transition: max-width .5s ease-out-cubic
+
+.nav--slideout-trigger
+  position: absolute
+  display: none
+  background: rgba(#000, 0.5)
+  color: #FFF
+  line-height: rem($nav-item-height)
+
+  .nav__hamburger
+    background: none
+    border: 0
+    border-radius: 0
+    color: #FFF
+    outline: 0
 
 .nav--shadow
   position: fixed
@@ -41,10 +58,14 @@
 
   &:visited, &:active
     color: #FFF
+
+  &.nav--active
+    border-color: lighten($nav-item-active-color, 60%)
+
   &:hover
     text-decoration: none
-    border-color: $nav-item-hover-color
-    background: rgba(#FFF, 0.15)
+    border-color: lighten($nav-item-hover-color, 80%)
+    background: rgba(#FFF, 0.3)
 
 .nav__list--secondary
   float: right
@@ -103,9 +124,12 @@
 
   .nav__item
     color: $text-color
+    &.nav--active
+      border-color: $nav-item-active-color
     &:visited, &:active
       color: $text-color
     &:hover
+      border-color: $nav-item-hover-color
       background: #F8F8F8
 
   .nav__item--round
@@ -123,3 +147,71 @@
 
 .nav--shadow.floating
   box-shadow: 0 0 6px rgba(#000, 0.3)
+
+// For Mobile: show a slideout vertical arranged menu
++below(rupture.mobile-cutoff)
+
+  .nav .columns
+    padding: 0
+
+  .nav--slideout-trigger
+    display: block
+
+  .nav--shadow
+    display: none
+
+  .nav.slideout-menu
+    background: #1D1F20
+
+  .nav__list
+    float: none
+
+  .nav__list-item
+    float: none
+
+  .nav__logo
+    width: auto !important
+    opacity: 1 !important
+    background-position: center center
+    margin: 0
+    height: rem($nav-logo-height + 40px)
+
+  .nav__item,
+  .nav__item--round,
+  .nav__list--secondary .nav__item--round,
+  .nav .dropdown-target.menu .menu__link
+    line-height: rem($nav-item-height - 6)
+    padding: rem(0 20px 3px 20px)
+    border: 0
+    border-left: 3px solid transparent
+    margin: 0
+    border-radius: 0
+    background: none
+    color: #FFF
+
+    &.nav--active
+      border-color: $nav-item-active-color
+
+    &:visited, &:active
+      background: none
+      color: #FFF
+
+    &:hover
+      border-color: $nav-item-hover-color
+      background: rgba(#FFF, 0.10)
+      color: #FFF
+
+  .nav .dropdown-target.menu
+    display: block
+    background: none
+    border: 0
+    box-shadow: none
+
+    .menu__link
+      padding-left: rem(35px)
+
+    .menu__seperator
+      display: none
+
+  .nav__list--secondary
+    border-top: 1px solid #666

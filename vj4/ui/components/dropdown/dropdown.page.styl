@@ -1,0 +1,75 @@
+@import '~misc/section.inc.styl'
+
+.drop-element,
+.drop-element:after,
+.drop-element:before,
+.drop-element *,
+.drop-element *:after,
+.drop-element *:before
+  box-sizing: border-box
+
+.drop-element
+  position: absolute
+  display: none
+  opacity: 0
+  transition: opacity .1s ease-in-out
+  z-index: 1000
+
+  &.drop-open
+    display: block
+
+  &.drop-open-transitionend
+    display: block
+
+  &.drop-after-open
+    opacity: 1
+
+.drop-content
+  transition: transform .1s ease-in-out
+  transform: scale(0.9) translateZ(0)
+
+.drop-after-open
+  .drop-content
+    transform: scale(1) translateZ(0)
+
+.drop-element-attached-bottom.drop-element-attached-center .drop-content
+  transform-origin: 50% 100%
+.drop-element-attached-top.drop-element-attached-center .drop-content
+  transform-origin: 50% 0
+.drop-element-attached-right.drop-element-attached-middle .drop-content
+  transform-origin: 100% 50%
+.drop-element-attached-left.drop-element-attached-middle .drop-content
+  transform-origin: 0 50%
+.drop-element-attached-top.drop-element-attached-left.drop-target-attached-bottom .drop-content
+  transform-origin: 0 0
+.drop-element-attached-top.drop-element-attached-right.drop-target-attached-bottom .drop-content
+  transform-origin: 100% 0
+.drop-element-attached-bottom.drop-element-attached-left.drop-target-attached-top .drop-content
+  transform-origin: 0 100%
+.drop-element-attached-bottom.drop-element-attached-right.drop-target-attached-top .drop-content
+  transform-origin: 100% 100%
+.drop-element-attached-top.drop-element-attached-right.drop-target-attached-left .drop-content
+  transform-origin: 100% 0
+.drop-element-attached-top.drop-element-attached-left.drop-target-attached-right .drop-content
+  transform-origin: 0 0
+.drop-element-attached-bottom.drop-element-attached-right.drop-target-attached-left .drop-content
+  transform-origin: 100% 100%
+.drop-element-attached-bottom.drop-element-attached-left.drop-target-attached-right .drop-content
+  transform-origin: 0 100%
+
+.dropdown-target
+  display: none
+  font-size: rem($font-size-small)
+
+  &.menu
+    min-width: rem(150px)
+    box-shadow: 0 2px 7px rgba(#000, 0.3)
+    background: #FFF
+    font-size: rem($font-size-small)
+
+  .menu__link
+    padding: rem(0 10px)
+    line-height: 2.5em
+
+.drop .dropdown-target
+  display: block

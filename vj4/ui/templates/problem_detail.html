@@ -1,85 +1,32 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
+<script>
+  var Context = {{ {
+    'problemId': pdoc['doc_id'],
+    'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['doc_id'])|string(),
+    'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string(),
+    'getSubmissionsUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string(),
+  }|json|safe }};
+</script>
+<div class="row">
+  <div class="large-9 columns">
     <div class="section">
-      <div class="section__indent top bottom left right">
-        <h1>{{ pdoc['title'] }}</h1>
-        <div class="typo">{{ pdoc['content']|markdown }}</div>
-      </div>
-    </div>
-  </div>
-  <div class="layout--2col__side">
-    <div class="section side section--contest-info">
-      <div class="section__indent top bottom">
-        <div class="section__indent left right">
-          <div class="typo">
-            <h1>春夏之交邀请赛</h1>
-            <p>距离结束还有 1 小时</p>
-          </div>
+      <div class="problem-content">
+        <div class="section__header">
+          <h1>{{ pdoc['title'] }}</h1>
         </div>
-      </div>
-    </div>
-    <div class="section side">
-      <div>
-        <ul class="menu">
-          <li class="menu__item"><a class="menu__link" href="#">
-            <i class="menu__icon icon-enlarge"></i> {{ _('Enter IDE Mode') }}
-          </a></li>
-          <li class="menu__seperator"></li>
-          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-paper-plane"></i> {{ _('Test or Submit') }}
-          </a></li>
-          <li class="menu__item"><a class="menu__link" href="#">
-            <i class="menu__icon icon-pie-chart"></i> {{ _('Submission Statistics') }}
-          </a></li>
-          <li class="menu__seperator"></li>
-          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-bubble2"></i> {{ _('Solutions') }}
-          </a></li>
-          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-bubble2"></i> {{ _('Discussions') }}
-          </a></li>
-          <li class="menu__seperator"></li>
-          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">
-            <i class="menu__icon icon-pencil"></i>  {{ _('Edit') }}
-          </a></li>
-          <li class="menu__item"><a class="menu__link" href="#">
-            <i class="menu__icon icon-wrench"></i> {{ _('Settings') }}
-          </a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="section side">
-      <div class="section__indent top bottom">
-        <h1 class="section__title">{{ _('Information') }}</h1>
-        <div class="section__indent left right">
-          <div class="typo">
-            <p>状态：{{ vj4.view.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</p>
-            <p>难度：4</p>
-            <p>评分：<i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-full"></i><i class="icon-star-empty"></i> (30)</p>
-            <p>分类：动态规划|树形动规、高精度</p>
-            <p>递交次数：140</p>
-            <p>通过次数：30</p>
-            <p>通过率：20%</p>
-            <p>上传用户：Vijos Official</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="section side">
-      <div class="section__indent top bottom">
-        <h1 class="section__title">{{ _('Related') }}</h1>
-        <div class="section__indent left right">
-          <div class="typo">
-            <p>以下题单收录：</p>
-            <p>123abc</p>
-            <p>处于以下训练计划中：</p>
-            <p>123abc</p>
-          </div>
+        <div class="section__body typo">
+          {{ pdoc['content']|markdown }}
         </div>
       </div>
     </div>
   </div>
+  <div class="large-3 columns">
+    {% include "components/problem_sidebar.html" %}
+  </div>
+</div>
+<div class="scratchpad-container" style="display:none">
+  <div style="display:none" class="loader-container"><div class="loader"></div></div>
+  <div id="scratchpad" style="opacity:0"></div>
 </div>
 {% endblock %}

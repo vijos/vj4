@@ -1,17 +1,71 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="layout--2col clearfix">
-  <div class="layout--2col__main">
-    <h2>{{ _('contest_create') }}</h2>
-    {{ tdoc }}
+<div class="row">
+  <div class="large-9 columns">
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Create Contest') }}</h1>
+      </div>
+      <div class="section__body">
+        <form method="post">
+          <div class="row"><div class="medium-4 columns">
+            <label>
+              {{ _('Rule') }}
+              <select name="rule" class="select">
+                <option value="2">OI</option>
+                <option value="3">ACM/ICPC</option>
+              </select>
+            </label>
+          </div><div class="medium-8 columns">
+            <label>
+              {{ _('Title') }}
+              <input type="text" name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
+            </label>
+          </div></div>
+          <div class="row"><div class="medium-4 columns">
+            <label>
+              {{ _('Begin Date') }}
+              <input type="text" name="begin_at_date" value="1980-1-1" class="textbox" placeholder="YYYY-mm-dd" data-pick-date>
+            </label>
+          </div><div class="medium-4 columns">
+            <label>
+              {{ _('Begin Time') }}
+              <input type="text" name="begin_at_time" value="13:00" class="textbox" placeholder="HH:MM" data-pick-time>
+            </label>
+          </div><div class="medium-4 columns">
+            <label>
+              {{ _('Duration (hours)') }}
+              <input type="text" name="duration" value="3" class="textbox">
+            </label>
+          </div></div>
+          <div class="row"><div class="columns">
+            <label>
+              {{ _('Problems') }}
+              <input type="text" name="pids" value="1000,1001" class="textbox">
+            </label>
+          </div></div>
+          <div class="row"><div class="columns">
+            <label>
+              {{ _('Content') }}
+              <textarea name="content" class="textbox" data-markdown></textarea>
+            </label>
+          </div></div>
+          <div class="row"><div class="columns">
+            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+            <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+          </div></div>
+        </form>
+      </div>
+    </div>
   </div>
-  <div class="layout--2col__side">
-    <div>
-      <ul>
-        <li><a href="{{ reverse_url('contest_status', tid=tdoc['doc_id']) }}">{{ _('contest_status') }}</a></li>
-        <li>{{ _('Swx Template') }}</li>
-        <li>{{ _('Swx Template') }}</li>
-      </ul>
+  <div class="large-3 columns">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Information') }}</h1>
+      </div>
+      <div class="section__body">
+        <p>foo bar</p>
+      </div>
     </div>
   </div>
 </div>

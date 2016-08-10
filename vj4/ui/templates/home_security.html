@@ -1,65 +1,80 @@
 {% extends "home_base.html" %}
 {% block home_content %}
-<div>
-  <h1>{{ _('Password') }}</h1>
-  <form method="post">
-    <input type="hidden" name="operation" value="change_password">
-    <label for="input-current_password">{{ _('Current Password') }}</label>
-    <input id="input-current_password" type="password" name="current_password">
-    <label for="input-new_password">{{ _('New Password') }}</label>
-    <input id="input-new_password" type="password" name="new_password">
-    <label for="input-verify_password">{{ _('Verify Password') }}</label>
-    <input id="input-verify_password" type="password" name="verify_password">
-    <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
-    <input type="submit" value="{{ _('Change Password') }}">
-  </form>
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title">{{ _('Change Password') }}</h1>
+  </div>
+  <div class="section__body">
+    <form method="post">
+      <div class="row"><div class="medium-4 columns">
+        <label>
+          {{ _('Current Password') }}
+          <input type="password" name="current_password" class="textbox">
+        </label>
+      </div></div>
+      <div class="row"><div class="medium-4 columns">
+        <label>
+          {{ _('New Password') }}
+          <input type="password" name="new_password" class="textbox">
+        </label>
+      </div></div>
+      <div class="row"><div class="medium-4 columns">
+        <label>
+          {{ _('Repeat Password') }}
+          <input type="password" name="verify_password" class="textbox">
+        </label>
+      </div></div>
+      <div class="row"><div class="medium-4 columns">
+        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+        <input type="hidden" name="operation" value="change_password">
+        <input type="submit" class="rounded primary button" value="{{ _('Change Password') }}">
+      </div></div>
+    </form>
+  </div>
 </div>
-<div>
-  <h1>{{ _('Sessions') }}</h1>
-  <table>
-    <thead>
-      <th>{{ _('Create Time') }}</th>
-      <th>{{ _('Create IP') }}</th>
-      <th>{{ _('Create User Agent') }}</th>
-      <th>{{ _('Type') }}</th>
-      <th>{{ _('Update Time') }}</th>
-      <th>{{ _('Update IP') }}</th>
-      <th>{{ _('Update User Agent') }}</th>
-      <th>{{ _('Expire Time') }}</th>
-      <th>{{ _('Operation') }}</th>
-    </thead>
-    <tbody>
-    {% for session in sessions %}
-      <tr>
-        <td>{{ datetime_span(session['create_at']) }}</span></td>
-        <td>{{ session['create_ip'] }}</td>
-        <td>{{ session['create_ua'] }}</td>
-        <td>{{ _(vj4.view.home.TOKEN_TYPE_TEXTS[session['token_type']]) }}</td>
-        <td>{{ datetime_span(session['update_at']) }}</span></td>
-        <td>{{ session['update_ip'] }}</td>
-        <td>{{ session['update_ua'] }}</td>
-        <td>{{ datetime_span(session['expire_at']) }}</span></td>
-        <td>
-        {% if session['is_current'] %}
-          {{ _('This is current logon.') }}
-        {% else %}
-          <form method="post">
-            <input type="hidden" name="operation" value="delete_token">
-            <input type="hidden" name="token_type" value="{{ session['token_type'] }}">
-            <input type="hidden" name="token_digest" value="{{ session['token_digest'] }}">
-            <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
-            <input type="submit" value="{{ _('Delete') }}">
-          </form>
-        {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  <form method="post">
-    <input type="hidden" name="operation" value="delete_all_tokens">
-    <input type="hidden" name="csrf_token" value="{{ view.csrf_token }}">
-    <input type="submit" value="{{ _('Delete All Sessions') }}">
-  </form>
+
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title">{{ _('Active Sessions') }}</h1>
+  </div>
+  <div class="section__body">
+    <ul class="sessionlist">
+      {% for session in sessions %}
+      <li class="sessionlist__item">
+        <div class="media">
+          <div class="media__left medium">
+            <span class="sessionlist__icon icon icon-platform--{{ session['update_ua']['icon'] }}"></span>
+          </div>
+          <div class="media__body medium typo">
+            <p>{{ _('Last Update At') }}: {{ datetime_span(session['update_at']) }}</p>
+            <p>{{ _('Location') }}: {{ _(session['update_geoip']) }} ({{ session['update_ip'] }})</p>
+            <p>{{ _('Operating System') }}: {{ session['update_ua']['os'] }}</p>
+            <p>{{ _('Browser') }}: {{ session['update_ua']['browser'] }}</p>
+            <p>{{ _('Type') }}: {{ _(vj4.handler.home.TOKEN_TYPE_TEXTS[session['token_type']]) }}</p>
+            {% if session['is_current'] %}
+            <p class="sessionlist__current-session"><span class="icon icon-check"></span> {{ _('This is the current session') }}</p>
+            {% else %}
+            <form method="post">
+              <input type="hidden" name="operation" value="delete_token">
+              <input type="hidden" name="token_type" value="{{ session['token_type'] }}">
+              <input type="hidden" name="token_digest" value="{{ session['token_digest'] }}">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <input type="submit" value="{{ _('Logout This Session') }}" class="rounded button">
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="section__body">
+    <form method="post">
+      <input type="hidden" name="operation" value="delete_all_tokens">
+      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+      <input type="submit" value="{{ _('Logout All Sessions') }}" class="primary rounded button">
+    </form>
+    <p><small>IP geo-location data is provided by <a href="http://www.maxmind.com" target="_blank">MaxMind</a>.</small></p>
+  </div>
 </div>
 {% endblock %}

@@ -1,9 +1,11 @@
 import logging
 import pkgutil
 from os import path
+
 from vj4.util import argmethod
 
 _logger = logging.getLogger(__name__)
+
 
 @argmethod.wrap
 async def ensure_all_indexes():
@@ -14,6 +16,7 @@ async def ensure_all_indexes():
       if 'ensure_indexes' in dir(module):
         _logger.info('Ensuring indexes for "%s".' % name)
         await module.ensure_indexes()
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

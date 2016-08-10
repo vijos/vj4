@@ -1,13 +1,19 @@
 // Colors
-$primary-color = #5AA4E0
-$secondary-color = #e8698f
+$default-color = #e8e8e8
+$primary-color = #5f9fd6
+$secondary-color = #f6b84c
+$highlight-color = #df6589
 $text-color = #555
 $header-color = #3D3D3D
 $blockquote-color = #999
 $small-color = #888
 $bg-color = #ECECEC
-$font-size = 16px
-$table-border-color = #E8E8E8
+$font-size = 16px             // main content
+$font-size-secondary = 14px   // secondary content
+$font-size-small = 13px       // additional informations, usually gray colored
+$font-size-icon = 16px
+$font-size-title = 20px
+$table-border-color = $default-color
 
 $immersive-primary-color = #FFEF87
 $immersive-text-color = #F8F8F8
@@ -58,9 +64,9 @@ $record-status-color = {
 }
 
 $record-status-icon = {
-  'pass': '\e5ca',
-  'fail': '\e5cd',
-  'progress': '\e88b',
-  'ignored': '\e5cd',
-  'pending': '\e8b5',
+  'pass': icon-check,
+  'fail': icon-close,
+  'progress': icon-hourglass,
+  'ignored': icon-close,
+  'pending': icon-schedule,
 }

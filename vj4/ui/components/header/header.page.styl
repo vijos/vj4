@@ -1,13 +1,15 @@
 @import './var.inc.styl'
 @import '../navigation/var.inc.styl'
 
-$header-gap-collapsed = ($header-bg-height-collapsed - $nav-item-height - $header-logo-height) / 2
+$header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-height) / 2
 
 .header
   position: relative
-  padding-top: rem($header-gap-collapsed + $nav-item-height)
   height: rem($header-bg-height)
   background: #5eafca url(./header-background.png) no-repeat center top
+  transition: height .5s
+  transition-timing-function: ease-out-cubic
+  overflow: hidden
   +retina()
     background-image: url(./header-background.png)
     background-size: rem($header-bg-width $header-bg-height)
@@ -15,8 +17,8 @@ $header-gap-collapsed = ($header-bg-height-collapsed - $nav-item-height - $heade
     .header-content
       text-align: center
 
-  &.collapsed
-    height: rem($header-bg-height-collapsed)
+  &.mini
+    height: rem($header-bg-height-mini)
 
 .header__layer
   position: absolute
@@ -26,14 +28,19 @@ $header-gap-collapsed = ($header-bg-height-collapsed - $nav-item-height - $heade
   height: rem($header-layer-height)
   background: rgba(#000, 0.5)
 
-.header.collapsed .header__layer
+.header.mini .header__layer
   display: none
 
 .header__logo
   display: block
   width: rem($header-logo-width)
-  height: rem($header-logo-height)
+  height: rem($header-logo-height + $header-gap-mini + $nav-item-height)
   background: url(header-logo.png) no-repeat
+  background-position: 0 rem($header-gap-mini + $nav-item-height)
+  transition: transform .5s, opacity .5s
+  transition-timing-function: ease-out-cubic
+  transform-origin: 0 0
+  opacity: 1
   +retina()
     background-image: url(./header-logo@2x.png)
     background-size: rem($header-logo-width $header-logo-height)
@@ -55,3 +62,19 @@ $header-gap-collapsed = ($header-bg-height-collapsed - $nav-item-height - $heade
   white-space: nowrap
   overflow: hidden
   text-overflow: ellipsis
+
+.header--collapsed
+
+  #panel
+    padding-top: $header-bg-height
+
+  .header
+    position: absolute
+    left: 0
+    top: 0
+    width: 100%
+    height: 0
+
+  .header__logo
+    transform: scale(0)
+    opacity: 0

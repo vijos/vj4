@@ -2,23 +2,23 @@
 require.context('../', true, /\.page\.styl$/i);
 
 export class Page {
-  constructor(name, autoload, beforeLoading, afterLoading) {
+  constructor(name, autoload, afterLoading, beforeLoading) {
     this.name = name;
     this.autoload = autoload;
-    this.beforeLoading = beforeLoading;
     this.afterLoading = afterLoading;
+    this.beforeLoading = beforeLoading;
   }
 }
 
 export class NamedPage extends Page {
-  constructor(name = 'empty', beforeLoading = function() {}, afterLoading = function() {}) {
-    super(name, false, beforeLoading, afterLoading);
+  constructor(name = 'empty', afterLoading = function () {}, beforeLoading = function () {}) {
+    super(name, false, afterLoading, beforeLoading);
   }
 }
 
 export class AutoloadPage extends Page {
-  constructor(beforeLoading = function() {}, afterLoading = function() {}) {
-    super(null, true, beforeLoading, afterLoading);
+  constructor(afterLoading = function () {}, beforeLoading = function () {}) {
+    super('(autoload)', true, afterLoading, beforeLoading);
   }
 }
 
@@ -29,16 +29,15 @@ export class PageLoader {
   }
 
   getAutoloadPages() {
-    var pages = this.pageInstances.filter(page => page.autoload);
+    const pages = this.pageInstances.filter(page => page.autoload);
     return pages;
   }
 
   getNamedPage(pageName) {
-    var pages = this.pageInstances.filter(page => page.name === pageName);
+    const pages = this.pageInstances.filter(page => page.name === pageName);
     if (pages.length > 0) {
       return pages[0];
-    } else {
-      return new NamedPage();
     }
+    return new NamedPage();
   }
 }

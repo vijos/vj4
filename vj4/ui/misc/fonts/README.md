@@ -32,4 +32,11 @@ See IcoMoon manual.
 
 5. Execute `$PROJECT_ROOT/scripts/copy_icomoon_fonts.sh`, in which `$PROJECT_ROOT` is the location of VJ4.
 
-TADA! Now you can use your icon by writing `<i class="..."></i>`. Click `Get Code` in the `Generate Font` page to know the HTML of your icon.
+TADA! Now you can use your icon by writing `<span class="icon icon-name"></span>`. Click `Get Code` in the `Generate Font` page to know the HTML of your icon.
+
+## Font Properties
+
+- Metrics width = 1024
+- Ascent = 960
+- Descent = 64
+- Em size = 1024

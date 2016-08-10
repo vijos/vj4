@@ -1,5 +1,5 @@
-import assign from 'lodash/assign';
-import DOMAttachedObject from 'components/DOMAttachedObject';
+import _ from 'lodash';
+import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Dialog extends DOMAttachedObject {
 
@@ -84,5 +84,5 @@ export default class Dialog extends DOMAttachedObject {
 
 }
 
-Dialog._attachKey = 'vjDialogInstance';
-assign(Dialog, DOMAttachedObject);
+Dialog.DOMAttachKey = 'vjDialogInstance';
+_.assign(Dialog, DOMAttachedObject);

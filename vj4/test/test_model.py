@@ -1,14 +1,16 @@
 import hashlib
 import unittest
+
 from bson import objectid
 from gridfs import errors as gridfs_errors
 from pymongo import errors as pymongo_errors
+
 from vj4 import error
 from vj4.model import document
+from vj4.model import domain
 from vj4.model import fs
 from vj4.model import system
 from vj4.model import user
-from vj4.model import domain
 from vj4.test import base
 
 CONTENT = 'dummy_content'
@@ -21,17 +23,20 @@ STATUS_KEY = 'dummy_key'
 ROLES = {'dummy': 777}
 OWNER_UID2 = 222
 
+
 class SystemTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_inc_user_counter(self):
     self.assertEqual(await system.inc_user_counter(), 2)
     self.assertEqual(await system.inc_user_counter(), 3)
 
+
 class UserTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_user(self):
     with self.assertRaises(error.UserAlreadyExistError):
       await user.add(DUP_UID, DUP_UNAME, '123456', 'dup@vijos.org', 0)
+
 
 class DocumentTest(base.DatabaseTestCase):
   def test_convert_doc_id(self):
@@ -65,6 +70,7 @@ class DocumentTest(base.DatabaseTestCase):
     with self.assertRaises(pymongo_errors.DuplicateKeyError):
       await document.capped_inc_status(DOMAIN_ID, DOC_TYPE, doc_id, OWNER_UID, STATUS_KEY, 1)
 
+
 class DomainTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_get_transfer(self):
@@ -81,6 +87,7 @@ class DomainTest(base.DatabaseTestCase):
     self.assertIsNone(ddoc)
     ddoc = await domain.get('null')
     self.assertIsNone(ddoc)
+
 
 class FsTest(base.DatabaseTestCase):
   CONTENT = b'dummy_content'
@@ -104,6 +111,7 @@ class FsTest(base.DatabaseTestCase):
     await fs.unlink(file_id)
     with self.assertRaises(gridfs_errors.NoFile):
       await fs.get(file_id)
+
 
 if __name__ == '__main__':
   unittest.main()

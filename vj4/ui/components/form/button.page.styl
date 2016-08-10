@@ -1,18 +1,23 @@
 @import './var.inc.styl'
 
 .button
-  font-size: 0.9rem
+  font-size: rem($font-size-secondary)
   line-height: rem($form-standard-height)
-  background-color: #E8E8E8
+  background-color: $default-color
   border: 0
   height: rem($form-standard-height)
   padding: rem(0 25px)
   display: inline-block
   outline: 0
+  margin: 0 0 1rem
+  color: $text-color
+  transition: background-color .1s linear, box-shadow .1s linear
+  cursor: pointer
 
   &:hover, &:focus
-    background-color: #E0E0E0
+    background-color: darken($default-color, 10%)
     text-decoration: none
+    box-shadow: 0 2px 10px rgba(#000, 0.2)
 
   &.expanded
     padding-left: 0
@@ -30,6 +35,13 @@
     &:hover
       background-color: lighten($primary-color, 10%)
 
+  &.secondary
+    background-color: $secondary-color
+    color: #FFF
+
+    &:hover
+      background-color: lighten($secondary-color, 10%)
+
 .button.inverse
   line-height: rem($form-standard-height - 4)
   border: 2px solid #FFF
@@ -40,3 +52,4 @@
     border-color: $immersive-primary-color
     color: $immersive-primary-color
     background: none
+    box-shadow: none

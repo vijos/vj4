@@ -7,13 +7,13 @@
   border-left: 5px solid transparent
 
   &.highlight
-    border-left: 5px solid $secondary-color
+    border-left: 5px solid $highlight-color
 
   &:last-child
     border-bottom: 0
 
 .dczlist__title
-  font-size: 1.3rem
+  font-size: rem($font-size-title)
   line-height: 1.2em
   margin-bottom: rem(10px)
 
@@ -24,7 +24,7 @@
     color: lighten($text-color, 60%)
 
 .dczlist__supplementary
-  font-size: 0.9rem
+  font-size: rem($font-size-secondary)
   line-height: 1
   color: lighten($text-color, 50%)
 
