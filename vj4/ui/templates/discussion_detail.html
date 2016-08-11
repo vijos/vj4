@@ -11,7 +11,7 @@
           <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
           <span class="v-center"> · </span>
           {% with user = udoc %}
-            {% include "components/inline_user.html" %}
+          {% include "components/inline_user.html" %}
           {% endwith %}
           <span class="v-center"> · </span>
           <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
@@ -29,101 +29,22 @@
         <h1 class="dczdetail__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
       </div>
       <div class="section__body">
-        <ul class="dczcomments__list">
-          <!-- TODO (iceboy): privilege/permission based -->
-          {% if handler.user != vj4.model.builtin.USER_GUEST %}
-          <li class="dczcomments__item">
-            <div class="media">
-              <div class="media__left top">
-                <img src="{{ handler.user['gravatar']|gravatar_url }}" width="60" height="60" class="medium user-profile-avatar">
-              </div>
-              <div class="media__body top">
-                <form method="post" class="hasjs--hide">
-                  <div class="dczcomments__box">
-                    <div>
-                      <textarea name="content" class="textbox" data-markdown></textarea>
-                    </div>
-                    <div>
-                      <input type="submit" class="rounded primary button dczcomments__box__submit" value="{{ _('Comment') }}" data-value-reply="{{ _('Reply') }}" data-value-comment="{{ _('Comment') }}" data-value-update="{{ _('Update') }}">
-                      <input type="button" class="rounded button nojs--hide dczcomments__box__cancel" value="{{ _('Cancel') }}">
-                    </div>
-                  </div>
-                  <input type="hidden" name="operation" value="reply">
-                  <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                </form>
-                <div class="nojs--hide">
-                  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": "reply"}|json }}" placeholder="Write Your Comments"></textarea>
-                </div>
-                <div class="commentbox-placeholder"></div>
-                <ul style="display:none">
-                  <li class="dczcomments__reply commentbox-container">
-                    <div class="media">
-                      <div class="media__left top">
-                        <img src="{{ handler.user['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
-                      </div>
-                      <div class="media__body top commentbox-placeholder"></div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </li>
-          {% endif %}
-          {% for drdoc in drdocs %}
-          <li class="dczcomments__item">
-            <div class="media">
-              <div class="media__left top">
-                <img src="{{ drdoc['udoc']['gravatar']|gravatar_url }}" width="60" height="60" class="medium user-profile-avatar">
-              </div>
-              <div class="media__body top">
-                <div class="clearfix">
-                  <div class="dczcomments__supplementary">
-                    {% with noAvatar = true, user = drdoc['udoc'] %}
-                    {% include "components/inline_user.html" %}
-                    {% endwith %}
-                    <span class="v-center">@ {{ datetime_span(drdoc['_id'].generation_time) }}</span>
-                  </div>
-                  <div class="dczcomments__operations nojs--hide">
-                    <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-comment" data-form="{{ {"operation": "tail_reply", "drid": drdoc['doc_id']}|json }}"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit" data-form="{{ {"operation": "edit_reply"}|json }}"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
-                  </div>
-                </div>
-                <div class="typo no-heading emoji--enabled">
-                  {{ drdoc['content']|markdown }}
-                </div>
-                <div class="commentbox-edit-target"></div>
-                <ul class="dczcomments__replies commentbox-reply-target">
-                  {% for drrdoc in drdoc['reply'] %}
-                  <li class="dczcomments__reply">
-                    <div class="media">
-                      <div class="media__left top">
-                        <img src="{{ drrdoc['udoc']['gravatar']|gravatar_url }}" width="50" height="50" class="medium user-profile-avatar">
-                      </div>
-                      <div class="media__body top">
-                        <div class="clearfix">
-                          <div class="dczcomments__supplementary">
-                            {% with noAvatar = true, user = drrdoc['udoc'] %}
-                            {% include "components/inline_user.html" %}
-                            {% endwith %}
-                            <span class="v-center">@ {{ datetime_span(drrdoc['at']) }}</span>
-                          </div>
-                          <div class="dczcomments__operations nojs--hide">
-                            <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a> <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit" data-form="{{ {"operation": "edit_tail_reply"}|json }}"><span class="icon icon-edit"></span></a> <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
-                          </div>
-                        </div>
-                        <div class="typo no-heading emoji--enabled">
-                          {{ drrdoc['content']|markdown }}
-                        </div>
-                        <div class="commentbox-edit-target"></div>
-                      </div>
-                    </div>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-          </li>
-          {% endfor %}
-        </ul>
+        {% with
+          view = 'discussion',
+          docs = drdocs,
+          comment_placeholder = 'Write Your Comment',
+          reply_ref = 'drid',
+          comment_post_op = 'reply',
+          comment_edit_op = 'edit_reply',
+          comment_post_text = 'Comment',
+          comment_edit_text = 'Update Comment',
+          reply_post_op = 'tail_reply',
+          reply_post_text = 'Reply',
+          reply_edit_op = 'edit_tail_reply',
+          reply_edit_text = 'Update Reply'
+        %}
+        {% include "components/comments.html" %}
+        {% endwith %}
       </div>
     </div>
   </div>

@@ -1,0 +1,32 @@
+{% macro comment_form() %}
+<form method="post" class="hasjs--hide">
+  <div class="dczcomments__box">
+    <div>
+      <textarea name="content" class="textbox" data-markdown></textarea>
+    </div>
+    <div>
+      <input type="submit" class="rounded primary button dczcomments__box__submit" value="{{ _(comment_post_text) }}" data-value-reply="{{ _(reply_post_text) }}" data-value-comment="{{ _(comment_post_text) }}" data-value-comment-update="{{ _(comment_edit_text) }}" data-value-reply-update="{{ _(reply_edit_text) }}">
+      <input type="button" class="rounded button nojs--hide dczcomments__box__cancel" value="{{ _('Cancel') }}">
+    </div>
+  </div>
+  <input type="hidden" name="operation" value="{{ comment_post_op }}">
+  <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+</form>
+<div class="nojs--hide">
+  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ comment_placeholder }}"></textarea>
+</div>
+{% endmacro %}
+{% macro comment_operations(doc) %}
+<div class="dczcomments__operations nojs--hide">
+  <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-comment" data-form="{{ {"operation": reply_post_op, reply_ref: doc['doc_id']}|json }}"><span class="icon icon-reply"></span></a>
+  <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit-comment" data-form="{{ {"operation": comment_edit_op}|json }}"><span class="icon icon-edit"></span></a>
+  <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+</div>
+{% endmacro %}
+{% macro reply_operations() %}
+<div class="dczcomments__operations nojs--hide">
+  <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a>
+  <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit-reply" data-form="{{ {"operation": reply_edit_op}|json }}"><span class="icon icon-edit"></span></a>
+  <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+</div>
+{% endmacro %}
