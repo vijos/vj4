@@ -1,3 +1,4 @@
+import builtins
 import datetime
 import itertools
 
@@ -114,12 +115,12 @@ async def attach_pssdocs(docs, domain_field_name, psid_field_name, uid):
   # TODO(twd2): projection.
   psids_by_domain = {}
   for domain_id, domain_docs in itertools.groupby(docs, lambda doc: doc[domain_field_name]):
-    psids = builtin.set(doc[psid_field_name] for doc in domain_docs)
+    psids = builtins.set(doc[psid_field_name] for doc in domain_docs)
     pssdocs = await document.get_multi_status(domain_id, document.TYPE_PROBLEM_SOLUTION,
                                               doc_id={'$in': list(psids)}, uid=uid).to_list(None)
     psids_by_domain[domain_id] = dict((pssdoc['doc_id'], pssdoc) for pssdoc in pssdocs)
   for doc in docs:
-    doc['pssdoc'] = psids_by_domain[doc[domain_field_name]].get(doc[pid_field_name])
+    doc['pssdoc'] = psids_by_domain[doc[domain_field_name]].get(doc[psid_field_name])
   return docs
 
 

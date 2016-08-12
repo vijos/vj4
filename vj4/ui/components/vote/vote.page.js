@@ -32,10 +32,7 @@ const votePage = new AutoloadPage(() => {
     util
       .post($form.attr('action'), $form)
       .then(data => {
-        // TODO: fix new status
-        // TODO: apply initial status (add `active` class) in HTML
-        const newStatus = $button.is('.upvote') ? 1 : -1;
-        setVoteState($container, data.vote, newStatus);
+        setVoteState($container, data.vote, data.user_vote);
       })
       .catch(() => {
         // TODO(iceboy): notify failure

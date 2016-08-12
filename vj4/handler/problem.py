@@ -121,11 +121,13 @@ class ProblemSolutionView(base.OperationHandler):
     psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
                                              skip=skip,
                                              limit=limit)
+    await problem.attach_pssdocs(psdocs, 'domain_id', '_id', self.user['_id'])
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
       (self.translate('problem_solution'), None))
-    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs, path_components=path_components)
+    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs,
+                path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
@@ -148,8 +150,10 @@ class ProblemSolutionView(base.OperationHandler):
                             value: int):
     pdoc = await problem.get(self.domain_id, pid)
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
-    pssdoc = await problem.vote_solution(self.domain_id, psdoc['doc_id'], self.user['_id'], value)
-    self.json_or_redirect(self.reverse_url('problem_solution', pid=pid), vote=pssdoc['vote'])
+    psdoc = await problem.vote_solution(self.domain_id, psdoc['doc_id'], self.user['_id'], value)
+    await problem.attach_pssdocs([psdoc], 'domain_id', '_id', self.user['_id'])
+    self.json_or_redirect(self.reverse_url('problem_solution', pid=pid),
+                          vote=psdoc['vote'], user_vote=psdoc['pssdoc']['vote'])
 
   post_upvote = functools.partialmethod(upvote_downvote, value=1)
   post_downvote = functools.partialmethod(upvote_downvote, value=-1)

@@ -41,13 +41,13 @@
             <input type="hidden" name="operation" value="upvote">
             <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <button type="submit" class="vote-button upvote icon icon-vote--up"></button>
+            <button type="submit" class="vote-button upvote icon icon-vote--up{% if doc['pssdoc']['vote'] == 1 %} active{% endif %}"></button>
           </form>
           <form method="post">
             <input type="hidden" name="operation" value="downvote">
             <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <button type="submit" class="vote-button downvote icon icon-vote--down"></button>
+            <button type="submit" class="vote-button downvote icon icon-vote--down{% if doc['pssdoc']['vote'] == -1 %} active{% endif %}"></button>
           </form>
         </div>
       </div>
