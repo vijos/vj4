@@ -218,9 +218,12 @@ class ProblemCreateView(base.Handler):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
-  async def post(self):
-    # TODO(twd2)
-    pass
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, title: str, content: str):
+    pid = await problem.add(self.domain_id, title, content, self.user['_id'])
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
@@ -242,6 +245,11 @@ class ProblemEditView(base.Handler):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
-  async def post(self):
-    # TODO(twd2)
-    pass
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
+    # TODO(twd2): new domain_id
+    await problem.set(self.domain_id, pid, title=title, content=content)
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
