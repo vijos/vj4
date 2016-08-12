@@ -107,7 +107,7 @@ class UserNewmailWithCodeHandler(base.Handler):
     # TODO(twd2): Ensure mail is unique.
     await user.set_mail(self.user['_id'], tdoc['mail'])
     await token.delete(code, token.TYPE_NEWMAIL)
-    self.json_or_redirect(self.reverse_url('main'))
+    self.json_or_redirect(self.reverse_url('home_security'))
 
 
 @app.route('/home/account', 'home_account')
