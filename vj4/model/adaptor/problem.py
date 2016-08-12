@@ -9,7 +9,6 @@ from vj4 import db
 from vj4 import error
 from vj4.model import document
 from vj4.model import fs
-from vj4.model import user
 from vj4.util import argmethod
 
 
