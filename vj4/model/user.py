@@ -100,6 +100,12 @@ async def set_password(uid: int, password: str):
 
 
 @argmethod.wrap
+async def set_mail(uid: int, mail: str):
+  """Set password. Returns doc or None."""
+  return await set_by_uid(uid, mail=mail, mail_lower=mail.strip().lower())
+
+
+@argmethod.wrap
 async def change_password(uid: int, current_password: str, password: str):
   """Change password. Returns doc or None."""
   doc = await get_by_uid(uid)

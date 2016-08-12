@@ -2,6 +2,38 @@
 {% block home_content %}
 <div class="section">
   <div class="section__header">
+    <h1 class="section__title">{{ _('Change Email') }}</h1>
+  </div>
+  <div class="section__body">
+    <form method="post">
+      <div class="row"><div class="medium-4 columns">
+        <label>
+          {{ _('Current Password') }}
+          <input type="password" name="current_password" class="textbox">
+        </label>
+      </div></div>
+      <div class="row"><div class="medium-4 columns">
+        <label>
+          {{ _('Current Email') }}
+          <input type="text" value="{{ handler.user['mail'] }}" class="textbox" disabled>
+        </label>
+      </div></div>
+      <div class="row"><div class="medium-4 columns">
+        <label>
+          {{ _('New Email') }}
+          <input type="text" name="mail" class="textbox">
+        </label>
+      </div></div>
+      <div class="row"><div class="medium-4 columns">
+        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+        <input type="hidden" name="operation" value="change_mail">
+        <input type="submit" class="rounded primary button" value="{{ _('Change Email') }}">
+      </div></div>
+    </form>
+  </div>
+</div>
+<div class="section">
+  <div class="section__header">
     <h1 class="section__title">{{ _('Change Password') }}</h1>
   </div>
   <div class="section__body">
@@ -32,7 +64,6 @@
     </form>
   </div>
 </div>
-
 <div class="section">
   <div class="section__header">
     <h1 class="section__title">{{ _('Active Sessions') }}</h1>
@@ -53,6 +84,10 @@
             <p>{{ _('Type') }}: {{ _(vj4.handler.home.TOKEN_TYPE_TEXTS[session['token_type']]) }}</p>
             {% if session['is_current'] %}
             <p class="sessionlist__current-session"><span class="icon icon-check"></span> {{ _('This is the current session') }}</p>
+            <form method="POST" action="{{ reverse_url('user_logout') }}">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <input type="submit" value="{{ _('Logout') }}" class="rounded button">
+            </form>
             {% else %}
             <form method="post">
               <input type="hidden" name="operation" value="delete_token">
