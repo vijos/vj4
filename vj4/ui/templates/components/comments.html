@@ -1,0 +1,10 @@
+{% import "components/comments_base.html" as comment_base with context %}
+{% import "components/comments_" ~ view ~ ".html" as comment_impl with context %}
+<ul class="dczcomments__list view--{{ view }}">
+  {% if handler.user != vj4.model.builtin.USER_GUEST %}
+    {{ comment_impl.comment(true, handler.user) }}
+  {% endif %}
+  {% for doc in docs %}
+    {{ comment_impl.comment(false, doc['udoc'], doc) }}
+  {% endfor %}
+</ul>

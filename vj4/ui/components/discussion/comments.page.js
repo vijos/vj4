@@ -120,7 +120,7 @@ async function onCommentClickReplyReply(ev) {
     .trigger('click', { initialText: `@${username}: ` });
 }
 
-async function onCommentClickEdit(ev) {
+async function onCommentClickEdit(mode, ev) {
   const $evTarget = $(ev.currentTarget);
 
   if (CommentBox.get($evTarget)) {
@@ -134,9 +134,13 @@ async function onCommentClickEdit(ev) {
 
   const opt = {
     // TODO: retrive original markdown
-    initialText: $mediaBody.find('.typo').text().trim(),
+    initialText: $mediaBody
+      .find('.typo')
+      .eq(0)
+      .text()
+      .trim(),
     form: JSON.parse($evTarget.attr('data-form')),
-    mode: 'update',
+    mode,
     onCancel: () => {
       $mediaBody.removeClass('is-editing');
     },
@@ -148,6 +152,14 @@ async function onCommentClickEdit(ev) {
     .getOrConstruct($evTarget, opt)
     .appendTo($mediaBody.find('.commentbox-edit-target').eq(0))
     .focus();
+}
+
+function onCommentClickEditComment(ev) {
+  return onCommentClickEdit('comment-update', ev);
+}
+
+function onCommentClickEditReply(ev) {
+  return onCommentClickEdit('reply-update', ev);
 }
 
 function onClickDummyBox(ev) {
@@ -182,7 +194,8 @@ const commentsPage = new AutoloadPage(() => {
   $(document).on('click', '.dczcomments__dummy-box', onClickDummyBox);
   $(document).on('click', '.dczcomments__op-reply-comment', onCommentClickReplyComment);
   $(document).on('click', '.dczcomments__op-reply-reply', onCommentClickReplyReply);
-  $(document).on('click', '.dczcomments__op-edit', onCommentClickEdit);
+  $(document).on('click', '.dczcomments__op-edit-comment', onCommentClickEditComment);
+  $(document).on('click', '.dczcomments__op-edit-reply', onCommentClickEditReply);
 });
 
 export default commentsPage;

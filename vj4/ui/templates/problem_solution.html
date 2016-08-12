@@ -4,78 +4,30 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{{ _('Problem Solution List') }}</h1>
+        <h1 class="dczdetail__title">{{ _('{0} solutions').format(psdocs|length) }}</h1>
       </div>
-      <div class="section__body no-padding">
-        <table class="data-table">
-          <colgroup>
-            <col class="col--name">
-          </colgroup>
-          <thead>
-            <tr>
-              <th class="col--name">{{ _('Problem Solution') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-          {% if not psdocs %}
-            <tr class="empty-row">
-              <td colspan="1">{{ _('Sorry, there is no problem solution for this problem.') }}</td>
-            </tr>
-          {% else %}
-          {% for psdoc in psdocs %}
-            <tr data-psid="{{ psdoc['doc_id'] }}">
-              <td>
-                <div>{{ psdoc['content']|markdown }}</div>
-                {% for reply in psdoc['reply'] %}
-                <div>{{ reply }}</div>
-                {% endfor %}
-                <div>
-                  <a href="{{ reverse_url('user_detail', uid=psdoc['owner_uid']) }}">
-                    {{ psdoc['owner_uid'] }}
-                  </a>
-                </div>
-                <div>
-                  <span class="vote--count">{{ psdoc['vote'] }}</span>
-                  <form method="post">
-                    <input type="hidden" name="operation" value="upvote">
-                    <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
-                    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                    <input type="submit" class="vote vote--upvote" value="{{ _('upvote') }}">
-                  </form>
-                  <form method="post">
-                    <input type="hidden" name="operation" value="downvote">
-                    <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
-                    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                    <input type="submit" class="vote vote--downvote" value="{{ _('downvote') }}">
-                  </form>
-                  <form method="post">
-                    <input type="hidden" name="operation" value="reply">
-                    <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
-                    <textarea name="content"></textarea>
-                    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                    <input type="submit" value="{{ _('reply') }}">
-                  </form>
-                </div>
-              </td>
-            </tr>
-          {% endfor %}
-          {% endif %}
-          </tbody>
-        </table>
+      <div class="section__body">
+        {% with
+          view = 'solution',
+          docs = psdocs,
+          comment_placeholder = 'Write Your Solution',
+          reply_ref = 'psid',
+          comment_post_op = 'submit',
+          comment_edit_op = 'edit_solution',
+          comment_post_text = 'Share Solution',
+          comment_edit_text = 'Update Solution',
+          reply_post_op = 'reply',
+          reply_post_text = 'Reply',
+          reply_edit_op = 'edit_reply',
+          reply_edit_text = 'Update Reply'
+        %}
+        {% include "components/comments.html" %}
+        {% endwith %}
       </div>
     </div>
   </div>
   <div class="large-3 columns">
     {% include "components/problem_sidebar.html" %}
   </div>
-</div>
-<div class="clearfix">TODO: <big>SWX</big> TEMPLATE</div>
-<div>
-  <form method="post">
-    <input type="hidden" name="operation" value="submit">
-    <textarea name="content"></textarea>
-    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-    <input type="submit" value="{{ _('Submit') }}">
-  </form>
 </div>
 {% endblock %}

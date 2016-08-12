@@ -14,7 +14,7 @@ from vj4.handler import base
 
 
 @app.route('/register', 'user_register')
-class UserRegisterView(base.Handler):
+class UserRegisterHandler(base.Handler):
   @base.require_priv(builtin.PRIV_REGISTER_USER)
   async def get(self):
     self.render('user_register.html')
@@ -37,7 +37,7 @@ class UserRegisterView(base.Handler):
 
 
 @app.route('/register/{code}', 'user_register_with_code')
-class UserRegisterWithCodeView(base.Handler):
+class UserRegisterWithCodeHandler(base.Handler):
   TITLE = 'user_register'
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
@@ -66,8 +66,62 @@ class UserRegisterWithCodeView(base.Handler):
     self.json_or_redirect(self.reverse_url('main'))
 
 
+@app.route('/lostpass', 'user_lostpass')
+class UserLostpassHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_REGISTER_USER)
+  async def get(self):
+    self.render('user_lostpass.html')
+
+  @base.require_priv(builtin.PRIV_REGISTER_USER)
+  @base.post_argument
+  @base.sanitize
+  async def post(self, *, mail: str):
+    validator.check_mail(mail)
+    udoc = await user.get_by_mail(mail)
+    if not udoc:
+      raise error.UserNotFoundError(mail)
+    # TODO(iceboy): rate limit.
+    rid, _ = await token.add(token.TYPE_LOSTPASS,
+                             options.options.lostpass_token_expire_seconds,
+                             uid=udoc['_id'])
+    content = self.render_html('user_lostpass_mail.html', url_prefix=options.options.url_prefix,
+                               url=self.reverse_url('user_lostpass_with_code', code=rid),
+                               uname=udoc['uname'])
+    await mailer.send_mail(mail, 'Lost Password - Vijos', content)
+    self.render('user_lostpass_mail_sent.html')
+
+
+@app.route('/lostpass/{code}', 'user_lostpass_with_code')
+class UserLostpassWithCodeHandler(base.Handler):
+  TITLE = 'user_lostpass'
+
+  @base.require_priv(builtin.PRIV_REGISTER_USER)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, code: str):
+    tdoc = await token.get(code, token.TYPE_LOSTPASS)
+    if not tdoc:
+      raise error.InvalidTokenError(token.TYPE_LOSTPASS, code)
+    udoc = await user.get_by_uid(tdoc['uid'])
+    self.render('user_lostpass_with_code.html', uname=udoc['uname'])
+
+  @base.require_priv(builtin.PRIV_REGISTER_USER)
+  @base.route_argument
+  @base.post_argument
+  @base.sanitize
+  async def post(self, *, code: str, password: str, verify_password: str):
+    tdoc = await token.get(code, token.TYPE_LOSTPASS)
+    if not tdoc:
+      raise error.InvalidTokenError(token.TYPE_LOSTPASS, code)
+    if password != verify_password:
+      raise error.VerifyPasswordError()
+    await user.set_password(tdoc['uid'], password)
+    await token.delete(code, token.TYPE_LOSTPASS)
+    self.json_or_redirect(self.reverse_url('main'))
+
+
 @app.route('/login', 'user_login')
-class UserLoginView(base.Handler):
+class UserLoginHandler(base.Handler):
   async def get(self):
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       self.redirect(self.reverse_url('main'))
@@ -76,7 +130,7 @@ class UserLoginView(base.Handler):
 
   @base.post_argument
   @base.sanitize
-  async def post(self, *, uname: str, password: str, rememberme: bool = False):
+  async def post(self, *, uname: str, password: str, rememberme: bool=False):
     udoc = await user.check_password_by_uname(uname, password)
     if not udoc:
       raise error.LoginError(uname)
@@ -88,7 +142,7 @@ class UserLoginView(base.Handler):
 
 
 @app.route('/logout', 'user_logout')
-class UserLogoutView(base.Handler):
+class UserLogoutHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     self.render('user_logout.html')
@@ -102,7 +156,7 @@ class UserLogoutView(base.Handler):
 
 
 @app.route('/user/{uid}', 'user_detail')
-class UserDetailView(base.Handler):
+class UserDetailHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, uid: int):
