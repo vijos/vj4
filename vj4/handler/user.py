@@ -85,7 +85,8 @@ class UserLostpassHandler(base.Handler):
                              options.options.lostpass_token_expire_seconds,
                              uid=udoc['_id'])
     content = self.render_html('user_lostpass_mail.html', url_prefix=options.options.url_prefix,
-                               url=self.reverse_url('user_lostpass_with_code', code=rid))
+                               url=self.reverse_url('user_lostpass_with_code', code=rid),
+                               uname=udoc['uname'])
     await mailer.send_mail(mail, 'Lost Password - Vijos', content)
     self.render('user_lostpass_mail_sent.html')
 
