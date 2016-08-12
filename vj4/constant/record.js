@@ -57,7 +57,7 @@ attachObjectMeta(STATUS_CODES, 'intKey', true);
 /**
  * Whether to show detail about each test case for a submission status
  */
-export const STATUS_IDE_SHOW_DETAIL_FLAGS = {
+export const STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS = {
   [STATUS_WAITING]: false,
   [STATUS_ACCEPTED]: true,
   [STATUS_WRONG_ANSWER]: true,
@@ -72,19 +72,19 @@ export const STATUS_IDE_SHOW_DETAIL_FLAGS = {
   [STATUS_COMPILING]: false,
   [STATUS_IGNORED]: false,
 };
-attachObjectMeta(STATUS_IDE_SHOW_DETAIL_FLAGS, 'exportToPython', false);
+attachObjectMeta(STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS, 'exportToPython', false);
 
 /**
- * Short text to show in IDE mode
+ * Short text to show in Scratchpad mode
  */
-export const STATUS_IDE_SHORT_TEXTS = {
+export const STATUS_SCRATCHPAD_SHORT_TEXTS = {
   [STATUS_ACCEPTED]: 'AC',
   [STATUS_WRONG_ANSWER]: 'WA',
   [STATUS_TIME_LIMIT_EXCEEDED]: 'TLE',
   [STATUS_MEMORY_LIMIT_EXCEEDED]: 'MLE',
   [STATUS_RUNTIME_ERROR]: 'RTE',
 };
-attachObjectMeta(STATUS_IDE_SHORT_TEXTS, 'exportToPython', false);
+attachObjectMeta(STATUS_SCRATCHPAD_SHORT_TEXTS, 'exportToPython', false);
 
 export const TYPE_TEXTS = {
   [TYPE_SUBMISSION]: 'Submission',

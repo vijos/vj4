@@ -1,3 +1,11 @@
+<div class="section side section--problem__contest-info">
+  <div class="section__header">
+    <h1>春夏之交邀请赛</h1>
+  </div>
+  <div class="section__body">
+    <p>距离结束还有 1 小时</p>
+  </div>
+</div>
 <div class="section side section--problem-sidebar">
   {% if page_name != 'problem_detail' %}
   <div class="section__header">
@@ -13,11 +21,11 @@
       <li class="menu__seperator"></li>
       {% endif %}
       {% if page_name == 'problem_detail' %}
-      <li class="menu__item ide--hide"><a class="menu__link highlight action--problem-sidebar__ide" href="javascript:;">
-        <span class="icon icon-enlarge"></span> {{ _('Enter IDE Mode') }}
+      <li class="menu__item scratchpad--hide"><a class="menu__link highlight action--problem-sidebar__open-scratchpad" href="javascript:;">
+        <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }}
       </a></li>
-      <li class="menu__item non-ide--hide"><a class="menu__link action--problem-sidebar__leave-ide" href="javascript:;">
-        <span class="icon icon-enlarge"></span> {{ _('Leave IDE Mode') }}
+      <li class="menu__item non-scratchpad--hide"><a class="menu__link action--problem-sidebar__quit-scratchpad" href="javascript:;">
+        <span class="icon icon-enlarge"></span> {{ _('Quit Scratchpad') }}
       </a></li>
       {% else %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">

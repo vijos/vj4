@@ -4,99 +4,25 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{{ _('Problem Solution') }}</h1>
-      </div>
-      <div class="section__body no-padding">
-          {% if not psdocs %}
-            {% with text = _('Sorry, there is no problem solution for this problem.') %}
-              {% include "components/nothing.html" %}
-            {% endwith %}
-          {% else %}
-          <ol class="dczlist">
-          {% for psdoc in psdocs %}
-            <li class="dczlist__item" data-psid="{{ psdoc['doc_id'] }}">
-              <div class="media">
-                <div class="media__left">
-                  <div class="dczlist__reply_n numbox">
-                    <form method="post">
-                      <input type="hidden" name="operation" value="upvote">
-                      <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
-                      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                      <input type="submit" class="vote vote--upvote" value="{{ _('upvote') }}">
-                    </form>
-                    <div class="numbox__num large vote vote--count">{{ psdoc['vote'] }}</div>
-                    <div class="numbox__text">{{ _('Votes') }}</div>
-                    <form method="post">
-                      <input type="hidden" name="operation" value="downvote">
-                      <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
-                      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                      <input type="submit" class="vote vote--downvote" value="{{ _('downvote') }}">
-                    </form>
-                  </div>
-                </div>
-                <div class="media__body top">
-                  <div class="typo no-heading emoji--enabled">
-                    {{ psdoc['content']|markdown }}
-                  </div>
-                  <div class="dczlist__supplementary">
-                    {# TODO(iceboy): Handle inexistent user... #}
-                    {% with user = psdoc['udoc'] %}
-                      {% include "components/inline_user.html" %}
-                    {% endwith %}
-                    <span class="v-center"> · </span>
-                    <span class="v-center">{{ _('Published at') }} {{ datetime_span(psdoc['_id'].generation_time) }}</span>
-                    <span class="v-center"> · </span>
-                    <span class="icon icon-bubble"></span> {{ _('{0} comments').format(psdoc['reply']|length) }}
-                  </div>
-                  {% for reply in psdoc['reply'] %}
-                    <div class="typo no-heading emoji--enabled">
-                      {{ reply['content']|markdown }}
-                    </div>
-                    <div class="dczlist__supplementary">
-                      {# TODO(iceboy): Handle inexistent user... #}
-                      {% with noBadge = true, user = reply['udoc'] %}
-                        {% include "components/inline_user.html" %}
-                      {% endwith %}
-                      <span class="v-center"> · </span>
-                      <span class="v-center">{{ _('Published at') }} {{ datetime_span(reply['at']) }}</span>
-                      <span class="v-center"> · </span>
-                      <span class="icon icon-bubble"></span> {{ _('This is a comment.') }}
-                    </div>
-                  {% endfor %}
-                  <form method="post">
-                    <div class="row"><div class="columns">
-                      <textarea name="content" class="textbox" data-markdown></textarea>
-                    </div></div>
-                    <div class="row"><div class="columns">
-                      <input type="hidden" name="operation" value="reply">
-                      <input type="hidden" name="psid" value="{{ psdoc['doc_id'] }}">
-                      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                      <input type="submit" class="rounded primary button" value="{{ _('reply') }}">
-                    </div></div>
-                  </form>
-                </div>
-              </div>
-            </li>
-          {% endfor %}
-          </ol>
-          {% endif %}
-      </div>
-    </div>
-    <div class="section">
-      <div class="section__header">
-        <h1 class="section__title">{{ _('Create Problem Solution') }}</h1>
+        <h1 class="dczdetail__title">{{ _('{0} solutions').format(psdocs|length) }}</h1>
       </div>
       <div class="section__body">
-        <form method="post">
-          <div class="row"><div class="columns">
-            <textarea name="content" class="textbox" data-markdown></textarea>
-          </div></div>
-          <div class="row"><div class="columns">
-            <input type="hidden" name="operation" value="submit">
-            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
-          </div></div>
-        </form>
+        {% with
+          view = 'solution',
+          docs = psdocs,
+          comment_placeholder = 'Write Your Solution',
+          reply_ref = 'psid',
+          comment_post_op = 'submit',
+          comment_edit_op = 'edit_solution',
+          comment_post_text = 'Share Solution',
+          comment_edit_text = 'Update Solution',
+          reply_post_op = 'reply',
+          reply_post_text = 'Reply',
+          reply_edit_op = 'edit_reply',
+          reply_edit_text = 'Update Reply'
+        %}
+        {% include "components/comments.html" %}
+        {% endwith %}
       </div>
     </div>
   </div>

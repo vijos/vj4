@@ -12,9 +12,12 @@ from vj4.model import token
 from vj4.model import user
 from vj4.service import bus
 from vj4.handler import base
+from vj4.service import mailer
 from vj4.util import useragent
 from vj4.util import validator
 from vj4.util import geoip
+from vj4.util import options
+from vj4.util import validator
 
 TOKEN_TYPE_TEXTS = {
   token.TYPE_SAVED_SESSION: 'Saved session',
@@ -52,6 +55,28 @@ class HomeSecurityView(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
   @base.sanitize
+  async def post_change_mail(self, *, current_password: str, mail: str):
+    validator.check_mail(mail)
+    udoc, mail_holder_udoc = await asyncio.gather(
+      user.check_password_by_uname(self.user['uname'], current_password),
+      user.get_by_mail(mail))
+    # TODO(twd2): raise other errors.
+    if not udoc:
+      raise error.LoginError(self.user['uname'])
+    if mail_holder_udoc:
+      raise error.UserAlreadyExistError(mail)
+    rid, _ = await token.add(token.TYPE_NEWMAIL,
+                             options.options.newmail_token_expire_seconds,
+                             uid=udoc['_id'], mail=mail)
+    content = self.render_html('user_newmail_mail.html', url_prefix=options.options.url_prefix,
+                               url=self.reverse_url('user_newmail_with_code', code=rid),
+                               uname=udoc['uname'])
+    await mailer.send_mail(mail, 'New Email - Vijos', content)
+    self.render('user_newmail_mail_sent.html')
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_csrf_token
+  @base.sanitize
   async def post_delete_token(self, *, token_type: int, token_digest: str):
     sessions = await token.get_session_list_by_uid(self.user['_id'])
     for session in sessions:
@@ -68,6 +93,24 @@ class HomeSecurityView(base.OperationHandler):
   async def post_delete_all_tokens(self):
     await token.delete_by_uid(self.user['_id'])
     self.json_or_redirect(self.referer_or_main)
+
+
+@app.route('/home/security/{code}', 'user_newmail_with_code')
+class UserNewmailWithCodeHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, code: str):
+    tdoc = await token.get(code, token.TYPE_NEWMAIL)
+    if not tdoc or tdoc['uid'] != self.user['_id']:
+      raise error.InvalidTokenError(token.TYPE_NEWMAIL, code)
+    mail_holder_udoc = await user.get_by_mail(tdoc['mail'])
+    if mail_holder_udoc:
+      raise error.UserAlreadyExistError(tdoc['mail'])
+    # TODO(twd2): Ensure mail is unique.
+    await user.set_mail(self.user['_id'], tdoc['mail'])
+    await token.delete(code, token.TYPE_NEWMAIL)
+    self.json_or_redirect(self.reverse_url('main'))
 
 
 @app.route('/home/account', 'home_account')

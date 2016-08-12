@@ -45,7 +45,7 @@
     <div class="section__body">
       <div class="row"><div class="medium-4 columns">
         <label>
-          {{ _('Send Code after Accepted') }}
+          {{ _('Send Code after acceptance') }}
           <select class="select" name="send_code">
           {% for key, value in vj4.constant.setting.FUNCTION_RANGE.items() %}
             <option value="{{ key }}"{% if handler.get_setting('send_code') == key %} selected{% endif %}>{{ _(value) }}</option>

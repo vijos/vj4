@@ -12,14 +12,9 @@ export default function reducer(state = {}, action) {
       [id]: {
         _id: id,
         sender_uid: UserContext.uid,
-        sender_udoc: {
-          uname: `UID = ${String(UserContext.uid)}`,
-          gravatar_url: '/img/avatar.png',
-        },
         sendee_uid: uid,
         sendee_udoc: {
           uname: `UID = ${String(uid)}`,
-          gravatar_url: '/img/avatar.png',
         },
         reply: [],
         isPlaceholder: true,

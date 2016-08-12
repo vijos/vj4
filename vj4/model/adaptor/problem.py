@@ -94,8 +94,8 @@ async def get_solution(domain_id: str, psid: document.convert_doc_id, pid=None):
 async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
                             fields=None, skip: int = 0, limit: int = 0):
   return await (document.get_multi(domain_id, document.TYPE_PROBLEM_SOLUTION,
-                                   parent_doc_type=document.TYPE_PROBLEM, parent_doc_id=pid,
-                                   fields=fields)
+                                     parent_doc_type=document.TYPE_PROBLEM, parent_doc_id=pid,
+                                     fields=fields)
                 .sort([('vote', -1), ('doc_id', -1)])
                 .skip(skip)
                 .limit(limit)

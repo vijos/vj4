@@ -5,6 +5,7 @@ from vj4 import app
 from vj4 import error
 from vj4 import constant
 from vj4.model import builtin
+from vj4.model import user
 from vj4.model import document
 from vj4.model import record
 from vj4.model import user
@@ -124,12 +125,20 @@ class ProblemSolutionView(base.OperationHandler):
     psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
                                              skip=skip,
                                              limit=limit)
+<<<<<<< HEAD
     psdocs_with_pdoc_and_reply = list(psdocs)
     psdocs_with_pdoc_and_reply.append(pdoc)
     for psdoc in psdocs:
       if 'reply' in psdoc:
         psdocs_with_pdoc_and_reply.extend(psdoc['reply'])
     await user.attach_udocs(psdocs_with_pdoc_and_reply, 'owner_uid')
+=======
+    psdocs_with_reply = list(psdocs)
+    for psdoc in psdocs:
+      if 'reply' in psdoc:
+        psdocs_with_reply.extend(psdoc['reply'])
+    await user.attach_udocs(psdocs_with_reply, 'owner_uid')
+>>>>>>> master
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
