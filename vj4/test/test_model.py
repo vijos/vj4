@@ -16,6 +16,10 @@ from vj4.test import base
 CONTENT = 'dummy_content'
 DUP_UID = 0
 DUP_UNAME = 'GuESt'
+SPWD_UID = 22
+SPWD_UNAME = 'twd2'
+SMAIL_UID = 23
+SMAIL_UNAME = 'twd3'
 OWNER_UID = 22
 DOMAIN_ID = 'dummy_domain'
 DOC_TYPE = document.TYPE_PROBLEM
@@ -37,6 +41,26 @@ class UserTest(base.DatabaseTestCase):
     with self.assertRaises(error.UserAlreadyExistError):
       await user.add(DUP_UID, DUP_UNAME, '123456', 'dup@vijos.org', 0)
 
+  @base.wrap_coro
+  async def test_set_password(self):
+    await user.add(SPWD_UID, SPWD_UNAME, '123456', 'twd2@vijos.org', 0)
+    self.assertNotEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
+    await user.set_password(SPWD_UID, '123457')
+    self.assertEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
+
+  @base.wrap_coro
+  async def test_change_password(self):
+    await user.add(SPWD_UID, SPWD_UNAME, '123456', 'twd2@vijos.org', 0)
+    self.assertNotEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
+    self.assertNotEqual(await user.change_password(SPWD_UID, '123456', '123457'), None)
+    self.assertEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
+
+  @base.wrap_coro
+  async def test_change_password_failed(self):
+    await user.add(SPWD_UID, SPWD_UNAME, '123456', 'twd2@vijos.org', 0)
+    self.assertNotEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
+    self.assertEqual(await user.change_password(SPWD_UID, '123457', '123457'), None)
+    self.assertNotEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
 
 class DocumentTest(base.DatabaseTestCase):
   def test_convert_doc_id(self):
