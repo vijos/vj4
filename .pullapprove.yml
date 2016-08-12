@@ -1,0 +1,20 @@
+always_pending:
+  title_regex: '(WIP|wip)'
+  labels:
+    - wip
+approve_by_comment: true
+approve_regex: ^Approved
+author_approval: ignored
+reject_regex: ^Rejected
+reset_on_push: true
+reviewers:
+  -
+    name: required_reviewers
+    required: 2
+    members:
+      - iceboy-sjtu
+      - SummerWish
+      - twd2
+    conditions:
+      branches:
+        - master
