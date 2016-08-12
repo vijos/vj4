@@ -24,6 +24,8 @@ class DiscussionMainView(base.Handler):
                                                                     skip=skip,
                                                                     limit=limit),
                                                 discussion.count(self.domain_id))
+    await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
+                         discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id'))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
                 page=page, dcount=dcount)
 
@@ -43,6 +45,7 @@ class DiscussionNodeView(base.Handler):
       discussion.get_vnode_and_list_and_count_for_node(
         self.domain_id, node_or_pid,
         skip=(page - 1) * self.DISCUSSIONS_PER_PAGE, limit=self.DISCUSSIONS_PER_PAGE))
+    await user.attach_udocs(ddocs, 'owner_uid')
     path_components = self.build_path(
       (self.translate('discussion_main'), self.reverse_url('discussion_main')),
       (vnode['title'], None))
@@ -89,6 +92,11 @@ class DiscussionDetailView(base.OperationHandler):
       (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
       (ddoc['title'], None))
     drdocs = await discussion.get_list_reply(self.domain_id, ddoc['doc_id'])
+    drdocs_with_reply = list(drdocs)
+    for drdoc in drdocs:
+      if 'reply' in drdoc:
+        drdocs_with_reply.extend(drdoc['reply'])
+    await user.attach_udocs(drdocs_with_reply, 'owner_uid')
     self.render('discussion_detail.html', ddoc=ddoc, udoc=udoc, drdocs=drdocs, vnode=vnode,
                 page_title=ddoc['title'], path_components=path_components)
 

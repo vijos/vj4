@@ -5,7 +5,6 @@ from pymongo import errors
 
 from vj4 import error
 from vj4.model import document
-from vj4.model import user
 from vj4.model.adaptor import problem
 from vj4.service import smallcache
 from vj4.util import argmethod
@@ -124,14 +123,11 @@ async def count(domain_id: str):
 @argmethod.wrap
 async def get_list(domain_id: str, *, fields=None, skip: int = 0, limit: int = 0):
   # TODO(twd2): projection.
-  ddocs = await (document.get_multi(domain_id, document.TYPE_DISCUSSION, fields=fields)
-                 .sort([('doc_id', -1)])
-                 .skip(skip)
-                 .limit(limit)
-                 .to_list(None))
-  await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
-                       attach_vnodes(ddocs, domain_id, 'parent_doc_id'))
-  return ddocs
+  return await (document.get_multi(domain_id, document.TYPE_DISCUSSION, fields=fields)
+                .sort([('doc_id', -1)])
+                .skip(skip)
+                .limit(limit)
+                .to_list(None))
 
 
 @argmethod.wrap
@@ -152,8 +148,7 @@ async def get_vnode_and_list_and_count_for_node(domain_id: str,
                  .skip(skip)
                  .limit(limit)
                  .to_list(None))
-  await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
-                       attach_vnodes(ddocs, domain_id, 'parent_doc_id'))
+  await attach_vnodes(ddocs, domain_id, 'parent_doc_id')
   return vnode, ddocs, await count_future
 
 
@@ -176,17 +171,11 @@ async def get_reply(domain_id: str, drid: document.convert_doc_id, did=None):
 
 @argmethod.wrap
 async def get_list_reply(domain_id: str, did: document.convert_doc_id, *, fields=None):
-  drdocs = await (document.get_multi(domain_id, document.TYPE_DISCUSSION_REPLY,
+  return await (document.get_multi(domain_id, document.TYPE_DISCUSSION_REPLY,
                                      parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did,
                                      fields=fields)
-                  .sort([('doc_id', -1)])
-                  .to_list(None))
-  drdocs_with_reply = list(drdocs)
-  for drdoc in drdocs:
-    if 'reply' in drdoc:
-      drdocs_with_reply.extend(drdoc['reply'])
-  await user.attach_udocs(drdocs_with_reply, 'owner_uid')
-  return drdocs
+                .sort([('doc_id', -1)])
+                .to_list(None))
 
 
 @argmethod.wrap
