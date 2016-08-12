@@ -149,6 +149,7 @@ class HomeMessagesView(base.OperationHandler):
     await asyncio.gather(
       user.attach_udocs(mdocs, 'sender_uid', 'sender_udoc', user.PROJECTION_PUBLIC),
       user.attach_udocs(mdocs, 'sendee_uid', 'sendee_udoc', user.PROJECTION_PUBLIC))
+    # TODO(twd2): improve here:
     for mdoc in mdocs:
       mdoc['sender_udoc']['gravatar_url'] = (
         template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
