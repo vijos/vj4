@@ -115,7 +115,7 @@ class UserLostpassWithCodeHandler(base.Handler):
     if password != verify_password:
       raise error.VerifyPasswordError()
     await user.set_password(tdoc['uid'], password)
-    await token.delete(code, token.TYPE_REGISTRATION)
+    await token.delete(code, token.TYPE_LOSTPASS)
     self.json_or_redirect(self.reverse_url('main'))
 
 
