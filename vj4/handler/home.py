@@ -137,11 +137,17 @@ class HomeMessagesView(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): projection, pagination.
-    messages = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
+    mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
     await asyncio.gather(
-      user.attach_udocs(messages, 'sender_uid', 'sender_udoc', user.PROJECTION_PUBLIC),
-      user.attach_udocs(messages, 'sendee_uid', 'sendee_udoc', user.PROJECTION_PUBLIC))
-    self.json_or_render('home_messages.html', messages=messages)
+      user.attach_udocs(mdocs, 'sender_uid', 'sender_udoc', user.PROJECTION_PUBLIC),
+      user.attach_udocs(mdocs, 'sendee_uid', 'sendee_udoc', user.PROJECTION_PUBLIC))
+    # TODO(twd2): improve here:
+    for mdoc in mdocs:
+      mdoc['sender_udoc']['gravatar_url'] = (
+        template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
+      mdoc['sendee_udoc']['gravatar_url'] = (
+        template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
+    self.json_or_render('home_messages.html', messages=mdocs)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
