@@ -3,18 +3,42 @@ always_pending:
   labels:
     - wip
 approve_by_comment: true
-approve_regex: ^Approved
-author_approval: ignored
-reject_regex: ^Rejected
+approve_regex: ^approved
+reject_regex: ^rejected
 reset_on_push: true
 reviewers:
   -
-    name: required_reviewers
-    required: 2
+    name: backend
+    required: 0
     members:
       - iceboy-sjtu
+    conditions:
+      branches:
+        - master
+      files:
+        - "*.py"
+  -
+    name: frontend
+    required: 1
+    members:
       - SummerWish
+    conditions:
+      branches:
+        - master
+      files:
+        - "vj4/ui/*"
+        - "webpack.config.js"
+        - "package.json"
+        - "npm-shrinkwrap.json"
+  -
+    name: project
+    required: 2
+    members:
+      - SummerWish
+      - iceboy-sjtu
       - twd2
     conditions:
       branches:
         - master
+      files:
+        - ".pullapprove.yml"
