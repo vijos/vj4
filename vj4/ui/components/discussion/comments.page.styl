@@ -1,3 +1,6 @@
+$upvote-color = green
+$downvote-color = red
+
 .dczcomments__item .is-editing
   .dczcomments__dummy-box
     display: none
@@ -47,3 +50,49 @@
 
 .view--solution .dczcomments__replies
   margin-left: rem(50px)
+
+.dczcomments__item
+  .vote-number
+    width: 60px
+    text-align: center
+    font-size: rem(25px)
+    font-weight: 300
+    margin-bottom: rem(10px)
+
+  .vote-op
+    position: relative
+
+    &>form
+      width: 50%
+      float: left
+      position: relative
+
+  .vote-button
+    appearance: none
+    border: 0
+    background: none
+    width: 100%
+    outline: 0
+    font-size: rem(12px)
+    line-height: 1.5
+    color: #AAA
+    border: 1px solid transparent
+    transition: color .1s linear, background .1s linear
+
+    &.upvote
+      &:hover
+        background: transparent
+        color: $upvote-color
+
+      &.active
+        background: $upvote-color
+        color: #FFF
+
+    &.downvote
+      &:hover
+        background: transparent
+        color: $downvote-color
+
+      &.active
+        background: $downvote-color
+        color: #FFF
