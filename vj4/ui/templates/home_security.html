@@ -81,6 +81,7 @@
             <p>{{ _('Location') }}: {{ _(session['update_geoip']) }} ({{ session['update_ip'] }})</p>
             <p>{{ _('Operating System') }}: {{ session['update_ua']['os'] }}</p>
             <p>{{ _('Browser') }}: {{ session['update_ua']['browser'] }}</p>
+            <!-- {{ _('User-Agent') }}: {{ session['update_ua']['str'] }} -->
             <p>{{ _('Type') }}: {{ _(vj4.handler.home.TOKEN_TYPE_TEXTS[session['token_type']]) }}</p>
             {% if session['is_current'] %}
             <p class="sessionlist__current-session"><span class="icon icon-check"></span> {{ _('This is the current session') }}</p>
