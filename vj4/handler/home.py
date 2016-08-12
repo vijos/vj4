@@ -110,7 +110,7 @@ class UserNewmailWithCodeHandler(base.Handler):
     # TODO(twd2): Ensure mail is unique.
     await user.set_mail(self.user['_id'], tdoc['mail'])
     await token.delete(code, token.TYPE_NEWMAIL)
-    self.json_or_redirect(self.reverse_url('main'))
+    self.json_or_redirect(self.reverse_url('home_security'))
 
 
 @app.route('/home/account', 'home_account')
@@ -146,10 +146,9 @@ class HomeMessagesView(base.OperationHandler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
     mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
-    await asyncio.gather(user.attach_udocs(mdocs, 'sender_uid',
-                                           'sender_udoc', user.PROJECTION_PUBLIC),
-                         user.attach_udocs(mdocs, 'sendee_uid',
-                                           'sendee_udoc', user.PROJECTION_PUBLIC))
+    await asyncio.gather(
+      user.attach_udocs(mdocs, 'sender_uid', 'sender_udoc', user.PROJECTION_PUBLIC),
+      user.attach_udocs(mdocs, 'sendee_uid', 'sendee_udoc', user.PROJECTION_PUBLIC))
     for mdoc in mdocs:
       mdoc['sender_udoc']['gravatar_url'] = (
         template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
