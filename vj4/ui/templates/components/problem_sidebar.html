@@ -33,7 +33,7 @@
       </a></li>
       {% endif %}
       <li class="menu__seperator"></li>
-      <li class="menu__item ide--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
+      <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
         <span class="icon icon-send"></span> {{ _('Submit') }}
       </a></li>
       <li class="menu__item"><a class="menu__link" href="#">
