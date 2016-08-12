@@ -9,14 +9,16 @@ from vj4.util import argmethod
 from vj4.util import pwhash
 from vj4.util import validator
 
+
 PROJECTION_PUBLIC = {'_id': 1,
                      'uname': 1,
                      'uname_lower': 1,
                      'mail': 1,
                      'mail_lower': 1,
                      'gravatar': 1}
-
 PROJECTION_VIEW = {'salt': 0, 'hash': 0}
+PROJECTION_ALL = None
+
 
 @argmethod.wrap
 async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
@@ -55,41 +57,49 @@ async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
 
 
 @argmethod.wrap
-async def get_by_uid(uid: int, projection=None):
+async def get_by_uid(uid: int, fields=PROJECTION_VIEW):
   """Get a user by uid."""
   for user in builtin.USERS:
     if user['_id'] == uid:
       return user
   coll = db.Collection('user')
-  return await coll.find_one({'_id': uid}, projection)
+  return await coll.find_one({'_id': uid}, fields)
 
 
 @argmethod.wrap
-async def get_by_uname(uname: str, projection=None):
+async def get_by_uname(uname: str, fields=PROJECTION_VIEW):
   """Get a user by uname."""
   uname_lower = uname.strip().lower()
   for user in builtin.USERS:
     if user['uname_lower'] == uname_lower:
       return user
   coll = db.Collection('user')
-  return await coll.find_one({'uname_lower': uname_lower}, projection)
+  return await coll.find_one({'uname_lower': uname_lower}, fields)
 
 
 @argmethod.wrap
-async def get_by_mail(mail: str, projection=None):
+async def get_by_mail(mail: str, fields=PROJECTION_VIEW):
   """Get a user by mail."""
   mail_lower = mail.strip().lower()
   for user in builtin.USERS:
     if user['mail_lower'] == mail_lower:
       return user
   coll = db.Collection('user')
-  return await coll.find_one({'mail_lower': mail_lower}, projection)
+  return await coll.find_one({'mail_lower': mail_lower}, fields)
+
+
+@argmethod.wrap
+async def check_password_by_uid(uid: int, password: str):
+  """Check password. Returns doc or None."""
+  doc = await get_by_uid(uid, PROJECTION_ALL)
+  if doc and pwhash.check(password, doc['salt'], doc['hash']):
+    return doc
 
 
 @argmethod.wrap
 async def check_password_by_uname(uname: str, password: str):
   """Check password. Returns doc or None."""
-  doc = await get_by_uname(uname)
+  doc = await get_by_uname(uname, PROJECTION_ALL)
   if doc and pwhash.check(password, doc['salt'], doc['hash']):
     return doc
 
@@ -116,8 +126,8 @@ async def set_mail(uid: int, mail: str):
 @argmethod.wrap
 async def change_password(uid: int, current_password: str, password: str):
   """Change password. Returns doc or None."""
-  doc = await get_by_uid(uid)
-  if (not doc) or (not pwhash.check(current_password, doc['salt'], doc['hash'])):
+  doc = await check_password_by_uid(uid, current_password)
+  if not doc:
     return None
   validator.check_password(password)
   salt = pwhash.gen_salt()
@@ -137,13 +147,13 @@ async def set_by_uid(uid, **kwargs):
   return doc
 
 
-async def attach_udocs(docs, field_name, udoc_field_name='udoc', projection=PROJECTION_VIEW):
+async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTION_VIEW):
   """Attach udoc to docs by uid in the specified field."""
   # TODO(iceboy): projection.
   uids = set(doc[field_name] for doc in docs)
   if uids:
     coll = db.Collection('user')
-    udocs = await coll.find({'_id': {'$in': list(uids)}}, projection).to_list(None)
+    udocs = await coll.find({'_id': {'$in': list(uids)}}, fields).to_list(None)
     uids = dict((udoc['_id'], udoc) for udoc in udocs)
     uids.update(dict((udoc['_id'], udoc) for udoc in builtin.USERS))
     for doc in docs:

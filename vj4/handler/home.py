@@ -58,7 +58,7 @@ class HomeSecurityView(base.OperationHandler):
   async def post_change_mail(self, *, current_password: str, mail: str):
     validator.check_mail(mail)
     udoc, mail_holder_udoc = await asyncio.gather(
-      user.check_password_by_uname(self.user['uname'], current_password),
+      user.check_password_by_uid(self.user['_id'], current_password),
       user.get_by_mail(mail))
     # TODO(twd2): raise other errors.
     if not udoc:
@@ -167,12 +167,13 @@ class HomeMessagesView(base.OperationHandler):
     mdoc = await message.add(self.user['_id'], udoc['_id'], content)
     if self.user['_id'] != uid:
       await bus.publish('message_received-' + str(uid), mdoc)
-
     # projection
     mdoc['sender_udoc'] = await user.get_by_uid(self.user['_id'], user.PROJECTION_PUBLIC)
+    # TODO(twd2): improve here:
     mdoc['sender_udoc']['gravatar_url'] = (
       template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
     mdoc['sendee_udoc'] = udoc
+    # TODO(twd2): improve here:
     mdoc['sendee_udoc']['gravatar_url'] = (
       template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
     self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
