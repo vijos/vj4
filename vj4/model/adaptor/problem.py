@@ -25,6 +25,7 @@ async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
   pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
+  # TODO(twd2): move out:
   if uid is not None:
     pdoc['psdoc'] = await document.get_status(domain_id, document.TYPE_PROBLEM,
                                               doc_id=pid, uid=uid)
@@ -47,6 +48,7 @@ async def get_list(domain_id: str, uid: int = None, fields=None, skip: int = 0, 
                  .limit(limit)
                  .to_list(None))
   piter = iter(pdocs)
+  # TODO(twd2): move out:
   if uid is not None:
     doc_ids = [pdoc['doc_id'] for pdoc in pdocs]
     # TODO(iceboy): projection.
@@ -99,6 +101,26 @@ async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
       psdocs_with_reply.extend(psdoc['reply'])
   await user.attach_udocs(psdocs_with_reply, 'owner_uid')
   return psdocs
+
+
+@argmethod.wrap
+async def get_solution_status(domain_id: str, psid: document.convert_doc_id, uid: int):
+  return await document.get_status(domain_id, document.TYPE_PROBLEM_SOLUTION,
+                                   psid, uid)
+
+
+async def attach_pssdocs(docs, domain_field_name, psid_field_name, uid):
+  """Attach pssdoc to docs by domain_id and psid in the specified field."""
+  # TODO(twd2): projection.
+  psids_by_domain = {}
+  for domain_id, domain_docs in itertools.groupby(docs, lambda doc: doc[domain_field_name]):
+    psids = builtin.set(doc[psid_field_name] for doc in domain_docs)
+    pssdocs = await document.get_multi_status(domain_id, document.TYPE_PROBLEM_SOLUTION,
+                                              doc_id={'$in': list(psids)}, uid=uid).to_list(None)
+    psids_by_domain[domain_id] = dict((pssdoc['doc_id'], pssdoc) for pssdoc in pssdocs)
+  for doc in docs:
+    doc['pssdoc'] = psids_by_domain[doc[domain_field_name]].get(doc[pid_field_name])
+  return docs
 
 
 @argmethod.wrap
@@ -170,7 +192,7 @@ async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
 
 
 async def attach_pdocs(docs, domain_field_name, pid_field_name):
-  """Attach udoc to docs by uid in the specified field."""
+  """Attach pdoc to docs by pid in the specified field."""
   # TODO(iceboy): projection.
   pids_by_domain = {}
   for domain_id, domain_docs in itertools.groupby(docs, lambda doc: doc[domain_field_name]):
