@@ -1,3 +1,4 @@
+import builtins
 import datetime
 import itertools
 
@@ -157,7 +158,7 @@ async def get_data_list(last: int):
     if last_datetime < date:
       pids.append((pdoc['domain_id'], pdoc['doc_id']))
 
-  return list(set(pids))
+  return list(builtins.set(pids))
 
 
 @argmethod.wrap
@@ -175,7 +176,7 @@ async def attach_pdocs(docs, domain_field_name, pid_field_name):
   # TODO(iceboy): projection.
   pids_by_domain = {}
   for domain_id, domain_docs in itertools.groupby(docs, lambda doc: doc[domain_field_name]):
-    pids = set(doc[pid_field_name] for doc in domain_docs)
+    pids = builtins.set(doc[pid_field_name] for doc in domain_docs)
     pdocs = await document.get_multi(domain_id, document.TYPE_PROBLEM,
                                      doc_id={'$in': list(pids)}).to_list(None)
     pids_by_domain[domain_id] = dict((pdoc['doc_id'], pdoc) for pdoc in pdocs)
