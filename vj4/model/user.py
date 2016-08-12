@@ -87,6 +87,19 @@ async def check_password_by_uname(uname: str, password: str):
 
 
 @argmethod.wrap
+async def set_password(uid: int, password: str):
+  """Set password. Returns doc or None."""
+  validator.check_password(password)
+  salt = pwhash.gen_salt()
+  coll = db.Collection('user')
+  doc = await coll.find_and_modify(query={'_id': uid},
+                                   update={'$set': {'salt': salt,
+                                                    'hash': pwhash.hash_vj4(password, salt)}},
+                                   new=True)
+  return doc
+
+
+@argmethod.wrap
 async def change_password(uid: int, current_password: str, password: str):
   """Change password. Returns doc or None."""
   doc = await get_by_uid(uid)

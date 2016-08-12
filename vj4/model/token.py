@@ -9,7 +9,7 @@ from vj4.util import argmethod
 TYPE_REGISTRATION = 1
 TYPE_SAVED_SESSION = 2
 TYPE_UNSAVED_SESSION = 3
-TYPE_ACTIVATION = 4
+TYPE_LOSTPASS = 4
 
 
 def _get_id(id_binary):
