@@ -25,7 +25,7 @@ class DiscussionMainView(base.Handler):
                                                                     limit=limit),
                                                 discussion.count(self.domain_id))
     await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
-                         attach_vnodes(ddocs, domain_id, 'parent_doc_id'))
+                         discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id'))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
                 page=page, dcount=dcount)
 
