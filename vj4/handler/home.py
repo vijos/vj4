@@ -5,11 +5,13 @@ from bson import objectid
 
 from vj4 import app
 from vj4 import error
+from vj4 import template
 from vj4.model import builtin
 from vj4.model import message
 from vj4.model import token
 from vj4.model import user
 from vj4.handler import base
+from vj4.service import bus
 from vj4.service import mailer
 from vj4.util import useragent
 from vj4.util import geoip
@@ -158,6 +160,8 @@ class HomeMessagesView(base.OperationHandler):
     # TODO(twd2): improve here:
     mdoc['sendee_udoc']['gravatar_url'] = (
       template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
+    if self.user['_id'] != uid:
+      await bus.publish('message_received-' + str(uid), mdoc)
     self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -167,6 +171,12 @@ class HomeMessagesView(base.OperationHandler):
     mdoc, reply = await message.add_reply(message_id, self.user['_id'], content)
     if not mdoc:
       return error.MessageNotFoundError(message_id)
+    if mdoc['sender_uid'] != mdoc['sendee_uid']:
+      if mdoc['sender_uid'] == self.user['_id']:
+        other_uid = mdoc['sendee_uid']
+      else:
+        other_uid = mdoc['sender_uid']
+      await bus.publish('message_received-' + str(other_uid), mdoc)
     self.json_or_redirect(self.referer_or_main, reply=reply)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -175,3 +185,17 @@ class HomeMessagesView(base.OperationHandler):
   async def post_delete_message(self, *, message_id: objectid.ObjectId):
     await message.delete(message_id, self.user['_id'])
     self.json_or_redirect(self.referer_or_main)
+
+
+@app.connection_route('/home/messages-conn', 'home_messages-conn')
+class HomeMessagesConnection(base.Connection):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  async def on_open(self):
+    await super(HomeMessagesConnection, self).on_open()
+    bus.subscribe(self.on_message_received, ['message_received-' + str(self.user['_id'])])
+
+  async def on_message_received(self, e):
+    self.send(**e['value'])
+
+  async def on_close(self):
+    bus.unsubscribe(self.on_message_received)
