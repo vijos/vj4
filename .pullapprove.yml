@@ -10,7 +10,7 @@ reset_on_push: true
 reviewers:
   -
     name: required_reviewers
-    required: 2
+    required: 0
     members:
       - iceboy-sjtu
       - SummerWish
