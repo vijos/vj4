@@ -155,6 +155,7 @@ async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTI
     coll = db.Collection('user')
     udocs = await coll.find({'_id': {'$in': list(uids)}}, fields).to_list(None)
     uids = dict((udoc['_id'], udoc) for udoc in udocs)
+    uids.update(dict((udoc['_id'], udoc) for udoc in builtin.USERS))
     for doc in docs:
       doc[udoc_field_name] = uids.get(doc[field_name])
   return docs
