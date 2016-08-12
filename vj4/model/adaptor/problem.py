@@ -86,19 +86,13 @@ async def get_solution(domain_id: str, psid: document.convert_doc_id, pid=None):
 @argmethod.wrap
 async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
                             fields=None, skip: int = 0, limit: int = 0):
-  psdocs = await (document.get_multi(domain_id, document.TYPE_PROBLEM_SOLUTION,
+  return await (document.get_multi(domain_id, document.TYPE_PROBLEM_SOLUTION,
                                      parent_doc_type=document.TYPE_PROBLEM, parent_doc_id=pid,
                                      fields=fields)
                 .sort([('vote', -1), ('doc_id', -1)])
                 .skip(skip)
                 .limit(limit)
                 .to_list(None))
-  psdocs_with_reply = list(psdocs)
-  for psdoc in psdocs:
-    if 'reply' in psdoc:
-      psdocs_with_reply.extend(psdoc['reply'])
-  await user.attach_udocs(psdocs_with_reply, 'owner_uid')
-  return psdocs
 
 
 @argmethod.wrap
