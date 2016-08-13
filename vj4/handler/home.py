@@ -143,10 +143,12 @@ class HomeMessagesView(base.OperationHandler):
       user.attach_udocs(mdocs, 'sendee_uid', 'sendee_udoc', user.PROJECTION_PUBLIC))
     # TODO(twd2): improve here:
     for mdoc in mdocs:
-      mdoc['sender_udoc']['gravatar_url'] = (
-        template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
-      mdoc['sendee_udoc']['gravatar_url'] = (
-        template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
+      if 'gravatar' in mdoc['sender_udoc']:
+        mdoc['sender_udoc']['gravatar_url'] = (
+          template.gravatar_url(mdoc['sender_udoc'].pop('gravatar')))
+      if 'gravatar' in mdoc['sendee_udoc']:
+        mdoc['sendee_udoc']['gravatar_url'] = (
+          template.gravatar_url(mdoc['sendee_udoc'].pop('gravatar')))
     self.json_or_render('home_messages.html', messages=mdocs)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -161,11 +163,11 @@ class HomeMessagesView(base.OperationHandler):
     mdoc['sender_udoc'] = await user.get_by_uid(self.user['_id'], user.PROJECTION_PUBLIC)
     # TODO(twd2): improve here:
     mdoc['sender_udoc']['gravatar_url'] = (
-      template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
+      template.gravatar_url(mdoc['sender_udoc'].pop('gravatar')))
     mdoc['sendee_udoc'] = udoc
     # TODO(twd2): improve here:
     mdoc['sendee_udoc']['gravatar_url'] = (
-      template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
+      template.gravatar_url(mdoc['sendee_udoc'].pop('gravatar')))
     if self.user['_id'] != uid:
       await bus.publish('message_received-' + str(uid), {'type': 'new', 'data': mdoc})
     self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
