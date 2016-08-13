@@ -3,6 +3,8 @@ import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Dialog extends DOMAttachedObject {
 
+  static DOMAttachKey = 'vjDialogInstance';
+
   constructor($dom, options = null) {
     super($dom);
     this.dialogShown = false;
@@ -84,5 +86,4 @@ export default class Dialog extends DOMAttachedObject {
 
 }
 
-Dialog.DOMAttachKey = 'vjDialogInstance';
 _.assign(Dialog, DOMAttachedObject);
