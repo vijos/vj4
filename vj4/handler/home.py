@@ -166,8 +166,6 @@ class HomeMessagesView(base.OperationHandler):
     if not udoc:
       raise error.UserNotFoundError(uid)
     mdoc = await message.add(self.user['_id'], udoc['_id'], content)
-    if self.user['_id'] != uid:
-      await bus.publish('message_received-' + str(uid), mdoc)
     # projection
     mdoc['sender_udoc'] = await user.get_by_uid(self.user['_id'], user.PROJECTION_PUBLIC)
     # TODO(twd2): improve here:
