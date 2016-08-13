@@ -1,24 +1,32 @@
+import Rotator from '../rotator';
 import { AutoloadPage } from '../../misc/PageLoader';
 import * as util from '../../misc/Util';
 
-function setVoteState($voteTr, vote) {
-  const $voteCount = $voteTr.find('.vote--count');
-  $voteCount.text(vote);
+function setVoteState($container, value, status) {
+  const $num = $container.find('.vote-number');
+  Rotator.get($num).setValue(value);
+  $container.find('.vote-button').removeClass('active');
+  if (status === 1) {
+    $container.find('.upvote').addClass('active');
+  } else if (status === -1) {
+    $container.find('.downvote').addClass('active');
+  }
+}
+
+function applyRotator(element) {
+  Rotator.getOrConstruct($(element));
 }
 
 const votePage = new AutoloadPage(() => {
-  $(document).on('click', '.vote', (ev) => {
+  $('.vote-number.rotator--enabled').each((i, el) => applyRotator(el));
+  $(document).on('click', '.vote-button', ev => {
     const $button = $(ev.currentTarget);
-    const $tr = $button.closest('tr');
-    const operation = $button.hasClass('vote--upvote') ? 'upvote' : 'downvote';
-    const psid = $tr.attr('data-psid');
+    const $container = $button.closest('.vote');
+    const $form = $button.closest('form');
     util
-      .post($button.closest('form').attr('action'), {
-        operation,
-        psid,
-      })
+      .post($form.attr('action'), $form)
       .then(data => {
-        setVoteState($tr, data.vote);
+        setVoteState($container, data.vote, data.user_vote);
       })
       .catch(() => {
         // TODO(iceboy): notify failure

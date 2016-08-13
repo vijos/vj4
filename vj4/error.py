@@ -32,13 +32,19 @@ class UserFacingError(Error):
     return 'An error has occurred.'
 
 
+class ForbiddenError(UserFacingError):
+  @property
+  def http_status(self):
+    return 403
+
+
 class NotFoundError(UserFacingError):
   @property
   def http_status(self):
     return 404
 
 
-class ValidationError(UserFacingError):
+class ValidationError(ForbiddenError):
   @property
   def message(self):
     if len(self.args) == 1:
@@ -47,21 +53,21 @@ class ValidationError(UserFacingError):
       return 'Field {0} or {1} validation failed.'
 
 
-class InvalidTokenError(UserFacingError):
+class InvalidTokenError(ForbiddenError):
   pass
 
 
-class VerifyPasswordError(UserFacingError):
+class VerifyPasswordError(ForbiddenError):
   """Error with the `verify password', not password verification error."""
 
 
-class UserAlreadyExistError(UserFacingError):
+class UserAlreadyExistError(ForbiddenError):
   @property
   def message(self):
     return "User {0} already exists."
 
 
-class LoginError(UserFacingError):
+class LoginError(ForbiddenError):
   @property
   def message(self):
     return "Invalid user {0} or password."
@@ -79,13 +85,13 @@ class ProblemDataNotFoundError(NotFoundError):
     return "Problem {0} data not found."
 
 
-class PermissionError(UserFacingError):
+class PermissionError(ForbiddenError):
   @property
   def message(self):
     return "User doesn't have the required permission in this domain."
 
 
-class PrivilegeError(UserFacingError):
+class PrivilegeError(ForbiddenError):
   @property
   def message(self):
     if any((p | builtin.PRIV_USER_PROFILE) == builtin.PRIV_USER_PROFILE for p in self.args):
@@ -94,15 +100,15 @@ class PrivilegeError(UserFacingError):
       return "User doesn't have the required privilege."
 
 
-class CsrfTokenError(UserFacingError):
+class CsrfTokenError(ForbiddenError):
   pass
 
 
-class InvalidOperationError(UserFacingError):
+class InvalidOperationError(ForbiddenError):
   pass
 
 
-class AlreadyVotedError(UserFacingError):
+class AlreadyVotedError(ForbiddenError):
   pass
 
 
@@ -110,15 +116,15 @@ class UserNotFoundError(NotFoundError):
   pass
 
 
-class InvalidTokenDigestError(UserFacingError):
+class InvalidTokenDigestError(ForbiddenError):
   pass
 
 
-class ChangePasswordError(UserFacingError):
+class ChangePasswordError(ForbiddenError):
   pass
 
 
-class DiscussionCategoryAlreadyExistError(UserFacingError):
+class DiscussionCategoryAlreadyExistError(ForbiddenError):
   pass
 
 
@@ -126,7 +132,7 @@ class DiscussionCategoryNotFoundError(NotFoundError):
   pass
 
 
-class DiscussionNodeAlreadyExistError(UserFacingError):
+class DiscussionNodeAlreadyExistError(ForbiddenError):
   pass
 
 
@@ -152,27 +158,27 @@ class DomainNotFoundError(NotFoundError):
     return "Domain {0} not found."
 
 
-class DomainAlreadyExistError(UserFacingError):
+class DomainAlreadyExistError(ForbiddenError):
   @property
   def message(self):
     return "Domain {0} already exists."
 
 
-class ContestAlreadyAttendedError(UserFacingError):
+class ContestAlreadyAttendedError(ForbiddenError):
   pass
 
 
-class ContestNotAttendedError(UserFacingError):
+class ContestNotAttendedError(ForbiddenError):
   pass
 
 
-class ContestStatusHiddenError(UserFacingError):
+class ContestStatusHiddenError(ForbiddenError):
   @property
   def message(self):
     return "Contest status is hidden."
 
 
-class TrainingRequirementNotSatisfiedError(UserFacingError):
+class TrainingRequirementNotSatisfiedError(ForbiddenError):
   pass
 
 
@@ -180,3 +186,7 @@ class RecordNotFoundError(NotFoundError):
   @property
   def message(self):
     return "Record {0} not found."
+
+
+class OpcountExceededError(ForbiddenError):
+  pass

@@ -19,16 +19,6 @@ export default class DOMAttachedObject {
     return newInstance;
   }
 
-  static from(Protoclass, key, $obj, ...args) {
-    const instance = $obj.data(key);
-    if (instance !== undefined) {
-      return instance;
-    }
-    const newInstance = new Protoclass($obj, ...args);
-    $obj.data(key, newInstance);
-    return newInstance;
-  }
-
   detach() {
     if (this.constructor.DOMAttachKey) {
       this.$dom.removeData(this.constructor.DOMAttachKey);

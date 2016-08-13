@@ -4,6 +4,8 @@ import CmEditor from './cmeditor';
 
 export default class TextareaHandler extends DOMAttachedObject {
 
+  static DOMAttachKey = 'vjTextareaHandlerInstance';
+
   getCmEditor() {
     return CmEditor.get(this.$dom);
   }
@@ -29,5 +31,4 @@ export default class TextareaHandler extends DOMAttachedObject {
 
 }
 
-TextareaHandler.DOMAttachKey = 'vjTextareaHandlerInstance';
 _.assign(TextareaHandler, DOMAttachedObject);

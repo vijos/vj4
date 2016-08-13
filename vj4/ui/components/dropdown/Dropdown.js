@@ -4,6 +4,8 @@ import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Dropdown extends DOMAttachedObject {
 
+  static DOMAttachKey = 'vjDropdownInstance';
+
   static initFromDOM($dom) {
     // special: for navigation bar, show as a menu only in desktop
     if ($dom.attr('data-dropdown-trigger-desktop-only') !== undefined) {
@@ -46,5 +48,4 @@ export default class Dropdown extends DOMAttachedObject {
 
 }
 
-Dropdown.DOMAttachKey = 'vjDropdownInstance';
 _.assign(Dropdown, DOMAttachedObject);
