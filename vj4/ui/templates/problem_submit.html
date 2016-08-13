@@ -4,7 +4,7 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">历史评测记录 (最近 10 条)</h1>
+        <h1 class="section__title">{{ _('Recent 10 Records') }}</h1>
       </div>
       <div class="section__body no-padding">
         <table class="data-table">
@@ -41,13 +41,13 @@
 
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">递交代码进行评测</h1>
+        <h1 class="section__title">{{ _('Submit to Judge') }}</h1>
       </div>
       <div class="section__body">
         <form method="post">
           <div class="row"><div class="medium-4 columns">
             <label>
-              代码语言:
+              {{ _('Code language') }}:
               <select name="lang" class="select">
               {% for key, value in vj4.constant.language.LANG_TEXTS.items() %}
                 <option value="{{ key }}">{{ value }}</option>
@@ -57,7 +57,7 @@
           </div></div>
           <div class="row"><div class="columns">
             <label>
-              代码:
+              {{ _('Code') }}:
               <textarea class="monospace textbox" name="code" autofocus></textarea>
             </label>
           </div></div>

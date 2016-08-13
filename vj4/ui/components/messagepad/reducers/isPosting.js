@@ -14,18 +14,18 @@ export default function reducer(state = {}, action) {
     };
   }
   case 'DIALOGUES_POST_REPLY_PENDING': {
-    const { dialogueId } = action.meta;
+    const id = action.meta.dialogueId;
     return {
       ...state,
-      [dialogueId]: true,
+      [id]: true,
     };
   }
   case 'DIALOGUES_POST_REPLY_REJECTED':
   case 'DIALOGUES_POST_REPLY_FULFILLED': {
-    const { dialogueId } = action.meta;
+    const id = action.meta.dialogueId;
     return {
       ...state,
-      [dialogueId]: false,
+      [id]: false,
     };
   }
   case 'DIALOGUES_POST_SEND_PENDING': {
@@ -48,6 +48,17 @@ export default function reducer(state = {}, action) {
       ..._.omit(state, placeholderId),
       [action.payload.mdoc._id]: false,
     };
+  }
+  case 'DIALOGUES_MESSAGE_PUSH': {
+    const { type, data } = action.payload;
+    const id = data._id;
+    if (type === 'new') {
+      return {
+        ...state,
+        [id]: false,
+      };
+    }
+    return state;
   }
   default:
     return state;

@@ -5,6 +5,7 @@ from vj4 import app
 from vj4 import error
 from vj4 import constant
 from vj4.model import builtin
+from vj4.model import user
 from vj4.model import document
 from vj4.model import record
 from vj4.model.adaptor import problem
@@ -46,6 +47,7 @@ class ProblemDetailView(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    await user.attach_udocs([pdoc], 'owner_uid')
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], None))
@@ -61,6 +63,7 @@ class ProblemSubmitView(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    await user.attach_udocs([pdoc], 'owner_uid')
     if uid == None:
       rdocs = []
     else:
@@ -98,12 +101,12 @@ class ProblemPretestView(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str, data_input: str, data_output: str):
-    tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
+    did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
                              data_input = self.request.POST.getall('data_input'),
                              data_output = self.request.POST.getall('data_output'))
-    # TODO(iceboy): Use pdoc['doc_id'] -- never trust user input.
-    rid = await record.add(self.domain_id, pid, constant.record.TYPE_PRETEST, self.user['_id'],
-                           lang, code, tid)
+    pdoc = await problem.get(self.domain_id, pid)
+    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST, self.user['_id'],
+                           lang, code, did)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
@@ -121,11 +124,19 @@ class ProblemSolutionView(base.OperationHandler):
     psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
                                              skip=skip,
                                              limit=limit)
+    psdocs_with_pdoc_and_reply = list(psdocs)
+    psdocs_with_pdoc_and_reply.append(pdoc)
+    for psdoc in psdocs:
+      if 'reply' in psdoc:
+        psdocs_with_pdoc_and_reply.extend(psdoc['reply'])
+    await asyncio.gather(user.attach_udocs(psdocs_with_pdoc_and_reply, 'owner_uid'),
+                         problem.attach_pssdocs(psdocs, 'domain_id', '_id', self.user['_id']))
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
       (self.translate('problem_solution'), None))
-    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs, path_components=path_components)
+    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs,
+                path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
@@ -148,8 +159,10 @@ class ProblemSolutionView(base.OperationHandler):
                             value: int):
     pdoc = await problem.get(self.domain_id, pid)
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
-    pssdoc = await problem.vote_solution(self.domain_id, psdoc['doc_id'], self.user['_id'], value)
-    self.json_or_redirect(self.reverse_url('problem_solution', pid=pid), vote=pssdoc['vote'])
+    psdoc = await problem.vote_solution(self.domain_id, psdoc['doc_id'], self.user['_id'], value)
+    await problem.attach_pssdocs([psdoc], 'domain_id', '_id', self.user['_id'])
+    self.json_or_redirect(self.reverse_url('problem_solution', pid=pid),
+                          vote=psdoc['vote'], user_vote=psdoc['pssdoc']['vote'])
 
   post_upvote = functools.partialmethod(upvote_downvote, value=1)
   post_downvote = functools.partialmethod(upvote_downvote, value=-1)
@@ -212,9 +225,12 @@ class ProblemCreateView(base.Handler):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
-  async def post(self):
-    # TODO(twd2)
-    pass
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, title: str, content: str):
+    pid = await problem.add(self.domain_id, title, content, self.user['_id'])
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
@@ -227,6 +243,7 @@ class ProblemEditView(base.Handler):
     pdoc = await problem.get(self.domain_id, pid)
     if not pdoc:
       raise error.DiscussionNotFoundError(self.domain_id, pid)
+    await user.attach_udocs([pdoc], 'owner_uid')
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
@@ -236,6 +253,11 @@ class ProblemEditView(base.Handler):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
-  async def post(self):
-    # TODO(twd2)
-    pass
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
+    # TODO(twd2): new domain_id
+    await problem.set(self.domain_id, pid, title=title, content=content)
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))

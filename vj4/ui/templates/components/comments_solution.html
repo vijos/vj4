@@ -34,21 +34,27 @@
   <div class="media">
     <div class="media__left top">
     {% if not mode_create %}
-      <span class="vote--count">{{ doc['vote'] }}</span>
-      <form method="post">
-        <input type="hidden" name="operation" value="upvote">
-        <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
-        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-        <input type="submit" class="vote vote--upvote" value="{{ _('upvote') }}">
-      </form>
-      <form method="post">
-        <input type="hidden" name="operation" value="downvote">
-        <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
-        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-        <input type="submit" class="vote vote--downvote" value="{{ _('downvote') }}">
-      </form>
+      <div class="vote vote--discussion">
+        <div class="vote-number rotator--enabled">{{ doc['vote'] }}</div>
+        <div class="vote-op clearfix">
+          <form method="post">
+            <input type="hidden" name="operation" value="upvote">
+            <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
+            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+            <button type="submit" class="vote-button upvote icon icon-vote--up{% if doc['pssdoc']['vote'] == 1 %} active{% endif %}"></button>
+          </form>
+          <form method="post">
+            <input type="hidden" name="operation" value="downvote">
+            <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
+            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+            <button type="submit" class="vote-button downvote icon icon-vote--down{% if doc['pssdoc']['vote'] == -1 %} active{% endif %}"></button>
+          </form>
+        </div>
+      </div>
     {% else %}
-      <span class="vote--count">0</span>
+      <div class="vote vote--discussion">
+        <div class="vote-number">0</div>
+      </div>
     {% endif %}
     </div>
     <div class="media__body top">
