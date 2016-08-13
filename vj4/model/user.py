@@ -159,6 +159,17 @@ async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTI
   return docs
 
 
+def get_multi(fields=PROJECTION_VIEW, **kwargs):
+  coll = db.Collection('user')
+  return coll.find({**kwargs}, fields=fields)
+
+
+@argmethod.wrap
+async def count(**kwargs):
+  coll = db.Collection('user')
+  return coll.find({**kwargs}).count()
+
+
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('user')
