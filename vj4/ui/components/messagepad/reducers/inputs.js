@@ -14,17 +14,17 @@ export default function reducer(state = {}, action) {
     };
   }
   case 'DIALOGUES_INPUT_CHANGED': {
-    const { dialogueId } = action.meta;
+    const id = action.meta.dialogueId;
     return {
       ...state,
-      [dialogueId]: action.payload,
+      [id]: action.payload,
     };
   }
   case 'DIALOGUES_POST_REPLY_FULFILLED': {
-    const { dialogueId } = action.meta;
+    const id = action.meta.dialogueId;
     return {
       ...state,
-      [dialogueId]: '',
+      [id]: '',
     };
   }
   case 'DIALOGUES_POST_SEND_FULFILLED': {
@@ -33,6 +33,17 @@ export default function reducer(state = {}, action) {
       ..._.omit(state, placeholderId),
       [action.payload.mdoc._id]: '',
     };
+  }
+  case 'DIALOGUES_MESSAGE_PUSH': {
+    const { type, data } = action.payload;
+    const id = data._id;
+    if (type === 'new') {
+      return {
+        ...state,
+        [id]: '',
+      };
+    }
+    return state;
   }
   default:
     return state;

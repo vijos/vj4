@@ -35,6 +35,8 @@ function init() {
 
 export default class CommentBox extends DOMAttachedObject {
 
+  static DOMAttachKey = 'vjCommentBoxInstance';
+
   constructor($dom, options = {}) {
     super($dom);
     init(); // delay initialize
@@ -115,5 +117,4 @@ export default class CommentBox extends DOMAttachedObject {
 
 }
 
-CommentBox.DOMAttachKey = 'vjCommentBoxInstance';
 _.assign(CommentBox, DOMAttachedObject);

@@ -12,6 +12,7 @@ from vj4.model import token
 from vj4.model import user
 from vj4.service import bus
 from vj4.handler import base
+from vj4.service import bus
 from vj4.service import mailer
 from vj4.util import useragent
 from vj4.util import validator
@@ -176,6 +177,8 @@ class HomeMessagesView(base.OperationHandler):
     # TODO(twd2): improve here:
     mdoc['sendee_udoc']['gravatar_url'] = (
       template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
+    if self.user['_id'] != uid:
+      await bus.publish('message_received-' + str(uid), {'type': 'new', 'data': mdoc})
     self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -187,10 +190,11 @@ class HomeMessagesView(base.OperationHandler):
       return error.MessageNotFoundError(message_id)
     if mdoc['sender_uid'] != mdoc['sendee_uid']:
       if mdoc['sender_uid'] == self.user['_id']:
-        sendee_uid = mdoc['sendee_uid']
+        other_uid = mdoc['sendee_uid']
       else:
-        sendee_uid = mdoc['sender_uid']
-      await bus.publish('message_received-' + str(sendee_uid), mdoc)
+        other_uid = mdoc['sender_uid']
+      mdoc['reply'] = [reply]
+      await bus.publish('message_received-' + str(other_uid), {'type': 'reply', 'data': mdoc})
     self.json_or_redirect(self.referer_or_main, reply=reply)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -213,4 +217,3 @@ class HomeMessagesConnection(base.Connection):
 
   async def on_close(self):
     bus.unsubscribe(self.on_message_received)
-

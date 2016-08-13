@@ -102,12 +102,12 @@ class ProblemPretestView(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str, data_input: str, data_output: str):
-    tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
+    did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
                              data_input = self.request.POST.getall('data_input'),
                              data_output = self.request.POST.getall('data_output'))
     pdoc = await problem.get(self.domain_id, pid)
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST, self.user['_id'],
-                           lang, code, tid)
+                           lang, code, did)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
