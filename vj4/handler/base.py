@@ -16,6 +16,7 @@ from vj4 import error
 from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
 from vj4.model.adaptor import setting
@@ -356,6 +357,17 @@ def post_argument(coro):
     return await coro(self, **kwargs, **await self.request.post())
 
   return wrapped
+
+
+def limit_rate(op, period_secs, max_operations):
+  def decorate(coro):
+    @functools.wraps(coro)
+    async def wrapped(self, **kwargs):
+      await opcount.inc(op, self.remote_ip, period_secs, max_operations)
+      return await coro(self, **kwargs)
+
+    return wrapped
+  return decorate
 
 
 def sanitize(func):
