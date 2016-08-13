@@ -167,7 +167,7 @@ class HomeMessagesView(base.OperationHandler):
     mdoc['sendee_udoc']['gravatar_url'] = (
       template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
     if self.user['_id'] != uid:
-      await bus.publish('message_received-' + str(uid), mdoc)
+      await bus.publish('message_received-' + str(uid), {'type': 'new', 'data': mdoc})
     self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -182,7 +182,8 @@ class HomeMessagesView(base.OperationHandler):
         other_uid = mdoc['sendee_uid']
       else:
         other_uid = mdoc['sender_uid']
-      await bus.publish('message_received-' + str(other_uid), mdoc)
+      mdoc['reply'] = [reply]
+      await bus.publish('message_received-' + str(other_uid), {'type': 'reply', 'data': mdoc})
     self.json_or_redirect(self.referer_or_main, reply=reply)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
