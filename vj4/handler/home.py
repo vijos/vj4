@@ -10,7 +10,6 @@ from vj4.model import builtin
 from vj4.model import message
 from vj4.model import token
 from vj4.model import user
-from vj4.service import bus
 from vj4.handler import base
 from vj4.service import bus
 from vj4.service import mailer
