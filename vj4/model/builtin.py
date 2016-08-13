@@ -2,6 +2,7 @@ import collections
 import datetime
 
 from vj4 import constant
+from vj4.util import version
 
 # Permissions.
 PERM_NONE = 0
@@ -90,6 +91,6 @@ VIEW_LANGS = collections.OrderedDict([('zh_CN', '简体中文'),
                                       ('en', 'English')])
 
 # Footer extra HTMLs.
-FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', '{$GIT_REVISION}',
+FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
                       '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
                       '沪ICP备14040537号</a>']
