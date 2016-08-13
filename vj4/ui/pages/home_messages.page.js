@@ -2,14 +2,6 @@ import { NamedPage } from '../misc/PageLoader';
 import loadReactRedux from '../utils/loadReactRedux';
 
 const page = new NamedPage('home_messages', async () => {
-  const SockJs = await System.import('sockjs-client');
-
-  const sock = new SockJs('/home/messages-conn');
-  sock.onmessage = (message) => {
-    // TODO(twd2)
-    alert(message.data);
-  };
-
   async function mountComponent() {
     const SockJs = await System.import('sockjs-client');
     const { default: MessagePadApp } = await System.import('../components/messagepad');
