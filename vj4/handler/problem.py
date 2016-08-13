@@ -8,7 +8,6 @@ from vj4.model import builtin
 from vj4.model import user
 from vj4.model import document
 from vj4.model import record
-from vj4.model import user
 from vj4.model.adaptor import problem
 from vj4.handler import base
 
@@ -242,7 +241,6 @@ class ProblemEditView(base.Handler):
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
     pdoc = await problem.get(self.domain_id, pid)
-    await user.attach_udocs([pdoc], 'owner_uid')
     if not pdoc:
       raise error.DiscussionNotFoundError(self.domain_id, pid)
     await user.attach_udocs([pdoc], 'owner_uid')
