@@ -3,6 +3,8 @@ import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class Tab extends DOMAttachedObject {
 
+  static DOMAttachKey = 'vjTabInstance';
+
   static attachAll() {
     $('.section__tabs').each((index, table) => Tab.getOrConstruct($(table)).attach());
   }
@@ -52,5 +54,4 @@ export default class Tab extends DOMAttachedObject {
 
 }
 
-Tab.DOMAttachKey = 'vjTabInstance';
 _.assign(Tab, DOMAttachedObject);

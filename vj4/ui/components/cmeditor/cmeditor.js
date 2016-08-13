@@ -3,6 +3,8 @@ import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class CmEditor extends DOMAttachedObject {
 
+  static DOMAttachKey = 'vjCmEditorInstance';
+
   constructor($dom, options = {}) {
     super($dom);
     this.editor = null;
@@ -63,5 +65,4 @@ export default class CmEditor extends DOMAttachedObject {
 
 }
 
-CmEditor.DOMAttachKey = 'vjCmEditorInstance';
 _.assign(CmEditor, DOMAttachedObject);
