@@ -45,8 +45,7 @@ class DiscussionNodeView(base.Handler):
       discussion.get_vnode_and_list_and_count_for_node(
         self.domain_id, node_or_pid,
         skip=(page - 1) * self.DISCUSSIONS_PER_PAGE, limit=self.DISCUSSIONS_PER_PAGE))
-    gathers = [user.attach_udocs(ddocs, 'owner_uid'),
-               discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id')]
+    gathers = [user.attach_udocs(ddocs, 'owner_uid')]
     if 'owner_uid' in vnode:
       gathers.append(user.attach_udocs([vnode], 'owner_uid'))
     await asyncio.gather(*gathers)
