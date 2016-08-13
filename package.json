@@ -57,7 +57,6 @@
     "lodash": "^4.14.2",
     "moment": "^2.14.1",
     "normalize.css": "^4.2.0",
-    "odometer": "^0.4.7",
     "pickadate": "^3.5.6",
     "promise.prototype.finally": "^1.0.1",
     "rc-tabs": "^5.9.2",
