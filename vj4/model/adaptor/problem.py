@@ -17,7 +17,8 @@ from vj4.util import argmethod
 async def add(domain_id: str, title: str, content: str, owner_uid: int,
               pid: document.convert_doc_id = None, data: objectid.ObjectId = None):
   return await document.add(domain_id, content, owner_uid,
-                            document.TYPE_PROBLEM, pid, title=title, data=data)
+                            document.TYPE_PROBLEM, pid, title=title, data=data,
+                            num_submit=0, num_accept=0)
 
 
 @argmethod.wrap
@@ -184,13 +185,23 @@ async def get_data_list(last: int):
 
 
 @argmethod.wrap
+async def inc(domain_id: str, pid: document.convert_doc_id,
+              submit: int, accept: int):
+  await document.inc(domain_id, document.TYPE_PROBLEM, pid, 'num_submit', submit)
+  pdoc = await document.inc(domain_id, document.TYPE_PROBLEM, pid, 'num_accept', accept)
+  if not pdoc:
+    raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
+  return pdoc
+
+
+@argmethod.wrap
 async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
                         rid: objectid.ObjectId, status: int):
   try:
-    await document.set_if_not_status(domain_id, document.TYPE_PROBLEM, pid, uid,
-                                     'status', status, constant.record.STATUS_ACCEPTED, rid=rid)
+    return await document.set_if_not_status(domain_id, document.TYPE_PROBLEM, pid, uid, 'status',
+                                            status, constant.record.STATUS_ACCEPTED, rid=rid)
   except errors.DuplicateKeyError:
-    pass
+    return None
 
 
 async def attach_pdocs(docs, domain_field_name, pid_field_name):
