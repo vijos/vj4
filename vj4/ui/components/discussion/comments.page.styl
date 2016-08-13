@@ -74,10 +74,11 @@ $downvote-color = red
     width: 100%
     outline: 0
     font-size: rem(12px)
-    line-height: 1.5
+    line-height: 1
+    padding: rem(3px 0)
     color: #AAA
     border: 1px solid transparent
-    transition: color .1s linear, background .1s linear
+    transition: color .1s linear, background-color .1s linear
 
     &.upvote
       &:hover
@@ -85,7 +86,7 @@ $downvote-color = red
         color: $upvote-color
 
       &.active
-        background: $upvote-color
+        background: lighten($upvote-color, 50%)
         color: #FFF
 
     &.downvote
@@ -94,5 +95,5 @@ $downvote-color = red
         color: $downvote-color
 
       &.active
-        background: $downvote-color
+        background: lighten($downvote-color, 50%)
         color: #FFF
