@@ -4,6 +4,7 @@ import datetime
 from vj4 import app
 from vj4 import error
 from vj4.model import builtin
+from vj4.model import opcount
 from vj4.model import system
 from vj4.model import token
 from vj4.model import user
@@ -20,13 +21,13 @@ class UserRegisterHandler(base.Handler):
     self.render('user_register.html')
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
+  @base.limit_rate('user_register', 3600, 60)
   @base.post_argument
   @base.sanitize
   async def post(self, *, mail: str):
     validator.check_mail(mail)
     if await user.get_by_mail(mail):
       raise error.UserAlreadyExistError(mail)
-    # TODO(iceboy): rate limit.
     rid, _ = await token.add(token.TYPE_REGISTRATION,
                              options.options.registration_token_expire_seconds,
                              mail=mail)
@@ -73,6 +74,7 @@ class UserLostpassHandler(base.Handler):
     self.render('user_lostpass.html')
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
+  @base.limit_rate('user_register', 3600, 60)
   @base.post_argument
   @base.sanitize
   async def post(self, *, mail: str):
@@ -80,7 +82,6 @@ class UserLostpassHandler(base.Handler):
     udoc = await user.get_by_mail(mail)
     if not udoc:
       raise error.UserNotFoundError(mail)
-    # TODO(iceboy): rate limit.
     rid, _ = await token.add(token.TYPE_LOSTPASS,
                              options.options.lostpass_token_expire_seconds,
                              uid=udoc['_id'])
