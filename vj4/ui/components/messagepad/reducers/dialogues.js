@@ -22,14 +22,14 @@ export default function reducer(state = {}, action) {
     };
   }
   case 'DIALOGUES_POST_REPLY_FULFILLED': {
-    const { dialogueId } = action.meta;
+    const id = action.meta.dialogueId;
     const { reply } = action.payload;
     return {
       ...state,
-      [dialogueId]: {
-        ...state[dialogueId],
+      [id]: {
+        ...state[id],
         reply: [
-          ...state[dialogueId].reply,
+          ...state[id].reply,
           reply,
         ],
       },
@@ -41,6 +41,32 @@ export default function reducer(state = {}, action) {
       ..._.omit(state, placeholderId),
       [action.payload.mdoc._id]: action.payload.mdoc,
     };
+  }
+  case 'DIALOGUES_MESSAGE_PUSH': {
+    const { type, data } = action.payload;
+    const id = data._id;
+    if (type === 'new') {
+      return {
+        ...state,
+        [id]: data,
+      };
+    } else if (type === 'reply') {
+      if (state[id] === undefined) {
+        window.location.reload();
+        return state;
+      }
+      return {
+        ...state,
+        [id]: {
+          ...state[id],
+          reply: [
+            ...state[id].reply,
+            data.reply[0],
+          ],
+        },
+      };
+    }
+    return state;
   }
   default:
     return state;
