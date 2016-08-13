@@ -14,6 +14,7 @@ from vj4.handler import base
 from vj4.service import bus
 from vj4.service import mailer
 from vj4.util import useragent
+from vj4.util import validator
 from vj4.util import geoip
 from vj4.util import options
 from vj4.util import validator
@@ -125,7 +126,14 @@ class HomeAccountView(base.Handler):
   async def post(self, *, gravatar: str, qq: str, gender: int,
                  show_mail: int, show_qq: int, show_gender: int,
                  view_lang: str, code_lang: str, show_tags: int, send_code: int):
-    # TODO(twd2): check gender
+    # TODO(twd2): check show_tags
+    validator.check_gender(gender)
+    validator.check_privacy('show_mail', show_mail)
+    validator.check_privacy('show_qq', show_qq)
+    validator.check_privacy('show_gender', show_gender)
+    validator.check_function('send_code', send_code)
+    validator.check_code_lang('code_lang', code_lang)
+    validator.check_view_lang(view_lang)
     await user.set_by_uid(self.user['_id'], g=gravatar, qq=qq, gender=gender,
                           show_mail=show_mail, show_qq=show_qq, show_gender=show_gender,
                           view_lang=view_lang, code_lang=code_lang, show_tags=show_tags, send_code=send_code)

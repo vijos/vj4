@@ -45,13 +45,12 @@ def markdown(text):
 
 
 def gravatar_url(gravatar, size=200):
-  # TODO: 'd' should be https://domain/img/avatar.png
   if gravatar:
     gravatar_hash = hashlib.md5(gravatar.lower().encode()).hexdigest()
+    return ('//gravatar.lug.ustc.edu.cn/avatar/' + gravatar_hash + "?" +
+            parse.urlencode({'d': options.options.url_prefix + '/img/avatar.png', 's': str(size)}))
   else:
-    gravatar_hash = ''
-  return ('//gravatar.lug.ustc.edu.cn/avatar/' + gravatar_hash + "?" +
-          parse.urlencode({'d': 'mm', 's': str(size)}))
+    return options.options.url_prefix + '/img/avatar.png'
 
 
 def paginate(page, num_pages):

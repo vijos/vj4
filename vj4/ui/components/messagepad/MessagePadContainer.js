@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Icon from '../react/IconComponent';
+import i18n from '../../utils/i18n';
 import MessagePadDialogueList from './MessagePadDialogueListContainer';
 import MessagePadDialogueContent from './MessagePadDialogueContentContainer';
 import MessagePadInput from './MessagePadInputContainer';
@@ -52,6 +53,7 @@ export default class MessagePadContainer extends React.PureComponent {
     }
   }
   render() {
+    // TODO(twd2): i18n
     return (
       <div className="messagepad clearfix" ref="container">
         <div className="messagepad__sidebar">

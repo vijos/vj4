@@ -50,6 +50,9 @@ export default class CommentBox extends DOMAttachedObject {
       const submitButton = this.$box.find('.dczcomments__box__submit');
       submitButton.val(submitButton.attr(`data-value-${options.mode}`));
     }
+    if (!!options.noTextarea) {
+      this.$box.find('.editarea').hide();
+    }
   }
 
   getTextareaHandler() {
@@ -58,7 +61,11 @@ export default class CommentBox extends DOMAttachedObject {
   }
 
   focus() {
-    this.getTextareaHandler().focus();
+    if (!this.options.noTextarea) {
+      this.getTextareaHandler().focus();
+    } else {
+      this.$box.find('.dczcomments__box__submit').focus();
+    }
     return this;
   }
 
@@ -84,12 +91,20 @@ export default class CommentBox extends DOMAttachedObject {
   }
 
   onSubmit() {
-    util
-      .post('', {
-        ...this.options.form,
-        content: this.getText(),
-      })
-      .then(() => window.location.reload());
+    if (!this.options.noTextarea) {
+      util
+        .post('', {
+          ...this.options.form,
+          content: this.getText(),
+        })
+        .then(() => window.location.reload());
+    } else {
+      util
+        .post('', {
+          ...this.options.form,
+        })
+        .then(() => window.location.reload());
+    }
   }
 
   async onCancel(ev) {

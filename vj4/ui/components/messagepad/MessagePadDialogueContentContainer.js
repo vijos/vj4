@@ -19,16 +19,19 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
     if (this.props.activeId === null) {
       return [];
     }
-    return _.map(this.props.item.reply, (reply, idx) => (
-      <Message
-        key={idx}
-        isSelf={reply.sender_uid === UserContext.uid}
-        faceUrl="//gravatar.lug.ustc.edu.cn/avatar/3efe6856c336243c907e2852b0498fcf?d=mm&amp;s=200"
-      >
-        <div>{reply.content}</div>
-        <time>{moment(reply.at).fromNow()}</time>
-      </Message>
-    ));
+    return _.map(this.props.item.reply, (reply, idx) => {
+      const udoc = reply.sender_uid === this.props.item.sender_uid ? this.props.item.sender_udoc : this.props.item.sendee_udoc;
+      return (
+        <Message
+          key={idx}
+          isSelf={reply.sender_uid === UserContext.uid}
+          faceUrl={udoc.gravatar_url}
+        >
+          <div>{reply.content}</div>
+          <time>{moment(reply.at).fromNow()}</time>
+        </Message>
+      );
+    });
   }
   render() {
     return (

@@ -1,0 +1,22 @@
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title">{{ _('Create Discussion in {0}').format(vnode.title) }}</h1>
+  </div>
+  <div class="section__body">
+    <form method="post"{% if inline %} action="{{ reverse_url('discussion_create', node_or_pid=vnode['doc_id']) }}"{% endif %}>
+      <div class="row"><div class="medium-8 columns">
+        <input name="title" placeholder="{{ _('title') }}" class="textbox"{% if not inline %} autofocus{% endif %}>
+      </div></div>
+      <div class="row"><div class="columns">
+        <textarea name="content" class="textbox" data-markdown></textarea>
+      </div></div>
+      <div class="row"><div class="columns">
+        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+        <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+        {% if not inline %}
+          <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
+        {% endif %}
+      </div></div>
+    </form>
+  </div>
+</div>

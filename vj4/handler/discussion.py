@@ -30,7 +30,7 @@ class DiscussionMainView(base.Handler):
                 page=page, dcount=dcount)
 
 
-@app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
+@app.route('/discuss/{node_or_pid}/', 'discussion_node')
 class DiscussionNodeView(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
