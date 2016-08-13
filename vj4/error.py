@@ -32,6 +32,12 @@ class UserFacingError(Error):
     return 'An error has occurred.'
 
 
+class ForbiddenError(UserFacingError):
+  @property
+  def http_status(self):
+    return 403
+
+
 class NotFoundError(UserFacingError):
   @property
   def http_status(self):
@@ -180,3 +186,7 @@ class RecordNotFoundError(NotFoundError):
   @property
   def message(self):
     return "Record {0} not found."
+
+
+class OpcountExceededError(ForbiddenError):
+  pass
