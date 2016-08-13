@@ -10,3 +10,4 @@ pytz
 colorlog
 httpagentparser
 geoip2
+GitPython
