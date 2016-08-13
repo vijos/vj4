@@ -3,6 +3,8 @@ import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
 
+  static DOMAttachKey = 'vjStyledTableInstance';
+
   static attachAll() {
     $('.section__body > .data-table').each((index, table) => StyledTable.getOrConstruct($(table)).attach());
   }
@@ -17,10 +19,10 @@ export default class StyledTable extends DOMAttachedObject {
       return false;
     }
 
-    this.$container = $(document.createElement('div')).addClass('section__table-container');
+    this.$container = $('<div>').addClass('section__table-container');
     this.$container.insertBefore(this.$dom);
 
-    this.$header = $(document.createElement('table'));
+    this.$header = $('<table>');
     this.$header.attr('class', `${this.$dom.attr('class')} section__table-header`);
 
     this.$container
@@ -43,5 +45,4 @@ export default class StyledTable extends DOMAttachedObject {
 
 }
 
-StyledTable.DOMAttachKey = 'vjStyledTableInstance';
 _.assign(StyledTable, DOMAttachedObject);

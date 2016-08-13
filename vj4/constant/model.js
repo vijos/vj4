@@ -7,6 +7,6 @@ export const USER_GENDERS = [USER_GENDER_MALE, USER_GENDER_FEMALE, USER_GENDER_O
 export const USER_GENDER_RANGE = {
   [USER_GENDER_MALE]: 'Boy ♂',
   [USER_GENDER_FEMALE]: 'Girl ♀',
-  [USER_GENDER_OTHER]: 'Other 😱',
+  [USER_GENDER_OTHER]: 'Other',
 };
 attachObjectMeta(USER_GENDER_RANGE, 'intKey', true);

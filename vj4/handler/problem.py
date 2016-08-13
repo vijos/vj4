@@ -47,6 +47,7 @@ class ProblemDetailView(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    await user.attach_udocs([pdoc], 'owner_uid')
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], None))
@@ -62,6 +63,7 @@ class ProblemSubmitView(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    await user.attach_udocs([pdoc], 'owner_uid')
     if uid == None:
       rdocs = []
     else:
@@ -99,12 +101,12 @@ class ProblemPretestView(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str, data_input: str, data_output: str):
-    tid = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
+    did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
                              data_input = self.request.POST.getall('data_input'),
                              data_output = self.request.POST.getall('data_output'))
-    # TODO(iceboy): Use pdoc['doc_id'] -- never trust user input.
-    rid = await record.add(self.domain_id, pid, constant.record.TYPE_PRETEST, self.user['_id'],
-                           lang, code, tid)
+    pdoc = await problem.get(self.domain_id, pid)
+    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST, self.user['_id'],
+                           lang, code, did)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
@@ -122,11 +124,12 @@ class ProblemSolutionView(base.OperationHandler):
     psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
                                              skip=skip,
                                              limit=limit)
-    psdocs_with_reply = list(psdocs)
+    psdocs_with_pdoc_and_reply = list(psdocs)
+    psdocs_with_pdoc_and_reply.append(pdoc)
     for psdoc in psdocs:
       if 'reply' in psdoc:
-        psdocs_with_reply.extend(psdoc['reply'])
-    await asyncio.gather(user.attach_udocs(psdocs_with_reply, 'owner_uid'),
+        psdocs_with_pdoc_and_reply.extend(psdoc['reply'])
+    await asyncio.gather(user.attach_udocs(psdocs_with_pdoc_and_reply, 'owner_uid'),
                          problem.attach_pssdocs(psdocs, 'domain_id', '_id', self.user['_id']))
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
@@ -240,6 +243,7 @@ class ProblemEditView(base.Handler):
     pdoc = await problem.get(self.domain_id, pid)
     if not pdoc:
       raise error.DiscussionNotFoundError(self.domain_id, pid)
+    await user.attach_udocs([pdoc], 'owner_uid')
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),

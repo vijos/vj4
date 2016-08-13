@@ -1,11 +1,10 @@
-import Odometer from 'odometer';
-
+import Rotator from '../rotator';
 import { AutoloadPage } from '../../misc/PageLoader';
 import * as util from '../../misc/Util';
 
 function setVoteState($container, value, status) {
   const $num = $container.find('.vote-number');
-  $num.text(value);
+  Rotator.get($num).setValue(value);
   $container.find('.vote-button').removeClass('active');
   if (status === 1) {
     $container.find('.upvote').addClass('active');
@@ -14,17 +13,12 @@ function setVoteState($container, value, status) {
   }
 }
 
-function applyOdometer(element) {
-  $(element).data('odometer', new Odometer({
-    el: element,
-    duration: 200,
-    format: 'd',
-    value: $(element).text(),
-  }));
+function applyRotator(element) {
+  Rotator.getOrConstruct($(element));
 }
 
 const votePage = new AutoloadPage(() => {
-  $('.vote-number.odometer--enabled').each((i, el) => applyOdometer(el));
+  $('.vote-number.rotator--enabled').each((i, el) => applyRotator(el));
   $(document).on('click', '.vote-button', ev => {
     const $button = $(ev.currentTarget);
     const $container = $button.closest('.vote');
