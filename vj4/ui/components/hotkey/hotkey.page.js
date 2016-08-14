@@ -32,10 +32,10 @@ function testElementHotkey(hotkey, $element, attr) {
   if (!$element.is(':visible')) {
     return;
   }
-  const hotkeyDefined = String($element.attr(attr))
+  String($element.attr(attr))
     .split(',')
     .forEach(singleDef => {
-      const [ defStr, trigger ] = singleDef.split(':');
+      const [defStr, trigger] = singleDef.split(':');
       if (isHotkeyMatch(hotkey, defStr)) {
         switch (trigger) {
         case 'submit':

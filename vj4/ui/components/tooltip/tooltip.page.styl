@@ -11,7 +11,7 @@
     position: absolute
     z-index: 10
 
-  &.tooltip--downward
+  &[data-tooltip-below]
     &:before, &:after
       bottom: initial
       top: 100%
@@ -27,7 +27,7 @@
     box-shadow: 1px 1px 4px rgba(#000, 0.3)
     line-height: 1
 
-  &.tooltip--downward
+  &[data-tooltip-below]
     &:after
       margin-top: 11px
       margin-bottom: 0
@@ -37,7 +37,7 @@
     border-top-color: #333
     content: ""
 
-  &.tooltip--downward
+  &[data-tooltip-below]
     &:before
       border-top-color: transparent
       border-bottom-color: #333
@@ -48,7 +48,7 @@
     transition: transform .2s, opacity .2s
     transition-timing-function: ease-out-cubic
 
-  &.tooltip--downward
+  &[data-tooltip-below]
     &:before, &:after
       transform: translate(-50%, -5px) scale(0.9)
       transform-origin: 50% 0
