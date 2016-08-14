@@ -8,21 +8,24 @@ from vj4.model import builtin
 from vj4.model import user
 
 Setting = functools.partial(
-  collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui']),
-  range=None, ui='input')
+  collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui', 'desc']),
+  range=None, ui='input', desc='')
 
 # Setting keys should not duplicate with user keys or session keys.
 SETTINGS = [
-  Setting('info', 'gravatar', str),
+  Setting('preference', 'view_lang', str, range=builtin.VIEW_LANGS, ui='select'),
+  Setting('preference', 'code_lang', str, range=constant.language.LANG_TEXTS, ui='select'),
+  Setting('preference', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE, ui='select',
+          desc='Whether to show tags in the problem list.'),
+  Setting('info', 'gravatar', str,
+          desc='We use Gravatar to present your avatar icon.'),
   Setting('info', 'qq', str),
   Setting('info', 'gender', int, range=constant.model.USER_GENDER_RANGE, ui='select'),
   Setting('privacy', 'show_mail', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
   Setting('privacy', 'show_qq', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
   Setting('privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
-  Setting('preference', 'view_lang', str, range=builtin.VIEW_LANGS, ui='select'),
-  Setting('preference', 'code_lang', str, range=constant.language.LANG_TEXTS, ui='select'),
-  Setting('preference', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE, ui='select'),
-  Setting('function', 'send_code', int, range=constant.setting.FUNCTION_RANGE, ui='select')]
+  Setting('function', 'send_code', int, range=constant.setting.FUNCTION_RANGE, ui='select',
+          desc='If enabled, source code will be emailed to you after the submission is accepted.')]
 
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
 SETTINGS_BY_FAMILY = collections.OrderedDict(
