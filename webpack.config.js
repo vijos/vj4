@@ -18,11 +18,11 @@ var root = function (fn) {
 
 var getI18NEntries = function () {
   var entries = {};
-  var localeFiles = glob.sync(root('vj4/locale/*.csv'));
+  var localeFiles = glob.sync(root('vj4/locale/*.yaml'));
   localeFiles.forEach(function (fileName) {
-    var locale = path.basename(fileName, '.csv');
+    var locale = path.basename(fileName, '.yaml');
     var dummyEntry = root('vj4/ui/.locale-loader/' + locale + '.js');
-    fs.writeFileSync(dummyEntry, 'window.LOCALES = require(\'../../locale/' + locale + '.csv\');\n');
+    fs.writeFileSync(dummyEntry, 'window.LOCALES = require(\'../../locale/' + locale + '.yaml\');\n');
     entries['locale_' + locale] = dummyEntry;
   });
   return entries;
