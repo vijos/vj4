@@ -3,6 +3,7 @@ import functools
 import itertools
 
 from vj4 import constant
+from vj4 import error
 from vj4.model import builtin
 from vj4.model import user
 
@@ -40,6 +41,13 @@ class SettingMixin(object):
     return setting.factory()
 
   async def set_settings(self, **kwargs):
+    for key, value in kwargs.items():
+      if key not in SETTINGS_BY_KEY:
+        raise error.UnknownFieldError(key)
+      setting = SETTINGS_BY_KEY[key]
+      kwargs[key] = setting.factory(value)
+      if setting.range and kwargs[key] not in setting.range:
+        raise error.ValidationError(key)
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       await user.set_by_uid(self.user['_id'], **kwargs)
     else:

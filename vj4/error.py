@@ -53,6 +53,12 @@ class ValidationError(ForbiddenError):
       return 'Field {0} or {1} validation failed.'
 
 
+class UnknownFieldError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Unknown field {0}.'
+
+
 class InvalidTokenError(ForbiddenError):
   pass
 
