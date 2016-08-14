@@ -9,6 +9,7 @@ from vj4.model import user
 from vj4.model import document
 from vj4.model import record
 from vj4.model.adaptor import problem
+from vj4.service import bus
 from vj4.handler import base
 
 
@@ -61,6 +62,7 @@ class ProblemSubmitView(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
+    # TODO(twd2): check status, eg. test, hidden problem, ...
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
     await user.attach_udocs([pdoc], 'owner_uid')
@@ -86,9 +88,11 @@ class ProblemSubmitView(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
+    # TODO(twd2): check status, eg. test, hidden problem, ...
     pdoc = await problem.get(self.domain_id, pid)
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION, self.user['_id'],
                            lang, code)
+    await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
@@ -101,12 +105,14 @@ class ProblemPretestView(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str, data_input: str, data_output: str):
+    # TODO(twd2): check status, eg. test, hidden problem, ...
     did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
                              data_input = self.request.POST.getall('data_input'),
                              data_output = self.request.POST.getall('data_output'))
     pdoc = await problem.get(self.domain_id, pid)
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST, self.user['_id'],
                            lang, code, did)
+    await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 

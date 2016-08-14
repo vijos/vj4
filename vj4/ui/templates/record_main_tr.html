@@ -13,6 +13,13 @@
     {% endif %}
   </td>
   <td class="col--problem">
+    <form class="form--inline" method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
+      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+      <button type="submit" class="link text-maroon lighter">
+        <span class="icon icon-refresh"></span>
+        {{ _('Rejudge') }}
+      </button> |
+    </form>
     {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
     (Pretest)
     {% endif %}

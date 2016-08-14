@@ -98,19 +98,20 @@ class JudgeNotifyConnection(base.Connection):
                                                       int(kwargs['memory_kb'])),
                                      self.channel.basic_client_ack(tag))
       accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
-      do_inc = await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
-                                           rdoc['_id'], rdoc['status'])
       post_coros = [bus.publish('record_change', rid)]
-      if do_inc:
-        post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 1,
-                                      1 if accept else 0))
-      if rdoc['tid']:
-        post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
-                                                rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
-      if accept:
-        post_coros.append(training.update_status_by_pid(rdoc['domain_id'],
-                                                        rdoc['uid'], rdoc['pid']))
-      # TODO(twd2): update user (num_submit, num_accept)
+      if rdoc['type'] == constant.record.TYPE_SUBMISSION:
+        _, delta_submit, delta_new = (
+          await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
+                                      rdoc['_id'], rdoc['status'], accept, rdoc['score']))
+        if delta_submit != 0 or delta_new != 0:
+          post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], delta_submit, delta_new))
+          # TODO(twd2): update user (num_submit, num_accept)
+        if rdoc['tid']:
+          post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
+                                                  rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
+        if accept:
+          post_coros.append(training.update_status_by_pid(rdoc['domain_id'],
+                                                          rdoc['uid'], rdoc['pid']))
       await asyncio.gather(*post_coros)
     elif key == 'nack':
       await self.channel.basic_client_nack(tag)
