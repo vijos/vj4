@@ -4,7 +4,7 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{% if page_name == 'problem_edit' %}Edit Problem{% else %}Create Problem{% endif %}</h1>
+        <h1 class="section__title">{% if page_name == 'problem_edit' %}{{ _('Edit Problem') }}{% else %}{{ _('Create Problem') }}{% endif %}</h1>
       </div>
       <div class="section__body">
         <form method="post">
@@ -18,7 +18,7 @@
                 <option value="123456">同济大学</option>
               </select>
               {% else %}
-              <input value="{{ handler.domain_id }}" class="textbox" disabled>
+              <input value="{{ _('current domain') }} ({{ handler.domain_id }})" class="textbox" disabled>
               {% endif %}
             </label>
           </div><div class="medium-8 columns">
