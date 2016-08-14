@@ -1,5 +1,5 @@
-import asyncio
 import hashlib
+import time
 import unittest
 
 from bson import objectid
@@ -141,6 +141,15 @@ class FsTest(base.DatabaseTestCase):
 
 
 class OpcountTest(base.DatabaseTestCase):
+  def setUp(self):
+    super().setUp()
+    self.old_time = time.time
+    time.time = lambda: 0
+
+  def tearDown(self):
+    time.time = self.old_time
+    super().tearDown()
+
   @base.wrap_coro
   async def test_inc(self):
     await opcount.inc(OP1, IDENT, 1, 1)
@@ -150,7 +159,7 @@ class OpcountTest(base.DatabaseTestCase):
     await opcount.inc(OP2, IDENT, 1, 2)
     with self.assertRaises(error.OpcountExceededError):
       await opcount.inc(OP2, IDENT, 1, 2)
-    await asyncio.sleep(1.0)
+    time.time = lambda: 1
     await opcount.inc(OP1, IDENT, 1, 1)
     await opcount.inc(OP2, IDENT, 1, 2)
 
