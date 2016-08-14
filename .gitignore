@@ -22,3 +22,8 @@ Vagrantfile
 
 # MaxMind DB.
 *.mmdb
+
+# Generated locale entries
+vj4/ui/.locale-loader/*
+
+!.gitkeep
