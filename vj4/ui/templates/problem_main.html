@@ -19,8 +19,8 @@
             <tr>
               <th class="col--status">{{ _('Status') }}</th>
               <th class="col--name">{{ _('Problem') }}</th>
-              <th class="col--submit_n">{{ _('# Submit') }}</th>
-              <th class="col--ac_rate">{{ _('% AC') }}</th>
+              <th class="col--submit_n">{{ _('Submit') }}</th>
+              <th class="col--ac_rate">% {{ _('AC') }}</th>
               <th class="col--difficulty">{{ _('Difficulty') }}</th>
             </tr>
           </thead>
@@ -51,8 +51,8 @@
                   </a>
                 </form>
               </td>
-              <td class="col--submit_n">1234</td>
-              <td class="col--ac_rate">50%</td>
+              <td class="col--submit_n">{{ pdoc['num_submit'] }}</td>
+              <td class="col--ac_rate">{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int if pdoc['num_submit'] > 0 else _('N/A') }}</td>
               <td class="col--difficulty">9</td>
             </tr>
           {% endfor %}
