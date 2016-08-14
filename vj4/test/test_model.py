@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import unittest
 
@@ -9,6 +10,7 @@ from vj4 import error
 from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
+from vj4.model import opcount
 from vj4.model import system
 from vj4.model import user
 from vj4.test import base
@@ -16,16 +18,17 @@ from vj4.test import base
 CONTENT = 'dummy_content'
 DUP_UID = 0
 DUP_UNAME = 'GuESt'
-SPWD_UID = 22
-SPWD_UNAME = 'twd2'
-SMAIL_UID = 23
-SMAIL_UNAME = 'twd3'
+UID = 22
+UNAME = 'twd2'
 OWNER_UID = 22
 DOMAIN_ID = 'dummy_domain'
 DOC_TYPE = document.TYPE_PROBLEM
 STATUS_KEY = 'dummy_key'
 ROLES = {'dummy': 777}
 OWNER_UID2 = 222
+OP1 = 'test1'
+OP2 = 'test2'
+IDENT = '127.0.0.1'
 
 
 class SystemTest(base.DatabaseTestCase):
@@ -43,24 +46,24 @@ class UserTest(base.DatabaseTestCase):
 
   @base.wrap_coro
   async def test_set_password(self):
-    await user.add(SPWD_UID, SPWD_UNAME, '123456', 'twd2@vijos.org', 0)
-    self.assertNotEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
-    await user.set_password(SPWD_UID, '123457')
-    self.assertEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
+    await user.add(UID, UNAME, '123456', 'twd2@vijos.org', 0)
+    self.assertNotEqual(await user.check_password_by_uid(UID, '123456'), None)
+    await user.set_password(UID, '123457')
+    self.assertEqual(await user.check_password_by_uid(UID, '123456'), None)
 
   @base.wrap_coro
   async def test_change_password(self):
-    await user.add(SPWD_UID, SPWD_UNAME, '123456', 'twd2@vijos.org', 0)
-    self.assertNotEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
-    self.assertNotEqual(await user.change_password(SPWD_UID, '123456', '123457'), None)
-    self.assertEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
+    await user.add(UID, UNAME, '123456', 'twd2@vijos.org', 0)
+    self.assertNotEqual(await user.check_password_by_uid(UID, '123456'), None)
+    self.assertNotEqual(await user.change_password(UID, '123456', '123457'), None)
+    self.assertEqual(await user.check_password_by_uid(UID, '123456'), None)
 
   @base.wrap_coro
   async def test_change_password_failed(self):
-    await user.add(SPWD_UID, SPWD_UNAME, '123456', 'twd2@vijos.org', 0)
-    self.assertNotEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
-    self.assertEqual(await user.change_password(SPWD_UID, '123457', '123457'), None)
-    self.assertNotEqual(await user.check_password_by_uname(SPWD_UNAME, '123456'), None)
+    await user.add(UID, UNAME, '123456', 'twd2@vijos.org', 0)
+    self.assertNotEqual(await user.check_password_by_uid(UID, '123456'), None)
+    self.assertEqual(await user.change_password(UID, '123457', '123457'), None)
+    self.assertNotEqual(await user.check_password_by_uid(UID, '123456'), None)
 
 class DocumentTest(base.DatabaseTestCase):
   def test_convert_doc_id(self):
@@ -135,6 +138,21 @@ class FsTest(base.DatabaseTestCase):
     await fs.unlink(file_id)
     with self.assertRaises(gridfs_errors.NoFile):
       await fs.get(file_id)
+
+
+class OpcountTest(base.DatabaseTestCase):
+  @base.wrap_coro
+  async def test_inc(self):
+    await opcount.inc(OP1, IDENT, 1, 1)
+    await opcount.inc(OP2, IDENT, 1, 2)
+    with self.assertRaises(error.OpcountExceededError):
+      await opcount.inc(OP1, IDENT, 1, 1)
+    await opcount.inc(OP2, IDENT, 1, 2)
+    with self.assertRaises(error.OpcountExceededError):
+      await opcount.inc(OP2, IDENT, 1, 2)
+    await asyncio.sleep(1.0)
+    await opcount.inc(OP1, IDENT, 1, 1)
+    await opcount.inc(OP2, IDENT, 1, 2)
 
 
 if __name__ == '__main__':
