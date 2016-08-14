@@ -25,6 +25,7 @@ PERM_VIEW_CONTEST_STATUS = 1 << 15
 PERM_CREATE_CONTEST = 1 << 16
 PERM_ATTEND_CONTEST = 1 << 17
 PERM_VIEW_TRAINING = 1 << 18
+PERM_REJUDGE = 1 << 19
 PERM_ALL = -1
 
 # Privileges.
@@ -85,10 +86,6 @@ USER_GUEST = {'_id': UID_GUEST,
               'loginip': '',
               'gravatar': ''}
 USERS = [USER_GUEST]
-
-# View langs.
-VIEW_LANGS = collections.OrderedDict([('zh_CN', '简体中文'),
-                                      ('en', 'English')])
 
 # Footer extra HTMLs.
 FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
