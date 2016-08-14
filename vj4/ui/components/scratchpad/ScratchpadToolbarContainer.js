@@ -87,15 +87,21 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           disabled={this.props.isPosting || !this.props.pretestValid}
           className="scratchpad__toolbar__pretest"
           onClick={() => this.props.postPretest(this.context)}
+          data-global-hotkey="f5"
+          data-tooltip="Pretest Your Code (F5)"
+          data-tooltip-below
         >
-          <Icon name="debug" />Run Pretest
+          <Icon name="debug" />Run Pretest (F5)
         </ToolbarButton>
         <ToolbarButton
           disabled={this.props.isPosting}
           className="scratchpad__toolbar__submit"
           onClick={() => this.props.postSubmit(this.context)}
+          data-global-hotkey="f10"
+          data-tooltip="Submit Your Code (F10)"
+          data-tooltip-below
         >
-          <Icon name="play" />Submit Solution
+          <Icon name="play" />Submit Solution (F10)
         </ToolbarButton>
         <ToolbarItem>
           <select
@@ -113,12 +119,18 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
         <ToolbarButton
           activated={this.props.pretestVisible}
           onClick={() => this.props.togglePanel('pretest')}
+          data-global-hotkey="alt+p"
+          data-tooltip="Toggle Pretest Panel (Alt+P)"
+          data-tooltip-below
         >
           <Icon name="edit" />Pretest
         </ToolbarButton>
         <ToolbarButton
           activated={this.props.recordsVisible}
           onClick={() => this.props.togglePanel('records')}
+          data-global-hotkey="alt+r"
+          data-tooltip="Toggle Records Panel (Alt+R)"
+          data-tooltip-below
         >
           <Icon name="flag" />Records
         </ToolbarButton>
