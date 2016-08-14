@@ -22,7 +22,7 @@ var getI18NEntries = function () {
   localeFiles.forEach(function (fileName) {
     var locale = path.basename(fileName, '.yaml');
     var dummyEntry = root('vj4/ui/.locale-loader/' + locale + '.js');
-    fs.writeFileSync(dummyEntry, 'window.LOCALES = require(\'../../locale/' + locale + '.yaml\');\n');
+    fs.writeFileSync(dummyEntry, 'window.LOCALES = require(\'json!yaml!../../locale/' + locale + '.yaml\');\n');
     entries['locale_' + locale] = dummyEntry;
   });
   return entries;
