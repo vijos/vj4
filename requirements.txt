@@ -11,3 +11,4 @@ colorlog
 httpagentparser
 geoip2
 GitPython
+PyYAML
