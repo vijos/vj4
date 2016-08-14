@@ -48,6 +48,9 @@ async def count(domain_id: str):
   return await document.get_multi(domain_id, document.TYPE_PROBLEM).count()
 
 
+def get_multi(domain_id: str, fields=None):
+  return document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields)
+
 @argmethod.wrap
 async def get_list(domain_id: str, uid: int = None, fields=None, skip: int = 0, limit: int = 0):
   # TODO(iceboy): projection.

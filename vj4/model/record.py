@@ -47,9 +47,20 @@ def get_all_multi(end_id: objectid.ObjectId = None, *, fields=None):
 
 
 @argmethod.wrap
-def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_doc_id, *, fields=None):
+def get_problem_multi(uid: int, domain_id: str, pid: document.convert_doc_id,
+                      get_hidden: bool=False, *, fields=None):
   coll = db.Collection('record')
-  query = {'hidden': False, 'domain_id': domain_id, 'pid': pid, 'uid': uid}
+  query = {'hidden': False if not get_hidden else {'$ne': None},
+           'domain_id': domain_id, 'pid': pid}
+  return coll.find(query, fields=fields)
+
+
+@argmethod.wrap
+def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_doc_id,
+                              get_hidden: bool=False, *, fields=None):
+  coll = db.Collection('record')
+  query = {'hidden': False if not get_hidden else {'$ne': None},
+           'domain_id': domain_id, 'pid': pid, 'uid': uid}
   return coll.find(query, fields=fields)
 
 
