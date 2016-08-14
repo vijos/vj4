@@ -33,7 +33,7 @@
           {% for pdoc in pdocs %}
             <tr data-pid="{{ pdoc['doc_id'] }}">
               <td class="col--status">
-                {{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc'].get('status')] }}
+                <a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid']) }}">{{ vj4.constant.record.STATUS_ABBRS[pdoc['psdoc']['status']] }}</a>
               </td>
               <td class="col--name">
                 <form method="post">

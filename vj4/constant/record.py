@@ -57,6 +57,23 @@ STATUS_TEXTS = collections.OrderedDict([
 (30, "Ignored"),
 ])
 
+STATUS_ABBRS = collections.OrderedDict([
+(0, ""),
+(1, "AC"),
+(2, "WA"),
+(3, "TLE"),
+(4, "MLE"),
+(5, "OLE"),
+(6, "RE"),
+(7, "CE"),
+(8, "SE"),
+(9, "ETC"),
+(10, "ETC"),
+(20, "ETC"),
+(21, "ETC"),
+(30, "ETC"),
+])
+
 STATUS_CODES = collections.OrderedDict([
 (0, "pending"),
 (1, "pass"),

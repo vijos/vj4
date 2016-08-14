@@ -11,6 +11,7 @@ export default class VjCmEditor extends SimpleMDE {
     const defaultOptions = {
       autoDownloadFontAwesome: false,
       spellChecker: false,
+      forceSync: true,
       toolbar: [
         {
           name: 'bold',
