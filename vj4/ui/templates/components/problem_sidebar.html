@@ -65,9 +65,9 @@
     <p>{{ _('Difficulty') }}: {{ pdoc['diff'] }}</p>
     <p>{{ _('Vote') }}: <span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</p>
     <p>{{ _('Category') }}: 动态规划 | 树形动规、高精度</p>
-    <p>{{ _('Submit') }}: 140</p>
-    <p>{{ _('Accepted') }}: 30</p>
-    <p>{{ _('Accepted Rate') }}: 20%</p>
+    <p>{{ _('Submit') }}: {{ pdoc['num_submit'] }}</p>
+    <p>{{ _('Accepted') }}: {{ pdoc['num_accept'] }}</p>
+    <p>{{ _('Accepted Rate') }}: {% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('N/A') }}{% endif %}</p>
     <p>{{ _('Uploaded By') }}:
     {% if pdoc['owner_uid'] != 0 %}
       {% with noBadge = true, user = pdoc['udoc'] %}
