@@ -8,23 +8,33 @@ from vj4.model import builtin
 from vj4.model import user
 
 Setting = functools.partial(
-  collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui', 'desc']),
-  range=None, ui='input', desc='')
+  collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui', 'name', 'desc']),
+  range=None, ui='text', name='', desc='')
 
 # Setting keys should not duplicate with user keys or session keys.
 SETTINGS = [
-  Setting('preference', 'view_lang', str, range=builtin.VIEW_LANGS, ui='select'),
-  Setting('preference', 'code_lang', str, range=constant.language.LANG_TEXTS, ui='select'),
-  Setting('preference', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE, ui='select',
+  Setting('setting-preference', 'view_lang', str, range=builtin.VIEW_LANGS,
+          ui='select', name='UI Language'),
+  Setting('setting-preference', 'code_lang', str, range=constant.language.LANG_TEXTS,
+          ui='select', name='Default Code Language'),
+  Setting('setting-preference', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE,
+          ui='select', name='Problem Tags Visibility',
           desc='Whether to show tags in the problem list.'),
-  Setting('personal_info', 'gravatar', str,
+  Setting('setting-info', 'gravatar', str,
+          name='Gravatar Email',
           desc='We use Gravatar to present your avatar icon.'),
-  Setting('personal_info', 'qq', str),
-  Setting('personal_info', 'gender', int, range=constant.model.USER_GENDER_RANGE, ui='select'),
-  Setting('privacy', 'show_mail', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
-  Setting('privacy', 'show_qq', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
-  Setting('privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE, ui='select'),
-  Setting('function', 'send_code', int, range=constant.setting.FUNCTION_RANGE, ui='select',
+  Setting('setting-info', 'qq', str,
+          name='QQ'),
+  Setting('setting-info', 'gender', int, range=constant.model.USER_GENDER_RANGE,
+          ui='select', name='Gender'),
+  Setting('setting-privacy', 'show_mail', int, range=constant.setting.PRIVACY_RANGE,
+          ui='select', name='Email Visibility'),
+  Setting('setting-privacy', 'show_qq', int, range=constant.setting.PRIVACY_RANGE,
+          ui='select', name='QQ Visibility'),
+  Setting('setting-privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE,
+          ui='select', name='Gender Visibility'),
+  Setting('setting-function', 'send_code', int, range=constant.setting.FUNCTION_RANGE,
+          ui='select', name='Send Code after acceptance',
           desc='If enabled, source code will be emailed to you after the submission is accepted.')]
 
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))

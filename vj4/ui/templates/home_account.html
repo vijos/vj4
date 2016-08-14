@@ -10,8 +10,8 @@
       {% for setting in settings %}
       <div class="row"><div class="medium-4 columns">
         <label>
-          {{ _(setting.key) }}
-          {% if setting.ui == 'input' %}
+          {{ _(setting.name) }}
+          {% if setting.ui == 'text' %}
           <input class="textbox" name="{{ setting.key }}" value="{{ handler.get_setting(setting.key) }}">
           {% endif %}
           {% if setting.ui == 'select' %}
