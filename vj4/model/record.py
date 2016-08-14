@@ -27,7 +27,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
                            'tid': tid,
                            'data_id': data_id,
                            'type': type})
-  await asyncio.gather(queue.publish('judge', rid=rid), bus.publish('record_change', rid))
+  await queue.publish('judge', rid=rid)
   return rid
 
 
@@ -35,6 +35,14 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
 async def get(record_id: objectid.ObjectId):
   coll = db.Collection('record')
   return await coll.find_one(record_id)
+
+
+@argmethod.wrap
+async def rejudge(record_id: objectid.ObjectId):
+  coll = db.Collection('record')
+  rdoc = await coll.find_one(record_id)
+  await queue.publish('judge', rid=rdoc['_id'])
+  return rdoc
 
 
 @argmethod.wrap
