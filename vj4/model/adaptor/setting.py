@@ -6,6 +6,7 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import user
+from vj4.util import locale
 
 Setting = functools.partial(
   collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui', 'name', 'desc']),
@@ -13,7 +14,7 @@ Setting = functools.partial(
 
 # Setting keys should not duplicate with user keys or session keys.
 SETTINGS = [
-  Setting('setting_preference', 'view_lang', str, range=builtin.VIEW_LANGS,
+  Setting('setting_preference', 'view_lang', str, range=locale.VIEW_LANGS,
           ui='select', name='UI Language'),
   Setting('setting_preference', 'code_lang', str, range=constant.language.LANG_TEXTS,
           ui='select', name='Default Code Language'),
