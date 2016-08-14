@@ -36,8 +36,9 @@
           <li class="footer__extra-link-item dropdown-trigger" data-dropdown-target="#menu-footer-lang">
             <span><span class="icon icon-global"></span> Language <span class="icon icon-expand_less"></span></span>
             <ol class="dropdown-target menu" id="menu-footer-lang">
-              <li class="menu__item"><a class="menu__link" href="/lang/en">English</a></li>
-              <li class="menu__item"><a class="menu__link" href="/lang/zh_CN">简体中文</a></li>
+              {% for code, name in vj4.util.locale.VIEW_LANGS.items() %}
+              <li class="menu__item"><a class="menu__link" href="/lang/{{ code }}">{{ name }}</a></li>
+              {% endfor %}
             </ol>
           </li>
         </ol>

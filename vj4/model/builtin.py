@@ -87,10 +87,6 @@ USER_GUEST = {'_id': UID_GUEST,
               'gravatar': ''}
 USERS = [USER_GUEST]
 
-# View langs.
-VIEW_LANGS = collections.OrderedDict([('zh_CN', '简体中文'),
-                                      ('en', 'English')])
-
 # Footer extra HTMLs.
 FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
                       '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
