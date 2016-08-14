@@ -10,6 +10,10 @@
             {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
           </span>
         </h1>
+        <form method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
+          <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+          <input type="submit" class="rounded primary button" value="{{ _('Rejudge') }}">
+        </form>
       </div>
       <div class="section__body">
         <pre class="compiler-text">{{ rdoc['compiler_texts']|join('\n') }}</pre>

@@ -19,6 +19,10 @@
     <a href="{{ reverse_url('problem_detail', pid=rdoc['pid'], domain_id=rdoc['domain_id']) }}">
 {{ rdoc['pdoc']['title'] }}
     </a>
+    <form method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
+      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+      <input type="submit" class="rounded primary button" value="{{ _('Rejudge') }}">
+    </form>
   </td>
   <td class="col--submit-by"><a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">{{ rdoc['udoc']['uname'] }}</a></td>
   <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>

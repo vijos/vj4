@@ -60,16 +60,17 @@ class RecordDetailView(base.Handler):
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')
-class ProblemPretestView(base.Handler):
+class RecordRejudgeView(base.Handler):
   @base.require_perm(builtin.PERM_REJUDGE)
   @base.route_argument
+  @base.post_argument
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, rid: objectid.ObjectId):
     # TODO(twd2): check status, eg. test, hidden problem, ...
     rdoc = await record.rejudge(rid)
     await bus.publish('record_change', rdoc['_id'])
-    self.json_or_redirect(self.reverse_url('record_detail', rid=rdoc['_id']))
+    self.json_or_redirect(self.referer_or_main)
 
 
 @app.route('/records/{rid}/pretest_data', 'record_pretest_data')

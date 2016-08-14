@@ -10,6 +10,7 @@ from vj4.model import document
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
+from vj4.service import bus
 from vj4.handler import base
 
 STATUS_TEXTS = {
