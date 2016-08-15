@@ -22,13 +22,15 @@ function onBoxSubmit(ev) {
   if (commentBox) {
     commentBox.onSubmit(ev);
   }
+  ev.preventDefault();
 }
 
 function init() {
   if (initialized) {
     return;
   }
-  $(document).on('click', '.dczcomments__box__submit', onBoxSubmit);
+  $(document).on('submit', '.dczcomments__box__form', onBoxSubmit);
+  $(document).on('vjCommentBoxCancel', '.dczcomments__box__form', onBoxCancel);
   $(document).on('click', '.dczcomments__box__cancel', onBoxCancel);
   initialized = true;
 }

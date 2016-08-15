@@ -7,6 +7,7 @@ from vj4 import app
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
+from vj4.model import domain
 from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import problem
@@ -56,7 +57,22 @@ class RecordDetailView(base.Handler):
       raise error.RecordNotFoundError(rid)
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
+    await domain.update_udocs(self.domain_id, [rdoc['udoc']])
     self.render('record_detail.html', rdoc=rdoc)
+
+
+@app.route('/records/{rid}/rejudge', 'record_rejudge')
+class RecordRejudgeView(base.Handler):
+  @base.require_perm(builtin.PERM_REJUDGE)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, rid: objectid.ObjectId):
+    # TODO(twd2): check status, eg. test, hidden problem, ...
+    rdoc = await record.rejudge(rid)
+    await bus.publish('record_change', rdoc['_id'])
+    self.json_or_redirect(self.referer_or_main)
 
 
 @app.route('/records/{rid}/pretest_data', 'record_pretest_data')

@@ -45,7 +45,6 @@ async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
                        'hash': pwhash.hash_vj4(password, salt),
                        'regat': datetime.datetime.utcnow(),
                        'regip': regip,
-                       'roles': {},
                        'priv': builtin.PRIV_USER_PROFILE,
                        'loginat': datetime.datetime.utcnow(),
                        'loginip': regip,
@@ -156,7 +155,14 @@ async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTI
     uids.update(dict((udoc['_id'], udoc) for udoc in builtin.USERS))
     for doc in docs:
       doc[udoc_field_name] = uids.get(doc[field_name])
-  return docs
+    return list(uids.values())
+  return []
+
+
+def get_multi(fields=PROJECTION_VIEW):
+  # TODO(twd2): builtins
+  coll = db.Collection('user')
+  return coll.find({}, fields)
 
 
 def get_multi(fields=PROJECTION_VIEW, **kwargs):

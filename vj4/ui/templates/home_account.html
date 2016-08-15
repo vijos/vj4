@@ -2,125 +2,33 @@
 {% block home_content %}
 <div class="section">
   <form method="post">
+    {% for family, settings in vj4.model.adaptor.setting.SETTINGS_BY_FAMILY.items() %}
     <div class="section__header">
-      <h1 class="section__title">{{ _('Preference') }}</h1>
+      <h1 class="section__title">{{ _(family) }}</h1>
     </div>
     <div class="section__body">
+      {% for setting in settings %}
       <div class="row"><div class="medium-4 columns">
         <label>
-          {{ _('Default Code Language') }}
-          <select class="select" name="code_lang">
-          {% for key, value in vj4.constant.language.LANG_TEXTS.items() %}
-            <option value="{{ key }}"{% if handler.get_setting('code_lang') == key %} selected{% endif %}>{{ value }}</option>
+          {{ _(setting.name) }}
+          {% if setting.ui == 'text' %}
+          <input class="textbox" name="{{ setting.key }}" value="{{ handler.get_setting(setting.key) }}">
+          {% endif %}
+          {% if setting.ui == 'select' %}
+          <select class="select" name="{{ setting.key }}">
+          {% for key, value in setting.range.items() %}
+            <option value="{{ key }}"{% if handler.get_setting(setting.key) == key %} selected{% endif %}>{{ _(value) }}</option>
           {% endfor %}
           </select>
+          {% endif %}
         </label>
+        {% if setting.desc %}
+          <p class="help-text">{{ _(setting.desc) }}</p>
+        {% endif %}
       </div></div>
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('UI Language') }}
-          <select class="select" name="view_lang">
-          {% for key, value in vj4.model.builtin.VIEW_LANGS.items() %}
-            <option value="{{ key }}"{% if handler.get_setting('view_lang') == key %} selected{% endif %}>{{ value }}</option>
-          {% endfor %}
-          </select>
-        </label>
-      </div></div>
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('Problem Tags Visibility') }}
-          <select class="select" name="show_tags">
-          {% for key, value in vj4.constant.setting.SHOW_TAGS_RANGE.items() %}
-            <option value="{{ key }}"{% if handler.get_setting('show_tags') == key %} selected{% endif %}>{{ _(value) }}</option>
-          {% endfor %}
-          </select>
-        </label>
-        <p class="help-text">{{ _('Whether to show tags in the problem list.') }}</p>
-      </div></div>
+      {% endfor %}
     </div>
-
-    <div class="section__header">
-      <h1 class="section__title">{{ _('Function') }}</h1>
-    </div>
-    <div class="section__body">
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('Send Code after acceptance') }}
-          <select class="select" name="send_code">
-          {% for key, value in vj4.constant.setting.FUNCTION_RANGE.items() %}
-            <option value="{{ key }}"{% if handler.get_setting('send_code') == key %} selected{% endif %}>{{ _(value) }}</option>
-          {% endfor %}
-          </select>
-        </label>
-        <p class="help-text">{{ _('If enabled, source code will be emailed to you after the submission is accepted.') }}</p>
-      </div></div>
-    </div>
-
-    <div class="section__header">
-      <h1 class="section__title">{{ _('Personal Info') }}</h1>
-    </div>
-    <div class="section__body">
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('Gravatar Email') }}
-          <input class="textbox" name="gravatar" value="{{ handler.get_setting('gravatar') }}">
-        </label>
-        <p class="help-text">{{ _('We use Gravatar to present your avatar icon.') }}</p>
-      </div></div>
-
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('QQ') }}
-          <input class="textbox" name="qq" value="{{ handler.get_setting('qq') }}">
-        </label>
-      </div></div>
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('Gender') }}
-          <select class="select" name="gender">
-          {% for key, value in vj4.constant.model.USER_GENDER_RANGE.items() %}
-            <option value="{{ key }}"{% if handler.get_setting('gender') == key %} selected{% endif %}>{{ _(value) }}</option>
-          {% endfor %}
-          </select>
-        </label>
-      </div></div>
-    </div>
-
-    <div class="section__header">
-      <h1 class="section__title">{{ _('Privacy') }}</h1>
-    </div>
-    <div class="section__body">
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('Email Visibility') }}
-          <select class="select" name="show_mail">
-          {% for key, value in vj4.constant.setting.PRIVACY_RANGE.items() %}
-            <option value="{{ key }}"{% if handler.get_setting('show_mail') == key %} selected{% endif %}>{{ _(value) }}</option>
-          {% endfor %}
-          </select>
-        </label>
-      </div></div>
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('QQ Visibility') }}
-          <select class="select" name="show_qq">
-          {% for key, value in vj4.constant.setting.PRIVACY_RANGE.items() %}
-            <option value="{{ key }}"{% if handler.get_setting('show_qq') == key %} selected{% endif %}>{{ _(value) }}</option>
-          {% endfor %}
-          </select>
-        </label>
-      </div></div>
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _('Gender Visibility') }}
-          <select class="select" name="show_gender">
-          {% for key, value in vj4.constant.setting.PRIVACY_RANGE.items() %}
-            <option value="{{ key }}"{% if handler.get_setting('show_gender') == key %} selected{% endif %}>{{ _(value) }}</option>
-          {% endfor %}
-          </select>
-        </label>
-      </div></div>
-    </div>
+    {% endfor %}
     <div class="section__body">
       <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
       <input type="submit" class="rounded primary button" value="{{ _('Save All Changes') }}">

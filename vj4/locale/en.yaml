@@ -1,0 +1,34 @@
+#English
+---
+contest_create: Contest Create
+contest_main: Contest
+contest_status: Contest Status
+discussion_create: Create Discussion
+discussion_main: Discussion
+discussion_node: Discussion
+home_account: Account
+home_messages: Messages
+home_security: Security
+judge_playground: Judge Playground
+main: Home
+pager_first: « First
+pager_last: Last »
+pager_next: Next ›
+pager_previous: ‹ Previous
+problem_create: Problem Create
+problem_edit: Problem Edit
+problem_main: Problem Set
+problem_solution: Problem Solution
+problem_submit: Problem Submit
+record_detail: Record Detail
+record_main: Judging Queue
+setting_function: Function
+setting_info: Personal Info
+setting_preference: Preference
+setting_privacy: Privacy
+training_main: Training
+user_detail: User Detail
+user_login: Login
+user_logout: Logout
+user_lostpass: Lost Password
+user_register: Register

@@ -1,19 +1,19 @@
 {% macro comment_form() %}
-<form method="post" class="hasjs--hide">
-  <div class="dczcomments__box">
+<div class="hasjs--hide">
+  <form method="post" class="dczcomments__box dczcomments__box__form" data-hotkey="ctrl+enter:submit,esc:vjCommentBoxCancel">
     <div>
       <textarea name="content" class="textbox" data-markdown></textarea>
     </div>
     <div>
-      <input type="submit" class="rounded primary button dczcomments__box__submit" value="{{ _(comment_post_text) }}" data-value-reply="{{ _(reply_post_text) }}" data-value-comment="{{ _(comment_post_text) }}" data-value-comment-update="{{ _(comment_edit_text) }}" data-value-reply-update="{{ _(reply_edit_text) }}">
-      <input type="button" class="rounded button nojs--hide dczcomments__box__cancel" value="{{ _('Cancel') }}">
+      <input type="submit" class="rounded primary button dczcomments__box__submit" value="{{ _(comment_post_text) }} (Ctrl+Enter)" data-value-reply="{{ _(reply_post_text) }} (Ctrl+Enter)" data-value-comment="{{ _(comment_post_text) }} (Ctrl+Enter)" data-value-comment-update="{{ _(comment_edit_text) }} (Ctrl+Enter)" data-value-reply-update="{{ _(reply_edit_text) }} (Ctrl+Enter)">
+      <input type="button" class="rounded button nojs--hide dczcomments__box__cancel" value="{{ _('Cancel') }} (Esc)">
     </div>
-  </div>
-  <input type="hidden" name="operation" value="{{ comment_post_op }}">
-  <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-</form>
+    <input type="hidden" name="operation" value="{{ comment_post_op }}">
+    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+  </form>
+</div>
 <div class="nojs--hide">
-  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ comment_placeholder }}"></textarea>
+  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ _(comment_placeholder) }}"></textarea>
 </div>
 {% endmacro %}
 {% macro comment_operations(doc) %}

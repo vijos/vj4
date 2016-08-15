@@ -6,6 +6,7 @@ import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
 import ScratchpadRecordsTable from './ScratchpadRecordsTableContainer';
 
+import i18n from '../../utils/i18n';
 import * as util from '../../misc/Util';
 
 const mapDispatchToProps = (dispatch) => ({
@@ -34,7 +35,7 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
   render() {
     return (
       <Panel
-        title={<span><Icon name="flag" /> Records</span>}
+        title={<span><Icon name="flag" /> {i18n('Records')}</span>}
       >
         <Tabs
           className="scratchpad__panel-tab flex-col flex-fill"
@@ -43,10 +44,11 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
           tabBarExtraContent={
             <span>
               <PanelButton
-                data-tooltip="Refresh Records"
+                data-tooltip={i18n('Refresh Records')}
+                data-tooltip-below
                 onClick={() => this.props.handleClickRefresh()}
               >
-                Refresh
+                {i18n('Refresh')}
               </PanelButton>
               <PanelButton
                 onClick={() => this.props.handleClickClose()}

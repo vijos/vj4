@@ -10,6 +10,7 @@ from vj4.model import document
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
+from vj4.service import bus
 from vj4.handler import base
 
 STATUS_TEXTS = {
@@ -110,6 +111,7 @@ class ContestDetailProblemSubmitHandler(base.Handler):
     # TODO(iceboy): Check if contest can be submitted.
     rid = await record.add(self.domain_id, pdoc['doc_id'], record.TYPE_SUBMISSION, self.user['_id'],
                            lang, code, tid=tdoc['doc_id'], hidden=True)
+    await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
@@ -144,9 +146,8 @@ class ContestCreateHandler(base.Handler):
                  begin_at_time: str,
                  duration: float,
                  pids: str):
-    # TODO(twd2): User's time zone.
     begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-    begin_at = begin_at.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
+    begin_at = begin_at.replace(tzinfo=pytz.timezone(self.timezone))
     end_at = begin_at + datetime.timedelta(hours=duration)
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
                             rule, begin_at, end_at, list(map(int, pids.split(','))))

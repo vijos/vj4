@@ -53,6 +53,12 @@ class ValidationError(ForbiddenError):
       return 'Field {0} or {1} validation failed.'
 
 
+class UnknownFieldError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Unknown field {0}.'
+
+
 class InvalidTokenError(ForbiddenError):
   pass
 
@@ -88,7 +94,10 @@ class ProblemDataNotFoundError(NotFoundError):
 class PermissionError(ForbiddenError):
   @property
   def message(self):
-    return "User doesn't have the required permission in this domain."
+    if any((p | builtin.PERM_VIEW) == builtin.PERM_VIEW for p in self.args):
+      return "You cannot visit this domain."
+    else:
+      return "User doesn't have the required permission in this domain."
 
 
 class PrivilegeError(ForbiddenError):

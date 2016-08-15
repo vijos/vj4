@@ -22,3 +22,14 @@ Vagrantfile
 
 # MaxMind DB.
 *.mmdb
+
+# Generated fonts
+vj4/ui/misc/.iconfont
+
+# Generated constants
+vj4/constant
+
+# Generated locales
+vj4/ui/static/locale
+
+!.gitkeep

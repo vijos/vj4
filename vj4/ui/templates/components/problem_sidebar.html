@@ -21,11 +21,11 @@
       <li class="menu__seperator"></li>
       {% endif %}
       {% if page_name == 'problem_detail' %}
-      <li class="menu__item scratchpad--hide"><a class="menu__link highlight action--problem-sidebar__open-scratchpad" href="javascript:;">
-        <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }}
+      <li class="menu__item scratchpad--hide"><a class="menu__link highlight action--problem-sidebar__open-scratchpad" href="javascript:;" data-global-hotkey="alt+e">
+        <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }} (Alt+E)
       </a></li>
-      <li class="menu__item non-scratchpad--hide"><a class="menu__link action--problem-sidebar__quit-scratchpad" href="javascript:;">
-        <span class="icon icon-enlarge"></span> {{ _('Quit Scratchpad') }}
+      <li class="menu__item non-scratchpad--hide"><a class="menu__link action--problem-sidebar__quit-scratchpad" href="javascript:;" data-global-hotkey="alt+q">
+        <span class="icon icon-enlarge"></span> {{ _('Quit Scratchpad') }} (Alt+Q)
       </a></li>
       {% else %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
@@ -61,13 +61,13 @@
     <h1 class="section__title">{{ _('Information') }}</h1>
   </div>
   <div class="section__body typo">
-    <p>{{ _('Status') }}: {{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</p>
+    <p>{{ _('Status') }}: {% if pdoc['psdoc']['status'] %}<a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid']) }}">{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</a>{% else %}{{ _('(None)') }}{% endif %}</p>
     <p>{{ _('Difficulty') }}: {{ pdoc['diff'] }}</p>
     <p>{{ _('Vote') }}: <span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</p>
     <p>{{ _('Category') }}: 动态规划 | 树形动规、高精度</p>
     <p>{{ _('Submit') }}: {{ pdoc['num_submit'] }}</p>
     <p>{{ _('Accepted') }}: {{ pdoc['num_accept'] }}</p>
-    <p>{{ _('Accepted Rate') }}: {% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('N/A') }}{% endif %}</p>
+    <p>{{ _('Accepted Rate') }}: {% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</p>
     <p>{{ _('Uploaded By') }}:
     {% if pdoc['owner_uid'] != 0 %}
       {% with noBadge = true, user = pdoc['udoc'] %}
