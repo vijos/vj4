@@ -49,22 +49,18 @@ async def _process_domain(domain_id, udocs):
         udoc_updates[uid]['num_accept'] += status['num_accept']
     _logger.info('updating problem')
     await document.set(domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], **pdoc_update)
-    _logger.info('updating users')
-    for uid, udoc_update in udoc_updates.items():
-      await domain.set_user(domain_id, uid, **udoc_update)
+  _logger.info('updating users')
+  for uid, udoc_update in udoc_updates.items():
+    await domain.set_user(domain_id, uid, **udoc_update)
 
 
 @argmethod.wrap
 async def status():
   _logger.info('clearing previous statuses')
-  await asyncio.gather(
-    db.Collection('document').update(
-      {'doc_type': document.TYPE_PROBLEM},
-      {'$set': {'num_submit': 0, 'num_accept': 0}}, multi=True),
-    db.Collection('document.status').update(
-      {'doc_type': document.TYPE_PROBLEM},
-      {'$unset': {'journal': '', 'rev': '', 'status': '', 'rid': '',
-                  'num_submit': '', 'num_accept': ''}}, multi=True))
+  await db.Collection('document.status').update(
+    {'doc_type': document.TYPE_PROBLEM},
+    {'$unset': {'journal': '', 'rev': '', 'status': '', 'rid': '',
+                'num_submit': '', 'num_accept': ''}}, multi=True)
   _logger.info('loading users')
   udocs = await user.get_multi({'_id': 1}).to_list(None)
   _logger.info('built in domains')
