@@ -16,7 +16,7 @@ VIEW_LANGS = {}
 
 
 def load_translations(translation_path):
-  langs = [('zh_CN', '')] # default
+  langs = []
   for filename in os.listdir(translation_path):
     if not filename.endswith(".yaml"):
       continue

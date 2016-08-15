@@ -39,8 +39,8 @@ class HandlerBase(setting.SettingMixin):
       self.user = builtin.USER_GUEST
     self.view_lang = self.get_setting('view_lang')
     self.translate = locale.get_translate(self.view_lang)
-    # TODO(iceboy): use user timezone.
-    self.datetime_span = _get_datetime_span('Asia/Shanghai')
+    self.timezone = self.get_setting('timezone')
+    self.datetime_span = _get_datetime_span(self.timezone)
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id)

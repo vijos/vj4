@@ -146,9 +146,8 @@ class ContestCreateHandler(base.Handler):
                  begin_at_time: str,
                  duration: float,
                  pids: str):
-    # TODO(twd2): User's time zone.
     begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-    begin_at = begin_at.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
+    begin_at = begin_at.replace(tzinfo=pytz.timezone(self.timezone))
     end_at = begin_at + datetime.timedelta(hours=duration)
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
                             rule, begin_at, end_at, list(map(int, pids.split(','))))

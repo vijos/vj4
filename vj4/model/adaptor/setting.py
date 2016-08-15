@@ -9,13 +9,16 @@ from vj4.model import user
 from vj4.util import locale
 
 Setting = functools.partial(
-  collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'ui', 'name', 'desc']),
-  range=None, ui='text', name='', desc='')
+  collections.namedtuple('Setting', ['family', 'key', 'factory', 'range', 'default',
+                                     'ui', 'name', 'desc']),
+  range=None, default=None, ui='text', name='', desc='')
 
 # Setting keys should not duplicate with user keys or session keys.
 SETTINGS = [
   Setting('setting_preference', 'view_lang', str, range=locale.VIEW_LANGS,
-          ui='select', name='UI Language'),
+          default='zh_CN', ui='select', name='UI Language'),
+  Setting('setting_preference', 'timezone', str, range=builtin.TIMEZONES,
+          default='Asia/Shanghai', ui='select', name='Timezone'),
   Setting('setting_preference', 'code_lang', str, range=constant.language.LANG_TEXTS,
           ui='select', name='Default Code Language'),
   Setting('setting_preference', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE,
@@ -50,6 +53,9 @@ class SettingMixin(object):
     if self.session and key in self.session:
       return self.session[key]
     setting = SETTINGS_BY_KEY[key]
+    if setting.default:
+      assert not setting.range or setting.default in setting.range
+      return setting.default
     if setting.range:
       return next(iter(setting.range))
     return setting.factory()

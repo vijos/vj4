@@ -1,5 +1,6 @@
 import collections
 import datetime
+import pytz
 
 from vj4 import constant
 from vj4.util import version
@@ -94,6 +95,9 @@ USER_GUEST = {'_id': UID_GUEST,
               'num_submit': 0,
               'num_accept': 0}
 USERS = [USER_GUEST]
+
+# Timezones.
+TIMEZONES = collections.OrderedDict([(tz, tz) for tz in pytz.common_timezones])
 
 # Footer extra HTMLs.
 FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
