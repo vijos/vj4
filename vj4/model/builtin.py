@@ -101,7 +101,7 @@ TIMEZONES = collections.OrderedDict([(tz, tz) for tz in pytz.common_timezones])
 
 # Key represents level
 # Value represents percent
-# E.g. (10, 1) means that people who rank in 1% will get 10 levels
+# E.g. (10, 1) means that people whose rank is less than 1% will get Level 10
 LEVELS = collections.OrderedDict([(10, 1),
                                   (9, 2),
                                   (8, 3),

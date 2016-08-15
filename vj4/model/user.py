@@ -181,8 +181,6 @@ async def ensure_indexes():
   coll = db.Collection('user')
   await coll.ensure_index('uname_lower', unique=True)
   await coll.ensure_index('mail_lower', sparse=True)
-  await coll.ensure_index([('rp', -1)])
-  await coll.ensure_index([('rank', 1)])
 
 
 if __name__ == '__main__':

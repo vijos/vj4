@@ -86,6 +86,11 @@ async def update_udocs(domain_id, udocs, fields=None):
   return udocs
 
 
+def get_multi_users(domain_id: str, fields=None):
+  coll = db.Collection('domain.user')
+  return coll.find({'domain_id': domain_id}, fields)
+
+
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('domain')
@@ -93,6 +98,10 @@ async def ensure_indexes():
   user_coll = db.Collection('domain.user')
   await user_coll.ensure_index([('domain_id', 1),
                                 ('uid', 1)])
+  await user_coll.ensure_index([('domain_id', 1),
+                                ('rp', -1)])
+  await user_coll.ensure_index([('domain_id', 1),
+                                ('rank', 1)])
 
 
 if __name__ == '__main__':
