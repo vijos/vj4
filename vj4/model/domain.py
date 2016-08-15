@@ -29,9 +29,9 @@ async def get(domain_id: str):
   return await coll.find_one(domain_id)
 
 
-def get_multi():
+def get_multi(fields=None):
   coll = db.Collection('domain')
-  return coll.find()
+  return coll.find({}, fields)
 
 
 @argmethod.wrap
