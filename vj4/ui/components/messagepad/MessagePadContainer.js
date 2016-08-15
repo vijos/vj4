@@ -8,6 +8,7 @@ import MessagePadInput from './MessagePadInputContainer';
 import 'jquery.easing';
 
 import * as util from '../../misc/Util';
+import i18n from '../../utils/i18n';
 
 const mapDispatchToProps = (dispatch) => ({
   loadDialogues() {
@@ -56,13 +57,13 @@ export default class MessagePadContainer extends React.PureComponent {
       <div className="messagepad clearfix" ref="container">
         <div className="messagepad__sidebar">
           <div className="section__header">
-            <h1 className="section__title">Messages</h1>
+            <h1 className="section__title">{i18n('Messages')}</h1>
             <div className="section__tools">
               <button
                 onClick={() => this.props.handleNewDialogue()}
                 className="tool-button"
               >
-                <Icon name="add" /> New
+                <Icon name="add" /> {i18n('New')}
               </button>
             </div>
           </div>

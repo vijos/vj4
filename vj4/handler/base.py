@@ -37,7 +37,8 @@ class HandlerBase(setting.SettingMixin):
       self.user = await user.get_by_uid(self.session['uid']) or builtin.USER_GUEST
     else:
       self.user = builtin.USER_GUEST
-    self.translate = locale.get_translate(self.get_setting('view_lang'))
+    self.view_lang = self.get_setting('view_lang')
+    self.translate = locale.get_translate(self.view_lang)
     # TODO(iceboy): use user timezone.
     self.datetime_span = _get_datetime_span('Asia/Shanghai')
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
