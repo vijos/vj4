@@ -145,7 +145,14 @@
     "babel-cli": {
       "version": "6.11.4",
       "from": "babel-cli@>=6.11.4 <7.0.0",
-      "resolved": "https://registry.npm.taobao.org/babel-cli/download/babel-cli-6.11.4.tgz"
+      "resolved": "https://registry.npm.taobao.org/babel-cli/download/babel-cli-6.11.4.tgz",
+      "dependencies": {
+        "glob": {
+          "version": "5.0.15",
+          "from": "glob@>=5.0.5 <6.0.0",
+          "resolved": "https://registry.npm.taobao.org/glob/download/glob-5.0.15.tgz"
+        }
+      }
     },
     "babel-code-frame": {
       "version": "6.11.0",
@@ -2150,9 +2157,9 @@
       }
     },
     "glob": {
-      "version": "5.0.15",
-      "from": "glob@>=5.0.5 <6.0.0",
-      "resolved": "https://registry.npm.taobao.org/glob/download/glob-5.0.15.tgz"
+      "version": "7.0.5",
+      "from": "glob@latest",
+      "resolved": "https://registry.npm.taobao.org/glob/download/glob-7.0.5.tgz"
     },
     "glob-base": {
       "version": "0.3.0",
@@ -4151,6 +4158,11 @@
       "version": "3.2.1",
       "from": "y18n@>=3.2.1 <4.0.0",
       "resolved": "https://registry.npm.taobao.org/y18n/download/y18n-3.2.1.tgz"
+    },
+    "yaml-loader": {
+      "version": "0.4.0",
+      "from": "yaml-loader@>=0.4.0 <0.5.0",
+      "resolved": "https://registry.npm.taobao.org/yaml-loader/download/yaml-loader-0.4.0.tgz"
     },
     "yargs": {
       "version": "4.8.1",

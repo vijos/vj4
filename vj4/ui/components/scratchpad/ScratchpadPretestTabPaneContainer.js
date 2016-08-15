@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import DataInput from './DataInputComponent';
 
+import i18n from '../../utils/i18n';
+
 const mapStateToProps = (state) => ({
   data: state.pretest.data,
 });
@@ -32,12 +34,12 @@ export default class ScratchpadPretestTabPaneContainer extends React.PureCompone
     return (
       <div className="flex-row flex-fill">
         <DataInput
-          title="Sample Input"
+          title={i18n('Sample Input')}
           value={this.props.input}
           onChange={v => this.props.handleDataChange(this.props.id, 'input', v)}
         />
         <DataInput
-          title="Sample Output"
+          title={i18n('Sample Output')}
           value={this.props.output}
           onChange={v => this.props.handleDataChange(this.props.id, 'output', v)}
         />

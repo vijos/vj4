@@ -1,6 +1,8 @@
 var path = require('path');
 var webpack = require('webpack');
 var _ = require('lodash');
+var glob = require('glob');
+var fs = require('fs');
 
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -14,11 +16,23 @@ var root = function (fn) {
   return path.resolve(__dirname, fn);
 };
 
+var getI18NEntries = function () {
+  var entries = {};
+  var localeFiles = glob.sync(root('vj4/locale/*.yaml'));
+  localeFiles.forEach(function (fileName) {
+    var locale = path.basename(fileName, '.yaml');
+    var dummyEntry = root('vj4/ui/.locale-loader/' + locale + '.js');
+    fs.writeFileSync(dummyEntry, 'window.LOCALES = require(\'json!yaml!../../locale/' + locale + '.yaml\');\n');
+    entries['locale_' + locale] = dummyEntry;
+  });
+  return entries;
+};
+
 var config = {
   context: root('vj4/ui'),
-  entry: {
+  entry: _.merge({
     vj4: './Entry.js',
-  },
+  }, getI18NEntries()),
   output: {
     path: root('vj4/.uibuild'),
     filename: '[name].js',

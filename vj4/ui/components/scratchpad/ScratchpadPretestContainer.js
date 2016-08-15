@@ -6,6 +6,8 @@ import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
 import ScratchpadPretestTabPane from './ScratchpadPretestTabPaneContainer';
 
+import i18n from '../../utils/i18n';
+
 const mapStateToProps = (state) => ({
   current: state.pretest.current,
   tabs: state.pretest.tabs,
@@ -45,7 +47,7 @@ export default class ScratchpadPretestContainer extends React.PureComponent {
   render() {
     return (
       <Panel
-        title={<span><Icon name="edit" /> Pretest</span>}
+        title={<span><Icon name="edit" /> {i18n('Pretest')}</span>}
       >
         <Tabs
           className="scratchpad__panel-tab flex-col flex-fill"
@@ -55,16 +57,18 @@ export default class ScratchpadPretestContainer extends React.PureComponent {
           tabBarExtraContent={
             <span>
               <PanelButton
-                data-tooltip="Add Data"
+                data-tooltip={i18n('Add new data')}
+                data-tooltip-below
                 onClick={() => this.props.handleClickAdd()}
               >
-                Add
+                {i18n('Add')}
               </PanelButton>
               <PanelButton
-                data-tooltip="Remove Data"
+                data-tooltip={i18n('Remove this data')}
+                data-tooltip-below
                 onClick={() => this.props.handleClickRemove()}
               >
-                Remove
+                {i18n('Remove')}
               </PanelButton>
               <PanelButton
                 onClick={() => this.props.handleClickClose()}

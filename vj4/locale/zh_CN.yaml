@@ -153,7 +153,6 @@ Submissions: 递交
 Submit: 递交
 Submit At: 递交时间
 Submit By: 递交者
-Submit Solution: 递交代码
 Submit Time: 递交时间
 Support: 支持
 Swx Good!: Swx 好棒！
@@ -231,3 +230,20 @@ user_register: 注册
 '{0} comments': '{0} 条评论'
 '{0} solutions': '{0} 个题解'
 '{0} views': '{0} 次查看'
+New: 创建
+Pretest: 对拍
+Add: 添加
+Remove: 移除
+Add new data: 添加新数据
+Remove this data: 移除这组数据
+Sample Input: 输入数据
+Sample Output: 输出数据
+Records: 评测记录
+Refresh Records: 刷新评测记录
+Refresh: 刷新
+Run Pretest: 运行对拍
+Pretest Your Code: 使用您的对拍数据测试代码
+Submit Solution: 递交评测
+Submit Your Code: 递交代码进行正式评测
+Toggle Pretest Panel: 切换对拍面板
+Toggle Records Panel: 切换评测记录面板
