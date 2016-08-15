@@ -3,6 +3,7 @@ import asyncio
 from vj4 import app
 from vj4.model import builtin
 from vj4.model import document
+from vj4.model import domain
 from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.handler import base
@@ -24,7 +25,8 @@ class DiscussionMainView(base.Handler):
                                                                     skip=skip,
                                                                     limit=limit),
                                                 discussion.count(self.domain_id))
-    await asyncio.gather(user.attach_udocs(ddocs, 'owner_uid'),
+    udocs = await user.attach_udocs(ddocs, 'owner_uid')
+    await asyncio.gather(domain.update_udocs(self.domain_id, udocs),
                          discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id'))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
                 page=page, dcount=dcount)
@@ -45,10 +47,15 @@ class DiscussionNodeView(base.Handler):
       discussion.get_vnode_and_list_and_count_for_node(
         self.domain_id, node_or_pid,
         skip=(page - 1) * self.DISCUSSIONS_PER_PAGE, limit=self.DISCUSSIONS_PER_PAGE))
-    gathers = [user.attach_udocs(ddocs, 'owner_uid')]
+    attach_coros = [user.attach_udocs(ddocs, 'owner_uid')]
     if 'owner_uid' in vnode:
-      gathers.append(user.attach_udocs([vnode], 'owner_uid'))
-    await asyncio.gather(*gathers)
+      attach_coros.append(user.attach_udocs([vnode], 'owner_uid'))
+    udocss = await asyncio.gather(*attach_coros)
+    update_coros = []
+    for udocs in udocss:
+      update_coros.append(domain.update_udocs(self.domain_id, udocs))
+    if update_coros:
+      await asyncio.gather(*update_coros)
     path_components = self.build_path(
       (self.translate('discussion_main'), self.reverse_url('discussion_main')),
       (vnode['title'], None))
@@ -99,7 +106,9 @@ class DiscussionDetailView(base.OperationHandler):
     for drdoc in drdocs:
       if 'reply' in drdoc:
         drdocs_with_reply.extend(drdoc['reply'])
-    await user.attach_udocs(drdocs_with_reply, 'owner_uid')
+    udocs = await user.attach_udocs(drdocs_with_reply, 'owner_uid')
+    udocs.append(udoc)
+    await domain.update_udocs(self.domain_id, udocs)
     self.render('discussion_detail.html', ddoc=ddoc, udoc=udoc, drdocs=drdocs, vnode=vnode,
                 page_title=ddoc['title'], path_components=path_components)
 

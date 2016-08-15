@@ -7,6 +7,7 @@ from vj4 import app
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
+from vj4.model import domain
 from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import problem
@@ -56,6 +57,7 @@ class RecordDetailView(base.Handler):
       raise error.RecordNotFoundError(rid)
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
+    await domain.update_udocs(self.domain_id, [rdoc['udoc']])
     self.render('record_detail.html', rdoc=rdoc)
 
 

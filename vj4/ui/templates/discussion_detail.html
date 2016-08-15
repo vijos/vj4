@@ -69,8 +69,8 @@
         <div class="balancer sidebar-user-stat">
           <div class="balancer__body">
             <div class="numbox">
-              <div class="numbox__num medium">52</div>
-              <div class="numbox__text">通过题目</div>
+              <div class="numbox__num medium">{{ udoc.get('num_accept', 0) }}</div>
+              <div class="numbox__text">{{ _('Accepted') }}</div>
             </div>
           </div>
           <div class="balancer__body">

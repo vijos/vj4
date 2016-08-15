@@ -143,7 +143,7 @@ Sign Up: 注册
 Sign Up Now: 现在注册
 Sign up mail has been sent to your email.: 注册邮件已经发送到您的电子邮箱。
 Solutions: 题解
-'Solved {0} problems, rank: {1} (No. {2})': '解决了 {0} 个问题，积分: {1} (No. {2})'
+'Solved {0} problems, RP: {1} (No. {2})': '解决了 {0} 个问题，RP: {1} (No. {2})'
 Sorry, there is no problem in the problem set.: 题库中目前没有题目。
 Statistics: 统计
 Status: 状态
@@ -252,3 +252,4 @@ Submit to Judge: 递交以评测
 Code language: 代码语言
 'Yes': 是
 'No': 否
+AC Rate: 通过率

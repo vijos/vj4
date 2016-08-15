@@ -155,7 +155,8 @@ async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTI
     uids.update(dict((udoc['_id'], udoc) for udoc in builtin.USERS))
     for doc in docs:
       doc[udoc_field_name] = uids.get(doc[field_name])
-  return docs
+    return list(uids.values())
+  return []
 
 
 def get_multi(fields=PROJECTION_VIEW):
