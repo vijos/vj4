@@ -5,7 +5,7 @@ from vj4.util import locale
 
 
 @app.route('/lang/{lang}', 'language_set')
-class LanguageView(base.Handler):
+class LanguageHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, lang: str):

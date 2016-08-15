@@ -25,7 +25,7 @@ TOKEN_TYPE_TEXTS = {
 
 
 @app.route('/home/security', 'home_security')
-class HomeSecurityView(base.OperationHandler):
+class HomeSecurityHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): pagination? or limit session count for uid?
@@ -113,7 +113,7 @@ class UserNewmailWithCodeHandler(base.Handler):
 
 
 @app.route('/home/account', 'home_account')
-class HomeAccountView(base.Handler):
+class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     self.render('home_account.html')
@@ -127,7 +127,7 @@ class HomeAccountView(base.Handler):
 
 
 @app.route('/home/messages', 'home_messages')
-class HomeMessagesView(base.OperationHandler):
+class HomeMessagesHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): projection, pagination.

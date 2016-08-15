@@ -10,7 +10,7 @@ from vj4.handler import base
 
 
 @app.route('/discuss', 'discussion_main')
-class DiscussionMainView(base.Handler):
+class DiscussionMainHandler(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -33,7 +33,7 @@ class DiscussionMainView(base.Handler):
 
 
 @app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
-class DiscussionNodeView(base.Handler):
+class DiscussionNodeHandler(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -64,7 +64,7 @@ class DiscussionNodeView(base.Handler):
 
 
 @app.route('/discuss/{node_or_pid}/create', 'discussion_create')
-class DiscussionCreateView(base.Handler):
+class DiscussionCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_DISCUSSION)
   @base.route_argument
@@ -89,7 +89,7 @@ class DiscussionCreateView(base.Handler):
 
 
 @app.route('/discuss/{did:\w{24}}', 'discussion_detail')
-class DiscussionDetailView(base.OperationHandler):
+class DiscussionDetailHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
   @base.sanitize

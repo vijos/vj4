@@ -15,7 +15,7 @@ from vj4.handler import base
 
 
 @app.route('/p', 'problem_main')
-class ProblemMainView(base.OperationHandler):
+class ProblemMainHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
@@ -42,7 +42,7 @@ class ProblemMainView(base.OperationHandler):
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
-class ProblemDetailView(base.Handler):
+class ProblemDetailHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -59,7 +59,7 @@ class ProblemDetailView(base.Handler):
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
-class ProblemSubmitView(base.Handler):
+class ProblemSubmitHandler(base.Handler):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -100,7 +100,7 @@ class ProblemSubmitView(base.Handler):
 
 
 @app.route('/p/{pid}/pretest', 'problem_pretest')
-class ProblemPretestView(base.Handler):
+class ProblemPretestHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
   @base.route_argument
@@ -120,7 +120,7 @@ class ProblemPretestView(base.Handler):
 
 
 @app.route('/p/{pid}/solution', 'problem_solution')
-class ProblemSolutionView(base.OperationHandler):
+class ProblemSolutionHandler(base.OperationHandler):
   SOLUTIONS_PER_PAGE = 30
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
@@ -193,7 +193,7 @@ class ProblemSolutionView(base.OperationHandler):
 
 
 @app.route('/p/{pid}/data', 'problem_data')
-class ProblemDataView(base.Handler):
+class ProblemDataHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool = False):
@@ -227,7 +227,7 @@ class ProblemDataView(base.Handler):
 
 
 @app.route('/p/create', 'problem_create')
-class ProblemCreateView(base.Handler):
+class ProblemCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
   async def get(self):
@@ -244,7 +244,7 @@ class ProblemCreateView(base.Handler):
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
-class ProblemEditView(base.Handler):
+class ProblemEditHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument

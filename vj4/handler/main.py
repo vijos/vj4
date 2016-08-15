@@ -4,7 +4,7 @@ from vj4.handler import base
 
 
 @app.route('/', 'main')
-class MainView(base.Handler):
+class MainHandler(base.Handler):
   async def get(self):
     self.render('main.html',
                 discussion_nodes=await discussion.get_nodes(self.domain_id),
@@ -12,6 +12,6 @@ class MainView(base.Handler):
 
 
 @app.route('/500', 'error')
-class ErrorView(base.Handler):
+class ErrorHandler(base.Handler):
   async def get(self):
     raise Exception('swx template')

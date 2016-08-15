@@ -16,7 +16,7 @@ from vj4.handler import base
 
 
 @app.route('/records', 'record_main')
-class RecordMainView(base.Handler):
+class RecordMainHandler(base.Handler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
     # TODO(twd2): check permission for visibility. (e.g. test).
@@ -47,7 +47,7 @@ class RecordMainConnection(base.Connection):
 
 
 @app.route('/records/{rid}', 'record_detail')
-class RecordDetailView(base.Handler):
+class RecordDetailHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):
@@ -62,7 +62,7 @@ class RecordDetailView(base.Handler):
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')
-class RecordRejudgeView(base.Handler):
+class RecordRejudgeHandler(base.Handler):
   @base.require_perm(builtin.PERM_REJUDGE)
   @base.route_argument
   @base.post_argument
@@ -76,7 +76,7 @@ class RecordRejudgeView(base.Handler):
 
 
 @app.route('/records/{rid}/pretest_data', 'record_pretest_data')
-class RecordPretestDataView(base.Handler):
+class RecordPretestDataHandler(base.Handler):
   @base.require_priv(builtin.PRIV_READ_PRETEST_DATA)
   @base.route_argument
   @base.sanitize

@@ -18,21 +18,21 @@ _logger = logging.getLogger(__name__)
 
 
 @app.route('/judge/playground', 'judge_playground')
-class JudgePlaygroundView(base.Handler):
+class JudgePlaygroundHandler(base.Handler):
   @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
   async def get(self):
     self.render('judge_playground.html')
 
 
 @app.route('/judge/noop', 'judge_noop')
-class JudgeNoopView(base.Handler):
+class JudgeNoopHandler(base.Handler):
   @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
   async def get(self):
     self.json({})
 
 
 @app.route('/judge/datalist', 'judge_datalist')
-class JudgeDataListView(base.Handler):
+class JudgeDataListHandler(base.Handler):
   @base.get_argument
   @base.sanitize
   async def get(self, last: int):
