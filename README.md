@@ -61,6 +61,12 @@ pm vj4.model.user add -1 icebox 12345 icebox@iceboy.org
 pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 777
 ```
 
+You need to run rank script on a regular basis to maintain correct ranks for all users:
+
+```bash
+pm vj4.job.rank rank
+```
+
 ### After Modifying Icons (`vj4/ui/misc/icons`)
 
 1. `npm run generate:icon`

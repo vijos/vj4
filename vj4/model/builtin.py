@@ -99,6 +99,20 @@ USERS = [USER_GUEST]
 # Timezones.
 TIMEZONES = collections.OrderedDict([(tz, tz) for tz in pytz.common_timezones])
 
+# Key represents level
+# Value represents percent
+# E.g. (10, 1) means that people whose rank is less than 1% will get Level 10
+LEVELS = collections.OrderedDict([(10, 1),
+                                  (9, 2),
+                                  (8, 10),
+                                  (7, 20),
+                                  (6, 30),
+                                  (5, 40),
+                                  (4, 70),
+                                  (3, 90),
+                                  (2, 95),
+                                  (1, 100)])
+
 # Footer extra HTMLs.
 FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
                       '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
