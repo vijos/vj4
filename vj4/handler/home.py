@@ -48,7 +48,7 @@ class HomeSecurityView(base.OperationHandler):
       raise error.VerifyPasswordError()
     doc = await user.change_password(self.user['_id'], current_password, new_password)
     if not doc:
-      raise error.ChangePasswordError(self.user['_id'])
+      raise error.CurrentPasswordError(self.user['_id'])
     self.json_or_redirect(self.referer_or_main)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -61,7 +61,7 @@ class HomeSecurityView(base.OperationHandler):
       user.get_by_mail(mail))
     # TODO(twd2): raise other errors.
     if not udoc:
-      raise error.LoginError(self.user['uname'])
+      raise error.CurrentPasswordError(self.user['uname'])
     if mail_holder_udoc:
       raise error.UserAlreadyExistError(mail)
     rid, _ = await token.add(token.TYPE_NEWMAIL,

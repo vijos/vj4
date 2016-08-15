@@ -65,6 +65,9 @@ class InvalidTokenError(ForbiddenError):
 
 class VerifyPasswordError(ForbiddenError):
   """Error with the `verify password', not password verification error."""
+  @property
+  def message(self):
+    return "Verify password isn't exactly the same as password."
 
 
 class UserAlreadyExistError(ForbiddenError):
@@ -118,35 +121,49 @@ class InvalidOperationError(ForbiddenError):
 
 
 class AlreadyVotedError(ForbiddenError):
-  pass
+  @property
+  def message(self):
+    return "You've already voted."
 
 
 class UserNotFoundError(NotFoundError):
-  pass
+  @property
+  def message(self):
+    return "User not found."
 
 
 class InvalidTokenDigestError(ForbiddenError):
   pass
 
 
-class ChangePasswordError(ForbiddenError):
-  pass
+class CurrentPasswordError(ForbiddenError):
+  @property
+  def message(self):
+    return "Your current password isn't what you entered."
 
 
 class DiscussionCategoryAlreadyExistError(ForbiddenError):
-  pass
+  @property
+  def message(self):
+    return "Discussion category {1} already exists."
 
 
 class DiscussionCategoryNotFoundError(NotFoundError):
-  pass
+  @property
+  def message(self):
+    return "Discussion category {1} not found."
 
 
 class DiscussionNodeAlreadyExistError(ForbiddenError):
-  pass
+  @property
+  def message(self):
+    return "Discussion node {1} already exists."
 
 
 class DiscussionNodeNotFoundError(NotFoundError):
-  pass
+  @property
+  def message(self):
+    return "Discussion node {1} not found."
 
 
 class DiscussionNotFoundError(DocumentNotFoundError):
@@ -174,11 +191,15 @@ class DomainAlreadyExistError(ForbiddenError):
 
 
 class ContestAlreadyAttendedError(ForbiddenError):
-  pass
+  @property
+  def message(self):
+    return "You've already attended this contest."
 
 
 class ContestNotAttendedError(ForbiddenError):
-  pass
+  @property
+  def message(self):
+    return "You haven't attended this contest yet."
 
 
 class ContestStatusHiddenError(ForbiddenError):
@@ -188,7 +209,9 @@ class ContestStatusHiddenError(ForbiddenError):
 
 
 class TrainingRequirementNotSatisfiedError(ForbiddenError):
-  pass
+  @property
+  def message(self):
+    return "Training requirement is not satisfied."
 
 
 class RecordNotFoundError(NotFoundError):
@@ -198,4 +221,6 @@ class RecordNotFoundError(NotFoundError):
 
 
 class OpcountExceededError(ForbiddenError):
-  pass
+  @property
+  def message(self):
+    return "{0} limit exceeded (limit: {2} operations in {1} seconds)."

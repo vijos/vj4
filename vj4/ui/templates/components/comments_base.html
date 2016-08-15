@@ -18,15 +18,15 @@
 {% endmacro %}
 {% macro comment_operations(doc) %}
 <div class="dczcomments__operations nojs--hide">
-  <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-comment" data-form="{{ {"operation": reply_post_op, reply_ref: doc['doc_id']}|json }}"><span class="icon icon-reply"></span></a>
-  <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit-comment" data-form="{{ {"operation": comment_edit_op}|json }}"><span class="icon icon-edit"></span></a>
-  <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Reply') }}" class="dczcomments__op-reply-comment" data-form="{{ {"operation": reply_post_op, reply_ref: doc['doc_id']}|json }}"><span class="icon icon-reply"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" class="dczcomments__op-edit-comment" data-form="{{ {"operation": comment_edit_op}|json }}"><span class="icon icon-edit"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
 </div>
 {% endmacro %}
 {% macro reply_operations() %}
 <div class="dczcomments__operations nojs--hide">
-  <a href="javascript:;" data-tooltip="Reply" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a>
-  <a href="javascript:;" data-tooltip="Edit" class="dczcomments__op-edit-reply" data-form="{{ {"operation": reply_edit_op}|json }}"><span class="icon icon-edit"></span></a>
-  <a href="javascript:;" data-tooltip="Delete" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Reply') }}" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" class="dczcomments__op-edit-reply" data-form="{{ {"operation": reply_edit_op}|json }}"><span class="icon icon-edit"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
 </div>
 {% endmacro %}
