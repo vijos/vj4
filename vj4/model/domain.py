@@ -29,6 +29,11 @@ async def get(domain_id: str):
   return await coll.find_one(domain_id)
 
 
+def get_multi():
+  coll = db.Collection('domain')
+  return coll.find()
+
+
 @argmethod.wrap
 async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
   for domain in builtin.DOMAINS:
