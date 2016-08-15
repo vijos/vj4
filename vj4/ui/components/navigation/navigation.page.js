@@ -3,6 +3,7 @@ import * as util from '../../misc/Util';
 import _ from 'lodash';
 import Slideout from 'slideout';
 import Navigation from './navigation.js';
+import responsiveCutoff from '../../responsive.inc.js';
 
 const nav = Navigation.instance;
 const $nav = nav.$nav;
@@ -26,7 +27,7 @@ function onNavLogoutClick() {
 const navigationPage = new AutoloadPage(() => {
   if ($nav.length > 0
     && document.documentElement.getAttribute('data-layout') === 'basic'
-    && window.innerWidth >= 450
+    && window.innerWidth >= responsiveCutoff.mobile
   ) {
     $(window).on('scroll', _.throttle(onScroll, 100));
     $nav.hover(

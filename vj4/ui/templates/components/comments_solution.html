@@ -11,7 +11,7 @@
       </div>
       {{ comment_base.reply_operations() }}
     </div>
-    <div class="typo no-heading emoji--enabled">
+    <div class="typo no-heading" data-emoji-enabled>
       {{ rdoc['content']|markdown }}
     </div>
     <div class="commentbox-edit-target"></div>
@@ -68,7 +68,7 @@
         </div>
         {{ comment_base.comment_operations(doc) }}
       </div>
-      <div class="typo no-heading emoji--enabled">
+      <div class="typo no-heading" data-emoji-enabled>
         {{ doc['content']|markdown }}
       </div>
       <div class="commentbox-edit-target"></div>

@@ -6,11 +6,19 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import postcssAutoprefixerPlugin from 'autoprefixer';
 import stylusRupturePlugin from 'rupture';
 
+import responsiveCutoff from './vj4/ui/responsive.inc.js';
+
 const extractProjectCSS = new ExtractTextPlugin({ filename: 'vj4.css', allChunks: true });
 const extractVendorCSS = new ExtractTextPlugin({ filename: 'vendors.css', allChunks: true });
 
 function root(fn) {
   return path.resolve(__dirname, fn);
+}
+
+function vjResponsivePlugin() {
+  return style => {
+    style.define('vjResponsiveCutoff', responsiveCutoff, true);
+  };
 }
 
 const config = {
@@ -129,6 +137,7 @@ const config = {
   postcss: () => [postcssAutoprefixerPlugin],
   stylus: {
     use: [
+      vjResponsivePlugin(),
       stylusRupturePlugin(),
     ],
     import: [

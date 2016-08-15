@@ -1,6 +1,7 @@
 import Drop from 'tether-drop';
 import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
+import responsiveCutoff from '../../responsive.inc.js';
 
 export default class Dropdown extends DOMAttachedObject {
 
@@ -9,7 +10,7 @@ export default class Dropdown extends DOMAttachedObject {
   static initFromDOM($dom) {
     // special: for navigation bar, show as a menu only in desktop
     if ($dom.attr('data-dropdown-trigger-desktop-only') !== undefined) {
-      if (window.innerWidth < 450) {
+      if (window.innerWidth < responsiveCutoff.mobile) {
         return null;
       }
     }
