@@ -51,9 +51,7 @@ async def _process_domain(domain_id, udocs):
     await document.set(domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], **pdoc_update)
     _logger.info('updating users')
     for uid, udoc_update in udoc_updates.items():
-      # TODO(twd2): update user (num_submit, num_accept)
-      # await domain.set_user(domain_id, uid, **udoc_update)
-      pass
+      await domain.set_user(domain_id, uid, **udoc_update)
 
 
 @argmethod.wrap

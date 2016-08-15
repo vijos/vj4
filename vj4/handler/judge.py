@@ -5,6 +5,7 @@ import time
 from vj4 import app
 from vj4 import constant
 from vj4.model import builtin
+from vj4.model import domain
 from vj4.model import queue
 from vj4.model import record
 from vj4.model.adaptor import contest
@@ -100,12 +101,13 @@ class JudgeNotifyConnection(base.Connection):
       accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
       post_coros = [bus.publish('record_change', rid)]
       if rdoc['type'] == constant.record.TYPE_SUBMISSION:
-        _, delta_submit, delta_new = (
+        _, delta_submit, delta_accept = (
           await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
                                       rdoc['_id'], rdoc['status'], accept, rdoc['score']))
-        if delta_submit != 0 or delta_new != 0:
-          post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], delta_submit, delta_new))
-          # TODO(twd2): update user (num_submit, num_accept)
+        if delta_submit != 0 or delta_accept != 0:
+          post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], delta_submit, delta_accept))
+          post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'],
+                                            num_submit=delta_submit, num_accept=delta_accept))
         if rdoc['tid']:
           post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
                                                   rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
