@@ -4,7 +4,7 @@
   {% endif %}
   <a class="v-center user-profile-name" href="{{ reverse_url('user_detail', uid=user['_id']) }}">{{ user['uname'] }}</a>
   {% if not noBadge %}
-  <a class="v-center user-profile-badge badge--lv{{ udoc.get('level', 0) }}" href="{{ reverse_url('user_detail', uid=user['_id']) }}" title="LV {{ udoc.get('level', 0) }}: Top TODO%">LV {{ udoc.get('level', 0) }}</a>
+  <a class="v-center user-profile-badge badge--lv{{ user.get('level', 0) }}" href="{{ reverse_url('user_detail', uid=user['_id']) }}" title="LV {{ user.get('level', 0) }}: Top TODO%">LV {{ user.get('level', 0) }}</a>
   {% if not noModBadge %}
   <span class="v-center user-profile-badge badge--mod" title="Moderator">MOD</span>
   {% endif %}
