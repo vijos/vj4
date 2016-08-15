@@ -90,6 +90,20 @@ USERS = [USER_GUEST]
 VIEW_LANGS = collections.OrderedDict([('zh_CN', '简体中文'),
                                       ('en', 'English')])
 
+# Key represents level
+# Value represents percent
+# E.g. (10, 1) means that people who rank in 1% will get 10 levels
+LEVELS = collections.OrderedDict([(10, 1),
+                                  (9, 2),
+                                  (8, 3),
+                                  (7, 5),
+                                  (6, 10),
+                                  (5, 20),
+                                  (4, 30),
+                                  (3, 50),
+                                  (2, 80),
+                                  (1, 100)])
+
 # Footer extra HTMLs.
 FOOTER_EXTRA_HTMLS = ['© 2005 - 2016 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
                       '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
