@@ -84,7 +84,13 @@ USER_GUEST = {'_id': UID_GUEST,
               'priv': PRIV_REGISTER_USER,
               'loginat': datetime.datetime.utcnow(),
               'loginip': '',
-              'gravatar': ''}
+              'gravatar': '',
+              # in every domains:
+              'rp': 0.0,
+              'rank': 0,
+              'level': 0,
+              'num_submit': 0,
+              'num_accept': 0}
 USERS = [USER_GUEST]
 
 # Footer extra HTMLs.
