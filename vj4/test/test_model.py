@@ -42,25 +42,25 @@ class UserTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_user(self):
     with self.assertRaises(error.UserAlreadyExistError):
-      await user.add(DUP_UID, DUP_UNAME, '123456', 'dup@vijos.org', 0)
+      await user.add(DUP_UID, DUP_UNAME, '123456', 'dup@vijos.org')
 
   @base.wrap_coro
   async def test_set_password(self):
-    await user.add(UID, UNAME, '123456', 'twd2@vijos.org', 0)
+    await user.add(UID, UNAME, '123456', 'twd2@vijos.org')
     self.assertNotEqual(await user.check_password_by_uid(UID, '123456'), None)
     await user.set_password(UID, '123457')
     self.assertEqual(await user.check_password_by_uid(UID, '123456'), None)
 
   @base.wrap_coro
   async def test_change_password(self):
-    await user.add(UID, UNAME, '123456', 'twd2@vijos.org', 0)
+    await user.add(UID, UNAME, '123456', 'twd2@vijos.org')
     self.assertNotEqual(await user.check_password_by_uid(UID, '123456'), None)
     self.assertNotEqual(await user.change_password(UID, '123456', '123457'), None)
     self.assertEqual(await user.check_password_by_uid(UID, '123456'), None)
 
   @base.wrap_coro
   async def test_change_password_failed(self):
-    await user.add(UID, UNAME, '123456', 'twd2@vijos.org', 0)
+    await user.add(UID, UNAME, '123456', 'twd2@vijos.org')
     self.assertNotEqual(await user.check_password_by_uid(UID, '123456'), None)
     self.assertEqual(await user.change_password(UID, '123457', '123457'), None)
     self.assertNotEqual(await user.check_password_by_uid(UID, '123456'), None)
@@ -114,6 +114,46 @@ class DomainTest(base.DatabaseTestCase):
     self.assertIsNone(ddoc)
     ddoc = await domain.get('null')
     self.assertIsNone(ddoc)
+
+  @base.wrap_coro
+  async def test_user_in_domain(self):
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES)
+    await user.add(UID, UNAME, '123456', 'twd2@vijos.org')
+    await domain.set_user(DOMAIN_ID, UID, test_field='test tset', num=1)
+    uddoc = await domain.get_user(DOMAIN_ID, UID)
+    self.assertEqual(uddoc['test_field'], 'test tset')
+    self.assertEqual(uddoc['num'], 1)
+    uddoc = await domain.inc_user(DOMAIN_ID, UID, num=2)
+    self.assertEqual(uddoc['test_field'], 'test tset')
+    self.assertEqual(uddoc['num'], 3)
+    udoc = await user.get_by_uid(UID)
+    await domain.update_udocs(DOMAIN_ID, [udoc])
+    self.assertEqual(udoc['_id'], UID)
+    self.assertTrue('domain_id' not in udoc)
+    self.assertEqual(udoc['uname'], UNAME)
+    self.assertEqual(udoc['mail'], 'twd2@vijos.org')
+    self.assertEqual(udoc['test_field'], 'test tset')
+    self.assertEqual(udoc['num'], 3)
+
+  @base.wrap_coro
+  async def test_user_in_domain_projection(self):
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES)
+    await user.add(UID, UNAME, '123456', 'twd2@vijos.org')
+    await domain.set_user(DOMAIN_ID, UID, test_field='test tset', num=1)
+    uddoc = await domain.get_user(DOMAIN_ID, UID)
+    self.assertEqual(uddoc['test_field'], 'test tset')
+    self.assertEqual(uddoc['num'], 1)
+    uddoc = await domain.inc_user(DOMAIN_ID, UID, num=2)
+    self.assertEqual(uddoc['test_field'], 'test tset')
+    self.assertEqual(uddoc['num'], 3)
+    udoc = await user.get_by_uid(UID)
+    await domain.update_udocs(DOMAIN_ID, [udoc], {'test_field': 0})
+    self.assertEqual(udoc['_id'], UID)
+    self.assertTrue('domain_id' not in udoc)
+    self.assertEqual(udoc['uname'], UNAME)
+    self.assertEqual(udoc['mail'], 'twd2@vijos.org')
+    self.assertTrue('test_field' not in udoc)
+    self.assertEqual(udoc['num'], 3)
 
 
 class FsTest(base.DatabaseTestCase):
