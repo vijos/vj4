@@ -10,7 +10,7 @@ import Toolbar, {
 
 import i18n from '../../utils/i18n';
 import * as util from '../../misc/Util';
-import * as languageEnum from '../../../constant/language';
+import * as languageEnum from '../../constant/language';
 
 function isTestCaseDataValid(data) {
   return data.input.trim().length > 0 && data.output.trim().length > 0;

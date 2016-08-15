@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { parse as parseMongoId } from '../../utils/mongoId';
 
 import i18n from '../../utils/i18n';
-import * as recordEnum from '../../../constant/record';
+import * as recordEnum from '../../constant/record';
 
 const shouldShowDetail = (data) =>
   recordEnum.STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS[data.status];
