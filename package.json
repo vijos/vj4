@@ -84,6 +84,7 @@
   "scripts": {
     "generate:icon": "gulp iconfont",
     "generate:constant": "gulp constant",
+    "generate:locale": "gulp locale",
     "build": "webpack --progress --color --display-error-details",
     "build:production": "npm run build -- -p",
     "watch": "npm run build -- --watch",
