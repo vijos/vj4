@@ -12,6 +12,7 @@ options.define('smtp_password', default='', help='SMTP password')
 options.define('mail_from', default='', help='Mail from')
 
 
+@argmethod.wrap
 async def send_mail(to: str, subject: str, content: str):
   msg = text.MIMEText(content, _subtype='html', _charset='UTF-8')
   msg['Subject'] = subject
