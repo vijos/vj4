@@ -1,30 +1,32 @@
 {% macro reply(mode_create = false, udoc, rdoc = {}) %}
 <li class="dczcomments__reply{% if mode_create %} commentbox-container{% endif %}">
   <div class="media">
-  {% if not mode_create %}
-    <div class="clearfix">
-      <div class="dczcomments__supplementary">
-        {% with noAvatar = false, user = udoc, noBadge = true %}
-        {% include "components/inline_user.html" %}
-        {% endwith %}
-        <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
+    <div class="media__body top">
+    {% if not mode_create %}
+      <div class="clearfix">
+        <div class="dczcomments__supplementary">
+          {% with noAvatar = false, user = udoc, noBadge = true %}
+          {% include "components/inline_user.html" %}
+          {% endwith %}
+          <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
+        </div>
+        {{ comment_base.reply_operations() }}
       </div>
-      {{ comment_base.reply_operations() }}
-    </div>
-    <div class="typo no-heading" data-emoji-enabled>
-      {{ rdoc['content']|markdown }}
-    </div>
-    <div class="commentbox-edit-target"></div>
-  {% else %}
-    <div class="clearfix">
-      <div class="dczcomments__supplementary">
-        {% with noAvatar = false, user = udoc, noBadge = true %}
-        {% include "components/inline_user.html" %}
-        {% endwith %}
+      <div class="typo no-heading" data-emoji-enabled>
+        {{ rdoc['content']|markdown }}
       </div>
+      <div class="commentbox-edit-target"></div>
+    {% else %}
+      <div class="clearfix">
+        <div class="dczcomments__supplementary">
+          {% with noAvatar = false, user = udoc, noBadge = true %}
+          {% include "components/inline_user.html" %}
+          {% endwith %}
+        </div>
+      </div>
+      <div class="commentbox-placeholder"></div>
+    {% endif %}
     </div>
-    <div class="commentbox-placeholder"></div>
-  {% endif %}
   </div>
 </li>
 {% endmacro %}
