@@ -47,9 +47,12 @@ class HandlerBase(setting.SettingMixin):
     self.domain = await domain.get(self.domain_id)
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
+    await domain.update_udocs(self.domain_id, [self.user])
+    if not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
+      self.check_perm(builtin.PERM_VIEW)
 
   def has_perm(self, perm):
-    role = self.user['roles'].get(self.domain_id, builtin.ROLE_DEFAULT)
+    role = self.user.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return (perm & mask) == perm or self.domain['owner_uid'] == self.user['_id']
 
@@ -63,6 +66,14 @@ class HandlerBase(setting.SettingMixin):
   def check_priv(self, priv):
     if not self.has_priv(priv):
       raise error.PrivilegeError(priv)
+
+  def udoc_has_perm(self, udoc, perm):
+    role = udoc.get('role', builtin.ROLE_DEFAULT)
+    mask = self.domain['roles'].get(role, builtin.PERM_NONE)
+    return (perm & mask) == perm or self.domain['owner_uid'] == udoc['_id']
+
+  def udoc_has_priv(self, udoc, priv):
+    return (priv & udoc['priv']) == priv
 
   async def update_session(self, *, new_saved=False, **kwargs):
     """Update or create session if necessary.

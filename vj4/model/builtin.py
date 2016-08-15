@@ -26,6 +26,7 @@ PERM_CREATE_CONTEST = 1 << 16
 PERM_ATTEND_CONTEST = 1 << 17
 PERM_VIEW_TRAINING = 1 << 18
 PERM_REJUDGE = 1 << 19
+PERM_VIEW = 1 << 20
 PERM_ALL = -1
 
 # Privileges.
@@ -38,6 +39,7 @@ PRIV_READ_RECORD_CODE = 1 << 4
 PRIV_READ_PROBLEM_DATA = 1 << 5
 PRIV_READ_PRETEST_DATA = 1 << 6
 PRIV_WRITE_RECORD = 1 << 7
+PRIV_VIEW_ALL_DOMAIN = 1 << 8
 PRIV_ALL = -1
 
 # Roles.
@@ -46,7 +48,8 @@ ROLE_ADMIN = 'admin'
 
 # Domains.
 DOMAIN_ID_SYSTEM = 'system'
-DEFAULT_PERMISSIONS = (PERM_VIEW_PROBLEM |
+DEFAULT_PERMISSIONS = (PERM_VIEW |
+                       PERM_VIEW_PROBLEM |
                        PERM_SUBMIT_PROBLEM |
                        PERM_VIEW_PROBLEM_SOLUTION |
                        PERM_SUBMIT_PROBLEM_SOLUTION |
@@ -80,11 +83,16 @@ USER_GUEST = {'_id': UID_GUEST,
               'gender': constant.model.USER_GENDER_OTHER,
               'regat': datetime.datetime.utcfromtimestamp(0),
               'regip': '',
-              'roles': {},
               'priv': PRIV_REGISTER_USER,
               'loginat': datetime.datetime.utcnow(),
               'loginip': '',
-              'gravatar': ''}
+              'gravatar': '',
+              # in every domains:
+              'rp': 0.0,
+              'rank': 0,
+              'level': 0,
+              'num_submit': 0,
+              'num_accept': 0}
 USERS = [USER_GUEST]
 
 # Footer extra HTMLs.
