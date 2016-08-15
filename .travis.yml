@@ -3,7 +3,7 @@ services:
   - rabbitmq
   - mongodb
 env:
-  - TRAVIS_NODE_VERSION="5.11"
+  - CXX=g++-4.8 TRAVIS_NODE_VERSION="5.11"
 language: python
 python:
   - "3.5"
@@ -14,6 +14,15 @@ install:
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - node scripts/fix_abroad_shrinkwrap.js
   - npm install
+  - npm run generate:icon
+  - npm run generate:constant
+  - npm run generate:locale
 script:
   - python -m unittest
-  - npm run lint
+  - npm run build:production
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
