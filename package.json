@@ -87,8 +87,7 @@
     "generate:locale": "gulp locale",
     "build": "webpack --progress --color --display-error-details",
     "build:production": "npm run build -- -p",
-    "watch": "npm run build -- --watch",
-    "lint": "eslint -c vj4/ui/.eslintrc.yml \"vj4/ui/**/*.js\""
+    "watch": "npm run build -- --watch"
   },
   "babel": {
     "plugins": [
@@ -108,7 +107,12 @@
       "transform-decorators-legacy"
     ],
     "presets": [
-      ["es2015", {"modules": false}],
+      [
+        "es2015",
+        {
+          "modules": false
+        }
+      ],
       "stage-0",
       "react"
     ]

@@ -19,7 +19,6 @@ install:
   - npm run generate:locale
 script:
   - python -m unittest
-  - npm run lint
   - npm run build:production
 addons:
   apt:
