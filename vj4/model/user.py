@@ -168,7 +168,7 @@ async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
                  .to_list(limit))
   for udoc in builtin.USERS:
     if udoc['uname_lower'].startswith(prefix):
-      udocs.append(udoc)
+      udocs.append(copy.deepcopy(udoc))
   return udocs
 
 
