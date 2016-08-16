@@ -25,7 +25,7 @@ TOKEN_TYPE_TEXTS = {
 
 
 @app.route('/home/security', 'home_security')
-class HomeSecurityView(base.OperationHandler):
+class HomeSecurityHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): pagination? or limit session count for uid?
@@ -48,7 +48,7 @@ class HomeSecurityView(base.OperationHandler):
       raise error.VerifyPasswordError()
     doc = await user.change_password(self.user['_id'], current_password, new_password)
     if not doc:
-      raise error.ChangePasswordError(self.user['_id'])
+      raise error.CurrentPasswordError(self.user['_id'])
     self.json_or_redirect(self.referer_or_main)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -61,7 +61,7 @@ class HomeSecurityView(base.OperationHandler):
       user.get_by_mail(mail))
     # TODO(twd2): raise other errors.
     if not udoc:
-      raise error.LoginError(self.user['uname'])
+      raise error.CurrentPasswordError(self.user['uname'])
     if mail_holder_udoc:
       raise error.UserAlreadyExistError(mail)
     rid, _ = await token.add(token.TYPE_NEWMAIL,
@@ -113,7 +113,7 @@ class UserNewmailWithCodeHandler(base.Handler):
 
 
 @app.route('/home/account', 'home_account')
-class HomeAccountView(base.Handler):
+class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     self.render('home_account.html')
@@ -121,19 +121,13 @@ class HomeAccountView(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument
   @base.require_csrf_token
-  @base.sanitize
-  async def post(self, *, gravatar: str, qq: str, gender: int,
-                 show_mail: int, show_qq: int, show_gender: int,
-                 view_lang: str, code_lang: str, show_tags: int, send_code: int):
-    # TODO(twd2): check gender
-    await user.set_by_uid(self.user['_id'], g=gravatar, qq=qq, gender=gender,
-                          show_mail=show_mail, show_qq=show_qq, show_gender=show_gender,
-                          view_lang=view_lang, code_lang=code_lang, show_tags=show_tags, send_code=send_code)
+  async def post(self, **kwargs):
+    await self.set_settings(**kwargs)
     self.json_or_redirect(self.referer_or_main)
 
 
 @app.route('/home/messages', 'home_messages')
-class HomeMessagesView(base.OperationHandler):
+class HomeMessagesHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): projection, pagination.
@@ -143,10 +137,12 @@ class HomeMessagesView(base.OperationHandler):
       user.attach_udocs(mdocs, 'sendee_uid', 'sendee_udoc', user.PROJECTION_PUBLIC))
     # TODO(twd2): improve here:
     for mdoc in mdocs:
-      mdoc['sender_udoc']['gravatar_url'] = (
-        template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
-      mdoc['sendee_udoc']['gravatar_url'] = (
-        template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
+      if 'gravatar' in mdoc['sender_udoc']:
+        mdoc['sender_udoc']['gravatar_url'] = (
+          template.gravatar_url(mdoc['sender_udoc'].pop('gravatar')))
+      if 'gravatar' in mdoc['sendee_udoc']:
+        mdoc['sendee_udoc']['gravatar_url'] = (
+          template.gravatar_url(mdoc['sendee_udoc'].pop('gravatar')))
     self.json_or_render('home_messages.html', messages=mdocs)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -161,11 +157,11 @@ class HomeMessagesView(base.OperationHandler):
     mdoc['sender_udoc'] = await user.get_by_uid(self.user['_id'], user.PROJECTION_PUBLIC)
     # TODO(twd2): improve here:
     mdoc['sender_udoc']['gravatar_url'] = (
-      template.gravatar_url(mdoc['sender_udoc']['gravatar'] or None))
+      template.gravatar_url(mdoc['sender_udoc'].pop('gravatar')))
     mdoc['sendee_udoc'] = udoc
     # TODO(twd2): improve here:
     mdoc['sendee_udoc']['gravatar_url'] = (
-      template.gravatar_url(mdoc['sendee_udoc']['gravatar'] or None))
+      template.gravatar_url(mdoc['sendee_udoc'].pop('gravatar')))
     if self.user['_id'] != uid:
       await bus.publish('message_received-' + str(uid), {'type': 'new', 'data': mdoc})
     self.json_or_redirect(self.referer_or_main, mdoc=mdoc)

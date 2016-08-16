@@ -4,7 +4,7 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__header">
-        <h1 class="emoji--enabled">{{ ddoc['title'] }}</h1>
+        <h1 data-emoji-enabled>{{ ddoc['title'] }}</h1>
       </div>
       <div class="section__body">
         <div class="dczdetail__supplementary">
@@ -16,7 +16,7 @@
           <span class="v-center"> · </span>
           <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
         </div>
-        <div class="typo topic__content emoji--enabled">
+        <div class="typo topic__content" data-emoji-enabled>
           {{ ddoc['content']|markdown }}
         </div>
       </div>
@@ -37,11 +37,17 @@
           comment_post_op = 'reply',
           comment_edit_op = 'edit_reply',
           comment_post_text = 'Comment',
-          comment_edit_text = 'Update Comment',
+          comment_edit_text = 'Update',
+          comment_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
+          comment_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+          comment_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
           reply_post_op = 'tail_reply',
           reply_post_text = 'Reply',
           reply_edit_op = 'edit_tail_reply',
-          reply_edit_text = 'Update Reply'
+          reply_edit_text = 'Update',
+          reply_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
+          reply_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+          reply_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY
         %}
         {% include "components/comments.html" %}
         {% endwith %}
@@ -69,8 +75,8 @@
         <div class="balancer sidebar-user-stat">
           <div class="balancer__body">
             <div class="numbox">
-              <div class="numbox__num medium">52</div>
-              <div class="numbox__text">通过题目</div>
+              <div class="numbox__num medium">{{ udoc.get('num_accept', 0) }}</div>
+              <div class="numbox__text">{{ _('Accepted') }}</div>
             </div>
           </div>
           <div class="balancer__body">

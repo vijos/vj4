@@ -10,6 +10,7 @@ from vj4.model import document
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
+from vj4.service import bus
 from vj4.handler import base
 
 STATUS_TEXTS = {
@@ -40,10 +41,17 @@ class ContestDetailHandler(base.OperationHandler):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc = await contest.get(self.domain_id, tid)
+    tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'],
+                                     {'attend': 1})
+    if tsdoc:
+      attended = tsdoc.get('attend') == 1
+    else:
+      attended = False
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], None))
-    self.render('contest_detail.html', tdoc=tdoc, path_components=path_components)
+    self.render('contest_detail.html', tdoc=tdoc, attended=attended,
+                path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_ATTEND_CONTEST)
@@ -110,6 +118,7 @@ class ContestDetailProblemSubmitHandler(base.Handler):
     # TODO(iceboy): Check if contest can be submitted.
     rid = await record.add(self.domain_id, pdoc['doc_id'], record.TYPE_SUBMISSION, self.user['_id'],
                            lang, code, tid=tdoc['doc_id'], hidden=True)
+    await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
@@ -120,6 +129,10 @@ class ContestStatusHandler(base.Handler):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    # TODO(iceboy): This does not work on multi-machine environment.
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
+        and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
+      raise error.ContestStatusHiddenError()
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
@@ -144,9 +157,8 @@ class ContestCreateHandler(base.Handler):
                  begin_at_time: str,
                  duration: float,
                  pids: str):
-    # TODO(twd2): User's time zone.
     begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-    begin_at = begin_at.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
+    begin_at = begin_at.replace(tzinfo=pytz.timezone(self.timezone))
     end_at = begin_at + datetime.timedelta(hours=duration)
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
                             rule, begin_at, end_at, list(map(int, pids.split(','))))

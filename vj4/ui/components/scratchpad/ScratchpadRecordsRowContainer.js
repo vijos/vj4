@@ -5,7 +5,8 @@ import moment from 'moment';
 import _ from 'lodash';
 import { parse as parseMongoId } from '../../utils/mongoId';
 
-import * as recordEnum from '../../../constant/record';
+import i18n from '../../utils/i18n';
+import * as recordEnum from '../../constant/record';
 
 const shouldShowDetail = (data) =>
   recordEnum.STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS[data.status];
@@ -59,7 +60,7 @@ export default class ScratchpadRecordsRowContainer extends React.PureComponent {
           <span className={`icon record-status--icon ${recordEnum.STATUS_CODES[data.status]}`}></span>
           <span className="icol icol--pretest">
             {isPretest(data)
-              ? <span className={`flag record-status--background ${recordEnum.STATUS_CODES[data.status]}`}>Pretest</span>
+              ? <span className={`flag record-status--background ${recordEnum.STATUS_CODES[data.status]}`}>{i18n('Pretest')}</span>
               : ''
             }
           </span>

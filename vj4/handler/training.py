@@ -7,7 +7,7 @@ from vj4.handler import base
 
 
 @app.route('/training', 'training_main')
-class TrainingMainView(base.Handler):
+class TrainingMainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   async def get(self):
@@ -16,7 +16,7 @@ class TrainingMainView(base.Handler):
 
 
 @app.route('/training/{tid}', 'training_detail')
-class TrainingDetailView(base.Handler):
+class TrainingDetailHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.route_argument

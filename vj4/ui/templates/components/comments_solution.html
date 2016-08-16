@@ -1,30 +1,32 @@
 {% macro reply(mode_create = false, udoc, rdoc = {}) %}
 <li class="dczcomments__reply{% if mode_create %} commentbox-container{% endif %}">
   <div class="media">
-  {% if not mode_create %}
-    <div class="clearfix">
-      <div class="dczcomments__supplementary">
-        {% with noAvatar = false, user = udoc, noBadge = true %}
-        {% include "components/inline_user.html" %}
-        {% endwith %}
-        <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
+    <div class="media__body top">
+    {% if not mode_create %}
+      <div class="clearfix">
+        <div class="dczcomments__supplementary">
+          {% with noAvatar = false, user = udoc, noBadge = true %}
+          {% include "components/inline_user.html" %}
+          {% endwith %}
+          <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
+        </div>
+        {{ comment_base.reply_operations() }}
       </div>
-      {{ comment_base.reply_operations() }}
-    </div>
-    <div class="typo no-heading emoji--enabled">
-      {{ rdoc['content']|markdown }}
-    </div>
-    <div class="commentbox-edit-target"></div>
-  {% else %}
-    <div class="clearfix">
-      <div class="dczcomments__supplementary">
-        {% with noAvatar = false, user = udoc, noBadge = true %}
-        {% include "components/inline_user.html" %}
-        {% endwith %}
+      <div class="typo no-heading" data-emoji-enabled>
+        {{ rdoc['content']|markdown }}
       </div>
+      <div class="commentbox-edit-target"></div>
+    {% else %}
+      <div class="clearfix">
+        <div class="dczcomments__supplementary">
+          {% with noAvatar = false, user = udoc, noBadge = true %}
+          {% include "components/inline_user.html" %}
+          {% endwith %}
+        </div>
+      </div>
+      <div class="commentbox-placeholder"></div>
+    {% endif %}
     </div>
-    <div class="commentbox-placeholder"></div>
-  {% endif %}
   </div>
 </li>
 {% endmacro %}
@@ -35,21 +37,25 @@
     <div class="media__left top">
     {% if not mode_create %}
       <div class="vote vote--discussion">
+        {% if handler.has_perm(vj4.model.builtin.PERM_VOTE_PROBLEM_SOLUTION) %}
         <div class="vote-number rotator--enabled">{{ doc['vote'] }}</div>
         <div class="vote-op clearfix">
           <form method="post">
             <input type="hidden" name="operation" value="upvote">
             <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <button type="submit" class="vote-button upvote icon icon-vote--up{% if doc['pssdoc']['vote'] == 1 %} active{% endif %}"></button>
+            <button type="submit" class="vote-button upvote{% if doc['pssdoc']['vote'] == 1 %} active{% endif %}" data-tooltip="{{ _('Upvote') }}" data-tooltip-below aria-label="{{ _('Upvote') }}"><span class="icon icon-vote--up"></span></button>
           </form>
           <form method="post">
             <input type="hidden" name="operation" value="downvote">
             <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <button type="submit" class="vote-button downvote icon icon-vote--down{% if doc['pssdoc']['vote'] == -1 %} active{% endif %}"></button>
+            <button type="submit" class="vote-button downvote{% if doc['pssdoc']['vote'] == -1 %} active{% endif %}" data-tooltip="{{ _('Downvote') }}" data-tooltip-below aria-label="{{ _('Downvote') }}"><span class="icon icon-vote--down"></span></button>
           </form>
         </div>
+        {% else %}
+        <div class="vote-number">{{ doc['vote'] }}</div>
+        {% endif %}
       </div>
     {% else %}
       <div class="vote vote--discussion">
@@ -68,7 +74,7 @@
         </div>
         {{ comment_base.comment_operations(doc) }}
       </div>
-      <div class="typo no-heading emoji--enabled">
+      <div class="typo no-heading" data-emoji-enabled>
         {{ doc['content']|markdown }}
       </div>
       <div class="commentbox-edit-target"></div>

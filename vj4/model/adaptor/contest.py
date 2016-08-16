@@ -8,6 +8,8 @@ from pymongo import errors
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
+from vj4.util import timezone
+
 
 STATUS_NEW = 0
 STATUS_READY = 1
@@ -23,6 +25,10 @@ Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
 def _oi_stat(tdoc, journal):
   detail = list(dict((j['pid'], j) for j in journal if j['pid'] in tdoc['pids']).values())
   return {'score': sum(d['score'] for d in detail), 'detail': detail}
+
+
+def _oi_show(tdoc, now):
+  return timezone.ensure_tzinfo(now) > timezone.ensure_tzinfo(tdoc['end_at'])
 
 
 def _acm_stat(tdoc, journal):
@@ -45,10 +51,13 @@ def _acm_stat(tdoc, journal):
           'detail': detail}
 
 
-_RULES = {
-  RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)]),
-  RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
-                 _acm_stat, [('accept', -1), ('time', 1)]),
+def _acm_show(tdoc, now):
+  return timezone.ensure_tzinfo(now) >= timezone.ensure_tzinfo(tdoc['begin_at'])
+
+
+RULES = {
+  RULE_OI: Rule(_oi_show, _oi_stat, [('score', -1)]),
+  RULE_ACM: Rule(_acm_show, _acm_stat, [('accept', -1), ('time', 1)]),
 }
 
 
@@ -57,7 +66,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
               begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               pids=[]):
-  if rule not in _RULES:
+  if rule not in RULES:
     raise error.ValidationError('rule')
   if begin_at >= end_at:
     raise error.ValidationError('begin_at', 'end_at')
@@ -95,15 +104,18 @@ async def attend(domain_id: str, tid: objectid.ObjectId, uid: int):
 
 
 @argmethod.wrap
+async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=None):
+  return await document.get_status(domain_id, document.TYPE_CONTEST, doc_id=tid,
+                                   uid=uid, fields=fields)
+
+
+@argmethod.wrap
 async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.
   tdoc = await get(domain_id, tid)
-  # TODO(iceboy): This does not work on multi-machine environment.
-  if not _RULES[tdoc['rule']].show_func(tdoc, datetime.datetime.utcnow()):
-    raise error.ContestStatusHiddenError()
   tsdocs = await (document.get_multi_status(domain_id, document.TYPE_CONTEST, doc_id=tdoc['doc_id'],
                                             fields=fields)
-                  .sort(_RULES[tdoc['rule']].status_sort)
+                  .sort(RULES[tdoc['rule']].status_sort)
                   .to_list(None))
   return tdoc, tsdocs
 
@@ -126,7 +138,7 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
   key_func = lambda j: j['rid']
   journal = [list(g)[-1]
              for _, g in itertools.groupby(sorted(tsdoc['journal'], key=key_func), key=key_func)]
-  stats = _RULES[tdoc['rule']].stat_func(tdoc, journal)
+  stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
   tsdoc = await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, uid, tsdoc['rev'],
                                         journal=journal, **stats)
   return tsdoc

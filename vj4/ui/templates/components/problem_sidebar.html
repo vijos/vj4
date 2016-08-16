@@ -1,11 +1,13 @@
+{% if pdoc['tdoc'] %}
 <div class="section side section--problem__contest-info">
   <div class="section__header">
-    <h1>春夏之交邀请赛</h1>
+    <h1>{{ pdoc['tdoc']['title'] }}</h1>
   </div>
   <div class="section__body">
-    <p>距离结束还有 1 小时</p>
+    <p>{{ _('End at {0}'.format(pdoc['tdoc']['end_at'])) }}</p>
   </div>
 </div>
+{% endif %}
 <div class="section side section--problem-sidebar">
   {% if page_name != 'problem_detail' %}
   <div class="section__header">
@@ -15,37 +17,62 @@
   <div>
     <ul class="menu">
       {% if page_name == 'discussion_node' %}
+        {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create', node_or_pid=pdoc['doc_id']) }}">
         <span class="icon icon-add"></span> {{ _('Create a discussion') }}
       </a></li>
+        {% else %}
+      <li class="menu__item"><a class="menu__link highlight" href="javascript:;">
+        <span class="icon icon-add"></span> {{ _('Login to Create a discussion' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Create a discussion') }}
+      </a></li>
+        {% endif %}
       <li class="menu__seperator"></li>
       {% endif %}
       {% if page_name == 'problem_detail' %}
-      <li class="menu__item scratchpad--hide"><a class="menu__link highlight action--problem-sidebar__open-scratchpad" href="javascript:;">
-        <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }}
+        {% if handler.has_perm(vj4.model.builtin.PERM_SUBMIT_PROBLEM) %}
+      <li class="menu__item scratchpad--hide"><a class="menu__link highlight action--problem-sidebar__open-scratchpad" href="javascript:;" data-global-hotkey="alt+e">
+        <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }} (Alt+E)
       </a></li>
-      <li class="menu__item non-scratchpad--hide"><a class="menu__link action--problem-sidebar__quit-scratchpad" href="javascript:;">
-        <span class="icon icon-enlarge"></span> {{ _('Quit Scratchpad') }}
+      <li class="menu__item non-scratchpad--hide"><a class="menu__link action--problem-sidebar__quit-scratchpad" href="javascript:;" data-global-hotkey="alt+q">
+        <span class="icon icon-enlarge"></span> {{ _('Quit Scratchpad') }} (Alt+Q)
       </a></li>
+        {% else %}
+      <li class="menu__item scratchpad--hide"><a class="menu__link highlight" href="javascript:;">
+        <span class="icon icon-enlarge"></span> {{ _('Login to Use Scratchpad' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Use Scratchpad') }}
+      </a></li>
+        {% endif %}
       {% else %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
         <span class="icon icon-flag"></span> {{ _('View Problem') }}
       </a></li>
       {% endif %}
       <li class="menu__seperator"></li>
+      {% if handler.has_perm(vj4.model.builtin.PERM_SUBMIT_PROBLEM) %}
       <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
         <span class="icon icon-send"></span> {{ _('Submit') }}
       </a></li>
+      {% else %}
+      <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="javascript:;">
+        <span class="icon icon-send"></span> {{ _('Login to Submit' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Submit') }}
+      </a></li>
+      {% endif %}
       <li class="menu__item"><a class="menu__link" href="#">
         <span class="icon icon-statistics"></span> {{ _('Submission Statistics') }}
       </a></li>
+      {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) or handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM_SOLUTION) %}
       <li class="menu__seperator"></li>
+      {% endif %}
+      {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
         <span class="icon icon-bubble--outline"></span> {{ _('Discussions') }}
       </a></li>
+      {% endif %}
+      {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM_SOLUTION) %}
       <li class="menu__item"><a class="menu__link{% if page_name == 'problem_solution' %} active{% endif %}" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
         <span class="icon icon-bubble--outline"></span> {{ _('Solutions') }}
       </a></li>
+      {% endif %}
+      {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_PROBLEM) %}
       <li class="menu__seperator"></li>
       <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">
         <span class="icon icon-edit"></span>  {{ _('Edit') }}
@@ -53,6 +80,7 @@
       <li class="menu__item"><a class="menu__link" href="#">
         <span class="icon icon-wrench"></span> {{ _('Settings') }}
       </a></li>
+      {% endif %}
     </ul>
   </div>
 </div>
@@ -61,13 +89,13 @@
     <h1 class="section__title">{{ _('Information') }}</h1>
   </div>
   <div class="section__body typo">
-    <p>{{ _('Status') }}: {{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</p>
-    <p>{{ _('Difficulty') }}: {{ pdoc['diff'] }}</p>
+    <p>{{ _('Status') }}: {% if pdoc['psdoc']['status'] %}<a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid']) }}">{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</a>{% else %}{{ _('(None)') }}{% endif %}</p>
+    <p>{{ _('Difficulty') }}: {{ pdoc['diff']|default(_('(None)')) }}</p>
     <p>{{ _('Vote') }}: <span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</p>
     <p>{{ _('Category') }}: 动态规划 | 树形动规、高精度</p>
-    <p>{{ _('Submit') }}: 140</p>
-    <p>{{ _('Accepted') }}: 30</p>
-    <p>{{ _('Accepted Rate') }}: 20%</p>
+    <p>{{ _('Submit') }}: {{ pdoc['num_submit'] }}</p>
+    <p>{{ _('Accepted') }}: {{ pdoc['num_accept'] }}</p>
+    <p>{{ _('Accepted Rate') }}: {% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</p>
     <p>{{ _('Uploaded By') }}:
     {% if pdoc['owner_uid'] != 0 %}
       {% with noBadge = true, user = pdoc['udoc'] %}
@@ -85,7 +113,9 @@
   <div class="section__body typo">
     <p>{{ _('In following problem lists') }}: </p>
     <p>foobar</p>
+    {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_TRAINING) %}
     <p>{{ _('In following training plans') }}: </p>
     <p>LV 1: 最初的最初 - 基础能力</p>
+    {% endif %}
   </div>
 </div>

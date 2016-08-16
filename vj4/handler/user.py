@@ -4,6 +4,7 @@ import datetime
 from vj4 import app
 from vj4 import error
 from vj4.model import builtin
+from vj4.model import domain
 from vj4.model import opcount
 from vj4.model import system
 from vj4.model import token
@@ -164,5 +165,6 @@ class UserDetailHandler(base.Handler):
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)
+    await domain.update_udocs(self.domain_id, [udoc])
     sdoc = await token.get_most_recent_session_by_uid(udoc['_id'])
     self.render('user_detail.html', udoc=udoc, sdoc=sdoc)

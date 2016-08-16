@@ -14,7 +14,7 @@ import './misc/textalign.styl';
 import './misc/grid.styl';
 import './misc/slideout.styl';
 
-import './misc/webicon.styl';
+import './misc/.iconfont/webicon.styl';
 import './misc/immersive.styl';
 import './misc/structure.styl';
 import './misc/section.styl';
@@ -35,6 +35,9 @@ async function load() {
     [currentPage.afterLoading, currentPage],
   ];
   for (const [func, page] of loadSequence) {
+    if (typeof func !== 'function') {
+      continue;
+    }
     try {
       await func();
     } catch (e) {

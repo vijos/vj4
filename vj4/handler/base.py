@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import calendar
 import functools
 import hmac
@@ -20,6 +21,7 @@ from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
 from vj4.model.adaptor import setting
+from vj4.util import timezone
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
@@ -32,23 +34,28 @@ class HandlerBase(setting.SettingMixin):
   TITLE = None
 
   async def prepare(self):
+    self.now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
     self.session = await self.update_session()
     if self.session and 'uid' in self.session:
       self.user = await user.get_by_uid(self.session['uid']) or builtin.USER_GUEST
     else:
       self.user = builtin.USER_GUEST
-    self.translate = locale.get_translate(self.get_setting('view_lang'))
-    # TODO(iceboy): use user timezone.
-    self.datetime_span = _get_datetime_span('Asia/Shanghai')
+    self.view_lang = self.get_setting('view_lang')
+    self.translate = locale.get_translate(self.view_lang)
+    self.timezone = self.get_setting('timezone')
+    self.datetime_span = _get_datetime_span(self.timezone)
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id)
     self.domain = await domain.get(self.domain_id)
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
+    await domain.update_udocs(self.domain_id, [self.user])
+    if not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
+      self.check_perm(builtin.PERM_VIEW)
 
   def has_perm(self, perm):
-    role = self.user['roles'].get(self.domain_id, builtin.ROLE_DEFAULT)
+    role = self.user.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return (perm & mask) == perm or self.domain['owner_uid'] == self.user['_id']
 
@@ -62,6 +69,14 @@ class HandlerBase(setting.SettingMixin):
   def check_priv(self, priv):
     if not self.has_priv(priv):
       raise error.PrivilegeError(priv)
+
+  def udoc_has_perm(self, udoc, perm):
+    role = udoc.get('role', builtin.ROLE_DEFAULT)
+    mask = self.domain['roles'].get(role, builtin.PERM_NONE)
+    return (perm & mask) == perm or self.domain['owner_uid'] == udoc['_id']
+
+  def udoc_has_priv(self, udoc, priv):
+    return (priv & udoc['priv']) == priv
 
   async def update_session(self, *, new_saved=False, **kwargs):
     """Update or create session if necessary.
@@ -174,6 +189,8 @@ class Handler(web.View, HandlerBase):
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
+    except asyncio.futures.InvalidStateError as e:
+      _logger.debug("asyncio.futures.InvalidStateError: %s", repr(e))
     return self.response
 
   def render(self, template_name, **kwargs):
@@ -289,8 +306,7 @@ def _get_datetime_span(tzname):
 
   @functools.lru_cache()
   def _datetime_span(dt):
-    if not dt.tzinfo:
-      dt = dt.replace(tzinfo=pytz.utc)
+    dt = timezone.ensure_tzinfo(dt)
     # TODO(iceboy): add a class for javascript selection.
     return markupsafe.Markup(
       '<span data-timestamp="{0}">{1}</span>'.format(

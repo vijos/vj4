@@ -124,10 +124,11 @@ async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: s
 
 
 @argmethod.wrap
-async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int):
+async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int, fields=None):
   coll = db.Collection('document.status')
   return await coll.find_one({'domain_id': domain_id, 'doc_type': doc_type,
-                              'doc_id': doc_id, 'uid': uid})
+                              'doc_id': doc_id, 'uid': uid},
+                             fields)
 
 
 def get_multi_status(domain_id, doc_type, *, fields=None, **kwargs):
@@ -151,15 +152,14 @@ async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
 async def set_if_not_status(domain_id: str, doc_type: int, doc_id: convert_doc_id,
                             uid: int, key: str, value: int, if_not: int, **kwargs):
   coll = db.Collection('document.status')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id,
-                                          'uid': uid,
-                                          key: {'$not': {'$eq': if_not}}},
-                                   update={'$set': {key: value, **kwargs}},
-                                   upsert=True,
-                                   new=True)
-  return doc
+  return await coll.find_and_modify(query={'domain_id': domain_id,
+                                           'doc_type': doc_type,
+                                           'doc_id': doc_id,
+                                           'uid': uid,
+                                           key: {'$not': {'$eq': if_not}}},
+                                    update={'$set': {key: value, **kwargs}},
+                                    upsert=True,
+                                    new=True)
 
 
 @argmethod.wrap

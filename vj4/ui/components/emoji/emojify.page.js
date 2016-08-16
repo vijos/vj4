@@ -4,9 +4,9 @@ import emojify from 'emojify.js';
 import 'emojify.js/dist/css/basic/emojify.css';
 
 function runEmojify($container) {
-  $container.find('.emoji--enabled').each((i, element) => {
+  for (const element of $container.find('[data-emoji-enabled]')) {
     emojify.run(element);
-  });
+  }
 }
 
 const emojifyPage = new AutoloadPage(() => {

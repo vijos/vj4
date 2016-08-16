@@ -62,7 +62,24 @@
     </div>
   </div>
   <div class="large-3 columns">
-    <div class="section">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Action') }}</h1>
+      </div>
+      <div class="section__body no-padding">
+        <ul class="menu">
+          <li class="menu__item">
+            <form method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <button type="submit" class="menu__link">
+                <span class="icon icon-refresh"></span> {{ _('Rejudge') }}
+              </button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Information') }}</h1>
       </div>
@@ -91,7 +108,7 @@
         <p>{{ _('Peak Memory') }}: {{ rdoc['memory_kb'] / 1000 }}MiB</p>
       </div>
     </div>
-    <div class="section">
+    <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
       </div>
