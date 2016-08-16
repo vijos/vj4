@@ -250,6 +250,21 @@ Menu can be put inside a section. It should be placed inside `section__body no-p
 </div>
 ```
 
+#### Menu Item from Headings
+
+Menu items can be automatically generated from headings. To enable this feature, you need to specify the region to extract headings and the destination of extracted menu items by setting `data-heading-extract-to` attribute:
+
+```html
+<div class="section" data-heading-extract-to="#my-menu-item">
+  <h1 id="h_1" data-heading>Heading 1</h1>
+  <h1 id="h_2" data-heading>Heading 2</h1>
+</div>
+```
+
+This attribute accepts a CSS selector and all elements that contain `data-heading` attribute in the element will be extracted. `id` is essential and it will be appended to the hash part so that the page will navigate when user clicks the newly generate menu item.
+
+The CSS selector should match a `menu__item` element. Headings will become the sub-menu of that element.
+
 ### Sticky
 
 Sticky elements are always visible when the user scrolls. To enable sticky, add `data-sticky` attribute to the element.
