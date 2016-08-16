@@ -1,3 +1,4 @@
+import copy
 from pymongo import errors
 
 from vj4 import db
@@ -24,7 +25,7 @@ async def add(domain_id: str, owner_uid: int,
 async def get(domain_id: str, fields=None):
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
-      return domain
+      return copy.deepcopy(domain)
   coll = db.Collection('domain')
   return await coll.find_one(domain_id, fields)
 
