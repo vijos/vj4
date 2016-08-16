@@ -18,12 +18,12 @@ async def send_mail(to: str, subject: str, content: str):
   msg['Subject'] = subject
   msg['From'] = options.options.mail_from
   msg['To'] = to
-  server = smtplibaio.SMTP_SSL()
-  await server.connect(host=options.options.smtp_host, port=options.options.smtp_port)
-  await server.ehlo()
-  await server.login(options.options.smtp_user, options.options.smtp_password)
-  await server.sendmail(options.options.mail_from, to, msg.as_string())
-  await server.quit()
+  with smtplibaio.SMTP_SSL() as server:
+    await server.connect(host=options.options.smtp_host, port=options.options.smtp_port)
+    await server.ehlo()
+    await server.login(options.options.smtp_user, options.options.smtp_password)
+    await server.sendmail(options.options.mail_from, to, msg.as_string())
+    await server.quit()
 
 
 if __name__ == '__main__':
