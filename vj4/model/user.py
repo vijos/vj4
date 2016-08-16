@@ -1,3 +1,4 @@
+import copy
 import datetime
 
 from pymongo import errors
@@ -58,7 +59,7 @@ async def get_by_uid(uid: int, fields=PROJECTION_VIEW):
   """Get a user by uid."""
   for user in builtin.USERS:
     if user['_id'] == uid:
-      return user
+      return copy.deepcopy(user)
   coll = db.Collection('user')
   return await coll.find_one({'_id': uid}, fields)
 
@@ -69,7 +70,7 @@ async def get_by_uname(uname: str, fields=PROJECTION_VIEW):
   uname_lower = uname.strip().lower()
   for user in builtin.USERS:
     if user['uname_lower'] == uname_lower:
-      return user
+      return copy.deepcopy(user)
   coll = db.Collection('user')
   return await coll.find_one({'uname_lower': uname_lower}, fields)
 
@@ -80,7 +81,7 @@ async def get_by_mail(mail: str, fields=PROJECTION_VIEW):
   mail_lower = mail.strip().lower()
   for user in builtin.USERS:
     if user['mail_lower'] == mail_lower:
-      return user
+      return copy.deepcopy(user)
   coll = db.Collection('user')
   return await coll.find_one({'mail_lower': mail_lower}, fields)
 
@@ -152,7 +153,7 @@ async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTI
     coll = db.Collection('user')
     udocs = await coll.find({'_id': {'$in': list(uids)}}, fields).to_list(None)
     uids = dict((udoc['_id'], udoc) for udoc in udocs)
-    uids.update(dict((udoc['_id'], udoc) for udoc in builtin.USERS))
+    uids.update(dict((udoc['_id'], copy.deepcopy(udoc)) for udoc in builtin.USERS))
     for doc in docs:
       doc[udoc_field_name] = uids.get(doc[field_name])
     return list(uids.values())
