@@ -5,7 +5,7 @@
   <a class="v-center user-profile-name" href="{{ reverse_url('user_detail', uid=user['_id']) }}">{{ user['uname'] }}</a>
   {% if not noBadge %}
   <a class="v-center user-profile-badge badge--lv{{ user['level']|default(0) }}" href="{{ reverse_url('user_detail', uid=user['_id']) }}" title="LV {{ user['level']|default(0) }}: Top {{ vj4.model.builtin.LEVELS[user['level']|default(0)] }}%">LV {{ user['level']|default(0) }}</a>
-  {% if not noModBadge %}
+  {% if not noModBadge and handler.udoc_has_perm(user, vj4.model.builtin.PERM_MOD_BADGE) %}
   <span class="v-center user-profile-badge badge--mod" title="Moderator">MOD</span>
   {% endif %}
   {% endif %}
