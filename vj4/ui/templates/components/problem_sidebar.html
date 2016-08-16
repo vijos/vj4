@@ -17,9 +17,15 @@
   <div>
     <ul class="menu">
       {% if page_name == 'discussion_node' %}
+        {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create', node_or_pid=pdoc['doc_id']) }}">
         <span class="icon icon-add"></span> {{ _('Create a discussion') }}
       </a></li>
+        {% else %}
+      <li class="menu__item"><a class="menu__link highlight" href="javascript:;">
+        <span class="icon icon-add"></span> {{ _('Login to Create a discussion' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Create a discussion') }}
+      </a></li>
+        {% endif %}
       <li class="menu__seperator"></li>
       {% endif %}
       {% if page_name == 'problem_detail' %}
