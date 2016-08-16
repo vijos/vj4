@@ -102,7 +102,7 @@ class ProblemSubmitHandler(base.Handler):
 @app.route('/p/{pid}/pretest', 'problem_pretest')
 class ProblemPretestHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
+  @base.require_perm(builtin.PERM_CREATE_PROBLEM_SOLUTION)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
@@ -149,7 +149,7 @@ class ProblemSolutionHandler(base.OperationHandler):
                 path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_SUBMIT_PROBLEM_SOLUTION)
+  @base.require_perm(builtin.PERM_CREATE_PROBLEM_SOLUTION)
   @base.route_argument
   @base.require_csrf_token
   @base.sanitize
