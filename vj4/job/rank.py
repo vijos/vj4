@@ -6,13 +6,14 @@ from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import user
 from vj4.util import argmethod
+from vj4.util import domainjob
 
 
 _logger = logging.getLogger(__name__)
 
 
-async def _process_domain(domain_id, keyword, rank_field, level_field):
-  _logger.info('Domain {0}'.format(domain_id))
+@domainjob.wrap
+async def run(domain_id: str, keyword: str='rp', rank_field: str='rank', level_field: str='level'):
   _logger.info('Ranking')
   uddocs = domain.get_multi_users(domain_id, fields={'uid': 1, keyword: 1}).sort(keyword, -1)
   last_uddoc = {keyword: None}
@@ -50,16 +51,6 @@ async def _process_domain(domain_id, keyword, rank_field, level_field):
                    {'$set': {level_field: level_ranks[i][0]}},
                    multi=True))
 
-
-@argmethod.wrap
-async def rank(keyword: str='rp', rank_field: str='rank', level_field: str='level'):
-  _logger.info('Built in domains')
-  for ddoc in builtin.DOMAINS:
-    await _process_domain(ddoc['_id'], keyword, rank_field, level_field)
-  _logger.info('User domains')
-  ddocs = domain.get_multi({'_id': 1})
-  async for ddoc in ddocs:
-    await _process_domain(ddoc['_id'], keyword, rank_field, level_field)
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()
