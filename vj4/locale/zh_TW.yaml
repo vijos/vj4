@@ -5,7 +5,7 @@ API: API
 About: 關於
 Accepted: 已通過
 Accepted Rate: 通過率
-Account Settings: 賬戶設置
+Account Settings: 賬戶設定
 Active Sessions: 活動會話
 An error has occurred.: 發生了一個錯誤。
 Arguments: 參數
@@ -14,20 +14,20 @@ Begin Date: 開始日期
 Begin Time: 開始時間
 Belongs to: 屬於
 Bio: 個人簡介
-Blog: 博客
+Blog: 部落格
 Boom!: 炸了！
 Browser: 瀏覽器
 ? By signing up a Vijos universal account, you can submit code and join discussions in all online
   judging services provided by us.
-: 註冊一個 Vijos 通用賬戶，您就可以在我們提供的所有在線評測服務上提交代碼、參與討論。
+: 註冊一個 Vijos 通用賬戶，您就可以在我們提供的所有線上評測服務上提交程式碼、參與討論。
 CLOSE: 關閉
 Cancel: 取消
 Category: 分類
 Change Email: 修改電子郵件
 Change Password: 修改密碼
-Code: 代碼
+Code: 程式碼
 Comments: 評論
-Contact Us: 聯繫我們
+Contact Us: 聯絡我們
 Content: 內容
 Contest Status: 比賽狀態
 Create: 創建
@@ -41,14 +41,14 @@ Create a problem: 創建一個題目
 Current Email: 當前電子郵件
 Current Location: 當前位置
 Current Password: 當前密碼
-Default Code Language: 默認代碼語言
+Default Code Language: 預設程式碼語言
 Development: 開發
 Difficulty: 難度
 Disabled: 關閉
 Discussion Nodes: 討論節點
 Discussions: 討論
 Don't have an account?: 還沒有賬戶？
-Download Dataset: 下載測試數據
+Download Dataset: 下載測試資料
 Duration (hours): 持續時間 (小時)
 Edit: 編輯
 Edit Problem: 編輯題目
@@ -57,48 +57,48 @@ Email Visibility: Email 可見度
 Enabled: 開啟
 Field {0} or {1} validation failed.: 欄位 {0} 或 {1} 驗證失敗。
 Field {0} validation failed.: 欄位 {0} 驗證失敗。
-Footer: 頁腳
-Forgot password or username?: 忘記密碼或者用戶名？
+Footer: 頁尾
+Forgot password or username?: 忘記密碼或者使用者名？
 Gender: 性別
 Gender Visibility: 性別可見度
 Gravatar Email: Gravatar Email 地址
-'Hello! You can click following link to sign up your Vijos account:': 您好！您可以點擊以下鏈接來註冊您的 Vijos 賬戶：
-'Hello, {0}! You can click following link to reset the password of your Vijos account:': 您好，{0}！您可以點擊以下鏈接來重置您
+'Hello! You can click following link to sign up your Vijos account:': 您好！您可以點選以下連結來註冊您的 Vijos 賬戶：
+'Hello, {0}! You can click following link to reset the password of your Vijos account:': 您好，{0}！您可以點選以下連結來重置您
   Vijos 賬戶的密碼：
 Help: 幫助
 Hide all tags: 隱藏所有標籤
 Hide categorical tags: 隱藏分類標籤
-If enabled, source code will be emailed to you after the submission is accepted.: 如果啟用，在您通過題目後，源代碼會以
-  Email 的形式發送給您。
+If enabled, source code will be emailed to you after the submission is accepted.: 如果啟用，在您通過題目後，原始碼會以
+  Email 的形式傳送給您。
 In following problem lists: 在下列題單中
 In following training plans: 在下列訓練計劃中
-Information: 信息
-Invalid user {0} or password.: 用戶 {0} 不存在或密碼錯誤。
+Information: 資訊
+Invalid user {0} or password.: 使用者 {0} 不存在或密碼錯誤。
 It works!: 它成了！
 Judged At: 評測時間
-Judging Queue: 評測隊列
+Judging Queue: 評測佇列
 Language: 語言
 Last Update At: 最後活動時間
 Location: 位置
-Login: 登錄
+Login: 登入
 Logout: 登出
-Logout All Sessions: 註銷所有會話
-Logout This Session: 註銷該會話
+Logout All Sessions: 登出所有會話
+Logout This Session: 登出該會話
 Lost Password: 忘記密碼
-Memory Cost: 內存使用
-Messages: 站內消息
+Memory Cost: 記憶體使用
+Messages: 站內訊息
 My Profile: 我的資料
 New Email: 新電子郵件
 New Password: 新密碼
 Not available: 不可用
-Oh, there is no task in the queue!: 呀，隊列中目前沒有任務。
+Oh, there is no task in the queue!: 呀，佇列中目前沒有任務。
 Oops!: Oops!
-Open Scratchpad: 進入在線編程模式
+Open Scratchpad: 進入線上程式設計模式
 Open Source: 開源
-Operating System: 操作系統
+Operating System: 作業系統
 Password: 密碼
-Password reset mail has been sent to your email.: 密碼重置郵件已發送到您的電子郵箱。
-Peak Memory: 內存使用峰值
+Password reset mail has been sent to your email.: 密碼重置郵件已傳送到您的電子郵箱。
+Peak Memory: 記憶體使用峰值
 Pretest?: 測試?
 Privacy: 隱私
 Problem: 題目
@@ -110,35 +110,35 @@ Problem Tags Visibility: 題目標籤可見性
 Problems: 題目
 Problems Sets: 題庫
 Public: 公開
-Published at: 發佈於
+Published at: 釋出於
 QQ Group: QQ 群
 QQ Visibility: QQ 可見度
-Quit Scratchpad: 退出在線編程模式
+Quit Scratchpad: 退出線上程式設計模式
 Recent Activities: 最近活動
 Registered at: 註冊於
 Related: 相關
 Related Discussions: 相關討論
 Remember me: 記住我
 Repeat Password: 重複密碼
-Reply: 回復
+Reply: 回覆
 Reset Password: 重置密碼
 Rule: 規則
-SIGN IN: 登錄
-Save All Changes: 保存所有修改
-Saved session: 已保存的會話
+SIGN IN: 登入
+Save All Changes: 儲存所有修改
+Saved session: 已儲存的會話
 Score: 分數
 Secret: 保密
 Security: 安全
-Security Settings: 安全設置
+Security Settings: 安全設定
 Select a node to create discussion.: 選擇一個節點來發表討論。
-Send: 發送
-Send Code after acceptance: 通過題目後發送原始碼
-Send Password Reset Email: 發送密碼重置郵件
-Send Verification Email: 發送驗證郵件
+Send: 傳送
+Send Code after acceptance: 通過題目後傳送原始碼
+Send Password Reset Email: 傳送密碼重置郵件
+Send Verification Email: 傳送驗證郵件
 Service Status: 服務狀態
-Settings: 設置
+Settings: 設定
 Show all tags: 顯示所有標籤
-Sign In: 登錄
+Sign In: 登入
 Sign Up: 註冊
 Sign Up Now: 現在註冊
 Sign up mail has been sent to your email.: 註冊郵件已經發送到您的電子郵箱。
@@ -152,39 +152,38 @@ Submissions: 遞交
 Submit: 遞交
 Submit At: 遞交時間
 Submit By: 遞交者
-Submit Solution: 遞交代碼
 Submit Time: 遞交時間
-Support: 支持
+Support: 支援
 Swx Good!: Swx 好棒！
 Swx Template!: Swx 模板！
-Technical Information: 技術信息
+Technical Information: 技術資訊
 Temporary session: 臨時會話
-This email was sent by {0} automatically, and please do not reply directly.: 這封郵件由{0}自動發送，請勿直接回復。
+This email was sent by {0} automatically, and please do not reply directly.: 這封郵件由 {0} 自動傳送，請勿直接回復。
 This is the current session: 這是當前的會話
 Time Cost: 耗時
 Title: 標題
 Total Time: 總耗時
 Type: 類型
-UI Language: 用戶界面語言
+UI Language: 使用者介面語言
 Unknown: 未知
 Update: 更新
 Uploaded By: 上傳者
-User: 用戶
-User doesn't have the required permission in this domain.: 用戶在該域中無此許可權。
-User doesn't have the required privilege.: 用戶沒有相應的特權。
-User {0} already exists.: 用戶 {0} 已存在。
-Username: 用戶名
+User: 使用者
+User doesn't have the required permission in this domain.: 使用者在該域中無此許可權。
+User doesn't have the required privilege.: 使用者沒有相應的特權。
+User {0} already exists.: 使用者 {0} 已存在。
+Username: 使用者名
 Using your Vijos universal account: 使用您的 Vijos 通用賬戶
-View Problem: 查看題目
-View or create discussion: 查看與發表討論
-View or submit solution: 查看與發表題解
-Visible to registered users: 對註冊用戶可見
+View Problem: 檢視題目
+View or create discussion: 檢視與發表討論
+View or submit solution: 檢視與發表題解
+Visible to registered users: 對註冊使用者可見
 Vote: 投票
 We use Gravatar to present your avatar icon.: 我們使用 Gravatar 服務來呈現您的頭像。
 Whether to show tags in the problem list.: 是否在題目列表中顯示題目的標籤。
 Write Your Comment: 撰寫您的評論
 Write Your Solution: 撰寫您的題解
-You're not logged in.: 您沒有登錄。
+You're not logged in.: 您沒有登入。
 author: 作者
 content: 內容
 contest_create: 創建比賽
@@ -196,12 +195,12 @@ discussion_create: 創建討論
 discussion_main: 討論
 discussion_node: 討論
 error: 錯誤
-home_account: 賬戶設置
-home_messages: 站內消息
-home_security: 安全設置
+home_account: 賬戶設定
+home_messages: 站內訊息
+home_security: 安全設定
 judge_playground: 評測遊樂場
 last active at: 最後活動於
-last login at: 最後登錄於
+last login at: 最後登入於
 main: 首頁
 no discussion yet...: 目前沒有討論…
 pager_first: « 第一頁
@@ -212,21 +211,47 @@ problem_create: 創建題目
 problem_edit: 編輯題目
 problem_main: 題庫
 problem_solution: 題解
-problem_submit: 遞交代碼
+problem_submit: 遞交程式碼
 record_detail: 記錄詳情
-record_main: 評測隊列
-reply: 回復
+record_main: 評測佇列
+reply: 回覆
 setting_function: 功能
-setting_info: 個人信息
+setting_info: 個人資訊
 setting_preference: 偏好
 setting_privacy: 隱私
 title: 標題
 training_main: 訓練
-user_detail: 用戶
-user_login: 登錄
+user_detail: 使用者
+user_login: 登入
 user_logout: 登出
 user_lostpass: 忘記密碼
 user_register: 註冊
 '{0} comments': '{0} 條評論'
 '{0} solutions': '{0} 個題解'
-'{0} views': '{0} 次查看'
+'{0} views': '{0} 次檢視'
+New: 創建
+Pretest: 對拍
+Add: 新增
+Remove: 移除
+Add new data: 新增新資料
+Remove this data: 移除這組資料
+Sample Input: 輸入資料
+Sample Output: 輸出資料
+Records: 評測記錄
+Refresh Records: 重新整理評測記錄
+Refresh: 重新整理
+Run Pretest: 運行對拍
+Pretest Your Code: 使用您的對拍資料測試程式碼
+Submit Solution: 遞交評測
+Submit Your Code: 遞交程式碼進行正式評測
+Toggle Pretest Panel: 切換對拍面板
+Toggle Records Panel: 切換評測記錄面板
+Recent {0} Records: 最近 {0} 條記錄
+You have not submitted any solutions for this problem.: 您在該題下沒有遞交過任何解答。
+Submit to Judge: 遞交以評測
+Code language: 程式碼語言
+'Yes': 是
+'No': 否
+Comment: 評論
+Share: 分享
+Delete: 刪除
