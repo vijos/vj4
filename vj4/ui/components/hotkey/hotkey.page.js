@@ -71,14 +71,14 @@ const hotkeyPage = new AutoloadPage(() => {
     hotkey.sort();
 
     // Find all global hotkeys
-    $('[data-global-hotkey]').each((i, element) => {
+    for (const element of $('[data-global-hotkey]')) {
       testElementHotkey(hotkey, $(element), 'data-global-hotkey');
-    });
+    }
 
     // Find all local hotkeys
-    $(ev.target).parents('[data-hotkey]').each((i, element) => {
+    for (const element of $(ev.target).parents('[data-hotkey]')) {
       testElementHotkey(hotkey, $(element), 'data-hotkey');
-    });
+    }
   });
 });
 

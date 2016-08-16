@@ -1,5 +1,5 @@
 @font-face
-  font-family: '{{ options.fontName }}'
+  font-family: $icon-font-name
   src: url('./{{ options.fontName }}.eot?{{ options.timestamp }}')
   src: url('./{{ options.fontName }}.eot?{{ options.timestamp }}#iefix') format('embedded-opentype'),
     url('./{{ options.fontName }}.woff2?{{ options.timestamp }}') format('woff2'),
@@ -9,7 +9,7 @@
   font-style: normal
 
 .icon
-  font-family: '{{ options.fontName }}' !important
+  font-family: $icon-font-name !important
   speak: none
   font-style: normal
   font-weight: normal

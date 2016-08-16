@@ -16,11 +16,10 @@ function updateStickies($stickies) {
       if ($stickyParent.length > 0) {
         stickyOptions.parent = $stickyParent;
       }
+      stickyOptions.offset_top = 10;
       const $nav = $('.nav');
       if ($nav.length > 0) {
-        stickyOptions.offset_top = $nav.height() + 10;
-      } else {
-        stickyOptions.offset_top = 10;
+        stickyOptions.offset_top += $nav.height();
       }
       $sticky.stick_in_parent(stickyOptions);
       $sticky.data('sticky-enabled', true);

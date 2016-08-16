@@ -18,7 +18,9 @@ function applyRotator(element) {
 }
 
 const votePage = new AutoloadPage(() => {
-  $('.vote-number.rotator--enabled').each((i, el) => applyRotator(el));
+  for (const element of $('.vote-number.rotator--enabled')) {
+    applyRotator(element);
+  }
   $(document).on('click', '.vote-button', ev => {
     const $button = $(ev.currentTarget);
     const $container = $button.closest('.vote');

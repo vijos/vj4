@@ -1,10 +1,10 @@
 {% extends "home_base.html" %}
 {% block home_content %}
-<div class="section">
+<div class="section" data-heading-extract-to="#menu-item-home_account">
   <form method="post">
     {% for family, settings in vj4.model.adaptor.setting.SETTINGS_BY_FAMILY.items() %}
     <div class="section__header">
-      <h1 class="section__title">{{ _(family) }}</h1>
+      <h1 class="section__title" id="{{ family }}" data-heading>{{ _(family) }}</h1>
     </div>
     <div class="section__body">
       {% for setting in settings %}

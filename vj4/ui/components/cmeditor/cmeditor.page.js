@@ -4,9 +4,9 @@ import delay from '../../utils/delay';
 
 function runSubstitute($container) {
   const selector = ['textarea[data-markdown]'];
-  $container.find(selector.join(', ')).each((i, element) => {
+  for (const element of $container.find(selector.join(', '))) {
     CmEditor.getOrConstruct($(element));
-  });
+  }
 }
 
 const cmEditorPage = new AutoloadPage(() => {
