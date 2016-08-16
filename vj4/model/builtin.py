@@ -69,11 +69,18 @@ PRIV_CREATE_DOMAIN = 1 << 9
 PRIV_ALL = -1
 
 # Roles.
+ROLE_GUEST = 'guest'
 ROLE_DEFAULT = 'default'
 ROLE_ADMIN = 'admin'
 
 # Domains.
 DOMAIN_ID_SYSTEM = 'system'
+BASIC_PERMISSIONS = (PERM_VIEW |
+                     PERM_VIEW_PROBLEM |
+                     PERM_VIEW_PROBLEM_SOLUTION |
+                     PERM_VIEW_DISCUSSION |
+                     PERM_VIEW_CONTEST |
+                     PERM_VIEW_CONTEST_STATUS)
 DEFAULT_PERMISSIONS = (PERM_VIEW |
                        PERM_VIEW_PROBLEM |
                        PERM_SUBMIT_PROBLEM |
@@ -91,7 +98,8 @@ DEFAULT_PERMISSIONS = (PERM_VIEW |
 ADMIN_PERMISSIONS = PERM_ALL
 DOMAIN_SYSTEM = {'_id': DOMAIN_ID_SYSTEM,
                  'owner_uid': 0,
-                 'roles': {ROLE_DEFAULT: DEFAULT_PERMISSIONS,
+                 'roles': {ROLE_GUEST: BASIC_PERMISSIONS,
+                           ROLE_DEFAULT: DEFAULT_PERMISSIONS,
                            ROLE_ADMIN: ADMIN_PERMISSIONS}}
 DOMAINS = [DOMAIN_SYSTEM]
 
@@ -115,6 +123,7 @@ USER_GUEST = {'_id': UID_GUEST,
               # in every domains:
               'rp': 0.0,
               'rank': 0,
+              'role': ROLE_GUEST,
               'level': 0,
               'num_submit': 0,
               'num_accept': 0}

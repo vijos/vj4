@@ -38,12 +38,14 @@
               <td class="col--name">
                 <form method="post">
                   <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
-                  {% if not pdoc['psdoc'].get('star') %}
+                  {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                    {% if not pdoc['psdoc'].get('star') %}
                   <input type="hidden" name="operation" value="star">
                   <button class="star" type="submit"><span class="icon icon-star--outline"></span></button>
-                  {% else %}
+                    {% else %}
                   <input type="hidden" name="operation" value="unstar">
                   <button class="star activated" type="submit"><span class="icon icon-star"></span></button>
+                    {% endif %}
                   {% endif %}
                   <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                   <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
@@ -66,6 +68,7 @@
     </div>
   </div>
   <div class="large-3 columns">
+    {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_PROBLEM) %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">
@@ -76,6 +79,7 @@
         <p><a href="{{ reverse_url('problem_create') }}" class="expanded primary button">{{ _('Create a problem') }}</a></p>
       </div>
     </div>
+    {% endif %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>

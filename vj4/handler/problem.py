@@ -49,6 +49,8 @@ class ProblemDetailHandler(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    # TODO(twd2): attach tdoc
+    pdoc['tdoc'] = {'_id': 'todo', 'title': 'test', 'end_at': 'TODO'}
     udocs = await user.attach_udocs([pdoc], 'owner_uid')
     await domain.update_udocs(self.domain_id, udocs)
     path_components = self.build_path(
@@ -101,8 +103,7 @@ class ProblemSubmitHandler(base.Handler):
 
 @app.route('/p/{pid}/pretest', 'problem_pretest')
 class ProblemPretestHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_CREATE_PROBLEM_SOLUTION)
+  @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
