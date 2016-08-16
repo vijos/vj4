@@ -17,8 +17,8 @@ const menuHeadingPage = new AutoloadPage(null, () => {
       const $a = $('<a>')
         .addClass('menu__link')
         .text($heading.text())
-        .attr('href', '#' + $heading.attr('id') || 0);
-      const $item = $('<li>')
+        .attr('href', `#${$heading.attr('id') || 0}`);
+      $('<li>')
         .addClass('menu__item')
         .append($a)
         .appendTo($menu);
