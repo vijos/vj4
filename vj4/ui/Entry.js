@@ -35,6 +35,9 @@ async function load() {
     [currentPage.afterLoading, currentPage],
   ];
   for (const [func, page] of loadSequence) {
+    if (typeof func !== 'function') {
+      continue;
+    }
     try {
       await func();
     } catch (e) {
