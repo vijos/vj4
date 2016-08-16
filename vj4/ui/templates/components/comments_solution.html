@@ -37,6 +37,7 @@
     <div class="media__left top">
     {% if not mode_create %}
       <div class="vote vote--discussion">
+        {% if handler.has_perm(vj4.model.builtin.PERM_VOTE_PROBLEM_SOLUTION) %}
         <div class="vote-number rotator--enabled">{{ doc['vote'] }}</div>
         <div class="vote-op clearfix">
           <form method="post">
@@ -52,6 +53,9 @@
             <button type="submit" class="vote-button downvote{% if doc['pssdoc']['vote'] == -1 %} active{% endif %}" data-tooltip="{{ _('Downvote') }}" data-tooltip-below aria-label="{{ _('Downvote') }}"><span class="icon icon-vote--down"></span></button>
           </form>
         </div>
+        {% else %}
+        <div class="vote-number">{{ doc['vote'] }}</div>
+        {% endif %}
       </div>
     {% else %}
       <div class="vote vote--discussion">

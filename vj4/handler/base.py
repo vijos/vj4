@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import calendar
 import functools
 import hmac
@@ -20,6 +21,7 @@ from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
 from vj4.model.adaptor import setting
+from vj4.util import timezone
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
@@ -32,6 +34,7 @@ class HandlerBase(setting.SettingMixin):
   TITLE = None
 
   async def prepare(self):
+    self.now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
     self.session = await self.update_session()
     if self.session and 'uid' in self.session:
       self.user = await user.get_by_uid(self.session['uid']) or builtin.USER_GUEST
@@ -303,8 +306,7 @@ def _get_datetime_span(tzname):
 
   @functools.lru_cache()
   def _datetime_span(dt):
-    if not dt.tzinfo:
-      dt = dt.replace(tzinfo=pytz.utc)
+    dt = timezone.ensure_tzinfo(dt)
     # TODO(iceboy): add a class for javascript selection.
     return markupsafe.Markup(
       '<span data-timestamp="{0}">{1}</span>'.format(

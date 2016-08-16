@@ -41,10 +41,17 @@ class ContestDetailHandler(base.OperationHandler):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc = await contest.get(self.domain_id, tid)
+    tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'],
+                                     {'attend': 1})
+    if tsdoc:
+      attended = tsdoc.get('attend') == 1
+    else:
+      attended = False
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], None))
-    self.render('contest_detail.html', tdoc=tdoc, path_components=path_components)
+    self.render('contest_detail.html', tdoc=tdoc, attended=attended,
+                path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_ATTEND_CONTEST)
@@ -122,6 +129,10 @@ class ContestStatusHandler(base.Handler):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    # TODO(iceboy): This does not work on multi-machine environment.
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
+        and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
+      raise error.ContestStatusHiddenError()
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),

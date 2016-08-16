@@ -123,7 +123,7 @@ class DiscussionDetailHandler(base.OperationHandler):
     self.json_or_redirect(self.reverse_url('discussion_detail', did=did))
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_TAIL_REPLY_DISCUSSION)
+  @base.require_perm(builtin.PERM_REPLY_DISCUSSION)
   @base.route_argument
   @base.require_csrf_token
   @base.sanitize

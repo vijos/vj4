@@ -13,20 +13,36 @@
   </form>
 </div>
 <div class="nojs--hide">
+  {% if handler.has_perm(comment_post_perm) %}
   <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ _(comment_placeholder) }}"></textarea>
+  {% else %}
+  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ _(('Login to ' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to ') + comment_placeholder) }}" disabled></textarea>
+  {% endif %}
 </div>
 {% endmacro %}
 {% macro comment_operations(doc) %}
 <div class="dczcomments__operations nojs--hide">
+  {% if handler.has_perm(reply_post_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Reply') }}" class="dczcomments__op-reply-comment" data-form="{{ {'operation': reply_post_op, reply_ref: doc['doc_id']}|json }}"><span class="icon icon-reply"></span></a>
+  {% endif %}
+  {% if handler.has_perm(comment_edit_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Edit') }}" class="dczcomments__op-edit-comment" data-form="{{ {'operation': comment_edit_op}|json }}"><span class="icon icon-edit"></span></a>
+  {% endif %}
+  {% if handler.has_perm(comment_delete_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Delete') }}" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+  {% endif %}
 </div>
 {% endmacro %}
 {% macro reply_operations() %}
 <div class="dczcomments__operations nojs--hide">
+  {% if handler.has_perm(reply_post_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Reply') }}" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a>
+  {% endif %}
+  {% if handler.has_perm(reply_edit_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Edit') }}" class="dczcomments__op-edit-reply" data-form="{{ {'operation': reply_edit_op}|json }}"><span class="icon icon-edit"></span></a>
+  {% endif %}
+  {% if handler.has_perm(reply_delete_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Delete') }}" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+  {% endif %}
 </div>
 {% endmacro %}
