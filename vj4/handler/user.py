@@ -3,6 +3,7 @@ import datetime
 
 from vj4 import app
 from vj4 import error
+from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import opcount
@@ -168,3 +169,18 @@ class UserDetailHandler(base.Handler):
     await domain.update_udocs(self.domain_id, [udoc])
     sdoc = await token.get_most_recent_session_by_uid(udoc['_id'])
     self.render('user_detail.html', udoc=udoc, sdoc=sdoc)
+
+
+@app.route('/user/prefix/{uprefix}', 'user_prefix')
+class UserPrefixHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, uprefix: str):
+    udocs = await user.get_prefix_list(uprefix, user.PROJECTION_PUBLIC, 50)
+    if not udocs:
+      raise error.UserNotFoundError(uprefix)
+    for udoc in udocs:
+      if 'gravatar' in udoc:
+        udoc['gravatar_url'] = template.gravatar_url(udoc.pop('gravatar'))
+    self.json(udocs)
