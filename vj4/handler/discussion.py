@@ -32,6 +32,7 @@ class DiscussionMainHandler(base.Handler):
                 page=page, dcount=dcount)
 
 
+@app.route('/discuss/{node_or_pid:\d+}', 'discussion_node-legacy')
 @app.route('/discuss/{node_or_pid}/', 'discussion_node')
 class DiscussionNodeHandler(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
