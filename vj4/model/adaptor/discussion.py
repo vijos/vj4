@@ -95,10 +95,11 @@ async def get_vnode(domain_id: str, node_or_pid: document.convert_doc_id, attach
 
 
 @argmethod.wrap
-async def add(domain_id: str, node_or_pid: str, owner_uid: int, title: str, content: str):
+async def add(domain_id: str, node_or_pid: str, owner_uid: int, title: str, content: str,
+              **flags):
   vnode = await get_vnode(domain_id, node_or_pid)
   return await document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION,
-                            title=title, num_replies=0,
+                            title=title, num_replies=0, views=0, **flags,
                             parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id'])
 
 

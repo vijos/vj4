@@ -83,8 +83,14 @@ class DiscussionCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, node_or_pid: document.convert_doc_id, title: str, content: str):
-    did = await discussion.add(self.domain_id, node_or_pid, self.user['_id'], title, content)
+  async def post(self, *, node_or_pid: document.convert_doc_id, title: str, content: str,
+                 highlight:str =None):
+    flags = {}
+    if highlight:
+      self.check_perm(builtin.PERM_HIGHLIGHT_DISCUSSION)
+      flags['highlight'] = True
+    did = await discussion.add(self.domain_id, node_or_pid, self.user['_id'], title, content,
+                               **flags)
     self.json_or_redirect(self.reverse_url('discussion_detail', did=did), did=did)
 
 
