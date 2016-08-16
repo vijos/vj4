@@ -1,6 +1,7 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import CommentBox from '../discussion/CommentBox';
 import delay from '../../utils/delay';
+import { slideDown } from '../../utils/slide';
 
 const $replyTemplate = $('.commentbox-container').eq(0).clone();
 
@@ -15,35 +16,14 @@ function createReplyContainer($parent) {
 
 async function showReplyContainer($parent) {
   const $container = $parent.find('.commentbox-container');
-  $container.css({
-    position: 'absolute',
-    visibility: 'none',
-    display: 'block',
-  });
-  const targetHeight = $container.outerHeight();
-  $container.removeAttr('style');
-  $container.css({
-    opacity: 0,
-    height: 0,
-    overflow: 'hidden',
-  });
-  $container.height();
-
-  $container.transition({
-    height: targetHeight,
-  }, {
-    duration: 300,
-    easing: 'easeOutCubic',
-  });
-  await delay(300);
-
+  $container.css('opacity', 0);
+  await slideDown($container, 300);
   $container.transition({
     opacity: 1,
   }, {
     duration: 200,
   });
   await delay(200);
-
   $container.removeAttr('style');
 }
 

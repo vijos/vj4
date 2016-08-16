@@ -1,4 +1,4 @@
-# Vijos UI Language
+# Vijos UI Framework
 
 ## Responsive Cutoffs
 
@@ -250,6 +250,21 @@ Menu can be put inside a section. It should be placed inside `section__body no-p
 </div>
 ```
 
+#### Menu Item from Headings
+
+Menu items can be automatically generated from headings. To enable this feature, you need to specify the region to extract headings and the destination of extracted menu items by setting `data-heading-extract-to` attribute:
+
+```html
+<div class="section" data-heading-extract-to="#my-menu-item">
+  <h1 id="h_1" data-heading>Heading 1</h1>
+  <h1 id="h_2" data-heading>Heading 2</h1>
+</div>
+```
+
+This attribute accepts a CSS selector and all elements that contain `data-heading` attribute in the element will be extracted. `id` is essential and it will be appended to the hash part so that the page will navigate when user clicks the newly generate menu item.
+
+The CSS selector should match a `menu__item` element. Headings will become the sub-menu of that element.
+
 ### Sticky
 
 Sticky elements are always visible when the user scrolls. To enable sticky, add `data-sticky` attribute to the element.
@@ -317,6 +332,50 @@ TODO
 ### Tab
 
 TODO
+
+### Hotkey
+
+#### Local Hotkey
+
+Local hotkeys are triggered when it is assigned to a parent of the active element in which user presses specific key.
+
+To enable local hotkey on an element, add `data-hotkey` attribute:
+
+```html
+<button data-hotkey="f1"></button>
+```
+
+You can specify multiple hotkeys in the attribute.
+
+#### Global hotkey
+
+Global hotkeys are triggered no matter where user presses specific key.
+
+To enable global hotkey on an element, add `data-global-hotkey` attribute:
+
+```html
+<button data-global-hotkey="f2"></button>
+```
+
+You can specify multiple hotkeys in the attribute.
+
+#### Hotkey Syntax
+
+`hotKeyDef[,hotKeyDef[,hotKeyDef...]]`
+
+`hotKeyDef`: `keySequence[:event]`
+
+`keySequence`: `key1[+key2[+key3...]]`
+
+When `keySequence` matches, the `event` will be triggered on the element that holds the attribute. If `event` is not given in `hotKeyDef`, it will be `click` by default. In addition, if `event` is `submit`, the event will be triggered on the closest `form` element, instead of the current element.
+
+Sample:
+
+`ctrl+f1`: Triggers click on this element when user presses `Ctrl`+`F1` or `Command`+`F1`.
+
+`ctrl+enter:submit`: Triggers submit on the closest `form` when user presses `Ctrl+Enter` or `Command+Enter`.
+
+`f1:submit,f2:client`: Triggers submit when user presses `f1` and triggers click when user presses `f2`.
 
 ## High-Level Components
 

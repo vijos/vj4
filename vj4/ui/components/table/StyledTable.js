@@ -6,7 +6,9 @@ export default class StyledTable extends DOMAttachedObject {
   static DOMAttachKey = 'vjStyledTableInstance';
 
   static attachAll() {
-    $('.section__body > .data-table').each((index, table) => StyledTable.getOrConstruct($(table)).attach());
+    for (const table of $('.section__body > .data-table')) {
+      StyledTable.getOrConstruct($(table)).attach();
+    }
   }
 
   constructor($dom) {

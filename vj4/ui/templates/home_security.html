@@ -1,8 +1,9 @@
 {% extends "home_base.html" %}
 {% block home_content %}
+<div data-heading-extract-to="#menu-item-home_security">
 <div class="section">
   <div class="section__header">
-    <h1 class="section__title">{{ _('Change Email') }}</h1>
+    <h1 class="section__title" id="email" data-heading>{{ _('Change Email') }}</h1>
   </div>
   <div class="section__body">
     <form method="post">
@@ -34,7 +35,7 @@
 </div>
 <div class="section">
   <div class="section__header">
-    <h1 class="section__title">{{ _('Change Password') }}</h1>
+    <h1 class="section__title" id="password" data-heading>{{ _('Change Password') }}</h1>
   </div>
   <div class="section__body">
     <form method="post">
@@ -66,7 +67,7 @@
 </div>
 <div class="section">
   <div class="section__header">
-    <h1 class="section__title">{{ _('Active Sessions') }}</h1>
+    <h1 class="section__title" id="session" data-heading>{{ _('Active Sessions') }}</h1>
   </div>
   <div class="section__body">
     <ul class="sessionlist">
@@ -85,9 +86,13 @@
             <p>{{ _('Type') }}: {{ _(vj4.handler.home.TOKEN_TYPE_TEXTS[session['token_type']]) }}</p>
             {% if session['is_current'] %}
             <p class="sessionlist__current-session"><span class="icon icon-check"></span> {{ _('This is the current session') }}</p>
+            {% endif %}
+          </div>
+          <div class="media__right medium">
+            {% if session['is_current'] %}
             <form method="POST" action="{{ reverse_url('user_logout') }}">
               <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-              <input type="submit" value="{{ _('Logout') }}" class="rounded button">
+              <input type="submit" value="{{ _('Logout This Session') }}" class="rounded button">
             </form>
             {% else %}
             <form method="post">
@@ -112,5 +117,6 @@
     </form>
     <p><small>IP geo-location data is provided by <a href="http://www.maxmind.com" target="_blank">MaxMind</a>.</small></p>
   </div>
+</div>
 </div>
 {% endblock %}

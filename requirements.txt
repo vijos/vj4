@@ -5,7 +5,7 @@ motor
 hoedown
 accept
 aioamqp
-smtplibaio
+git+https://github.com/hwmrocker/smtplibaio  # bugfix not deployed to pypi
 pytz
 colorlog
 httpagentparser
