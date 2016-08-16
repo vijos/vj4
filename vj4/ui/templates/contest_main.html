@@ -9,6 +9,7 @@
     </ol>
   </div>
   <div class="large-3 columns">
+    {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_CONTEST) %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">
@@ -19,6 +20,7 @@
         <p><a href="{{ reverse_url('contest_create') }}" class="expanded primary button">{{ _('Create a contest') }}</a></p>
       </div>
     </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
