@@ -139,26 +139,25 @@ const page = new NamedPage('problem_detail', async () => {
   }
 
   function updateFloatingSidebar() {
-    if ($floatingSidebar && $floatingSidebar.tether) {
-      $floatingSidebar.tether.position();
-    }
+    Tether.position();
   }
 
   async function createSidebar() {
     $floatingSidebar = $('.section--problem-sidebar')
       .clone()
-      .addClass('scratchpad__sidebar')
+      .addClass('scratchpad__sidebar visible')
       .appendTo('body');
     $floatingSidebar.find('a').attr('target', '_blank');
-    $floatingSidebar.tether = new Tether({
+
+    const tether = new Tether({
       element: $floatingSidebar,
       offset: '-20px 20px',
       target: '.scratchpad__problem',
       attachment: 'top right',
       targetAttachment: 'top right',
     });
-    $floatingSidebar.tether.position();
-    $floatingSidebar.addClass('visible');
+    await delay(100);
+    tether.position();
   }
 
   async function removeSidebar() {
