@@ -28,6 +28,7 @@ async def run(domain_id: str):
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
     rdocs = record.get_problem_multi(domain_id, pdoc['doc_id'],
+                                     type=constant.record.TYPE_SUBMISSION,
                                      fields={'_id': 1, 'uid': 1,
                                              'status': 1, 'score': 1}).sort('_id', 1)
     _logger.info('Reading records, rebuilding journals')
@@ -46,7 +47,7 @@ async def run(domain_id: str):
       pdoc_update['num_submit'] += status['num_submit']
       pdoc_update['num_accept'] += status['num_accept']
       await document.set_status(domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], uid,
-                                **status)
+                                **status, **psdoc)
       if uid not in udoc_updates:
         udoc_updates[uid] = {'num_submit': status['num_submit'],
                              'num_accept': status['num_accept']}
