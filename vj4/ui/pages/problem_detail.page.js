@@ -139,7 +139,7 @@ const page = new NamedPage('problem_detail', async () => {
   }
 
   function updateFloatingSidebar() {
-    Tether.position();
+    $floatingSidebar.tether.position();
   }
 
   async function createSidebar() {
@@ -148,8 +148,7 @@ const page = new NamedPage('problem_detail', async () => {
       .addClass('scratchpad__sidebar visible')
       .appendTo('body');
     $floatingSidebar.find('a').attr('target', '_blank');
-
-    const tether = new Tether({
+    $floatingSidebar.tether = new Tether({
       element: $floatingSidebar,
       offset: '-20px 20px',
       target: '.scratchpad__problem',
@@ -157,7 +156,7 @@ const page = new NamedPage('problem_detail', async () => {
       targetAttachment: 'top right',
     });
     await delay(100);
-    tether.position();
+    $floatingSidebar.tether.position();
   }
 
   async function removeSidebar() {

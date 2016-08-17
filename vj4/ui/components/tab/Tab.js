@@ -50,10 +50,6 @@ export default class Tab extends DOMAttachedObject {
     this.$header.find('.section__tab-header-item').eq(index).addClass('selected');
   }
 
-  detach() {
-    throw new Error('Not implemented');
-  }
-
 }
 
 _.assign(Tab, DOMAttachedObject);
