@@ -55,6 +55,7 @@ class RecordDetailHandler(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
+    # TODO(twd2): check perm or priv
     if rdoc['uid'] != self.user['_id']:
       del rdoc['code']
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
