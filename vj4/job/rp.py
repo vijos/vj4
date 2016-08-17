@@ -52,7 +52,7 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
   async for psdoc in psdocs:
     order += 1
     rp = rp_func(order)
-    delta_rp = rp - psdoc['rp']
+    delta_rp = rp - psdoc.get('rp', 0.0)
     await document.set_status(domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], psdoc['uid'],
                               rp=rp)
     assert psdoc['uid'] not in uddoc_incs
