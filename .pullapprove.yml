@@ -3,8 +3,8 @@ always_pending:
   labels:
     - wip
 approve_by_comment: true
-approve_regex: ^approved
-reject_regex: ^rejected
+approve_regex: ^[Aa]pproved
+reject_regex: ^[Rr]ejected
 reset_on_push: true
 reviewers:
   -
