@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import calendar
+import copy
 import functools
 import hmac
 import logging
@@ -37,9 +38,9 @@ class HandlerBase(setting.SettingMixin):
     self.now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
     self.session = await self.update_session()
     if self.session and 'uid' in self.session:
-      self.user = await user.get_by_uid(self.session['uid']) or builtin.USER_GUEST
+      self.user = await user.get_by_uid(self.session['uid']) or copy.deepcopy(builtin.USER_GUEST)
     else:
-      self.user = builtin.USER_GUEST
+      self.user = copy.deepcopy(builtin.USER_GUEST)
     self.view_lang = self.get_setting('view_lang')
     self.translate = locale.get_translate(self.view_lang)
     self.timezone = self.get_setting('timezone')
