@@ -16,6 +16,8 @@ UNAME2 = 'twd3'
 JUDGE_UID = 0
 JUDGE_TOKEN = 'token'
 
+EPS = 10 ** (-5)
+
 
 class RecordTestCase(base.DatabaseTestCase):
   async def init_record(self):
@@ -27,7 +29,7 @@ class RecordTestCase(base.DatabaseTestCase):
                                       UID, 'cc', 'int main(){}')
     self.rid_p1_ac2 = await record.add(DOMAIN_ID, self.pid1, constant.record.TYPE_SUBMISSION,
                                        UID, 'cc', 'int main(){}')
-    # first judge, WA.
+    # first judge, WA. rejudge, TODO(twd2)
     await record.begin_judge(self.rid_p1_wa_to_ac, JUDGE_UID, JUDGE_TOKEN,
                              constant.record.STATUS_JUDGING)
     await record.end_judge(self.rid_p1_wa_to_ac, JUDGE_UID, JUDGE_TOKEN,
@@ -158,6 +160,7 @@ class RpTest(RecordTestCase):
     await self.init_record()
     await job.record.run(DOMAIN_ID)
     await job.rp.recalc(DOMAIN_ID)
+    # user 1
     pdoc = await problem.get(DOMAIN_ID, self.pid1, UID)
     psdoc = pdoc['psdoc']
     rp_p1_before = psdoc['rp']
@@ -166,11 +169,13 @@ class RpTest(RecordTestCase):
     rp_p2_before = psdoc['rp']
     uddoc = await domain.get_user(DOMAIN_ID, UID)
     rp_u1_before = uddoc['rp']
+    # user 1 submitted a record, WA
     rid_p1_wa2 = await record.add(DOMAIN_ID, self.pid1, constant.record.TYPE_SUBMISSION,
                                   UID, 'cc', 'int main(){}')
     await record.begin_judge(rid_p1_wa2, JUDGE_UID, JUDGE_TOKEN, constant.record.STATUS_JUDGING)
     await record.end_judge(rid_p1_wa2, JUDGE_UID, JUDGE_TOKEN, constant.record.STATUS_WRONG_ANSWER,
                            50, 1000, 1024)
+    # user 2 submitted a record, AC
     rid_p1u2_ac = await record.add(DOMAIN_ID, self.pid1, constant.record.TYPE_SUBMISSION,
                                    UID2, 'cc', 'int main(){}')
     await record.begin_judge(rid_p1u2_ac, JUDGE_UID, JUDGE_TOKEN, constant.record.STATUS_JUDGING)
@@ -179,6 +184,7 @@ class RpTest(RecordTestCase):
     await job.record.run(DOMAIN_ID)
     await job.rp.update_problem(DOMAIN_ID, self.pid1)
     await job.rp.update_problem(DOMAIN_ID, self.pid2)
+    # user 1
     pdoc = await problem.get(DOMAIN_ID, self.pid1, UID)
     psdoc = pdoc['psdoc']
     rp_p1 = psdoc['rp']
@@ -192,6 +198,7 @@ class RpTest(RecordTestCase):
     uddoc = await domain.get_user(DOMAIN_ID, UID)
     self.assertEqual(uddoc['rp'], rp_p1 + rp_p2)
     self.assertLess(uddoc['rp'], rp_u1_before)
+    # user 2
     pdoc = await problem.get(DOMAIN_ID, self.pid1, UID2)
     psdoc = pdoc['psdoc']
     rp_p1u2 = psdoc['rp']
@@ -202,6 +209,35 @@ class RpTest(RecordTestCase):
     self.assertTrue('rp' not in psdoc or psdoc['rp'] == 0)
     uddoc = await domain.get_user(DOMAIN_ID, UID2)
     self.assertEqual(uddoc['rp'], rp_p1u2)
+    # rejudge to WA
+    await record.begin_judge(self.rid_p2_ac, JUDGE_UID, JUDGE_TOKEN,
+                             constant.record.STATUS_JUDGING)
+    await record.end_judge(self.rid_p2_ac, JUDGE_UID, JUDGE_TOKEN,
+                           constant.record.STATUS_WRONG_ANSWER, 10, 1000, 1024)
+    await job.record.run(DOMAIN_ID)
+    await job.rp.update_problem(DOMAIN_ID, self.pid1)
+    await job.rp.update_problem(DOMAIN_ID, self.pid2)
+    # user 1
+    pdoc = await problem.get(DOMAIN_ID, self.pid1, UID)
+    psdoc = pdoc['psdoc']
+    rp_p1_after = psdoc['rp']
+    self.assertEqual(rp_p1, rp_p1_after)
+    pdoc = await problem.get(DOMAIN_ID, self.pid2, UID)
+    psdoc = pdoc['psdoc']
+    self.assertTrue('rp' not in psdoc or psdoc['rp'] == 0)
+    uddoc = await domain.get_user(DOMAIN_ID, UID)
+    self.assertTrue(abs(uddoc['rp'] - rp_p1_after) < EPS)
+    # user 2
+    pdoc = await problem.get(DOMAIN_ID, self.pid1, UID2)
+    psdoc = pdoc['psdoc']
+    rp_p1u2_after = psdoc['rp']
+    self.assertEqual(rp_p1u2, rp_p1u2_after)
+    pdoc = await problem.get(DOMAIN_ID, self.pid2, UID2)
+    psdoc = pdoc['psdoc']
+    self.assertTrue('rp' not in psdoc or psdoc['rp'] == 0)
+    uddoc = await domain.get_user(DOMAIN_ID, UID2)
+    self.assertEqual(uddoc['rp'], rp_p1u2_after)
+
 
 class RankTest(RecordTestCase):
   @base.wrap_coro

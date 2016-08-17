@@ -20,7 +20,7 @@ RP_PROBLEM_MIN = 7.0
 # rp calculate range
 # (if count of accepted user is greater, will use RP_PROBLEM_MIN for the problem)
 RP_PROBLEM_MAX_USER = 1500
-RP_MIN_DELTA = 10 ** (-5)
+RP_MIN_DELTA = 10 ** (-9)
 
 
 def modulus_problem(num_accept):
@@ -55,12 +55,13 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
     delta_rp = rp - psdoc.get('rp', 0.0)
     await document.set_status(domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], psdoc['uid'],
                               rp=rp)
+    # (pid, uid) is unique.
     assert psdoc['uid'] not in uddoc_incs
     uddoc_incs[psdoc['uid']] = {'rp': delta_rp}
   if order != pdoc['num_accept']:
     _logger.warning('Problem {0} num_accept may be inconsistent.'.format(pdoc['doc_id']))
   # Was Accepted but Now Not Accepteds adjustment
-  # TODO(twd2): can $ne be indexed?
+  # TODO(twd2): should we use $ne? can $ne be indexed?
   psdocs = problem.get_multi_status(domain_id, doc_id=pdoc['doc_id'],
                                     status={'$gt': constant.record.STATUS_ACCEPTED},
                                     rp={'$gt': 0.0})
