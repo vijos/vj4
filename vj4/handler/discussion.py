@@ -84,7 +84,7 @@ class DiscussionCreateHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, node_or_pid: document.convert_doc_id, title: str, content: str,
-                 highlight:str =None):
+                 highlight: str=None):
     flags = {}
     if highlight:
       self.check_perm(builtin.PERM_HIGHLIGHT_DISCUSSION)
