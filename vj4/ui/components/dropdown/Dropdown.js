@@ -16,7 +16,7 @@ export default class Dropdown extends DOMAttachedObject {
     }
     const options = {
       target: $.find($dom.attr('data-dropdown-target'))[0],
-      position: $dom.attr('data-dropdown-position') || 'top left',
+      position: $dom.attr('data-dropdown-pos') || 'bottom left',
     };
     return Dropdown.getOrConstruct($dom, options);
   }
@@ -31,6 +31,7 @@ export default class Dropdown extends DOMAttachedObject {
     super($trigger);
     this.dropInstance = new Drop({
       target: $trigger[0],
+      classes: 'dropdown',
       content: options.target,
       position: options.position,
       openOn: 'hover',

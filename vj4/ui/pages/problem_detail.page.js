@@ -139,15 +139,13 @@ const page = new NamedPage('problem_detail', async () => {
   }
 
   function updateFloatingSidebar() {
-    if ($floatingSidebar && $floatingSidebar.tether) {
-      $floatingSidebar.tether.position();
-    }
+    $floatingSidebar.tether.position();
   }
 
   async function createSidebar() {
     $floatingSidebar = $('.section--problem-sidebar')
       .clone()
-      .addClass('scratchpad__sidebar')
+      .addClass('scratchpad__sidebar visible')
       .appendTo('body');
     $floatingSidebar.find('a').attr('target', '_blank');
     $floatingSidebar.tether = new Tether({
@@ -157,8 +155,8 @@ const page = new NamedPage('problem_detail', async () => {
       attachment: 'top right',
       targetAttachment: 'top right',
     });
+    await delay(100);
     $floatingSidebar.tether.position();
-    $floatingSidebar.addClass('visible');
   }
 
   async function removeSidebar() {
