@@ -67,19 +67,23 @@ def get_all_multi(end_id: objectid.ObjectId = None, *, fields=None):
 
 @argmethod.wrap
 def get_problem_multi(domain_id: str, pid: document.convert_doc_id,
-                      get_hidden: bool=False, *, fields=None):
+                      get_hidden: bool=False, type: int=None, *, fields=None):
   coll = db.Collection('record')
   query = {'hidden': False if not get_hidden else {'$gte': False},
            'domain_id': domain_id, 'pid': pid}
+  if type != None:
+    query['type'] = type
   return coll.find(query, fields=fields)
 
 
 @argmethod.wrap
 def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_doc_id,
-                              get_hidden: bool=False, *, fields=None):
+                              get_hidden: bool=False, type: int=None, *, fields=None):
   coll = db.Collection('record')
   query = {'hidden': False if not get_hidden else {'$gte': False},
            'domain_id': domain_id, 'pid': pid, 'uid': uid}
+  if type != None:
+    query['type'] = type
   return coll.find(query, fields=fields)
 
 
@@ -138,6 +142,7 @@ async def ensure_indexes():
   # for job problem status
   await coll.ensure_index([('domain_id', 1),
                            ('pid', 1),
+                           ('type', 1),
                            ('_id', 1)])
   # TODO(iceboy): Add more indexes.
 

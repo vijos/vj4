@@ -52,6 +52,7 @@
       </div>
       {% endif %}
     </div>
+    {% if rdoc['code'] %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Code') }}</h1>
@@ -60,6 +61,7 @@
         <pre><code class="language-{{ rdoc['lang'] }}">{{ rdoc['code'] }}</code></pre>
       </div>
     </div>
+    {% endif %}
   </div>
   <div class="large-3 columns">
     <div class="section side">
