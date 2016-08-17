@@ -60,6 +60,7 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
   if order != pdoc['num_accept']:
     _logger.warning('Problem {0} num_accept may be inconsistent.'.format(pdoc['doc_id']))
   # Was Accepted but Now Not Accepteds adjustment
+  # TODO(twd2): can $ne be indexed?
   psdocs = problem.get_multi_status(domain_id, doc_id=pdoc['doc_id'],
                                     status={'$gt': constant.record.STATUS_ACCEPTED},
                                     rp={'$gt': 0.0})
@@ -77,7 +78,7 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
 
 
 @domainjob.wrap
-async def run(domain_id: str):
+async def recalc(domain_id: str):
   pdocs = problem.get_multi(domain_id, {'_id': 1, 'doc_id': 1, 'num_accept': 1}).sort('doc_id', 1)
   uddoc_updates = {}
   async for pdoc in pdocs:
