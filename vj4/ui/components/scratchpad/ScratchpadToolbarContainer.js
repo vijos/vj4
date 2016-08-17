@@ -90,7 +90,6 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           onClick={() => this.props.postPretest(this.context)}
           data-global-hotkey="f5"
           data-tooltip={`${i18n('Pretest Your Code')} (F5)`}
-          data-tooltip-below
         >
           <Icon name="debug" /> {i18n('Run Pretest')} (F5)
         </ToolbarButton>
@@ -100,7 +99,6 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           onClick={() => this.props.postSubmit(this.context)}
           data-global-hotkey="f10"
           data-tooltip={`${i18n('Submit Your Code')} (F10)`}
-          data-tooltip-below
         >
           <Icon name="play" /> {i18n('Submit Solution')} (F10)
         </ToolbarButton>
@@ -122,7 +120,6 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           onClick={() => this.props.togglePanel('pretest')}
           data-global-hotkey="alt+p"
           data-tooltip={`${i18n('Toggle Pretest Panel')} (Alt+P)`}
-          data-tooltip-below
         >
           <Icon name="edit" /> {i18n('Pretest')}
         </ToolbarButton>
@@ -131,7 +128,6 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           onClick={() => this.props.togglePanel('records')}
           data-global-hotkey="alt+r"
           data-tooltip={`${i18n('Toggle Records Panel')} (Alt+R)`}
-          data-tooltip-below
         >
           <Icon name="flag" /> {i18n('Records')}
         </ToolbarButton>

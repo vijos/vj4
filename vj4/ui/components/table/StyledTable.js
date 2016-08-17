@@ -41,10 +41,6 @@ export default class StyledTable extends DOMAttachedObject {
     this.$dom.children('thead').appendTo(this.$header);
   }
 
-  detach() {
-    throw new Error('Not implemented');
-  }
-
 }
 
 _.assign(StyledTable, DOMAttachedObject);

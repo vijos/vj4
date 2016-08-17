@@ -55,6 +55,8 @@ class RecordDetailHandler(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
+    if rdoc['uid'] != self.user['_id']:
+      del rdoc['code']
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     await domain.update_udocs(self.domain_id, [rdoc['udoc']])

@@ -52,6 +52,7 @@
       </div>
       {% endif %}
     </div>
+    {% if rdoc['code'] %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Code') }}</h1>
@@ -60,6 +61,7 @@
         <pre><code class="language-{{ rdoc['lang'] }}">{{ rdoc['code'] }}</code></pre>
       </div>
     </div>
+    {% endif %}
   </div>
   <div class="large-3 columns">
     <div class="section side">
@@ -68,6 +70,7 @@
       </div>
       <div class="section__body no-padding">
         <ul class="menu">
+          {% if handler.has_perm(vj4.model.builtin.PERM_REJUDGE) %}
           <li class="menu__item">
             <form method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
               <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
@@ -76,6 +79,7 @@
               </button>
             </form>
           </li>
+          {% endif %}
         </ul>
       </div>
     </div>

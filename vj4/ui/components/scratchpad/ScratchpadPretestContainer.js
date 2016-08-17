@@ -58,14 +58,12 @@ export default class ScratchpadPretestContainer extends React.PureComponent {
             <span>
               <PanelButton
                 data-tooltip={i18n('Add new data')}
-                data-tooltip-below
                 onClick={() => this.props.handleClickAdd()}
               >
                 {i18n('Add')}
               </PanelButton>
               <PanelButton
                 data-tooltip={i18n('Remove this data')}
-                data-tooltip-below
                 onClick={() => this.props.handleClickRemove()}
               >
                 {i18n('Remove')}
