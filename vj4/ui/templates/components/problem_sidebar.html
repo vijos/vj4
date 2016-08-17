@@ -90,7 +90,7 @@
   </div>
   <div class="section__body typo">
     <p>{{ _('Status') }}: {% if pdoc['psdoc']['status'] %}<a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid']) }}">{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</a>{% else %}{{ _('(None)') }}{% endif %}</p>
-    <p>{{ _('Difficulty') }}: {{ pdoc['diff']|default(_('(None)')) }}</p>
+    <p>{{ _('Difficulty') }}: {{ pdoc['difficulty']|default(_('(None)')) }}</p>
     <p>{{ _('Vote') }}: <span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</p>
     <p>{{ _('Category') }}: 动态规划 | 树形动规、高精度</p>
     <p>{{ _('Submit') }}: {{ pdoc['num_submit'] }}</p>
