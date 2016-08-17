@@ -13,6 +13,7 @@
     {% endif %}
   </td>
   <td class="col--problem">
+    {% if handler.has_perm(vj4.model.builtin.PERM_REJUDGE) %}
     <form class="form--inline" method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
       <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
       <button type="submit" class="link text-maroon lighter">
@@ -20,6 +21,7 @@
         {{ _('Rejudge') }}
       </button> |
     </form>
+    {% endif %}
     {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
     (Pretest)
     {% endif %}

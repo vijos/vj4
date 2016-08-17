@@ -45,7 +45,7 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
             <span>
               <PanelButton
                 data-tooltip={i18n('Refresh Records')}
-                data-tooltip-below
+                data-tooltip-pos="top right"
                 onClick={() => this.props.handleClickRefresh()}
               >
                 {i18n('Refresh')}
