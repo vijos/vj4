@@ -16,7 +16,6 @@ async def add(domain_id: str, owner_uid: int,
     if domain['_id'] == domain_id:
       raise error.DomainAlreadyExistError(domain_id)
   coll = db.Collection('domain')
-  # TODO(twd2): Do we need to check owner's priv, quota, etc here?
   try:
     return await coll.insert({'_id': domain_id, 'owner_uid': owner_uid,
                               'description': description, 'roles': roles})
@@ -69,7 +68,6 @@ async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
     if domain['_id'] == domain_id:
       return None
   coll = db.Collection('domain')
-  # TODO(twd2): Do we need to check new owner's priv, quota, etc here?
   return await coll.find_and_modify(query={'_id': domain_id, 'owner_uid': old_owner_uid},
                                     update={'$set': {'owner_uid': new_owner_uid}},
                                     new=True)
