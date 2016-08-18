@@ -58,7 +58,9 @@ class HandlerBase(setting.SettingMixin):
   def has_perm(self, perm):
     role = self.user.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
-    return (perm & mask) == perm or self.domain['owner_uid'] == self.user['_id']
+    return ((perm & mask) == perm
+            or self.domain['owner_uid'] == self.user['_id']
+            or self.has_priv(builtin.PRIV_ALL))
 
   def check_perm(self, perm):
     if not self.has_perm(perm):
