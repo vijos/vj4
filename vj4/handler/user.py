@@ -171,16 +171,20 @@ class UserDetailHandler(base.Handler):
     self.render('user_detail.html', udoc=udoc, sdoc=sdoc)
 
 
-@app.route('/user/prefix', 'user_prefix')
-class UserPrefixHandler(base.Handler):
+@app.route('/user/search', 'user_search')
+class UserSearchHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.get_argument
   @base.route_argument
   @base.sanitize
   async def get(self, *, q: str):
     udocs = await user.get_prefix_list(q, user.PROJECTION_PUBLIC, 20)
-    if not udocs:
-      raise error.UserNotFoundError(q)
+    try:
+      udoc = await user.get_by_uid(int(q), user.PROJECTION_PUBLIC)
+      if udoc:
+        udocs.insert(0, udoc)
+    except ValueError as e:
+      pass
     for udoc in udocs:
       if 'gravatar' in udoc:
         udoc['gravatar_url'] = template.gravatar_url(udoc.pop('gravatar'))
