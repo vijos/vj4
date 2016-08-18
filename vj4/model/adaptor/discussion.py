@@ -173,8 +173,8 @@ async def get_reply(domain_id: str, drid: document.convert_doc_id, did=None):
 @argmethod.wrap
 async def get_list_reply(domain_id: str, did: document.convert_doc_id, *, fields=None):
   return await (document.get_multi(domain_id, document.TYPE_DISCUSSION_REPLY,
-                                     parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did,
-                                     fields=fields)
+                                   parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did,
+                                   fields=fields)
                 .sort([('doc_id', -1)])
                 .to_list(None))
 
@@ -200,6 +200,16 @@ async def attach_vnodes(docs, domain_id, field_name):
                       'title': doc[field_name]}
     else:
       doc['vnode'] = pids.get(doc[field_name])
+
+
+@argmethod.wrap
+async def set_star(domain_id: str, did: document.convert_doc_id, uid: int, star: bool):
+  return await document.set_status(domain_id, document.TYPE_DISCUSSION, did, uid, star=star)
+
+
+@argmethod.wrap
+async def get_status(domain_id: str, did: document.convert_doc_id, uid: int):
+  return await document.get_status(domain_id, document.TYPE_DISCUSSION, did, uid)
 
 
 if __name__ == '__main__':

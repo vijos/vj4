@@ -216,8 +216,14 @@ const page = new NamedPage('problem_detail', async () => {
   }
 
   $(document).on('vjScratchpadRelayout', updateFloatingSidebar);
-  $(document).on('click', '.action--problem-sidebar__open-scratchpad', enterScratchpadMode);
-  $(document).on('click', '.action--problem-sidebar__quit-scratchpad', leaveScratchpadMode);
+  $(document).on('click', '.action--problem-sidebar__open-scratchpad', ev => {
+    enterScratchpadMode();
+    ev.preventDefault();
+  });
+  $(document).on('click', '.action--problem-sidebar__quit-scratchpad', ev => {
+    leaveScratchpadMode();
+    ev.preventDefault();
+  });
 });
 
 export default page;

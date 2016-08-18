@@ -1,4 +1,5 @@
 import asyncio
+import functools
 
 from vj4 import app
 from vj4.model import builtin
@@ -101,12 +102,9 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.sanitize
   async def get(self, *, did: document.convert_doc_id):
     ddoc = await discussion.inc_views(self.domain_id, did)
+    ddoc['dsdoc'] = await discussion.get_status(self.domain_id, did, self.user['_id'])
     udoc = await user.get_by_uid(ddoc['owner_uid'])
     vnode = await discussion.get_vnode(self.domain_id, ddoc['parent_doc_id'])
-    path_components = self.build_path(
-      (self.translate('discussion_main'), self.reverse_url('discussion_main')),
-      (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
-      (ddoc['title'], None))
     drdocs = await discussion.get_list_reply(self.domain_id, ddoc['doc_id'])
     drdocs_with_reply = list(drdocs)
     for drdoc in drdocs:
@@ -115,6 +113,10 @@ class DiscussionDetailHandler(base.OperationHandler):
     udocs = await user.attach_udocs(drdocs_with_reply, 'owner_uid')
     udocs.append(udoc)
     await domain.update_udocs(self.domain_id, udocs)
+    path_components = self.build_path(
+      (self.translate('discussion_main'), self.reverse_url('discussion_main')),
+      (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
+      (ddoc['title'], None))
     self.render('discussion_detail.html', ddoc=ddoc, udoc=udoc, drdocs=drdocs, vnode=vnode,
                 page_title=ddoc['title'], path_components=path_components)
 
@@ -141,3 +143,17 @@ class DiscussionDetailHandler(base.OperationHandler):
     drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
     await discussion.add_tail_reply(self.domain_id, drdoc['doc_id'], self.user['_id'], content)
     self.json_or_redirect(self.reverse_url('discussion_detail', did=did))
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def star_unstar(self, *, did: document.convert_doc_id, pid: document.convert_doc_id=None, star: bool):
+    # TODO(twd2): fix js not to send pid
+    ddoc = await discussion.get(self.domain_id, did)
+    ddoc = await discussion.set_star(self.domain_id, ddoc['doc_id'], self.user['_id'], star)
+    self.json_or_redirect(self.referer_or_main, star=ddoc['star'])
+
+  post_star = functools.partialmethod(star_unstar, star=True)
+  post_unstar = functools.partialmethod(star_unstar, star=False)
