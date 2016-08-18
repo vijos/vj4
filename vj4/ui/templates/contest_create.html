@@ -12,8 +12,9 @@
             <label>
               {{ _('Rule') }}
               <select name="rule" class="select">
-                <option value="2">OI</option>
-                <option value="3">ACM/ICPC</option>
+                {% for key, value in vj4.handler.contest.TYPE_TEXTS.items() %}
+                <option value="{{ key }}">{{ _(value) }}</option>
+                {% endfor %}
               </select>
             </label>
           </div><div class="medium-8 columns">
@@ -25,12 +26,12 @@
           <div class="row"><div class="medium-4 columns">
             <label>
               {{ _('Begin Date') }}
-              <input type="text" name="begin_at_date" value="1980-1-1" class="textbox" placeholder="YYYY-mm-dd" data-pick-date>
+              <input type="text" name="begin_at_date" value="{{ date_text }}" class="textbox" placeholder="YYYY-mm-dd" data-pick-date>
             </label>
           </div><div class="medium-4 columns">
             <label>
               {{ _('Begin Time') }}
-              <input type="text" name="begin_at_time" value="13:00" class="textbox" placeholder="HH:MM" data-pick-time>
+              <input type="text" name="begin_at_time" value="{{ time_text }}" class="textbox" placeholder="HH:MM" data-pick-time>
             </label>
           </div><div class="medium-4 columns">
             <label>

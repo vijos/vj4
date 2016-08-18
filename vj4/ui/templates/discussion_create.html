@@ -10,6 +10,12 @@
         <form method="post">
           <div class="row"><div class="medium-8 columns">
             <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus required>
+          </div><div class="medium-4 columns">
+            {% if handler.has_perm(vj4.model.builtin.PERM_HIGHLIGHT_DISCUSSION) %}
+            <label class="checkbox">
+              <input type="checkbox" name="highlight" value="on">{{ _('Highlight') }}
+            </label>
+            {% endif %}
           </div></div>
           <div class="row"><div class="columns" data-hotkey="ctrl+enter:submit">
             <textarea name="content" class="textbox" data-markdown required></textarea>

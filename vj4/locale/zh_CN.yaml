@@ -10,6 +10,9 @@ Active Sessions: 活动会话
 An error has occurred.: 发生了一个错误。
 Arguments: 参数
 Attend Contest: 参加比赛
+Attended: 已参加
+Login to Attend Contest: 请登录来参加比赛
+No Permission to Attend Contest: 您没有权限参加比赛
 Begin Date: 开始日期
 Begin Time: 开始时间
 Belongs to: 属于
@@ -37,6 +40,8 @@ Create Discussion in {0}: 在 {0} 下创建讨论
 Create Problem: 创建题目
 Create a contest: 创建一个比赛
 Create a discussion: 创建一个讨论
+Login to Create a discussion: 请登录来创建一个讨论
+No Permission to Create a discussion: 您没有权限创建讨论
 Create a problem: 创建一个题目
 Current Email: 当前电子邮件
 Current Location: 当前位置
@@ -94,12 +99,14 @@ Not available: 不可用
 Oh, there is no task in the queue!: 呀，队列中目前没有任务。
 Oops!: Oops!
 Open Scratchpad: 进入在线编程模式
+Login to Use Scratchpad: 请登录来使用在线编程功能
+No Permission to Use Scratchpad: 您没有权限使用在线编程功能
 Open Source: 开源
 Operating System: 操作系统
 Password: 密码
 Password reset mail has been sent to your email.: 密码重置邮件已发送到您的电子邮箱。
 Peak Memory: 内存使用峰值
-Pretest?: 测试?
+Pretest?: 对拍?
 Privacy: 隐私
 Problem: 题目
 Problem List: 题目列表
@@ -147,9 +154,14 @@ Solutions: 题解
 Sorry, there is no problem in the problem set.: 题库中目前没有题目。
 Statistics: 统计
 Status: 状态
+Use Your Privilege to View Status: 使用您的特权来查看状态
+Status is hidden: 状态已隐藏
 Submission Statistics: 递交统计
+Submission: 递交
 Submissions: 递交
 Submit: 递交
+Login to Submit: 请登录来递交
+No Permission to Submit: 您没有权限递交
 Submit At: 递交时间
 Submit By: 递交者
 Submit Time: 递交时间
@@ -182,7 +194,11 @@ Vote: 投票
 We use Gravatar to present your avatar icon.: 我们使用 Gravatar 服务来呈现您的头像。
 Whether to show tags in the problem list.: 是否在题目列表中显示题目的标签。
 Write Your Comment: 撰写您的评论
+Login to Write Your Comment: 请登录来撰写您的评论
+No Permission to Write Your Comment: 您没有权限发布评论
 Write Your Solution: 撰写您的题解
+Login to Write Your Solution: 请登录来撰写您的题解
+No Permission to Write Your Solution: 您没有权限发布题解
 You're not logged in.: 您没有登录。
 author: 作者
 content: 内容
@@ -255,3 +271,7 @@ Code language: 代码语言
 Comment: 评论
 Share: 分享
 Delete: 删除
+Highlight: 高亮讨论
+End at: 结束于
+Action: 动作
+Rejudge: 重测

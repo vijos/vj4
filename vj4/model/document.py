@@ -230,6 +230,13 @@ async def ensure_indexes():
                                   ('doc_type', 1),
                                   ('uid', 1),
                                   ('doc_id', 1)], unique=True)
+  # for rp system
+  await status_coll.ensure_index([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('doc_id', 1),
+                                  ('status', 1),
+                                  ('rid', 1),
+                                  ('rp', 1)], sparse=True)
 
 
 if __name__ == '__main__':

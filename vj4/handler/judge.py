@@ -108,6 +108,9 @@ class JudgeNotifyConnection(base.Connection):
           post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], delta_submit, delta_accept))
           post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'],
                                             num_submit=delta_submit, num_accept=delta_accept))
+        if delta_accept != 0:
+          # TODO(twd2): enqueue rdoc['pid'] to recalculate rp.
+          pass
         if rdoc['tid']:
           post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
                                                   rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
