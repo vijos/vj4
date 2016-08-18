@@ -61,14 +61,25 @@ class Application(web.Application):
     if options.options.static:
       self.router.add_static('/', path.join(path.dirname(__file__), '.uibuild'), name='static')
 
+  async def error_middleware(self, app, handler):
+    async def middleware_handler(request):
+      try:
+        response = await handler(request)
+        return response
+      except web.HTTPNotFound as ex:
+        from vj4.handler import error
+        return await error.NotFoundHandler(request)
+
+    return middleware_handler
+
 
 def route(url, name):
-  def decorate(view):
-    view.NAME = view.NAME or name
-    view.TITLE = view.TITLE or name
-    Application().router.add_route('*', url, view, name=name)
-    Application().router.add_route('*', '/d/{domain_id}' + url, view, name=name + '_with_domain_id')
-    return view
+  def decorate(handler):
+    handler.NAME = handler.NAME or name
+    handler.TITLE = handler.TITLE or name
+    Application().router.add_route('*', url, handler, name=name)
+    Application().router.add_route('*', '/d/{domain_id}' + url, handler, name=name + '_with_domain_id')
+    return handler
 
   return decorate
 
