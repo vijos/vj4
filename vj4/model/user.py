@@ -160,15 +160,16 @@ async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTI
   return []
 
 
-def get_multi(fields=PROJECTION_VIEW):
-  # TODO(twd2): builtins
+@argmethod.wrap
+async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
+  prefix = prefix.lower().replace('\\E', '\\E\\\\E\\Q')
   coll = db.Collection('user')
-  return coll.find({}, fields)
-
-
-def get_multi(fields=PROJECTION_VIEW, **kwargs):
-  coll = db.Collection('user')
-  return coll.find({**kwargs}, fields=fields)
+  udocs = await (coll.find({'uname_lower': {'$regex': '\\A\\Q{0}\\E'.format(prefix)}}, fields=fields)
+                 .to_list(limit))
+  for udoc in builtin.USERS:
+    if udoc['uname_lower'].startswith(prefix):
+      udocs.append(copy.deepcopy(udoc))
+  return udocs
 
 
 @argmethod.wrap
