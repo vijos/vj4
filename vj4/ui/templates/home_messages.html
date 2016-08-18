@@ -1,6 +1,23 @@
 {% extends "home_base.html" %}
 {% block home_content %}
 <div class="section">
+  <div class="section__body">
+    <div class="row">
+      <div class="medium-8 columns">
+        <label>
+          {{ _('Username / UID') }}
+          <input type="text" id="autocomplete" class="textbox">
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="columns">
+        <button class="rounded primary button" id="submit">Tell me something about the selected user</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section">
   <div id="messagePad">
     <div class="loader-container"><div class="loader"></div></div>
   </div>

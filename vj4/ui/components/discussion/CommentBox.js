@@ -91,13 +91,13 @@ export default class CommentBox extends DOMAttachedObject {
     return this;
   }
 
-  onSubmit() {
-    util
+  async onSubmit() {
+    await util
       .post('', {
         ...this.options.form,
         content: this.getText(),
-      })
-      .then(() => window.location.reload());
+      });
+    window.location.reload();
   }
 
   async onCancel(ev) {

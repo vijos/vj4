@@ -1,6 +1,8 @@
 import { NamedPage } from '../misc/PageLoader';
 import loadReactRedux from '../utils/loadReactRedux';
 
+import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
+
 const page = new NamedPage('home_messages', async () => {
   async function mountComponent() {
     const SockJs = await System.import('sockjs-client');
@@ -25,6 +27,11 @@ const page = new NamedPage('home_messages', async () => {
     );
   }
   mountComponent();
+
+  const userSelector = UserSelectAutoComplete.getOrConstruct($('#autocomplete'));
+  $('#submit').click(() => {
+    alert(JSON.stringify(userSelector.value()));
+  });
 });
 
 export default page;
