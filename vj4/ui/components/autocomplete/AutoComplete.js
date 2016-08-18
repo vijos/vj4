@@ -3,6 +3,7 @@ import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 import 'jquery-scroll-lock';
 
+import i18n from '../../utils/i18n';
 import tpl from '../../utils/tpl';
 
 export default class AutoComplete extends DOMAttachedObject {
@@ -27,8 +28,8 @@ export default class AutoComplete extends DOMAttachedObject {
     this.currentItems = [];
     this.$menu = $(`<ol class="menu ${this.options.classes}"></ol>`);
     this.$menu.scrollLock({ strict: false });
-    this.$menu.on(`mousedown`, this.onMenuClick.bind(this));
-    this.$menu.on(`mousedown`, '.menu__item', this.onItemClick.bind(this));
+    this.$menu.on('mousedown', this.onMenuClick.bind(this));
+    this.$menu.on('mousedown', '.menu__item', this.onItemClick.bind(this));
     this.dropInstance = new Drop({
       classes: 'autocomplete dropdown',
       target: this.$dom[0],
@@ -96,18 +97,17 @@ export default class AutoComplete extends DOMAttachedObject {
   async getItems(val) {
     if (this.cache[val] !== undefined) {
       return this.cache[val];
-    } else {
-      const data = await this.options.items(val);
-      if (this.options.cache) {
-        this.cache[val] = data;
-      }
-      return data;
     }
+    const data = await this.options.items(val);
+    if (this.options.cache) {
+      this.cache[val] = data;
+    }
+    return data;
   }
 
   getHtml(items) {
     if (items.length === 0) {
-      return tpl`<div class="empty-row">${"Oops, there are no results."}</div>`;
+      return tpl`<div class="empty-row">${i18n('Oops, there are no results.')}</div>`;
     }
     return items.map((item, idx) => `
       <li class="menu__item" data-idx="${idx}"><a href="javascript:;" class="menu__link">
