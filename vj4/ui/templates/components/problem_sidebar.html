@@ -56,7 +56,7 @@
         <span class="icon icon-send"></span> {{ _('Login to Submit' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Submit') }}
       </a></li>
       {% endif %}
-      <li class="menu__item"><a class="menu__link" href="#">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_statistics' %} active{% endif %}" href="{{ reverse_url('problem_statistics', pid=pdoc['doc_id']) }}">
         <span class="icon icon-statistics"></span> {{ _('Submission Statistics') }}
       </a></li>
       {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) or handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM_SOLUTION) %}
@@ -77,7 +77,7 @@
       <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">
         <span class="icon icon-edit"></span>  {{ _('Edit') }}
       </a></li>
-      <li class="menu__item"><a class="menu__link" href="#">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_settings' %} active{% endif %}" href="{{ reverse_url('problem_settings', pid=pdoc['doc_id']) }}">
         <span class="icon icon-wrench"></span> {{ _('Settings') }}
       </a></li>
       {% endif %}
@@ -90,7 +90,7 @@
   </div>
   <div class="section__body typo">
     <p>{{ _('Status') }}: {% if pdoc['psdoc']['status'] %}<a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid']) }}">{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</a>{% else %}{{ _('(None)') }}{% endif %}</p>
-    <p>{{ _('Difficulty') }}: {{ pdoc['diff']|default(_('(None)')) }}</p>
+    <p>{{ _('Difficulty') }}: {{ pdoc['difficulty']|default(_('(None)')) }}</p>
     <p>{{ _('Vote') }}: <span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</p>
     <p>{{ _('Category') }}: 动态规划 | 树形动规、高精度</p>
     <p>{{ _('Submit') }}: {{ pdoc['num_submit'] }}</p>

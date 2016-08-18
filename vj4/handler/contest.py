@@ -1,4 +1,5 @@
 import asyncio
+import collections
 import datetime
 import time
 import pytz
@@ -17,13 +18,13 @@ STATUS_TEXTS = {
   contest.STATUS_NEW: 'New',
   contest.STATUS_READY: 'Ready',
   contest.STATUS_LIVE: 'Live',
-  contest.STATUS_DONE: 'Done',
+  contest.STATUS_DONE: 'Done'
 }
 
-TYPE_TEXTS = {
-  contest.RULE_ACM: 'ACM/ICPC',
-  contest.RULE_OI: 'OI',
-}
+TYPE_TEXTS = collections.OrderedDict([
+  (contest.RULE_OI, 'OI'),
+  (contest.RULE_ACM, 'ACM/ICPC')
+])
 
 
 @app.route('/tests', 'contest_main')
@@ -63,6 +64,7 @@ class ContestDetailHandler(base.OperationHandler):
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
 
 
+# TODO(twd2): combine with problem submit?
 @app.route('/tests/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
 class ContestDetailProblemHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
@@ -83,6 +85,7 @@ class ContestDetailProblemHandler(base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
 
+# TODO(twd2): combine with problem submit?
 @app.route('/tests/{tid}/{pid}/submit', 'contest_detail_problem_submit')
 class ContestDetailProblemSubmitHandler(base.Handler):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
@@ -145,7 +148,15 @@ class ContestCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
-    self.render('contest_create.html', now=int(time.time()))
+    tz = pytz.timezone(self.timezone)
+    dt = self.now.astimezone(tz)
+    ts = int(dt.timestamp())
+    # find next quarter
+    ts = ts - ts % (15 * 60) + 15 * 60
+    dt = datetime.datetime.fromtimestamp(ts, tz)
+    self.render('contest_create.html',
+                date_text=dt.strftime('%Y-%m-%d'),
+                time_text=dt.strftime('%H:%M'))
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
