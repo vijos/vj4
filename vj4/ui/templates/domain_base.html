@@ -1,0 +1,29 @@
+{% extends "layout/basic.html" %}
+{% macro menu_item(icon_name, target_page_name) %}
+<li class="menu__item" id="menu-item-{{ target_page_name }}">
+  <a href="{{ reverse_url(target_page_name) }}" class="menu__link{% if page_name == target_page_name %} active{% endif %}">
+    <span class="icon icon-{{ icon_name }}"></span> {{ _(target_page_name) }}
+  </a>
+</li>
+{% endmacro %}
+{% block content %}
+<div class="row">
+  <div class="large-9 columns">
+    {% block domain_content %}{% endblock %}
+  </div>
+  <div class="large-3 columns">
+    {% if page_name != 'domain_create' %}
+    <div class="section side">
+      <div data-sticky="large"><div class="section side">
+        <ul class="menu">
+          {{ menu_item('domain_main', 'domain_main') }}
+          <li class="menu__seperator"></li>
+          {{ menu_item('edit', 'domain_edit') }}
+          {{ menu_item('role', 'domain_role') }}
+        </ul>
+      </div></div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

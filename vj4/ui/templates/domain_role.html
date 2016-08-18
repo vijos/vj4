@@ -1,0 +1,11 @@
+{% extends "domain_base.html" %}
+{% block domain_content %}
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title" id="email" data-heading>TODO</h1>
+  </div>
+  <div class="section__body">
+    {{ handler.domain['roles'] }}
+  </div>
+</div>
+{% endblock %}
