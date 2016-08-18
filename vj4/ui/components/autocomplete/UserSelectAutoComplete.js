@@ -10,7 +10,7 @@ function getText(user) {
 }
 
 function getItems(val) {
-  return util.get('/user/prefix', { q: val });
+  return util.get('/user/search', { q: val });
 }
 
 function renderItem(user) {
