@@ -162,9 +162,10 @@ async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTI
 
 @argmethod.wrap
 async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
-  prefix = prefix.lower().replace('\\E', '\\E\\\\E\\Q')
+  prefix = prefix.lower()
+  regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))
   coll = db.Collection('user')
-  udocs = await (coll.find({'uname_lower': {'$regex': '\\A\\Q{0}\\E'.format(prefix)}}, fields=fields)
+  udocs = await (coll.find({'uname_lower': {'$regex': regex}}, fields=fields)
                  .to_list(limit))
   for udoc in builtin.USERS:
     if udoc['uname_lower'].startswith(prefix):
