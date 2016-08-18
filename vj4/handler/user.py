@@ -158,7 +158,7 @@ class UserLogoutHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/user/{uid:\d+}', 'user_detail')
+@app.route('/user/{uid:-?\d+}', 'user_detail')
 class UserDetailHandler(base.Handler):
   @base.route_argument
   @base.sanitize
