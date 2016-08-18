@@ -116,6 +116,29 @@ DOMAIN_SYSTEM = {'_id': DOMAIN_ID_SYSTEM,
 DOMAINS = [DOMAIN_SYSTEM]
 
 # Users.
+UID_SYSTEM = 0
+UNAME_SYSTEM = 'Vijos 4'
+USER_SYSTEM = {'_id': UID_SYSTEM,
+              'uname': UNAME_SYSTEM,
+              'uname_lower': UNAME_SYSTEM.strip().lower(),
+              'mail': '',
+              'mail_lower': '',
+              'salt': '',
+              'hash': 'vj4|',
+              'gender': constant.model.USER_GENDER_OTHER,
+              'regat': datetime.datetime.utcfromtimestamp(0),
+              'regip': '',
+              'priv': PRIV_NONE,
+              'loginat': datetime.datetime.utcnow(),
+              'loginip': '',
+              'gravatar': '',
+              # in every domains:
+              'rp': 0.0,
+              'rank': 0,
+              'role': ROLE_GUEST,
+              'level': 0,
+              'num_submit': 0,
+              'num_accept': 0}
 UID_GUEST = 1
 UNAME_GUEST = 'Guest'
 USER_GUEST = {'_id': UID_GUEST,
@@ -139,7 +162,7 @@ USER_GUEST = {'_id': UID_GUEST,
               'level': 0,
               'num_submit': 0,
               'num_accept': 0}
-USERS = [USER_GUEST]
+USERS = [USER_SYSTEM, USER_GUEST]
 
 # Timezones.
 TIMEZONES = collections.OrderedDict([(tz, tz) for tz in pytz.common_timezones])
