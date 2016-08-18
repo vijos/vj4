@@ -14,6 +14,7 @@
       {{ nav_item('training_main', 'training') }}
       {{ nav_item('discussion_main', 'discussion') }}
       {{ nav_item('contest_main', 'contest') }}
+      {{ nav_item('domain_main', 'domain') }}
     </ol>
     <ol class="nav__list nav__list--secondary clearfix">
     {% if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
@@ -28,6 +29,8 @@
           <li class="menu__seperator"></li>
           <li class="menu__item"><a href="{{ reverse_url('home_account') }}" class="menu__link">{{ _('Account Settings') }}</a></li>
           <li class="menu__item"><a href="{{ reverse_url('home_security') }}" class="menu__link">{{ _('Security Settings') }}</a></li>
+          <li class="menu__seperator"></li>
+          <li class="menu__item"><a href="{{ reverse_url('home_domain') }}" class="menu__link">{{ _('My Domains') }}</a></li>
           <li class="menu__seperator"></li>
           <li class="menu__item"><a href="{{ reverse_url('user_logout') }}" class="menu__link command--nav-logout">{{ _('Logout') }}</a></li>
         </ol>
