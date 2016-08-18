@@ -5,7 +5,7 @@
     <h1 class="section__title" data-heading>{{ _('Help') }}</h1>
   </div>
   <div class="section__body typo">
-    {{ handler.domain['description']|markdown }}
+    TODO
   </div>
 </div>
 <div class="section">
@@ -13,7 +13,7 @@
     <h1 class="section__title" data-heading>{{ _('Roles') }}</h1>
   </div>
   <div class="section__body">
-    <p>{{ _('Your role') }}: {{ handler.user['role']|default(vj4.model.builtin.ROLE_DEFAULT) }}</p>
+    <p>{{ _('Your role') }}: {{ handler.user['role']|default(vj4.model.builtin.ROLE_DEFAULT) }}{% if handler.user['_id'] == handler.domain['owner_uid'] %}, {{ _('owner') }}{% endif %}{% if handler.has_perm(vj4.model.builtin.PERM_ALL) %}, {{ _('root') }}{% endif %}{% if handler.has_priv(vj4.model.builtin.PRIV_ALL) %}, {{ _('vj4 root') }}{% endif %}</p>
     <p>{{ _('Your permission') }}: {{ handler.domain['roles'][handler.user['role']|default(vj4.model.builtin.ROLE_DEFAULT)]|default(vj4.model.builtin.PERM_NONE) }}</p>
     <p>{{ _('Roles') }}: {{ handler.domain['roles'] }}</p>
   </div>

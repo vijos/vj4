@@ -10,7 +10,7 @@ from vj4.util import argmethod
 
 @argmethod.wrap
 async def add(domain_id: str, owner_uid: int,
-              roles={builtin.ROLE_DEFAULT: builtin.DEFAULT_PERMISSIONS},
+              roles=builtin.DOMAIN_SYSTEM['roles'],
               description: str=None):
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:

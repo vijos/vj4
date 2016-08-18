@@ -18,7 +18,9 @@
         <ul class="menu">
           {{ menu_item('cloud', 'domain_main') }}
           <li class="menu__seperator"></li>
+          {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
           {{ menu_item('edit', 'domain_edit') }}
+          {% endif %}
           {{ menu_item('user', 'domain_role') }}
         </ul>
       </div></div>
