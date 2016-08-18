@@ -79,6 +79,9 @@ class HandlerBase(setting.SettingMixin):
   def udoc_has_priv(self, udoc, priv):
     return (priv & udoc['priv']) == priv
 
+  def own(self, doc, perm=builtin.PERM_NONE):
+    return (doc['owner_id'] == self.user['_id']) and self.has_perm(perm)
+
   async def update_session(self, *, new_saved=False, **kwargs):
     """Update or create session if necessary.
 
