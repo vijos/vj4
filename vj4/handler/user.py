@@ -158,7 +158,7 @@ class UserLogoutHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/user/{uid}', 'user_detail')
+@app.route('/user/{uid:\d+}', 'user_detail')
 class UserDetailHandler(base.Handler):
   @base.route_argument
   @base.sanitize
@@ -171,15 +171,16 @@ class UserDetailHandler(base.Handler):
     self.render('user_detail.html', udoc=udoc, sdoc=sdoc)
 
 
-@app.route('/user/prefix/{uprefix}', 'user_prefix')
+@app.route('/user/prefix', 'user_prefix')
 class UserPrefixHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.get_argument
   @base.route_argument
   @base.sanitize
-  async def get(self, *, uprefix: str):
-    udocs = await user.get_prefix_list(uprefix, user.PROJECTION_PUBLIC, 50)
+  async def get(self, *, q: str):
+    udocs = await user.get_prefix_list(q, user.PROJECTION_PUBLIC, 50)
     if not udocs:
-      raise error.UserNotFoundError(uprefix)
+      raise error.UserNotFoundError(q)
     for udoc in udocs:
       if 'gravatar' in udoc:
         udoc['gravatar_url'] = template.gravatar_url(udoc.pop('gravatar'))
