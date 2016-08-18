@@ -1,7 +1,6 @@
 import Drop from 'tether-drop';
 import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
-import delay from '../../utils/delay';
 
 export default class Tooltip extends DOMAttachedObject {
 

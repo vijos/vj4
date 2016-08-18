@@ -5,10 +5,14 @@ export default class Dialog extends DOMAttachedObject {
 
   static DOMAttachKey = 'vjDialogInstance';
 
-  constructor($dom, options = null) {
+  constructor($dom, options = {}) {
     super($dom);
     this.dialogShown = false;
-    this.options = options;
+    this.options = {
+      cancelByClickingBack: false,
+      cancelByEsc: false,
+      ...options,
+    };
   }
 
   show() {
@@ -17,10 +21,10 @@ export default class Dialog extends DOMAttachedObject {
     }
 
     this.dialogShown = true;
-    if (this.options && this.options.cancelByClickingBack) {
+    if (this.options.cancelByClickingBack) {
       this.$dom.on(`click.${this.eventNS}`, this.onClick.bind(this));
     }
-    if (this.options && this.options.cancelByEsc) {
+    if (this.options.cancelByEsc) {
       $(document).on(`keyup.${this.eventNS}`, this.onKeyUp.bind(this));
     }
 
