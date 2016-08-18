@@ -15,7 +15,7 @@
   </div>
   {% endif %}
   <div>
-    <ul class="menu">
+    <ol class="menu">
       {% if page_name == 'discussion_node' %}
         {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create', node_or_pid=pdoc['doc_id']) }}">
@@ -81,7 +81,7 @@
         <span class="icon icon-wrench"></span> {{ _('Settings') }}
       </a></li>
       {% endif %}
-    </ul>
+    </ol>
   </div>
 </div>
 <div class="section side">

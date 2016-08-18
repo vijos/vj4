@@ -64,13 +64,13 @@
     {% endif %}
   </div>
   <div class="large-3 columns">
+    {% if handler.has_perm(vj4.model.builtin.PERM_REJUDGE) %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Action') }}</h1>
       </div>
       <div class="section__body no-padding">
-        <ul class="menu">
-          {% if handler.has_perm(vj4.model.builtin.PERM_REJUDGE) %}
+        <ol class="menu">
           <li class="menu__item">
             <form method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
               <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
@@ -79,10 +79,10 @@
               </button>
             </form>
           </li>
-          {% endif %}
-        </ul>
+        </ol>
       </div>
     </div>
+    {% endif %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Information') }}</h1>
