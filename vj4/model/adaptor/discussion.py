@@ -202,5 +202,15 @@ async def attach_vnodes(docs, domain_id, field_name):
       doc['vnode'] = pids.get(doc[field_name])
 
 
+@argmethod.wrap
+async def set_star(domain_id: str, did: document.convert_doc_id, uid: int, star: bool):
+  return await document.set_status(domain_id, document.TYPE_DISCUSSION, did, uid, star=star)
+
+
+@argmethod.wrap
+async def get_status(domain_id: str, did: document.convert_doc_id, uid: int):
+  return await document.get_status(domain_id, document.TYPE_DISCUSSION, did, uid)
+
+
 if __name__ == '__main__':
   argmethod.invoke_by_args()
