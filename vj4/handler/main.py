@@ -9,9 +9,3 @@ class MainHandler(base.Handler):
     self.render('main.html',
                 discussion_nodes=await discussion.get_nodes(self.domain_id),
                 path_components=[(self.domain_id, None)])
-
-
-@app.route('/500', 'error')
-class ErrorHandler(base.Handler):
-  async def get(self):
-    raise Exception('swx template')
