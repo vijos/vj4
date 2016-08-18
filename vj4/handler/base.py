@@ -48,10 +48,10 @@ class HandlerBase(setting.SettingMixin):
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id)
-    self.domain = await domain.get(self.domain_id)
+    self.domain, _ = await asyncio.gather(domain.get(self.domain_id),
+                                          domain.update_udocs(self.domain_id, [self.user]))
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
-    await domain.update_udocs(self.domain_id, [self.user])
     if not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
       self.check_perm(builtin.PERM_VIEW)
 
@@ -190,8 +190,6 @@ class Handler(web.View, HandlerBase):
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
-    except asyncio.futures.InvalidStateError as e:
-      _logger.debug("asyncio.futures.InvalidStateError: %s", repr(e))
     return self.response
 
   def render(self, template_name, **kwargs):

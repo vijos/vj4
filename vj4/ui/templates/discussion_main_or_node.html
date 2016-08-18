@@ -10,7 +10,7 @@
       {% else %}
         <ol class="dczlist">
         {% for ddoc in ddocs %}
-          <li class="dczlist__item{% if loop.index == 3 %} highlight{% endif %}">
+          <li class="dczlist__item{% if ddoc['highlight'] %} highlight{% endif %}">
             <div class="media">
               <div class="media__left">
                 <div class="dczlist__reply_n numbox">

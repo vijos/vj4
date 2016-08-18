@@ -130,7 +130,8 @@ class ProblemSolutionHandler(base.OperationHandler):
   async def get(self, *, pid: document.convert_doc_id, page: int = 1):
     skip = (page - 1) * self.SOLUTIONS_PER_PAGE
     limit = self.SOLUTIONS_PER_PAGE
-    pdoc = await problem.get(self.domain_id, pid)
+    uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
+    pdoc = await problem.get(self.domain_id, pid, uid)
     psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
                                              skip=skip,
                                              limit=limit)
@@ -251,7 +252,8 @@ class ProblemEditHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
-    pdoc = await problem.get(self.domain_id, pid)
+    uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
+    pdoc = await problem.get(self.domain_id, pid, uid)
     if not pdoc:
       raise error.DiscussionNotFoundError(self.domain_id, pid)
     udocs = await user.attach_udocs([pdoc], 'owner_uid')
@@ -273,3 +275,45 @@ class ProblemEditHandler(base.Handler):
     # TODO(twd2): new domain_id
     await problem.set(self.domain_id, pid, title=title, content=content)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
+
+
+@app.route('/p/{pid}/settings', 'problem_settings')
+class ProblemSettingsHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id):
+    # TODO(twd2)
+    uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
+    pdoc = await problem.get(self.domain_id, pid, uid)
+    if not pdoc:
+      raise error.DiscussionNotFoundError(self.domain_id, pid)
+    udocs = await user.attach_udocs([pdoc], 'owner_uid')
+    await domain.update_udocs(self.domain_id, udocs)
+    path_components = self.build_path(
+      (self.translate('problem_main'), self.reverse_url('problem_main')),
+      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+      (self.translate('problem_settings'), None))
+    self.render('problem_settings.html', pdoc=pdoc,
+                page_title=pdoc['title'], path_components=path_components)
+
+
+@app.route('/p/{pid}/statistics', 'problem_statistics')
+class ProblemStatisticsHandler(base.Handler):
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id):
+    # TODO(twd2)
+    uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
+    pdoc = await problem.get(self.domain_id, pid, uid)
+    if not pdoc:
+      raise error.DiscussionNotFoundError(self.domain_id, pid)
+    udocs = await user.attach_udocs([pdoc], 'owner_uid')
+    await domain.update_udocs(self.domain_id, udocs)
+    path_components = self.build_path(
+      (self.translate('problem_main'), self.reverse_url('problem_main')),
+      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+      (self.translate('problem_statistics'), None))
+    self.render('problem_statistics.html', pdoc=pdoc,
+                page_title=pdoc['title'], path_components=path_components)

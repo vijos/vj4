@@ -63,12 +63,12 @@ class Application(web.Application):
 
 
 def route(url, name):
-  def decorate(view):
-    view.NAME = view.NAME or name
-    view.TITLE = view.TITLE or name
-    Application().router.add_route('*', url, view, name=name)
-    Application().router.add_route('*', '/d/{domain_id}' + url, view, name=name + '_with_domain_id')
-    return view
+  def decorate(handler):
+    handler.NAME = handler.NAME or name
+    handler.TITLE = handler.TITLE or name
+    Application().router.add_route('*', url, handler, name=name)
+    Application().router.add_route('*', '/d/{domain_id}' + url, handler, name=name + '_with_domain_id')
+    return handler
 
   return decorate
 

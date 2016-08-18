@@ -1,5 +1,6 @@
 import attachObjectMeta from './util/objectMeta';
 
+// Please note that accepted < others, rp system uses this feature.
 export const STATUS_WAITING = 0;
 export const STATUS_ACCEPTED = 1;
 export const STATUS_WRONG_ANSWER = 2;

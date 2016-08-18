@@ -43,6 +43,10 @@ class NotFoundError(UserFacingError):
   def http_status(self):
     return 404
 
+  @property
+  def message(self):
+    return "Path {0} not found."
+
 
 class ValidationError(ForbiddenError):
   @property
@@ -85,7 +89,7 @@ class LoginError(ForbiddenError):
 class DocumentNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Document {0} not found."
+    return "Document {2} not found."
 
 
 class ProblemDataNotFoundError(NotFoundError):
