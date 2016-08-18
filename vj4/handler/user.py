@@ -3,6 +3,7 @@ import datetime
 
 from vj4 import app
 from vj4 import error
+from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import opcount
@@ -157,7 +158,7 @@ class UserLogoutHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/user/{uid}', 'user_detail')
+@app.route('/user/{uid:\d+}', 'user_detail')
 class UserDetailHandler(base.Handler):
   @base.route_argument
   @base.sanitize
@@ -168,3 +169,23 @@ class UserDetailHandler(base.Handler):
     await domain.update_udocs(self.domain_id, [udoc])
     sdoc = await token.get_most_recent_session_by_uid(udoc['_id'])
     self.render('user_detail.html', udoc=udoc, sdoc=sdoc)
+
+
+@app.route('/user/search', 'user_search')
+class UserSearchHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.get_argument
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, q: str):
+    udocs = await user.get_prefix_list(q, user.PROJECTION_PUBLIC, 20)
+    try:
+      udoc = await user.get_by_uid(int(q), user.PROJECTION_PUBLIC)
+      if udoc:
+        udocs.insert(0, udoc)
+    except ValueError as e:
+      pass
+    for udoc in udocs:
+      if 'gravatar' in udoc:
+        udoc['gravatar_url'] = template.gravatar_url(udoc.pop('gravatar'))
+    self.json(udocs)
