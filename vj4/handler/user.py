@@ -178,7 +178,7 @@ class UserPrefixHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, q: str):
-    udocs = await user.get_prefix_list(q, user.PROJECTION_PUBLIC, 50)
+    udocs = await user.get_prefix_list(q, user.PROJECTION_PUBLIC, 20)
     if not udocs:
       raise error.UserNotFoundError(q)
     for udoc in udocs:
