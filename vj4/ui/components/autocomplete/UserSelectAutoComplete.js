@@ -31,7 +31,7 @@ export default class UserSelectAutoComplete extends DOMAttachedObject {
 
   static DOMAttachKey = 'vjUserSelectAutoCompleteInstance';
 
-  constructor($dom, options = {}) {
+  constructor($dom) {
     super($dom);
     this.autocompleteInstance = AutoComplete.getOrConstruct(this.$dom, {
       classes: 'user-select',
