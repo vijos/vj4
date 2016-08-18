@@ -1,0 +1,31 @@
+{% extends "home_base.html" %}
+{% block home_content %}
+<div data-heading-extract-to="#menu-item-home_domain">
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title" id="create" data-heading>{{ _('Create Domain') }}</h1>
+  </div>
+  <div class="section__body">
+    <div class="row"><div class="medium-4 columns">
+      <a class="rounded primary button" href="{{ reverse_url('domain_create') }}">{{ _('Create') }}</a>
+    </div></div>
+  </div>
+</div>
+{% for ddoc in ddocs %}
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title" id="{{ ddoc['_id'] }}" data-heading>{{ ddoc['_id'] }}</h1>
+  </div>
+  <div class="section__body typo">
+    {{ ddoc['description']|markdown }}
+  </div>
+  <div class="section__body">
+    <div class="row"><div class="medium-4 columns">
+      <a class="rounded primary button" href="{{ reverse_url('main', domain_id=ddoc['_id']) }}">{{ _('View') }}</a>
+      <a class="rounded primary button" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
+    </div></div>
+  </div>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,6 +1,7 @@
 from vj4 import app
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import user
 from vj4.handler import base
 
 
@@ -24,7 +25,7 @@ class DomainCreateHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, id: str, description: str):
-    domain_id = await domain.add(id, self.user['_id'], description)
+    domain_id = await domain.add(id, self.user['_id'], description=description)
     self.json_or_redirect(base._reverse_url('main', domain_id=domain_id))
 
 
@@ -32,7 +33,8 @@ class DomainCreateHandler(base.Handler):
 class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   async def get(self):
-    self.render('domain_edit.html',
+    udoc = await user.get_by_uid(self.domain['owner_uid'], user.PROJECTION_PUBLIC)
+    self.render('domain_edit.html', udoc=udoc,
                 path_components=[(self.domain_id, self.reverse_url('main')),
                                  (self.translate('domain_edit'), None)])
 
@@ -44,7 +46,8 @@ class DomainEditHandler(base.Handler):
     ddoc = await domain.set(self.domain_id, description=description)
     if ddoc:
       self.domain = ddoc
-    self.render('domain_edit.html',
+    udoc = await user.get_by_uid(self.domain['owner_uid'], user.PROJECTION_PUBLIC)
+    self.render('domain_edit.html', udoc=udoc,
                 path_components=[(self.domain_id, self.reverse_url('main')),
                                  (self.translate('domain_edit'), None)])
 

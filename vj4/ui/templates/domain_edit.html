@@ -10,7 +10,7 @@
             <label>
               {{ _('Belongs to') }}
               {% if page_name == 'domain_edit' %}
-              <input value="{{ handler.domain['owner_uid'] }}" class="textbox" disabled>
+              <input value="{{ udoc['uname'] }}" class="textbox" disabled>
               {% else %}
               <input value="{{ handler.user['uname'] }}" class="textbox" disabled>
               {% endif %}

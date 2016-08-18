@@ -214,6 +214,7 @@ error: 错误
 home_account: 账户设置
 home_messages: 站内消息
 home_security: 安全设置
+home_domain: 我的域
 judge_playground: 评测游乐场
 last active at: 最后活动于
 last login at: 最后登录于
@@ -275,3 +276,17 @@ Highlight: 高亮讨论
 End at: 结束于
 Action: 动作
 Rejudge: 重测
+My Domains: 我的域
+View: 查看
+Manage: 管理
+domain_create: 创建域
+Create Domain: 创建域
+domain_main: 域控制
+domain_edit: 编辑域
+domain_role: 角色
+Roles: 角色
+Your role: 您的角色
+Your permission: 您的权限
+ID: 标识符
+Edit Domain: 编辑域
+Description: 说明

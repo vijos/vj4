@@ -9,8 +9,9 @@ from vj4.util import argmethod
 
 
 @argmethod.wrap
-async def add(domain_id: str, owner_uid: int, description: str,
-              roles={builtin.ROLE_DEFAULT: builtin.DEFAULT_PERMISSIONS}):
+async def add(domain_id: str, owner_uid: int,
+              roles={builtin.ROLE_DEFAULT: builtin.DEFAULT_PERMISSIONS},
+              description: str=None):
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.DomainAlreadyExistError(domain_id)
@@ -32,9 +33,21 @@ async def get(domain_id: str, fields=None):
   return await coll.find_one(domain_id, fields)
 
 
-def get_multi(fields=None):
+def get_multi(owner_uid=None, fields=None):
   coll = db.Collection('domain')
-  return coll.find({}, fields)
+  query = {}
+  if owner_uid != None:
+    query['owner_uid'] = owner_uid
+  return coll.find(query, fields)
+
+
+@argmethod.wrap
+async def get_list(owner_uid: int=None, fields=None, limit: int=None):
+  coll = db.Collection('domain')
+  query = {}
+  if owner_uid != None:
+    query['owner_uid'] = owner_uid
+  return await coll.find(query, fields).to_list(None)
 
 
 @argmethod.wrap
