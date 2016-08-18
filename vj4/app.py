@@ -38,6 +38,7 @@ class Application(web.Application):
   def __init__(self):
     super(Application, self).__init__(
       handler_factory=functools.partial(web.RequestHandlerFactory, access_log=None),
+      middlewares=[self.error_middleware],
       debug=options.options.debug)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
