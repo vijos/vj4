@@ -110,6 +110,7 @@ DEFAULT_PERMISSIONS = (PERM_VIEW |
 ADMIN_PERMISSIONS = PERM_ALL
 DOMAIN_SYSTEM = {'_id': DOMAIN_ID_SYSTEM,
                  'owner_uid': 0,
+                 'description': 'Built-in',
                  'roles': {ROLE_GUEST: BASIC_PERMISSIONS,
                            ROLE_DEFAULT: DEFAULT_PERMISSIONS,
                            ROLE_ADMIN: ADMIN_PERMISSIONS}}
