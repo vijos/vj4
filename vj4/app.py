@@ -38,7 +38,6 @@ class Application(web.Application):
   def __init__(self):
     super(Application, self).__init__(
       handler_factory=functools.partial(web.RequestHandlerFactory, access_log=None),
-      middlewares=[self.error_middleware],
       debug=options.options.debug)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
@@ -61,17 +60,6 @@ class Application(web.Application):
     from vj4.handler import i18n
     if options.options.static:
       self.router.add_static('/', path.join(path.dirname(__file__), '.uibuild'), name='static')
-
-  async def error_middleware(self, app, handler):
-    async def middleware_handler(request):
-      try:
-        response = await handler(request)
-        return response
-      except web.HTTPNotFound as ex:
-        from vj4.handler import error
-        return await error.NotFoundHandler(request)
-
-    return middleware_handler
 
 
 def route(url, name):
