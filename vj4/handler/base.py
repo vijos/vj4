@@ -48,10 +48,10 @@ class HandlerBase(setting.SettingMixin):
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id)
-    self.domain = await domain.get(self.domain_id)
+    self.domain, _ = await asyncio.gather(domain.get(self.domain_id),
+                                          domain.update_udocs(self.domain_id, [self.user]))
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
-    await domain.update_udocs(self.domain_id, [self.user])
     if not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
       self.check_perm(builtin.PERM_VIEW)
 
