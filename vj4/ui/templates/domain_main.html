@@ -5,6 +5,7 @@
     <h1 class="section__title" data-heading>{{ _('Description') }}</h1>
   </div>
   <div class="section__body typo">
+    <p>{{ _('Owner') }}: {{ handler.domain['owner_uid'] }}</p>
     {{ handler.domain['description']|markdown }}
   </div>
 </div>

@@ -64,12 +64,20 @@ async def set(domain_id: str, **kwargs):
   coll = db.Collection('domain')
   if 'owner_uid' in kwargs:
     del kwargs['owner_uid']
-  if 'roles' in kwargs:
-    del kwargs['roles']
   if 'description' in kwargs and kwargs['description'] != None:
     validator.check_description(kwargs['description'])
+  # TODO(twd2): check kwargs
   return await coll.find_and_modify(query={'_id': domain_id},
                                     update={'$set': {**kwargs}},
+                                    new=True)
+
+
+async def unset(domain_id, fields):
+  # TODO(twd2): check fields
+  coll = db.Collection('domain')
+  return await coll.find_and_modify(query={'_id': domain_id},
+                                    update={'$unset': dict((f, '') for f in builtins.set(fields))},
+                                    upsert=True,
                                     new=True)
 
 
@@ -94,6 +102,14 @@ async def set_user(domain_id, uid, **kwargs):
   coll = db.Collection('domain.user')
   return await coll.find_and_modify(query={'domain_id': domain_id, 'uid': uid},
                                     update={'$set': kwargs},
+                                    upsert=True,
+                                    new=True)
+
+
+async def unset_user(domain_id, uid, fields):
+  coll = db.Collection('domain.user')
+  return await coll.find_and_modify(query={'domain_id': domain_id, 'uid': uid},
+                                    update={'$unset': dict((f, '') for f in builtins.set(fields))},
                                     upsert=True,
                                     new=True)
 
@@ -144,7 +160,7 @@ async def ensure_indexes():
   await user_coll.ensure_index([('domain_id', 1),
                                 ('uid', 1)], unique=True)
   await user_coll.ensure_index([('domain_id', 1),
-                                ('role', 1)])
+                                ('role', 1)], sparse=True)
   await user_coll.ensure_index([('domain_id', 1),
                                 ('rp', -1)])
   await user_coll.ensure_index([('domain_id', 1),

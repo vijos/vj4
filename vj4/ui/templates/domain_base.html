@@ -7,24 +7,22 @@
 </li>
 {% endmacro %}
 {% block content %}
-<div class="row">
+<div class="row" data-sticky-parent>
   <div class="large-9 columns">
     {% block domain_content %}{% endblock %}
   </div>
   <div class="large-3 columns">
     {% if page_name != 'domain_create' %}
-    <div class="section side">
-      <div data-sticky="large"><div class="section side">
-        <ul class="menu">
-          {{ menu_item('cloud', 'domain_main') }}
-          <li class="menu__seperator"></li>
-          {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
-          {{ menu_item('edit', 'domain_edit') }}
-          {% endif %}
-          {{ menu_item('user', 'domain_role') }}
-        </ul>
-      </div></div>
-    </div>
+    <div data-sticky="large"><div class="section side">
+      <ol class="menu">
+        {{ menu_item('cloud', 'domain_main') }}
+        <li class="menu__seperator"></li>
+        {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
+        {{ menu_item('edit', 'domain_edit') }}
+        {% endif %}
+        {{ menu_item('user', 'domain_role') }}
+      </ol>
+    </div></div>
     {% else %}
     <div class="section side">
       <div class="section__header">

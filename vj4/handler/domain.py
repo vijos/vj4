@@ -55,6 +55,11 @@ class DomainEditHandler(base.Handler):
 @app.route('/domain/role', 'domain_role')
 class DomainRoleHandler(base.Handler):
   async def get(self):
-    self.render('domain_role.html',
+    rudocs = dict((role, []) for role in self.domain['roles'])
+    uddocs = await domain.get_list_users_by_role(self.domain_id, {'$gt': ''}, {'uid': 1, 'role': 1})
+    for uddoc in uddocs:
+      if uddoc['role'] in rudocs:
+        rudocs[uddoc['role']].append(uddoc)
+    self.render('domain_role.html', rudocs=rudocs,
                 path_components=[(self.domain_id, self.reverse_url('main')),
                                  (self.translate('domain_role'), None)])
