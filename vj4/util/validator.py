@@ -50,6 +50,29 @@ def check_domain_id(s):
     raise error.ValidationError('domain_id')
 
 
+def is_id(s):
+  return bool(re.fullmatch(r'[^\\/\s\u3000]([^\\/\n\r]*[^\\/\s\u3000])?', s))
+
+
+def check_category_name(s):
+  if not is_id(s):
+    raise error.ValidationError('category_name')
+
+
+def check_node_name(s):
+  if not is_id(s):
+    raise error.ValidationError('node_name')
+
+
+def is_role(s):
+  return bool(re.fullmatch(r'[_0-9A-Za-z]+', s))
+
+
+def check_role(s):
+  if not is_role(s):
+    raise error.ValidationError('role')
+
+
 def is_title(s):
   return bool(re.fullmatch(r'.{1,}', s))
 

@@ -37,7 +37,7 @@ async def _update_nodes(domain_id, nodes):
 
 @argmethod.wrap
 async def add_category(domain_id: str, category_name: str):
-  # TODO(twd2): check category_name
+  validator.check_category_name(category_name)
   nodes = await get_nodes(domain_id)
   if category_name in nodes:
     raise error.DiscussionCategoryAlreadyExistError(domain_id, category_name)
@@ -56,7 +56,7 @@ def _get_exist_node(nodes, node_name):
 
 @argmethod.wrap
 async def add_node(domain_id: str, category_name: str, node_name: str, node_pic: str = None):
-  # TODO(twd2): check node_name
+  validator.check_node_name(node_name)
   nodes = await get_nodes(domain_id)
   if category_name not in nodes:
     raise error.DiscussionCategoryNotFoundError(domain_id, category_name)
