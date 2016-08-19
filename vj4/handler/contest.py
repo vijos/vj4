@@ -180,11 +180,16 @@ class ContestCreateHandler(base.Handler):
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     if begin_at >= end_at:
       raise error.ValidationError('duration')
-    try:
-      # TODO(twd2): check problem existance
-      pids = list(set(map(int, pids.split(','))))
-    except ValueError as e:
-      raise error.ValidationError('pids')
+    pids = list(set(map(document.convert_doc_id, pids.split(','))))
+    pdocs = (await problem.get_multi(self.domain_id, fields={'doc_id': 1}, doc_id={'$in': pids})
+             .sort('doc_id', 1)
+             .to_list(None))
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
                             rule, begin_at, end_at, pids)
+    # TODO(twd2): set problem properties e.g. hidden, ...
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
