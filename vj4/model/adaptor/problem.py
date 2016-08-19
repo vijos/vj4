@@ -55,8 +55,8 @@ async def count(domain_id: str):
   return await document.get_multi(domain_id, document.TYPE_PROBLEM).count()
 
 
-def get_multi(domain_id: str, fields=None):
-  return document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields)
+def get_multi(domain_id: str, fields=None, **kwargs):
+  return document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields, **kwargs)
 
 
 def get_multi_status(domain_id: str, *, fields=None, **kwargs):
@@ -64,9 +64,10 @@ def get_multi_status(domain_id: str, *, fields=None, **kwargs):
 
 
 @argmethod.wrap
-async def get_list(domain_id: str, uid: int = None, fields=None, skip: int = 0, limit: int = 0):
+async def get_list(domain_id: str, uid: int=None, fields=None, skip: int=0, limit: int=0,
+                   **kwargs):
   # TODO(iceboy): projection.
-  pdocs = await (document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields)
+  pdocs = await (document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields, **kwargs)
                  .sort([('doc_id', 1)])
                  .skip(skip)
                  .limit(limit)

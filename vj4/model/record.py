@@ -142,7 +142,7 @@ async def ensure_indexes():
                            ('pid', 1),
                            ('uid', 1),
                            ('_id', -1)])
-  # for job problem status
+  # for job record
   await coll.ensure_index([('domain_id', 1),
                            ('pid', 1),
                            ('type', 1),
