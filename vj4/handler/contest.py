@@ -6,6 +6,7 @@ import pytz
 from bson import objectid
 
 from vj4 import app
+from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import record
@@ -168,9 +169,17 @@ class ContestCreateHandler(base.Handler):
                  begin_at_time: str,
                  duration: float,
                  pids: str):
-    begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-    begin_at = begin_at.replace(tzinfo=pytz.timezone(self.timezone))
-    end_at = begin_at + datetime.timedelta(hours=duration)
+    try:
+      begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
+      begin_at = begin_at.replace(tzinfo=pytz.timezone(self.timezone))
+      end_at = begin_at + datetime.timedelta(hours=duration)
+    except ValueError as e:
+      raise error.ValidationError('begin_at_date', 'begin_at_time')
+    try:
+      # TODO(twd2): check problem existance
+      pids = list(set(map(int, pids.split(','))))
+    except ValueError as e:
+      raise error.ValidationError('pids')
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
-                            rule, begin_at, end_at, list(map(int, pids.split(','))))
+                            rule, begin_at, end_at, pids)
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))

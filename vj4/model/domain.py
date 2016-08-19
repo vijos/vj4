@@ -8,6 +8,9 @@ from vj4.model import builtin
 from vj4.util import argmethod
 
 
+PROJECTION_PUBLIC = {'uid': 1}
+
+
 @argmethod.wrap
 async def add(domain_id: str, owner_uid: int,
               roles=builtin.DOMAIN_SYSTEM['roles'],
@@ -57,6 +60,8 @@ async def set(domain_id: str, **kwargs):
   coll = db.Collection('domain')
   if 'owner_uid' in kwargs:
     del kwargs['owner_uid']
+  if 'roles' in kwargs:
+    del kwargs['roles']
   return await coll.find_and_modify(query={'_id': domain_id},
                                     update={'$set': {**kwargs}},
                                     new=True)
@@ -119,12 +124,21 @@ def get_multi_users(domain_id: str, fields=None):
 
 
 @argmethod.wrap
+async def get_list_users_by_role(domain_id: str, role: str, fields=PROJECTION_PUBLIC, limit: int=None):
+  coll = db.Collection('domain.user')
+  return await (coll.find({'domain_id': domain_id, 'role': role}, fields)
+                .to_list(limit))
+
+
+@argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('domain')
   await coll.ensure_index('owner_uid')
   user_coll = db.Collection('domain.user')
   await user_coll.ensure_index([('domain_id', 1),
-                                ('uid', 1)])
+                                ('uid', 1)], unique=True)
+  await user_coll.ensure_index([('domain_id', 1),
+                                ('role', 1)])
   await user_coll.ensure_index([('domain_id', 1),
                                 ('rp', -1)])
   await user_coll.ensure_index([('domain_id', 1),

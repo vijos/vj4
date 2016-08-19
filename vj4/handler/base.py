@@ -197,6 +197,10 @@ class Handler(web.View, HandlerBase):
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
+    except Exception as e:
+      _logger.error("Unexpected exception occurred when handling %s (UID = %d): %s",
+                    self.request.path, self.user['_id'] or None, repr(e))
+      raise
     return self.response
 
   def render(self, template_name, **kwargs):
