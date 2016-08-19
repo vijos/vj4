@@ -170,11 +170,16 @@ class ContestCreateHandler(base.Handler):
                  duration: float,
                  pids: str):
     try:
+      tz = pytz.timezone(self.timezone)
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-      begin_at = begin_at.replace(tzinfo=pytz.timezone(self.timezone))
-      end_at = begin_at + datetime.timedelta(hours=duration)
+      begin_at = tz.localize(begin_at)
+      end_at = tz.normalize(begin_at + datetime.timedelta(hours=duration))
     except ValueError as e:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
+    if begin_at <= self.now:
+      raise error.ValidationError('begin_at_date', 'begin_at_time')
+    if begin_at >= end_at:
+      raise error.ValidationError('duration')
     try:
       # TODO(twd2): check problem existance
       pids = list(set(map(int, pids.split(','))))
