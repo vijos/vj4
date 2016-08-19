@@ -8,6 +8,10 @@ from vj4 import error
 from vj4.util import argmethod
 
 
+PREFIX_IP = 'ip-'
+PREFIX_USER = 'user-'
+
+
 @argmethod.wrap
 async def inc(op: str, ident: str, period_secs: int, max_operations: int):
   coll = db.Collection('opcount')
