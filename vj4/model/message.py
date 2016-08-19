@@ -4,6 +4,7 @@ from bson import objectid
 
 from vj4 import db
 from vj4.util import argmethod
+from vj4.util import validator
 
 STATUS_READ = 1
 
@@ -11,6 +12,7 @@ STATUS_READ = 1
 @argmethod.wrap
 async def add(sender_uid: int, sendee_uid: int, content: str):
   """Send a message from sender to sendee with specified content."""
+  validator.check_content(content)
   coll = db.Collection('message')
   mdoc = {'sender_uid': sender_uid,
           'sendee_uid': sendee_uid,
@@ -33,6 +35,7 @@ def get_multi(uid: int, *, fields=None):
 @argmethod.wrap
 async def add_reply(message_id: objectid.ObjectId, sender_uid: int, content: str):
   """Reply a message with specified content."""
+  validator.check_content(content)
   coll = db.Collection('message')
   reply = {'sender_uid': sender_uid,
            'content': content,

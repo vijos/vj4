@@ -84,6 +84,7 @@ class RecordPretestDataHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):
+    # TODO(twd2): check permission or own
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
@@ -102,7 +103,7 @@ class RecordPretestDataHandler(base.Handler):
       zip_file.writestr('Output/{0}'.format(output_file), data_output)
     zip_file.writestr('Config.ini', config_content)
 
-    # mark all files as created in Windows
+    # mark all files as created in Windows :p
     for zfile in zip_file.filelist:
       zfile.create_system = 0
 

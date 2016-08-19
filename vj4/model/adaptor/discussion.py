@@ -8,6 +8,7 @@ from vj4.model import document
 from vj4.model.adaptor import problem
 from vj4.service import smallcache
 from vj4.util import argmethod
+from vj4.util import validator
 
 
 @argmethod.wrap
@@ -36,6 +37,7 @@ async def _update_nodes(domain_id, nodes):
 
 @argmethod.wrap
 async def add_category(domain_id: str, category_name: str):
+  # TODO(twd2): check category_name
   nodes = await get_nodes(domain_id)
   if category_name in nodes:
     raise error.DiscussionCategoryAlreadyExistError(domain_id, category_name)
@@ -54,6 +56,7 @@ def _get_exist_node(nodes, node_name):
 
 @argmethod.wrap
 async def add_node(domain_id: str, category_name: str, node_name: str, node_pic: str = None):
+  # TODO(twd2): check node_name
   nodes = await get_nodes(domain_id)
   if category_name not in nodes:
     raise error.DiscussionCategoryNotFoundError(domain_id, category_name)
@@ -97,6 +100,8 @@ async def get_vnode(domain_id: str, node_or_pid: document.convert_doc_id, attach
 @argmethod.wrap
 async def add(domain_id: str, node_or_pid: str, owner_uid: int, title: str, content: str,
               **flags):
+  validator.check_title(title)
+  validator.check_content(content)
   vnode = await get_vnode(domain_id, node_or_pid)
   return await document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION,
                             title=title, num_replies=0, views=0, **flags,
@@ -155,6 +160,7 @@ async def get_vnode_and_list_and_count_for_node(domain_id: str,
 
 @argmethod.wrap
 async def add_reply(domain_id: str, did: document.convert_doc_id, owner_uid: int, content: str):
+  validator.check_content(content)
   drdoc, _ = await asyncio.gather(
     document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION_REPLY,
                  parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did),
@@ -182,6 +188,7 @@ async def get_list_reply(domain_id: str, did: document.convert_doc_id, *, fields
 @argmethod.wrap
 async def add_tail_reply(domain_id: str, drid: document.convert_doc_id,
                          owner_uid: int, content: str):
+  validator.check_content(content)
   return await document.push(domain_id, document.TYPE_DISCUSSION_REPLY, drid,
                              'reply', content, owner_uid)
 

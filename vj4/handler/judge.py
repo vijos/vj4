@@ -100,6 +100,7 @@ class JudgeNotifyConnection(base.Connection):
                                      self.channel.basic_client_ack(tag))
       accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
       post_coros = [bus.publish('record_change', rid)]
+      # TODO(twd2): ignore no effect statuses like system error, ...
       if rdoc['type'] == constant.record.TYPE_SUBMISSION:
         _, delta_submit, delta_accept = (
           await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],

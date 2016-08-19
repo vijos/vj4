@@ -26,7 +26,7 @@ class DomainCreateHandler(base.Handler):
   @base.sanitize
   async def post(self, *, id: str, description: str):
     domain_id = await domain.add(id, self.user['_id'], description=description)
-    self.json_or_redirect(base._reverse_url('main', domain_id=domain_id))
+    self.json_or_redirect(self.reverse_url('main', domain_id=domain_id))
 
 
 @app.route('/domain/edit', 'domain_edit')

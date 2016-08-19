@@ -9,6 +9,7 @@ from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
 from vj4.util import timezone
+from vj4.util import validator
 
 
 STATUS_NEW = 0
@@ -66,10 +67,13 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
               begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               pids=[]):
+  validator.check_title(title)
+  validator.check_content(content)
   if rule not in RULES:
     raise error.ValidationError('rule')
   if begin_at >= end_at:
     raise error.ValidationError('begin_at', 'end_at')
+  # TODO(twd2): should we check problem existance here?
   return await document.add(domain_id, content, owner_uid, document.TYPE_CONTEST,
                             title=title, status=STATUS_NEW, rule=rule,
                             begin_at=begin_at, end_at=end_at, pids=pids, attend=0)

@@ -5,10 +5,13 @@ from bson import objectid
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
+from vj4.util import validator
 
 
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int, pids=(), require_tids=()):
+  validator.check_title(title)
+  validator.check_content(content)
   return await document.add(domain_id, content, owner_uid, document.TYPE_TRAINING,
                             title=title, pids=pids, require_tids=require_tids)
 

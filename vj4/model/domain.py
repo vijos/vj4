@@ -6,6 +6,7 @@ from vj4 import db
 from vj4 import error
 from vj4.model import builtin
 from vj4.util import argmethod
+from vj4.util import validator
 
 
 PROJECTION_PUBLIC = {'uid': 1}
@@ -15,6 +16,9 @@ PROJECTION_PUBLIC = {'uid': 1}
 async def add(domain_id: str, owner_uid: int,
               roles=builtin.DOMAIN_SYSTEM['roles'],
               description: str=None):
+  validator.check_domain_id(domain_id)
+  if description:
+    validator.check_description(description)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.DomainAlreadyExistError(domain_id)
@@ -62,6 +66,8 @@ async def set(domain_id: str, **kwargs):
     del kwargs['owner_uid']
   if 'roles' in kwargs:
     del kwargs['roles']
+  if 'description' in kwargs:
+    validator.check_description(kwargs['description'])
   return await coll.find_and_modify(query={'_id': domain_id},
                                     update={'$set': {**kwargs}},
                                     new=True)

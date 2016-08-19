@@ -212,6 +212,12 @@ class ContestStatusHiddenError(ForbiddenError):
     return "Contest status is hidden."
 
 
+class ProblemNotFoundError(DocumentNotFoundError):
+  @property
+  def message(self):
+    return "Problem {1} not found."
+
+
 class TrainingRequirementNotSatisfiedError(ForbiddenError):
   @property
   def message(self):
