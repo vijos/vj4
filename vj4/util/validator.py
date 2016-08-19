@@ -60,7 +60,7 @@ def check_title(s):
 
 
 def is_content(s):
-  return len(str(s)) >= 2
+  return isinstance(s, str) and len(str(s)) >= 2
 
 
 def check_content(s):
@@ -69,7 +69,7 @@ def check_content(s):
 
 
 def is_description(s):
-  return len(str(s)) >= 0
+  return isinstance(s, str)
 
 
 def check_description(s):

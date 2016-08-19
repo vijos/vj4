@@ -171,7 +171,7 @@ async def reply_solution(domain_id: str, psid: document.convert_doc_id, uid: int
 
 async def get_data(domain_id, pid):
   pdoc = await get(domain_id, pid)
-  if not pdoc['data']:
+  if not pdoc.get('data', None):
     raise error.ProblemDataNotFoundError(domain_id, pid)
   return await fs.get(pdoc['data'])
 

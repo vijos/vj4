@@ -46,7 +46,7 @@ async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
                        'hash': pwhash.hash_vj4(password, salt),
                        'regat': datetime.datetime.utcnow(),
                        'regip': regip,
-                       'priv': builtin.PRIV_USER_PROFILE,
+                       'priv': builtin.DEFAULT_PRIV,
                        'loginat': datetime.datetime.utcnow(),
                        'loginip': regip,
                        'gravatar': mail})

@@ -60,7 +60,7 @@ class HandlerBase(setting.SettingMixin):
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
             or self.domain['owner_uid'] == self.user['_id']
-            or self.has_priv(builtin.PRIV_ALL))
+            or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def check_perm(self, perm):
     if not self.has_perm(perm):
@@ -78,13 +78,13 @@ class HandlerBase(setting.SettingMixin):
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
             or self.domain['owner_uid'] == udoc['_id']
-            or self.udoc_has_priv(udoc, builtin.PRIV_ALL))
+            or self.udoc_has_priv(udoc, builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def udoc_has_priv(self, udoc, priv):
     return (priv & udoc['priv']) == priv
 
-  def own(self, doc, perm=builtin.PERM_NONE):
-    return (doc['owner_id'] == self.user['_id']) and self.has_perm(perm)
+  def own(self, doc, perm=builtin.PERM_NONE, field='owner_uid', priv=builtin.PRIV_NONE):
+    return (doc[field] == self.user['_id']) and self.has_perm(perm) and self.has_priv(priv)
 
   async def update_session(self, *, new_saved=False, **kwargs):
     """Update or create session if necessary.

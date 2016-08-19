@@ -111,10 +111,11 @@ class ProblemPretestHandler(base.Handler):
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str,
                  data_input: str, data_output: str):
     # TODO(twd2): check status, eg. test, hidden problem, ...
-    did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
-                             data_input=self.request.POST.getall('data_input'),
-                             data_output=self.request.POST.getall('data_output'))
     pdoc = await problem.get(self.domain_id, pid)
+    did = await document.add(self.domain_id, 'data', self.user['_id'], document.TYPE_PRETEST_DATA,
+                             pid=pdoc['doc_id'],
+                             data=list(zip(self.request.POST.getall('data_input'),
+                                           self.request.POST.getall('data_output'))))
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST,
                            self.user['_id'], lang, code, did)
     await bus.publish('record_change', rid)
@@ -199,11 +200,14 @@ class ProblemSolutionHandler(base.OperationHandler):
 class ProblemDataHandler(base.Handler):
   @base.route_argument
   @base.sanitize
-  async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool = False):
+  async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool=False):
     # Judges will have PRIV_READ_PROBLEM_DATA,
-    # domain administrators will have PERM_READ_PROBLEM_DATA.
-    if not self.has_priv(builtin.PRIV_READ_PROBLEM_DATA):
-      self.check_perm(builtin.PERM_READ_PROBLEM_DATA)
+    # domain administrators will have PERM_READ_PROBLEM_DATA,
+    # problem owner will have PERM_READ_PROBLEM_DATA_SELF.
+    pdoc = await problem.get(self.domain_id, pid)
+    if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
+        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
+      self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     grid_out = await problem.get_data(self.domain_id, pid)
 
     self.response.content_type = grid_out.content_type or 'application/octet-stream'

@@ -11,6 +11,10 @@ from vj4.util import argmethod
 from vj4.util import validator
 
 
+PROJECTION_PUBLIC = {'code': 0}
+PROJECTION_ALL = None
+
+
 @argmethod.wrap
 async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
               lang: str, code: str, data_id: objectid.ObjectId=None, tid: objectid.ObjectId=None,
@@ -35,9 +39,9 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
 
 
 @argmethod.wrap
-async def get(record_id: objectid.ObjectId):
+async def get(record_id: objectid.ObjectId, fields=PROJECTION_ALL):
   coll = db.Collection('record')
-  return await coll.find_one(record_id)
+  return await coll.find_one(record_id, fields)
 
 
 @argmethod.wrap

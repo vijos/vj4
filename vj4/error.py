@@ -95,7 +95,13 @@ class DocumentNotFoundError(NotFoundError):
 class ProblemDataNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Problem {0} data not found."
+    return "Problem {1} data not found."
+
+
+class RecordDataNotFoundError(NotFoundError):
+  @property
+  def message(self):
+    return "Data of record {1} not found."
 
 
 class PermissionError(ForbiddenError):

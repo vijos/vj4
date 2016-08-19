@@ -2,7 +2,7 @@
   <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
     <div class="col--status__text">
       <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
-      <a href="{{ reverse_url('record_detail', rid=rdoc['_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
+      <a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
         {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
       </a>
     </div>
