@@ -112,10 +112,10 @@ class ProblemPretestHandler(base.Handler):
                  data_input: str, data_output: str):
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdoc = await problem.get(self.domain_id, pid)
-    did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
-                             pid=pdoc['doc_id'],
-                             data=list(zip(self.request.POST.getall('data_input'),
-                                           self.request.POST.getall('data_output'))))
+    content = list(zip(self.request.POST.getall('data_input'),
+                       self.request.POST.getall('data_output')))
+    did = await document.add(self.domain_id, content, self.user['_id'], document.TYPE_PRETEST_DATA,
+                             pid=pdoc['doc_id'])
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST,
                            self.user['_id'], lang, code, did)
     await bus.publish('record_change', rid)

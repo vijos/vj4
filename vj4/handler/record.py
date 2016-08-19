@@ -103,8 +103,8 @@ class RecordPretestDataHandler(base.Handler):
 
     output_buffer = io.BytesIO()
     zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
-    config_content = str(len(ddoc['data'])) + '\n'
-    for i, (data_input, data_output) in enumerate(ddoc['data']):
+    config_content = str(len(ddoc['content'])) + '\n'
+    for i, (data_input, data_output) in enumerate(ddoc['content']):
       input_file = 'input{0}.txt'.format(i)
       output_file = 'output{0}.txt'.format(i)
       config_content += '{0}|{1}|1|10|262144\n'.format(input_file, output_file)

@@ -60,8 +60,6 @@ async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id):
 
 
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
-  if 'content' in kwargs:
-    validator.check_content(kwargs['content'])
   coll = db.Collection('document')
   doc = await coll.find_and_modify(query={'domain_id': domain_id,
                                           'doc_type': doc_type,
