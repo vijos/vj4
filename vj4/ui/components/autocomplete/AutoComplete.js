@@ -15,6 +15,7 @@ export default class AutoComplete extends DOMAttachedObject {
     this.menuShown = false;
     this.cache = {};
     this._value = null;
+    this.lastText = null;
     this.options = {
       items: async () => [],
       render: () => '',
@@ -68,7 +69,16 @@ export default class AutoComplete extends DOMAttachedObject {
     // TODO: Implement keyboard navigation
   }
 
-  onKeyUp() {
+  onKeyUp(ev) {
+    if (ev.which === 27) {
+      // ESC
+      this.close();
+      return;
+    }
+    if (this.$dom.val() === this.lastText) {
+      return;
+    }
+    this.lastText = this.$dom.val();
     this.updateOpenState();
     if (this.isOpen) {
       this.renderList();
