@@ -324,8 +324,8 @@ Problem {1} not found.: 题目 {1} 不存在。
 Training requirement is not satisfied.: 不满足训练条件。
 Record {0} not found.: 记录 {0} 不存在。
 '{0} limit exceeded (limit: {2} operations in {1} seconds).': '{0} 超过频率限制。限制：{1} 秒内最多 {2} 次操作。'
-Domain ID cannot be changed once the domain is created.: 域 ID 在创建后不能更改。
-'A domain ID is supposed to be:': '域名 ID 必须满足以下条件：'
+Domain ID cannot be changed once the domain is created.: 域标识符在创建后不能更改。
+'A domain ID is supposed to be:': '域标识符必须满足以下条件：'
 to be unique: 唯一
 not be wrapped with space: 两侧不含空格
 not to start with a number: 首字符不为数字
