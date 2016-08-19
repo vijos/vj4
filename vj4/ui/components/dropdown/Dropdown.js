@@ -3,6 +3,8 @@ import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 import responsiveCutoff from '../../responsive.inc.js';
 
+import zIndexManager from '../../utils/zIndexManager';
+
 export default class Dropdown extends DOMAttachedObject {
 
   static DOMAttachKey = 'vjDropdownInstance';
@@ -16,8 +18,10 @@ export default class Dropdown extends DOMAttachedObject {
     }
     const options = {
       target: $.find($dom.attr('data-dropdown-target'))[0],
-      position: $dom.attr('data-dropdown-pos') || 'bottom left',
     };
+    if ($dom.attr('data-dropdown-pos')) {
+      options.position = $dom.attr('data-dropdown-pos');
+    }
     return Dropdown.getOrConstruct($dom, options);
   }
 
@@ -29,11 +33,16 @@ export default class Dropdown extends DOMAttachedObject {
 
   constructor($trigger, options = {}) {
     super($trigger);
+    this.options = {
+      target: null,
+      position: 'bottom left',
+      ...options,
+    };
     this.dropInstance = new Drop({
       target: $trigger[0],
       classes: 'dropdown',
-      content: options.target,
-      position: options.position,
+      content: this.options.target,
+      position: this.options.position,
       openOn: 'hover',
       constrainToWindow: true,
       constrainToScrollParent: false,
@@ -43,6 +52,7 @@ export default class Dropdown extends DOMAttachedObject {
   }
 
   onDropOpen() {
+    $(this.dropInstance.drop).css('z-index', zIndexManager.getNext());
     this.$dom.trigger('vjDropdownShow');
   }
 

@@ -1,5 +1,17 @@
 {% extends "home_base.html" %}
 {% block home_content %}
+<div style="display: none" class="dialog__body--user-select">
+  <div>
+    <div class="row">
+      <div class="columns">
+        <label>
+          {{ _('Username / UID') }}
+          <input type="text" class="textbox user-select" data-autofocus>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="section">
   <div id="messagePad">
     <div class="loader-container"><div class="loader"></div></div>

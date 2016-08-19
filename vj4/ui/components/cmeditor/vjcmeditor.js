@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import SimpleMDE from 'vj-simplemde';
 import commonmark from 'commonmark';
 
@@ -8,7 +7,7 @@ import 'codemirror/mode/python/python';
 
 export default class VjCmEditor extends SimpleMDE {
   constructor(options = {}) {
-    const defaultOptions = {
+    super({
       autoDownloadFontAwesome: false,
       spellChecker: false,
       forceSync: true,
@@ -71,8 +70,8 @@ export default class VjCmEditor extends SimpleMDE {
       commonmark: {
         safe: true,
       },
-    };
-    super(_.assign({}, defaultOptions, options));
+      ...options,
+    });
   }
 
   markdown(text) {

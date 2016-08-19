@@ -219,12 +219,12 @@ TODO
 ### Menu
 
 ```html
-<ul class="menu">
+<ol class="menu">
   <li class="menu__item">
     <a href="#" class="menu__link">Item</a>
   </li>
   <li class="menu__seperator"></li>
-</ul>
+</ol>
 ```
 
 Optionally, a menu item can be `active` or `highlight` (notice that the decorator class name is added to `menu__link` instead of `menu__item`):
@@ -243,9 +243,9 @@ Menu can be put inside a section. It should be placed inside `section__body no-p
 ```html
 <div class="section">
   <div>
-    <ul class="menu">
+    <ol class="menu">
     ...
-    </ul>
+    </ol>
   </div>
 </div>
 ```
@@ -376,6 +376,21 @@ Sample:
 `ctrl+enter:submit`: Triggers submit on the closest `form` when user presses `Ctrl+Enter` or `Command+Enter`.
 
 `f1:submit,f2:client`: Triggers submit when user presses `f1` and triggers click when user presses `f2`.
+
+### Tooltip
+
+```html
+<X data-tooltip="your tooltip text"></X>
+```
+
+Optionally, you can specify a location by assigning `data-tooltip-pos` attribute. Available values are:
+
+- `"top left"`
+- `"top middle"` (default)
+- `"top right"`
+- `"bottom left"`
+- `"bottom middle"`
+- `"bottom right"`
 
 ## High-Level Components
 

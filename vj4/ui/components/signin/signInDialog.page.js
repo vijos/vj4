@@ -1,9 +1,9 @@
 import { AutoloadPage } from '../../misc/PageLoader';
-import Dialog from '../dialog';
+import DomDialog from '../dialog/DomDialog';
 import responsiveCutoff from '../../responsive.inc.js';
 
 const signinDialogPage = new AutoloadPage(() => {}, () => {
-  const signInDialog = Dialog.getOrConstruct($('.dialog--signin'), {
+  const signInDialog = DomDialog.getOrConstruct($('.dialog--signin'), {
     cancelByClickingBack: true,
     cancelByEsc: true,
   });

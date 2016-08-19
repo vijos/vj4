@@ -44,13 +44,19 @@ export default class CommentBox extends DOMAttachedObject {
     init(); // delay initialize
     this.$box = $template.clone();
     this.$box.data('instance', this);
-    this.options = options;
-    if (options.initialText) {
-      this.setText(options.initialText);
+    this.options = {
+      initialText: null,
+      mode: null,
+      form: null,
+      onCancel: () => null,
+      ...options,
+    };
+    if (this.options.initialText) {
+      this.setText(this.options.initialText);
     }
-    if (options.mode) {
+    if (this.options.mode) {
       const submitButton = this.$box.find('.dczcomments__box__submit');
-      submitButton.val(submitButton.attr(`data-value-${options.mode}`));
+      submitButton.val(submitButton.attr(`data-value-${this.options.mode}`));
     }
   }
 
@@ -85,19 +91,17 @@ export default class CommentBox extends DOMAttachedObject {
     return this;
   }
 
-  onSubmit() {
-    util
+  async onSubmit() {
+    await util
       .post('', {
         ...this.options.form,
         content: this.getText(),
-      })
-      .then(() => window.location.reload());
+      });
+    window.location.reload();
   }
 
   async onCancel(ev) {
-    if (this.options && this.options.onCancel) {
-      await this.options.onCancel(ev);
-    }
+    await this.options.onCancel(ev);
     this.$box.remove();
     this.detach();
   }

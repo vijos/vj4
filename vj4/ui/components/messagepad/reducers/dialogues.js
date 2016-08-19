@@ -6,16 +6,14 @@ export default function reducer(state = {}, action) {
     return _.keyBy(action.payload.messages, '_id');
   }
   case 'DIALOGUES_CREATE': {
-    const { id, uid } = action.payload;
+    const { id, user } = action.payload;
     return {
       ...state,
       [id]: {
         _id: id,
         sender_uid: UserContext.uid,
-        sendee_uid: uid,
-        sendee_udoc: {
-          uname: `UID = ${String(uid)}`,
-        },
+        sendee_uid: user._id,
+        sendee_udoc: {...user},
         reply: [],
         isPlaceholder: true,
       },

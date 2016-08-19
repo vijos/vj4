@@ -121,7 +121,9 @@ export default class MessagePadInputContainer extends React.PureComponent {
   }
   componentDidUpdate() {
     if (this.focusInput) {
+      const { scrollX, scrollY } = window;
       this.refs.input.focus();
+      window.scrollTo(scrollX, scrollY);
     }
   }
 }

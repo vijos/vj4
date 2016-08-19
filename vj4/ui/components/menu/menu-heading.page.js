@@ -1,5 +1,7 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 
+import tpl from '../../utils/tpl';
+
 const menuHeadingPage = new AutoloadPage(null, () => {
   for (const container of $('[data-heading-extract-to]')) {
     const $container = $(container);
@@ -9,19 +11,18 @@ const menuHeadingPage = new AutoloadPage(null, () => {
     }
     let $menu = $target.children('.menu');
     if ($menu.length === 0) {
-      $menu = $('<ul>').addClass('menu collapsed').appendTo($target);
+      $menu = $(tpl`<ul class="menu collapsed"></ul>`).appendTo($target);
       $target.children('.menu__link').addClass('expandable');
     }
     for (const heading of $container.find('[data-heading]')) {
       const $heading = $(heading);
-      const $a = $('<a>')
-        .addClass('menu__link')
-        .text($heading.text())
-        .attr('href', `#${$heading.attr('id') || 0}`);
-      $('<li>')
-        .addClass('menu__item')
-        .append($a)
-        .appendTo($menu);
+      $(tpl`
+        <li class="menu__item">
+          <a class="menu__link" href="#${$heading.attr('id') || ''}">
+            ${$heading.text()}
+          </a>
+        </li>
+      `).appendTo($menu);
     }
   }
 });

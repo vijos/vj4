@@ -2,20 +2,19 @@
 
 .dropdown-target
   display: none
-  font-size: rem($font-size-small)
 
-  &.menu
+.drop .dropdown-target
+  display: block
+
+.dropdown
+  .menu
     min-width: rem(150px)
     box-shadow: 0 2px 7px rgba(#000, 0.3)
     background: #FFF
     font-size: rem($font-size-small)
 
   .menu__link
-    padding: rem(0 10px)
-    line-height: 2.5em
-
-.drop .dropdown-target
-  display: block
+    padding: rem(8px 10px)
 
 .dropdown
   .drop-content
