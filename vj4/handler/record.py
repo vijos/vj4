@@ -4,6 +4,7 @@ import zipfile
 from bson import objectid
 
 from vj4 import app
+from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
@@ -34,7 +35,7 @@ class RecordMainConnection(base.Connection):
     bus.subscribe(self.on_record_change, ['record_change'])
 
   async def on_record_change(self, e):
-    rdoc = await record.get(objectid.ObjectId(e['value']))
+    rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
     # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
@@ -55,8 +56,12 @@ class RecordDetailHandler(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
-    # TODO(twd2): check perm or priv
-    if rdoc['uid'] != self.user['_id']:
+    if rdoc['domain_id'] != self.domain_id:
+      self.redirect(self.reverse_url('record_detail', rid=rid, domain_id=rdoc['domain_id']))
+      return
+    if (not self.own(rdoc, field='uid')
+        and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
+        and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
       del rdoc['code']
     rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
@@ -66,45 +71,49 @@ class RecordDetailHandler(base.Handler):
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')
 class RecordRejudgeHandler(base.Handler):
-  @base.require_perm(builtin.PERM_REJUDGE)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, rid: objectid.ObjectId):
     # TODO(twd2): check status, eg. test, hidden problem, ...
-    rdoc = await record.rejudge(rid)
+    rdoc = await record.get(rid)
+    if rdoc['domain_id'] == self.domain_id:
+      self.check_perm(builtin.PERM_REJUDGE)
+    else:
+      self.check_priv(builtin.PRIV_REJUDGE)
+    rdoc = await record.rejudge(rdoc['_id'])
     await bus.publish('record_change', rdoc['_id'])
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/records/{rid}/pretest_data', 'record_pretest_data')
+@app.route('/records/{rid}/data', 'record_pretest_data')
 class RecordPretestDataHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_READ_PRETEST_DATA)
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):
     rdoc = await record.get(rid)
-    if not rdoc:
+    if not rdoc or rdoc['type'] != constant.record.TYPE_PRETEST:
       raise error.RecordNotFoundError(rid)
+    if not self.own(rdoc, builtin.PRIV_READ_PRETEST_DATA_SELF, 'uid'):
+      self.check_priv(builtin.PRIV_READ_PRETEST_DATA)
     ddoc = await document.get(rdoc['domain_id'], document.TYPE_PRETEST_DATA, rdoc['data_id'])
     if not ddoc:
-      raise error.ProblemDataNotFoundError(rdoc['pid'])
+      raise error.RecordDataNotFoundError(rdoc['_id'])
 
     output_buffer = io.BytesIO()
     zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
-    config_content = str(len(ddoc['data_input'])) + "\n"
-    for i, (data_input, data_output) in enumerate(zip(ddoc['data_input'], ddoc['data_output'])):
+    config_content = str(len(ddoc['data'])) + '\n'
+    for i, (data_input, data_output) in enumerate(ddoc['data']):
       input_file = 'input{0}.txt'.format(i)
       output_file = 'output{0}.txt'.format(i)
-      config_content += '{0}|{1}|1|10|1024\n'.format(input_file, output_file)
+      config_content += '{0}|{1}|1|10|262144\n'.format(input_file, output_file)
       zip_file.writestr('Input/{0}'.format(input_file), data_input)
       zip_file.writestr('Output/{0}'.format(output_file), data_output)
     zip_file.writestr('Config.ini', config_content)
-
-    # mark all files as created in Windows
+    # mark all files as created in Windows :p
     for zfile in zip_file.filelist:
       zfile.create_system = 0
-
     zip_file.close()
+
     await self.binary(output_buffer.getvalue())

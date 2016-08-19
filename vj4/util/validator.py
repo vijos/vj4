@@ -41,10 +41,46 @@ def check_mail(s):
     raise error.ValidationError('mail')
 
 
-def is_gender(i):
-  return i in constant.model.USER_GENDERS
+def is_domain_id(s):
+  return bool(re.fullmatch(r'[^0-9\\/\s\u3000][^\\/\n\r]{2,}[^\\/\s\u3000]', s))
 
 
-def check_gender(i):
-  if not is_gender(i):
-    raise error.ValidationError('gender')
+def check_domain_id(s):
+  if not is_domain_id(s):
+    raise error.ValidationError('domain_id')
+
+
+def is_title(s):
+  return bool(re.fullmatch(r'.{1,}', s))
+
+
+def check_title(s):
+  if not is_title(s):
+    raise error.ValidationError('title')
+
+
+def is_content(s):
+  return isinstance(s, str) and len(str(s)) >= 2
+
+
+def check_content(s):
+  if not is_content(s):
+    raise error.ValidationError('content')
+
+
+def is_description(s):
+  return isinstance(s, str)
+
+
+def check_description(s):
+  if not is_description(s):
+    raise error.ValidationError('description')
+
+
+def is_lang(i):
+  return i in constant.language.LANG_TEXTS
+
+
+def check_lang(i):
+  if not is_lang(i):
+    raise error.ValidationError('lang')

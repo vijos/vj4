@@ -58,7 +58,9 @@ class HandlerBase(setting.SettingMixin):
   def has_perm(self, perm):
     role = self.user.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
-    return (perm & mask) == perm or self.domain['owner_uid'] == self.user['_id']
+    return ((perm & mask) == perm
+            or self.domain['owner_uid'] == self.user['_id']
+            or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def check_perm(self, perm):
     if not self.has_perm(perm):
@@ -74,10 +76,15 @@ class HandlerBase(setting.SettingMixin):
   def udoc_has_perm(self, udoc, perm):
     role = udoc.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
-    return (perm & mask) == perm or self.domain['owner_uid'] == udoc['_id']
+    return ((perm & mask) == perm
+            or self.domain['owner_uid'] == udoc['_id']
+            or self.udoc_has_priv(udoc, builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def udoc_has_priv(self, udoc, priv):
     return (priv & udoc['priv']) == priv
+
+  def own(self, doc, perm=builtin.PERM_NONE, field='owner_uid', priv=builtin.PRIV_NONE):
+    return (doc[field] == self.user['_id']) and self.has_perm(perm) and self.has_priv(priv)
 
   async def update_session(self, *, new_saved=False, **kwargs):
     """Update or create session if necessary.
@@ -190,6 +197,10 @@ class Handler(web.View, HandlerBase):
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
+    except Exception as e:
+      _logger.error("Unexpected exception occurred when handling %s (UID = %d): %s",
+                    self.request.path, self.user['_id'] or None, repr(e))
+      raise
     return self.response
 
   def render(self, template_name, **kwargs):

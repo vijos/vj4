@@ -95,8 +95,8 @@ class ProblemSubmitHandler(base.Handler):
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdoc = await problem.get(self.domain_id, pid)
-    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION, self.user['_id'],
-                           lang, code)
+    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
+                           self.user['_id'], lang, code)
     await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
@@ -108,14 +108,16 @@ class ProblemPretestHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, lang: str, code: str, data_input: str, data_output: str):
+  async def post(self, *, pid: document.convert_doc_id, lang: str, code: str,
+                 data_input: str, data_output: str):
     # TODO(twd2): check status, eg. test, hidden problem, ...
-    did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
-                             data_input = self.request.POST.getall('data_input'),
-                             data_output = self.request.POST.getall('data_output'))
     pdoc = await problem.get(self.domain_id, pid)
-    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST, self.user['_id'],
-                           lang, code, did)
+    did = await document.add(self.domain_id, 'data', self.user['_id'], document.TYPE_PRETEST_DATA,
+                             pid=pdoc['doc_id'],
+                             data=list(zip(self.request.POST.getall('data_input'),
+                                           self.request.POST.getall('data_output'))))
+    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST,
+                           self.user['_id'], lang, code, did)
     await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
@@ -198,10 +200,14 @@ class ProblemSolutionHandler(base.OperationHandler):
 class ProblemDataHandler(base.Handler):
   @base.route_argument
   @base.sanitize
-  async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool = False):
-    # Judges will have PRIV_READ_PROBLEM_DATA, domain administrators will have PERM_READ_PROBLEM_DATA.
-    if not self.has_priv(builtin.PRIV_READ_PROBLEM_DATA):
-      self.check_perm(builtin.PERM_READ_PROBLEM_DATA)
+  async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool=False):
+    # Judges will have PRIV_READ_PROBLEM_DATA,
+    # domain administrators will have PERM_READ_PROBLEM_DATA,
+    # problem owner will have PERM_READ_PROBLEM_DATA_SELF.
+    pdoc = await problem.get(self.domain_id, pid)
+    if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
+        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
+      self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     grid_out = await problem.get_data(self.domain_id, pid)
 
     self.response.content_type = grid_out.content_type or 'application/octet-stream'
@@ -254,8 +260,6 @@ class ProblemEditHandler(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    if not pdoc:
-      raise error.DiscussionNotFoundError(self.domain_id, pid)
     udocs = await user.attach_udocs([pdoc], 'owner_uid')
     await domain.update_udocs(self.domain_id, udocs)
     path_components = self.build_path(
@@ -287,8 +291,6 @@ class ProblemSettingsHandler(base.Handler):
     # TODO(twd2)
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    if not pdoc:
-      raise error.DiscussionNotFoundError(self.domain_id, pid)
     udocs = await user.attach_udocs([pdoc], 'owner_uid')
     await domain.update_udocs(self.domain_id, udocs)
     path_components = self.build_path(
@@ -307,8 +309,6 @@ class ProblemStatisticsHandler(base.Handler):
     # TODO(twd2)
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    if not pdoc:
-      raise error.DiscussionNotFoundError(self.domain_id, pid)
     udocs = await user.attach_udocs([pdoc], 'owner_uid')
     await domain.update_udocs(self.domain_id, udocs)
     path_components = self.build_path(

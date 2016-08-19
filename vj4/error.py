@@ -71,7 +71,7 @@ class VerifyPasswordError(ForbiddenError):
   """Error with the `verify password', not password verification error."""
   @property
   def message(self):
-    return "Verify password isn't exactly the same as password."
+    return "Passwords don't match."
 
 
 class UserAlreadyExistError(ForbiddenError):
@@ -83,7 +83,7 @@ class UserAlreadyExistError(ForbiddenError):
 class LoginError(ForbiddenError):
   @property
   def message(self):
-    return "Invalid user {0} or password."
+    return "Inexistent user {0} or wrong password."
 
 
 class DocumentNotFoundError(NotFoundError):
@@ -95,7 +95,13 @@ class DocumentNotFoundError(NotFoundError):
 class ProblemDataNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Problem {0} data not found."
+    return "Data of problem {1} not found."
+
+
+class RecordDataNotFoundError(NotFoundError):
+  @property
+  def message(self):
+    return "Data of record {1} not found."
 
 
 class PermissionError(ForbiddenError):
@@ -104,7 +110,7 @@ class PermissionError(ForbiddenError):
     if any((p | builtin.PERM_VIEW) == builtin.PERM_VIEW for p in self.args):
       return "You cannot visit this domain."
     else:
-      return "User doesn't have the required permission in this domain."
+      return "You don't have the required permission in this domain."
 
 
 class PrivilegeError(ForbiddenError):
@@ -113,7 +119,7 @@ class PrivilegeError(ForbiddenError):
     if any((p | builtin.PRIV_USER_PROFILE) == builtin.PRIV_USER_PROFILE for p in self.args):
       return "You're not logged in."
     else:
-      return "User doesn't have the required privilege."
+      return "You don't have the required privilege."
 
 
 class CsrfTokenError(ForbiddenError):
@@ -143,7 +149,7 @@ class InvalidTokenDigestError(ForbiddenError):
 class CurrentPasswordError(ForbiddenError):
   @property
   def message(self):
-    return "Your current password isn't what you entered."
+    return "Current password doesn't match."
 
 
 class DiscussionCategoryAlreadyExistError(ForbiddenError):
@@ -212,6 +218,12 @@ class ContestStatusHiddenError(ForbiddenError):
     return "Contest status is hidden."
 
 
+class ProblemNotFoundError(DocumentNotFoundError):
+  @property
+  def message(self):
+    return "Problem {1} not found."
+
+
 class TrainingRequirementNotSatisfiedError(ForbiddenError):
   @property
   def message(self):
@@ -227,4 +239,4 @@ class RecordNotFoundError(NotFoundError):
 class OpcountExceededError(ForbiddenError):
   @property
   def message(self):
-    return "{0} limit exceeded (limit: {2} operations in {1} seconds)."
+    return "Too frequent operations of {0} (limit: {2} operations in {1} seconds)."
