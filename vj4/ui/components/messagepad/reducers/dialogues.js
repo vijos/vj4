@@ -13,7 +13,7 @@ export default function reducer(state = {}, action) {
         _id: id,
         sender_uid: UserContext.uid,
         sendee_uid: user._id,
-        sendee_udoc: {...user},
+        sendee_udoc: { ...user },
         reply: [],
         isPlaceholder: true,
       },

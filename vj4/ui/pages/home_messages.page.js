@@ -6,7 +6,6 @@ import { ActionDialog } from '../components/dialog';
 import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('home_messages', async () => {
-
   async function mountComponent() {
     const SockJs = await System.import('sockjs-client');
     const { default: MessagePadApp } = await System.import('../components/messagepad');
@@ -41,10 +40,12 @@ const page = new NamedPage('home_messages', async () => {
 
     render(
       <Provider store={store}>
-        <MessagePadApp onAdd={() => {
-          userSelector.$dom.val('');
-          userSelectDialog.open();
-        }} />
+        <MessagePadApp
+          onAdd={() => {
+            userSelector.$dom.val('');
+            userSelectDialog.open();
+          }}
+        />
       </Provider>,
       $('#messagePad').get(0)
     );
