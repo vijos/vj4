@@ -17,7 +17,7 @@ async def add(domain_id: str, owner_uid: int,
               roles=builtin.DOMAIN_SYSTEM['roles'],
               description: str=None):
   validator.check_domain_id(domain_id)
-  if description:
+  if description != None:
     validator.check_description(description)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
@@ -66,7 +66,7 @@ async def set(domain_id: str, **kwargs):
     del kwargs['owner_uid']
   if 'roles' in kwargs:
     del kwargs['roles']
-  if 'description' in kwargs:
+  if 'description' in kwargs and kwargs['description'] != None:
     validator.check_description(kwargs['description'])
   return await coll.find_and_modify(query={'_id': domain_id},
                                     update={'$set': {**kwargs}},
