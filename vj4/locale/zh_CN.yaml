@@ -10,7 +10,7 @@ Active Sessions: 活动会话
 Arguments: 参数
 Attend Contest: 参加比赛
 Attended: 已参加
-Login to Attend Contest: 请登录来参加比赛
+Login to Attend Contest: 请登录后参加比赛
 No Permission to Attend Contest: 您没有权限参加比赛
 Begin Date: 开始日期
 Begin Time: 开始时间
@@ -39,7 +39,7 @@ Create Discussion in {0}: 在 {0} 下创建讨论
 Create Problem: 创建题目
 Create a contest: 创建一个比赛
 Create a discussion: 创建一个讨论
-Login to Create a discussion: 请登录来创建一个讨论
+Login to Create a discussion: 请登录后创建讨论
 No Permission to Create a discussion: 您没有权限创建讨论
 Create a problem: 创建一个题目
 Current Email: 当前电子邮件
@@ -67,6 +67,9 @@ Gravatar Email: Gravatar Email 地址
 'Hello! You can click following link to sign up your Vijos account:': 您好！您可以点击以下链接来注册您的 Vijos 账户：
 'Hello, {0}! You can click following link to reset the password of your Vijos account:': 您好，{0}！您可以点击以下链接来重置您
   Vijos 账户的密码：
+'Hello, {0}! You can click following link to active your new email of your Vijos account:': 您好，{0}！您可以点击以下链接来激活您
+  Vijos 账户的新电子邮件地址：
+Confirmation mail has been sent to your new email.: 确认邮件已经发送到您的新电子邮箱。
 Help: 帮助
 Hide all tags: 隐藏所有标签
 Hide categorical tags: 隐藏分类标签
@@ -95,7 +98,7 @@ Not available: 不可用
 Oh, there is no task in the queue!: 呀，队列中目前没有任务。
 Oops!: Oops!
 Open Scratchpad: 进入在线编程模式
-Login to Use Scratchpad: 请登录来使用在线编程功能
+Login to Use Scratchpad: 请登录后使用在线编程功能
 No Permission to Use Scratchpad: 您没有权限使用在线编程功能
 Open Source: 开源
 Operating System: 操作系统
@@ -107,13 +110,14 @@ Privacy: 隐私
 Problem: 题目
 Problem List: 题目列表
 Problem Set: 题库
+Problem Settings: 题目设置
 Problem Solution: 题解列表
 Problem Solution List: 题解列表
 Problem Tags Visibility: 题目标签可见性
 Problems: 题目
 Problems Sets: 题库
 Public: 公开
-Published at: 发布于
+Published at: 发表于
 QQ Group: QQ 群
 QQ Visibility: QQ 可见性
 Quit Scratchpad: 退出在线编程模式
@@ -147,16 +151,19 @@ Sign Up Now: 现在注册
 Sign up mail has been sent to your email.: 注册邮件已经发送到您的电子邮箱。
 Solutions: 题解
 'Solved {0} problems, RP: {1} (No. {2})': '解决了 {0} 个问题，RP: {1} (No. {2})'
+Sorry: 对不起
 Sorry, there is no problem in the problem set.: 题库中目前没有题目。
+Solutions Liked: 题解被赞
 Statistics: 统计
 Status: 状态
+Star Topic: 收藏讨论
 Use Your Privilege to View Status: 使用您的特权来查看状态
 Status is hidden: 状态已隐藏
 Submission Statistics: 递交统计
 Submission: 递交
 Submissions: 递交
 Submit: 递交
-Login to Submit: 请登录来递交
+Login to Submit: 请登录后递交
 No Permission to Submit: 您没有权限递交
 Submit At: 递交时间
 Submit By: 递交者
@@ -176,6 +183,7 @@ UI Language: 用户界面语言
 Unknown: 未知
 Update: 更新
 Uploaded By: 上传者
+Upload Problem: 上传题目
 User: 用户
 Username: 用户名
 Using your Vijos universal account: 使用您的 Vijos 通用账户
@@ -186,12 +194,12 @@ Visible to registered users: 对注册用户可见
 Vote: 投票
 We use Gravatar to present your avatar icon.: 我们使用 Gravatar 服务来呈现您的头像。
 Whether to show tags in the problem list.: 是否在题目列表中显示题目的标签。
-Write Your Comment: 撰写您的评论
-Login to Write Your Comment: 请登录来撰写您的评论
-No Permission to Write Your Comment: 您没有权限发布评论
-Write Your Solution: 撰写您的题解
-Login to Write Your Solution: 请登录来撰写您的题解
-No Permission to Write Your Solution: 您没有权限发布题解
+Write Your Comment: 发表您的评论
+Login to Write Your Comment: 请登录后发表您的评论
+No Permission to Write Your Comment: 您没有权限发表评论
+Write Your Solution: 发表您的题解
+Login to Write Your Solution: 请登录后发表您的题解
+No Permission to Write Your Solution: 您没有权限发表题解
 author: 作者
 content: 内容
 contest_create: 创建比赛
@@ -236,7 +244,7 @@ user_logout: 登出
 user_lostpass: 忘记密码
 user_register: 注册
 '{0} comments': '{0} 条评论'
-'{0} solutions': '{0} 个题解'
+'{0} solutions': '{0} 条题解'
 '{0} views': '{0} 次查看'
 New: 创建
 Pretest: 对拍
@@ -249,6 +257,7 @@ Sample Output: 输出数据
 Records: 评测记录
 Refresh Records: 刷新评测记录
 Refresh: 刷新
+Report: 举报
 Run Pretest: 运行对拍
 Pretest Your Code: 使用对拍数据测试
 Submit Solution: 递交评测
@@ -282,6 +291,7 @@ Your permission: 您的权限
 ID: 标识符
 Edit Domain: 编辑域
 Description: 说明
+'You don\'t own any domain and don\'t have privilege to create domain.': 您不拥有任何域也没有创建域名的特权。
 
 An error has occurred.: 发生了一个错误。
 Path {0} not found.: 路径 {0} 不存在。
@@ -313,4 +323,10 @@ Contest status is hidden.: 当前比赛状态隐藏，暂不可显示。
 Problem {1} not found.: 题目 {1} 不存在。
 Training requirement is not satisfied.: 不满足训练条件。
 Record {0} not found.: 记录 {0} 不存在。
-{0} limit exceeded (limit: {2} operations in {1} seconds).: {0} 超过频率限制。限制：{1} 秒内最多 {2} 次操作。
+'{0} limit exceeded (limit: {2} operations in {1} seconds).': '{0} 超过频率限制。限制：{1} 秒内最多 {2} 次操作。'
+Domain ID cannot be changed once the domain is created.: 域标识符在创建后不能更改。
+'A domain ID is supposed to be:': '域标识符必须满足以下条件：'
+to be unique: 唯一
+not be wrapped with space: 两侧不含空格
+not to start with a number: 首字符不为数字
+without slashes or backslashes: 不含斜杠和反斜杠
