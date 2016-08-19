@@ -5,8 +5,8 @@
   width: 100%
   height: 100%
   opacity: 0
-  z-index: 20000
-  //display: flex
+  z-index: 1000  // managed
+  // display flex will be added after animation completes
   flex-direction: column
   align-items: center
   justify-content: center
@@ -15,3 +15,18 @@
 
 .dialog__content
   position: relative
+
+.dialog.withBg .dialog__content
+  background: #FFF
+  border: 1px solid lighten($primary-color, 30%)
+  box-shadow: 0 2px 10px rgba(#000, 0.2)
+  min-width: rem(400px)
+  padding: rem(40px) rem(30px)
+
+.dialog__body
+  margin-bottom: rem(20px)
+  min-height: rem(50px)
+
+.dialog__action button
+  margin-left: rem(10px)
+  margin-bottom: 0

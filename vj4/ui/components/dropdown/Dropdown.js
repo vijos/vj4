@@ -3,6 +3,8 @@ import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 import responsiveCutoff from '../../responsive.inc.js';
 
+import zIndexManager from '../../utils/zIndexManager';
+
 export default class Dropdown extends DOMAttachedObject {
 
   static DOMAttachKey = 'vjDropdownInstance';
@@ -50,6 +52,7 @@ export default class Dropdown extends DOMAttachedObject {
   }
 
   onDropOpen() {
+    $(this.dropInstance.drop).css('z-index', zIndexManager.getNext());
     this.$dom.trigger('vjDropdownShow');
   }
 

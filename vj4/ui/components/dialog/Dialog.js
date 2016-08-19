@@ -1,93 +1,95 @@
-import _ from 'lodash';
-import DOMAttachedObject from '../DOMAttachedObject';
+import DomDialog from './DomDialog';
 
-export default class Dialog extends DOMAttachedObject {
+import tpl from '../../utils/tpl';
+import i18n from '../../utils/i18n';
 
-  static DOMAttachKey = 'vjDialogInstance';
-
-  constructor($dom, options = {}) {
-    super($dom);
-    this.dialogShown = false;
+export default class Dialog {
+  constructor(options = {}) {
     this.options = {
-      cancelByClickingBack: false,
-      cancelByEsc: false,
+      classes: '',
+      $body: null,
+      $action: null,
       ...options,
     };
+    this.$dom = $(tpl`
+      <div class="dialog withBg ${this.options.classes}" style="display:none">
+        <div class="dialog__content">
+          <div class="dialog__body"></div>
+          <div class="row"><div class="columns clearfix">
+            <div class="float-right dialog__action"></div>
+          </div></div>
+        </div>
+      </div>
+    `);
+    this.$dom.on('click', '[data-action]', this.onAction.bind(this));
+    this.$dom.on('vjDomDialogShow', this.beforeShow.bind(this));
+    this.$dom.on('vjDomDialogHidden', this.afterHide.bind(this));
+    this.$dom.find('.dialog__body').append(this.options.$body);
+    this.$dom.find('.dialog__action').append(this.options.$action);
+    this.domDialogInstance = new DomDialog(this.$dom, this.options);
   }
 
-  show() {
-    if (this.dialogShown) {
-      return false;
-    }
-
-    this.dialogShown = true;
-    if (this.options.cancelByClickingBack) {
-      this.$dom.on(`click.${this.eventNS}`, this.onClick.bind(this));
-    }
-    if (this.options.cancelByEsc) {
-      $(document).on(`keyup.${this.eventNS}`, this.onKeyUp.bind(this));
-    }
-
-    const $wrap = this.$dom;
-    $wrap.css({
-      display: 'flex',
-      opacity: 0,
-    });
-    $wrap.width();
-    $wrap.transition({
-      opacity: 1,
-    }, {
-      duration: 100,
-    });
-
-    const $dgContent = this.$dom.find('.dialog__content');
-    $dgContent.css({
-      scale: 0.8,
-    });
-    $dgContent.transition({
-      scale: 1,
-    }, {
-      duration: 200,
-      easing: 'easeOutCubic',
-      complete: () => this.$dom.find('[data-autofocus]').focus(),
-    });
-
-    return true;
+  beforeShow() {
+    this.$dom.appendTo('body');
   }
 
-  hide() {
-    if (!this.dialogShown) {
-      return false;
-    }
-
-    this.dialogShown = false;
-    $(document).off(`keyup.${this.eventNS}`);
-    this.$dom.off(`click.${this.eventNS}`);
-    this.$dom.css({
-      opacity: 1,
-    });
-    this.$dom.transition({
-      opacity: 0,
-    }, {
-      duration: 200,
-      complete: () => this.$dom.css('display', 'none'),
-    });
-
-    return true;
+  afterHide() {
+    this.$dom.detach();
   }
 
-  onClick(e) {
-    if (e.target === this.$dom.get(0)) {
-      this.hide();
-    }
+  open() {
+    return this.domDialogInstance.show();
   }
 
-  onKeyUp(e) {
-    if (e.keyCode === 27) {
-      this.hide();
-    }
+  close() {
+    return this.domDialogInstance.hide();
   }
 
+  onAction(ev) {
+    this.domDialogInstance.action($(ev.currentTarget).attr('data-action'));
+  }
 }
 
-_.assign(Dialog, DOMAttachedObject);
+const buttonOk = tpl`<button class="primary rounded button" data-action="ok">${i18n('Ok')}</button>`;
+const buttonCancel = tpl`<button class="rounded button" data-action="cancel">${i18n('Cancel')}</button>`;
+const buttonYes = tpl`<button class="primary rounded button" data-action="yes">${i18n('Yes')}</button>`;
+const buttonNo = tpl`<button class="rounded button" data-action="no">${i18n('No')}</button>`;
+
+export class InfoDialog extends Dialog {
+  constructor(options = {}) {
+    super({
+      $action: buttonOk,
+      cancelByClickingBack: true,
+      cancelByEsc: true,
+      ...options,
+    });
+  }
+}
+
+export class ActionDialog extends Dialog {
+  constructor(options = {}) {
+    super({
+      $action: [buttonCancel, buttonOk].join('\n'),
+      cancelByClickingBack: true,
+      cancelByEsc: true,
+      ...options,
+    });
+  }
+}
+
+export class ConfirmDialog extends Dialog {
+  constructor(options = {}) {
+    let buttons = [];
+    if (options.canCancel) {
+      buttons = [buttonCancel, buttonNo, buttonYes];
+    } else {
+      buttons = [buttonNo, buttonYes];
+    }
+    super({
+      $action: buttons.join('\n'),
+      cancelByClickingBack: options.canCancel,
+      cancelByEsc: options.canCancel,
+      ...options,
+    });
+  }
+}

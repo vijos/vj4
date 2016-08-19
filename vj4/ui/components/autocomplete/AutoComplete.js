@@ -5,6 +5,7 @@ import 'jquery-scroll-lock';
 
 import i18n from '../../utils/i18n';
 import tpl from '../../utils/tpl';
+import zIndexManager from '../../utils/zIndexManager';
 
 export default class AutoComplete extends DOMAttachedObject {
 
@@ -40,6 +41,7 @@ export default class AutoComplete extends DOMAttachedObject {
       constrainToScrollParent: false,
       openOn: false,
     });
+    this.dropInstance.on('open', this.onDropOpen.bind(this));
     this.attach();
   }
 
@@ -102,6 +104,10 @@ export default class AutoComplete extends DOMAttachedObject {
       this.$dom.val(text);
     }
     this.close();
+  }
+
+  onDropOpen() {
+    $(this.dropInstance.drop).css('z-index', zIndexManager.getNext());
   }
 
   async getItems(val) {

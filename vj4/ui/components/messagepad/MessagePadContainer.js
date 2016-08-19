@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 import Icon from '../react/IconComponent';
 import MessagePadDialogueList from './MessagePadDialogueListContainer';
@@ -17,24 +16,13 @@ const mapDispatchToProps = (dispatch) => ({
       payload: util.get(''),
     });
   },
-  handleNewDialogue() {
-    // TODO: pop up a dialog and pass udoc to store
-    const uid = parseInt(prompt('UID'), 10);
-    if (isNaN(uid)) {
-      return;
-    }
-    dispatch({
-      type: 'DIALOGUES_CREATE',
-      payload: {
-        id: _.uniqueId('PLACEHOLDER_'),
-        uid,
-      },
-    });
-  },
 });
 
 @connect(null, mapDispatchToProps)
 export default class MessagePadContainer extends React.PureComponent {
+  static propTypes = {
+    onAdd: React.PropTypes.func.isRequired,
+  };
   handleSwitch() {
     const BOUND_TOP = 60;
     const BOUND_BOTTOM = 20;
@@ -60,7 +48,7 @@ export default class MessagePadContainer extends React.PureComponent {
             <h1 className="section__title">{i18n('Messages')}</h1>
             <div className="section__tools">
               <button
-                onClick={() => this.props.handleNewDialogue()}
+                onClick={() => this.props.onAdd()}
                 className="tool-button"
               >
                 <Icon name="add" /> {i18n('New')}

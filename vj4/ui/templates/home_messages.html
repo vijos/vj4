@@ -1,18 +1,13 @@
 {% extends "home_base.html" %}
 {% block home_content %}
-<div class="section">
-  <div class="section__body">
-    <div class="row">
-      <div class="medium-8 columns">
-        <label>
-          {{ _('Username / UID') }}
-          <input type="text" id="autocomplete" class="textbox">
-        </label>
-      </div>
-    </div>
+<div style="display: none" class="dialog__body--user-select">
+  <div>
     <div class="row">
       <div class="columns">
-        <button class="rounded primary button" id="submit">Tell me something about the selected user</button>
+        <label>
+          {{ _('Username / UID') }}
+          <input type="text" class="textbox user-select" data-autofocus>
+        </label>
       </div>
     </div>
   </div>

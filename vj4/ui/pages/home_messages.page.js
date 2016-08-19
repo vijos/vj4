@@ -1,9 +1,12 @@
+import _ from 'lodash';
 import { NamedPage } from '../misc/PageLoader';
 import loadReactRedux from '../utils/loadReactRedux';
 
+import { ActionDialog } from '../components/dialog';
 import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('home_messages', async () => {
+
   async function mountComponent() {
     const SockJs = await System.import('sockjs-client');
     const { default: MessagePadApp } = await System.import('../components/messagepad');
@@ -19,19 +22,34 @@ const page = new NamedPage('home_messages', async () => {
       });
     };
 
+    const userSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--user-select .user-select'));
+    const userSelectDialog = new ActionDialog({
+      $body: $('.dialog__body--user-select > div'),
+      onAction: action => {
+        if (action !== 'ok') {
+          return;
+        }
+        store.dispatch({
+          type: 'DIALOGUES_CREATE',
+          payload: {
+            id: _.uniqueId('PLACEHOLDER_'),
+            user: userSelector.value(),
+          },
+        });
+      },
+    });
+
     render(
       <Provider store={store}>
-        <MessagePadApp />
+        <MessagePadApp onAdd={() => {
+          userSelector.$dom.val('');
+          userSelectDialog.open();
+        }} />
       </Provider>,
       $('#messagePad').get(0)
     );
   }
   mountComponent();
-
-  const userSelector = UserSelectAutoComplete.getOrConstruct($('#autocomplete'));
-  $('#submit').click(() => {
-    alert(JSON.stringify(userSelector.value()));
-  });
 });
 
 export default page;
