@@ -2,7 +2,7 @@
 Special for beginners, ^_^
 
 # Description
-Read two integers, and print the sum of them.
+Given two integers x and y, print the sum.
 
 # Format
 
@@ -10,7 +10,7 @@ Read two integers, and print the sum of them.
 Two integers x and y, satisfying 0 <= x, y <= 32767.
 
 ## Output
-One integer, that is the sum of x and y.
+One integer, the sum of x and y.
 
 # Sample 1
 
@@ -43,7 +43,7 @@ end.
 
 ```c
 #include <stdio.h>
-int main()
+int main(void)
 {
     int a, b;
     scanf("%d%d", &a, &b);

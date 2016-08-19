@@ -21,7 +21,21 @@
         </div>
       </div>
       <div class="section__footer topic__footer">
-        {{ _('{0} views').format(ddoc['views']) }} · <span class="icon icon-star--outline"></span> 收藏主题 · <a href="#"><span class="icon icon-warning"></span> 举报</a>
+        <form method="post">
+          {{ _('{0} views').format(ddoc['views']) }} ·
+          {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+            {% if not ddoc['dsdoc'] or not ddoc['dsdoc'].get('star') %}
+          <input type="hidden" name="operation" value="star">
+          <button class="star" type="submit"><span class="icon icon-star--outline"></span> {{ _('Star Topic') }}</button>
+            {% else %}
+          <input type="hidden" name="operation" value="unstar">
+          <button class="star activated" type="submit"><span class="icon icon-star"></span> {{ _('Star Topic') }}</button>
+            {% endif %}
+          <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+          ·
+          {% endif %}
+          <a href="#"><span class="icon icon-warning"></span> 举报</a>
+        </form>
       </div>
     </div>
     <div class="section">
@@ -33,7 +47,7 @@
           view = 'discussion',
           docs = drdocs,
           comment_placeholder = 'Write Your Comment',
-          reply_ref = 'drid',
+          comment_ref = 'drid',
           comment_post_op = 'reply',
           comment_edit_op = 'edit_reply',
           comment_post_text = 'Comment',
@@ -41,6 +55,7 @@
           comment_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
           comment_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
           comment_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
+          reply_ref = 'drrid',
           reply_post_op = 'tail_reply',
           reply_post_text = 'Reply',
           reply_edit_op = 'edit_tail_reply',

@@ -7,6 +7,7 @@ from vj4 import app
 from vj4 import error
 from vj4 import template
 from vj4.model import builtin
+from vj4.model import domain
 from vj4.model import message
 from vj4.model import token
 from vj4.model import user
@@ -202,3 +203,11 @@ class HomeMessagesConnection(base.Connection):
 
   async def on_close(self):
     bus.unsubscribe(self.on_message_received)
+
+
+@app.route('/home/domain', 'home_domain')
+class HomeAccountHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  async def get(self):
+    ddocs = await domain.get_list(owner_uid=self.user['_id'])
+    self.render('home_domain.html', ddocs=ddocs)

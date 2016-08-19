@@ -7,7 +7,6 @@ Accepted: 已通过
 Accepted Rate: 通过率
 Account Settings: 账户设置
 Active Sessions: 活动会话
-An error has occurred.: 发生了一个错误。
 Arguments: 参数
 Attend Contest: 参加比赛
 Attended: 已参加
@@ -58,14 +57,12 @@ Duration (hours): 持续时间 (小时)
 Edit: 编辑
 Edit Problem: 编辑题目
 Email: 电子邮件
-Email Visibility: Email 可见度
+Email Visibility: Email 可见性
 Enabled: 开启
-Field {0} or {1} validation failed.: 字段 {0} 或 {1} 验证失败。
-Field {0} validation failed.: 字段 {0} 验证失败。
 Footer: 页脚
 Forgot password or username?: 忘记密码或者用户名？
 Gender: 性别
-Gender Visibility: 性别可见度
+Gender Visibility: 性别可见性
 Gravatar Email: Gravatar Email 地址
 'Hello! You can click following link to sign up your Vijos account:': 您好！您可以点击以下链接来注册您的 Vijos 账户：
 'Hello, {0}! You can click following link to reset the password of your Vijos account:': 您好，{0}！您可以点击以下链接来重置您
@@ -78,7 +75,6 @@ If enabled, source code will be emailed to you after the submission is accepted.
 In following problem lists: 在下列题单中
 In following training plans: 在下列训练计划中
 Information: 信息
-Invalid user {0} or password.: 用户 {0} 不存在或密码错误。
 It works!: 它成了！
 Judged At: 评测时间
 Judging Queue: 评测队列
@@ -119,7 +115,7 @@ Problems Sets: 题库
 Public: 公开
 Published at: 发布于
 QQ Group: QQ 群
-QQ Visibility: QQ 可见度
+QQ Visibility: QQ 可见性
 Quit Scratchpad: 退出在线编程模式
 Recent Activities: 最近活动
 Registered at: 注册于
@@ -170,7 +166,7 @@ Swx Good!: Swx 好棒！
 Swx Template!: Swx 模板！
 Technical Information: 技术信息
 Temporary session: 临时会话
-This email was sent by {0} automatically, and please do not reply directly.: 这封邮件由{0}自动发送，请勿直接回复。
+This email was sent by {0} automatically, and please do not reply directly.: 这封邮件由 {0} 自动发送，请勿直接回复。
 This is the current session: 这是当前的会话
 Time Cost: 耗时
 Title: 标题
@@ -181,9 +177,6 @@ Unknown: 未知
 Update: 更新
 Uploaded By: 上传者
 User: 用户
-User doesn't have the required permission in this domain.: 用户在该域中无此权限。
-User doesn't have the required privilege.: 用户没有相应的特权。
-User {0} already exists.: 用户 {0} 已存在。
 Username: 用户名
 Using your Vijos universal account: 使用您的 Vijos 通用账户
 View Problem: 查看题目
@@ -199,7 +192,6 @@ No Permission to Write Your Comment: 您没有权限发布评论
 Write Your Solution: 撰写您的题解
 Login to Write Your Solution: 请登录来撰写您的题解
 No Permission to Write Your Solution: 您没有权限发布题解
-You're not logged in.: 您没有登录。
 author: 作者
 content: 内容
 contest_create: 创建比赛
@@ -214,6 +206,7 @@ error: 错误
 home_account: 账户设置
 home_messages: 站内消息
 home_security: 安全设置
+home_domain: 我的域
 judge_playground: 评测游乐场
 last active at: 最后活动于
 last login at: 最后登录于
@@ -276,3 +269,49 @@ End at: 结束于
 Action: 动作
 Rejudge: 重测
 Oops, there are no results.: 呀，没有结果。
+My Domains: 我的域
+View: 查看
+Manage: 管理
+domain_create: 创建域
+Create Domain: 创建域
+domain_main: 域控制
+domain_edit: 编辑域
+domain_role: 角色
+Roles: 角色
+Your role: 您的角色
+Your permission: 您的权限
+ID: 标识符
+Edit Domain: 编辑域
+Description: 说明
+
+An error has occurred.: 发生了一个错误。
+Path {0} not found.: 路径 {0} 不存在。
+Field {0} or {1} validation failed.: 字段 {0} 或 {1} 验证失败。
+Field {0} validation failed.: 字段 {0} 验证失败。
+Unknown field {0}.: 未知字段 {0}。
+Passwords don't match.: 验证密码不匹配。
+User {0} already exists.: 用户 {0} 已存在。
+Inexistent user {0} or wrong password.: 用户 {0} 不存在或密码错误。
+Document {2} not found.: 文档 {2} 不存在。
+Data of Problem {0} not found.: 题目 {0} 的数据缺失。
+You're not logged in.: 您没有登录。
+You don't have the required privilege.: 您没有相应的特权。
+You don't have the required permission in this domain.: 您在该域中无相应权限。
+You've already voted.: 您已经投过票。
+User not found.: 用户不存在。
+Current password doesn't match.: 当前密码输入错误。
+Discussion category {1} already exists.: 讨论分类 {1} 已经存在。
+Discussion category {1} not found.: 讨论分类 {1} 不存在。
+Discussion node {1} already exists.: 讨论节点 {1} 已经存在。
+Discussion node {1} not found.: 讨论节点 {1} 不存在。
+Discussion {1} not found.: 讨论 {1} 不存在。
+Message {0} not found.: 消息 {0} 不存在。
+Domain {0} not found.: 域 {0} 不存在。
+Domain {0} already exists.: 域 {0} 已经存在。
+You've already attended this contest.: 您已经参加本次比赛。
+You haven't attended this contest yet.: 您还没有参加本次比赛。
+Contest status is hidden.: 当前比赛状态隐藏，暂不可显示。
+Problem {1} not found.: 题目 {1} 不存在。
+Training requirement is not satisfied.: 不满足训练条件。
+Record {0} not found.: 记录 {0} 不存在。
+{0} limit exceeded (limit: {2} operations in {1} seconds).: {0} 超过频率限制。限制：{1} 秒内最多 {2} 次操作。

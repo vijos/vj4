@@ -11,11 +11,14 @@ from vj4 import error
 from vj4.model import document
 from vj4.model import fs
 from vj4.util import argmethod
+from vj4.util import validator
 
 
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int,
               pid: document.convert_doc_id = None, data: objectid.ObjectId = None):
+  validator.check_title(title)
+  validator.check_content(content)
   return await document.add(domain_id, content, owner_uid,
                             document.TYPE_PROBLEM, pid, title=title, data=data,
                             num_submit=0, num_accept=0)
@@ -25,7 +28,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
 async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
   pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
   if not pdoc:
-    raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
+    raise error.ProblemNotFoundError(domain_id, pid)
   # TODO(twd2): move out:
   if uid is not None:
     pdoc['psdoc'] = await document.get_status(domain_id, document.TYPE_PROBLEM,
@@ -37,6 +40,10 @@ async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
 
 @argmethod.wrap
 async def set(domain_id: str, pid: document.convert_doc_id, **kwargs):
+  if 'title' in kwargs:
+      validator.check_title(kwargs['title'])
+  if 'content' in kwargs:
+      validator.check_content(kwargs['content'])
   pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, **kwargs)
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
@@ -48,8 +55,8 @@ async def count(domain_id: str):
   return await document.get_multi(domain_id, document.TYPE_PROBLEM).count()
 
 
-def get_multi(domain_id: str, fields=None):
-  return document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields)
+def get_multi(domain_id: str, fields=None, **kwargs):
+  return document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields, **kwargs)
 
 
 def get_multi_status(domain_id: str, *, fields=None, **kwargs):
@@ -57,9 +64,10 @@ def get_multi_status(domain_id: str, *, fields=None, **kwargs):
 
 
 @argmethod.wrap
-async def get_list(domain_id: str, uid: int = None, fields=None, skip: int = 0, limit: int = 0):
+async def get_list(domain_id: str, uid: int=None, fields=None, skip: int=0, limit: int=0,
+                   **kwargs):
   # TODO(iceboy): projection.
-  pdocs = await (document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields)
+  pdocs = await (document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields, **kwargs)
                  .sort([('doc_id', 1)])
                  .skip(skip)
                  .limit(limit)
@@ -90,6 +98,7 @@ async def set_star(domain_id: str, pid: document.convert_doc_id, uid: int, star:
 
 @argmethod.wrap
 async def add_solution(domain_id: str, pid: document.convert_doc_id, uid: int, content: str):
+  validator.check_content(content)
   return await document.add(domain_id, content, uid, document.TYPE_PROBLEM_SOLUTION, None,
                             document.TYPE_PROBLEM, pid, vote=0, reply=[])
 
@@ -98,6 +107,15 @@ async def add_solution(domain_id: str, pid: document.convert_doc_id, uid: int, c
 async def get_solution(domain_id: str, psid: document.convert_doc_id, pid=None):
   psdoc = await document.get(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
   if not psdoc or (pid and psdoc['parent_doc_id'] != pid):
+    raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+  return psdoc
+
+
+@argmethod.wrap
+async def set_solution(domain_id: str, psid: document.convert_doc_id, content: str):
+  validator.check_content(content)
+  psdoc = await document.set(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, content=content)
+  if not psdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
   return psdoc
 
@@ -146,6 +164,7 @@ async def vote_solution(domain_id: str, psid: document.convert_doc_id, uid: int,
 
 @argmethod.wrap
 async def reply_solution(domain_id: str, psid: document.convert_doc_id, uid: int, content: str):
+  validator.check_content(content)
   return await document.push(domain_id, document.TYPE_PROBLEM_SOLUTION, psid,
                              'reply', content, uid)
 

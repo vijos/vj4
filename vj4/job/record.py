@@ -27,6 +27,7 @@ async def run(domain_id: str):
   udoc_updates = {}
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
+    # TODO(twd2): ignore no effect statuses like system error, ...
     rdocs = record.get_problem_multi(domain_id, pdoc['doc_id'],
                                      type=constant.record.TYPE_SUBMISSION,
                                      fields={'_id': 1, 'uid': 1,

@@ -117,7 +117,8 @@ async def set_password(uid: int, password: str):
 
 @argmethod.wrap
 async def set_mail(uid: int, mail: str):
-  """Set password. Returns doc or None."""
+  """Set mail. Returns doc or None."""
+  validator.check_mail(mail)
   return await set_by_uid(uid, mail=mail, mail_lower=mail.strip().lower())
 
 
@@ -147,7 +148,6 @@ async def set_by_uid(uid, **kwargs):
 
 async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTION_VIEW):
   """Attach udoc to docs by uid in the specified field."""
-  # TODO(iceboy): projection.
   uids = set(doc[field_name] for doc in docs)
   if uids:
     coll = db.Collection('user')

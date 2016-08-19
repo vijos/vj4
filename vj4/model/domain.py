@@ -1,3 +1,4 @@
+import builtins
 import copy
 from pymongo import errors
 
@@ -5,18 +6,26 @@ from vj4 import db
 from vj4 import error
 from vj4.model import builtin
 from vj4.util import argmethod
+from vj4.util import validator
+
+
+PROJECTION_PUBLIC = {'uid': 1}
 
 
 @argmethod.wrap
 async def add(domain_id: str, owner_uid: int,
-              roles={builtin.ROLE_DEFAULT: builtin.DEFAULT_PERMISSIONS}):
+              roles=builtin.DOMAIN_SYSTEM['roles'],
+              description: str=None):
+  validator.check_domain_id(domain_id)
+  if description != None:
+    validator.check_description(description)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.DomainAlreadyExistError(domain_id)
   coll = db.Collection('domain')
-  # TODO(twd2): Do we need to check owner's priv, quota, etc here?
   try:
-    return await coll.insert({'_id': domain_id, 'owner_uid': owner_uid, 'roles': roles})
+    return await coll.insert({'_id': domain_id, 'owner_uid': owner_uid,
+                              'description': description, 'roles': roles})
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
 
@@ -30,9 +39,38 @@ async def get(domain_id: str, fields=None):
   return await coll.find_one(domain_id, fields)
 
 
-def get_multi(fields=None):
+def get_multi(owner_uid=None, fields=None):
   coll = db.Collection('domain')
-  return coll.find({}, fields)
+  query = {}
+  if owner_uid != None:
+    query['owner_uid'] = owner_uid
+  return coll.find(query, fields)
+
+
+@argmethod.wrap
+async def get_list(owner_uid: int=None, fields=None, limit: int=None):
+  coll = db.Collection('domain')
+  query = {}
+  if owner_uid != None:
+    query['owner_uid'] = owner_uid
+  return await coll.find(query, fields).to_list(None)
+
+
+@argmethod.wrap
+async def set(domain_id: str, **kwargs):
+  for domain in builtin.DOMAINS:
+    if domain['_id'] == domain_id:
+      return None
+  coll = db.Collection('domain')
+  if 'owner_uid' in kwargs:
+    del kwargs['owner_uid']
+  if 'roles' in kwargs:
+    del kwargs['roles']
+  if 'description' in kwargs and kwargs['description'] != None:
+    validator.check_description(kwargs['description'])
+  return await coll.find_and_modify(query={'_id': domain_id},
+                                    update={'$set': {**kwargs}},
+                                    new=True)
 
 
 @argmethod.wrap
@@ -41,7 +79,6 @@ async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
     if domain['_id'] == domain_id:
       return None
   coll = db.Collection('domain')
-  # TODO(twd2): Do we need to check new owner's priv, quota, etc here?
   return await coll.find_and_modify(query={'_id': domain_id, 'owner_uid': old_owner_uid},
                                     update={'$set': {'owner_uid': new_owner_uid}},
                                     new=True)
@@ -70,7 +107,7 @@ async def inc_user(domain_id, uid, **kwargs):
 
 
 async def update_udocs(domain_id, udocs, fields=None):
-  uids = set(udoc['_id'] for udoc in udocs)
+  uids = builtins.set(udoc['_id'] for udoc in udocs)
   if uids:
     if fields:
       fields.update({'_id': 0, 'domain_id': 0})
@@ -93,12 +130,21 @@ def get_multi_users(domain_id: str, fields=None):
 
 
 @argmethod.wrap
+async def get_list_users_by_role(domain_id: str, role: str, fields=PROJECTION_PUBLIC, limit: int=None):
+  coll = db.Collection('domain.user')
+  return await (coll.find({'domain_id': domain_id, 'role': role}, fields)
+                .to_list(limit))
+
+
+@argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('domain')
   await coll.ensure_index('owner_uid')
   user_coll = db.Collection('domain.user')
   await user_coll.ensure_index([('domain_id', 1),
-                                ('uid', 1)])
+                                ('uid', 1)], unique=True)
+  await user_coll.ensure_index([('domain_id', 1),
+                                ('role', 1)])
   await user_coll.ensure_index([('domain_id', 1),
                                 ('rp', -1)])
   await user_coll.ensure_index([('domain_id', 1),

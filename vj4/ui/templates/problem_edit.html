@@ -11,15 +11,7 @@
           <div class="row"><div class="medium-4 columns">
             <label>
               {{ _('Belongs to') }}
-              {% if page_name == 'problem_edit' %}
-              <select class="select">
-                <option value="{{ handler.domain_id }}">{{ _('current domain') }} ({{ handler.domain_id }})</option>
-                <option value="thu">Tsinghua University</option>
-                <option value="123456">同济大学</option>
-              </select>
-              {% else %}
               <input value="{{ _('current domain') }} ({{ handler.domain_id }})" class="textbox" disabled>
-              {% endif %}
             </label>
           </div><div class="medium-8 columns">
             <label>

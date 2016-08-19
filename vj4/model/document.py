@@ -4,6 +4,7 @@ from bson import objectid
 
 from vj4 import db
 from vj4.util import argmethod
+from vj4.util import validator
 
 TYPE_PROBLEM = 10
 TYPE_PROBLEM_SOLUTION = 11
@@ -34,6 +35,7 @@ async def add(domain_id: str, content: str, owner_uid: int,
               doc_type: int, doc_id: convert_doc_id = None,
               parent_doc_type: int = None, parent_doc_id: convert_doc_id = None, **kwargs):
   """Add a document. Returns the document id."""
+  validator.check_content(content)
   obj_id = objectid.ObjectId()
   coll = db.Collection('document')
   doc = {'_id': obj_id,
@@ -59,6 +61,8 @@ async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id):
 
 
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
+  if 'content' in kwargs:
+    validator.check_content(kwargs['content'])
   coll = db.Collection('document')
   doc = await coll.find_and_modify(query={'domain_id': domain_id,
                                           'doc_type': doc_type,

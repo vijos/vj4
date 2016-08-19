@@ -6,6 +6,7 @@ import pytz
 from bson import objectid
 
 from vj4 import app
+from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import record
@@ -168,9 +169,27 @@ class ContestCreateHandler(base.Handler):
                  begin_at_time: str,
                  duration: float,
                  pids: str):
-    begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-    begin_at = begin_at.replace(tzinfo=pytz.timezone(self.timezone))
-    end_at = begin_at + datetime.timedelta(hours=duration)
+    try:
+      tz = pytz.timezone(self.timezone)
+      begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
+      begin_at = tz.localize(begin_at)
+      end_at = tz.normalize(begin_at + datetime.timedelta(hours=duration))
+    except ValueError as e:
+      raise error.ValidationError('begin_at_date', 'begin_at_time')
+    if begin_at <= self.now:
+      raise error.ValidationError('begin_at_date', 'begin_at_time')
+    if begin_at >= end_at:
+      raise error.ValidationError('duration')
+    pids = list(set(map(document.convert_doc_id, pids.split(','))))
+    pdocs = (await problem.get_multi(self.domain_id, fields={'doc_id': 1}, doc_id={'$in': pids})
+             .sort('doc_id', 1)
+             .to_list(None))
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
-                            rule, begin_at, end_at, list(map(int, pids.split(','))))
+                            rule, begin_at, end_at, pids)
+    # TODO(twd2): set problem properties e.g. hidden, ...
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
