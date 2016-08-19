@@ -6,6 +6,7 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import user
+from vj4.util import options
 from vj4.util import locale
 
 Setting = functools.partial(
@@ -16,7 +17,7 @@ Setting = functools.partial(
 # Setting keys should not duplicate with user keys or session keys.
 SETTINGS = [
   Setting('setting_preference', 'view_lang', str, range=locale.VIEW_LANGS,
-          default='zh_CN', ui='select', name='UI Language'),
+          default=options.options.default_locale, ui='select', name='UI Language'),
   Setting('setting_preference', 'timezone', str, range=builtin.TIMEZONES,
           default='Asia/Shanghai', ui='select', name='Timezone'),
   Setting('setting_preference', 'code_lang', str, range=constant.language.LANG_TEXTS,
