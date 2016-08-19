@@ -78,7 +78,7 @@ class HandlerBase(setting.SettingMixin):
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
             or self.domain['owner_uid'] == udoc['_id']
-            or self.udoc_has_priv(builtin.PRIV_ALL))
+            or self.udoc_has_priv(udoc, builtin.PRIV_ALL))
 
   def udoc_has_priv(self, udoc, priv):
     return (priv & udoc['priv']) == priv
