@@ -29,11 +29,12 @@ export default class MessagePadContainer extends React.PureComponent {
     const node = this.refs.container;
     if (node.offsetHeight + BOUND_TOP + BOUND_BOTTOM < window.innerHeight) {
       const rect = node.getBoundingClientRect();
+      const rectBody = document.body.getBoundingClientRect();
       let targetScrollTop = null;
       if (rect.top < BOUND_TOP) {
-        targetScrollTop = node.offsetTop - BOUND_TOP;
+        targetScrollTop = rect.top - rectBody.top - BOUND_TOP;
       } else if (rect.top + node.offsetHeight > window.innerHeight) {
-        targetScrollTop = node.offsetTop + node.offsetHeight + BOUND_BOTTOM - window.innerHeight;
+        targetScrollTop = rect.top - rectBody.top + node.offsetHeight + BOUND_BOTTOM - window.innerHeight;
       }
       if (targetScrollTop !== null) {
         $('html, body').stop().animate({ scrollTop: targetScrollTop }, 200, 'easeOutCubic');
