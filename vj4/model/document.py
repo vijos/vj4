@@ -35,7 +35,6 @@ async def add(domain_id: str, content: str, owner_uid: int,
               doc_type: int, doc_id: convert_doc_id = None,
               parent_doc_type: int = None, parent_doc_id: convert_doc_id = None, **kwargs):
   """Add a document. Returns the document id."""
-  validator.check_content(content)
   obj_id = objectid.ObjectId()
   coll = db.Collection('document')
   doc = {'_id': obj_id,

@@ -112,7 +112,7 @@ class ProblemPretestHandler(base.Handler):
                  data_input: str, data_output: str):
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdoc = await problem.get(self.domain_id, pid)
-    did = await document.add(self.domain_id, 'data', self.user['_id'], document.TYPE_PRETEST_DATA,
+    did = await document.add(self.domain_id, None, self.user['_id'], document.TYPE_PRETEST_DATA,
                              pid=pdoc['doc_id'],
                              data=list(zip(self.request.POST.getall('data_input'),
                                            self.request.POST.getall('data_output'))))
@@ -212,7 +212,7 @@ class ProblemDataHandler(base.Handler):
 
     self.response.content_type = grid_out.content_type or 'application/octet-stream'
     self.response.last_modified = grid_out.upload_date
-    self.response.headers['Etag'] = '"%s"' % grid_out.md5
+    self.response.headers['Etag'] = '"{0}"'.format(grid_out.md5)
     # TODO(iceboy): Handle If-Modified-Since & If-None-Match here.
     self.response.content_length = grid_out.length
 
