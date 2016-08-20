@@ -9,13 +9,13 @@ _logger = logging.getLogger(__name__)
 
 
 def wrap(method):
-  async def run(domain_id: str=None):
+  async def run():
     _logger.info('Built in domains')
     for ddoc in builtin.DOMAINS:
       _logger.info('Domain: {0}'.format(ddoc['_id']))
       await method(ddoc['_id'])
     _logger.info('User domains')
-    ddocs = domain.get_multi({'_id': 1})
+    ddocs = domain.get_multi(fields={'_id': 1})
     async for ddoc in ddocs:
       _logger.info('Domain: {0}'.format(ddoc['_id']))
       await method(ddoc['_id'])
