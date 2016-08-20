@@ -24,7 +24,8 @@ async def run(domain_id: str):
     {'$unset': {'journal': '', 'rev': '', 'status': '', 'rid': '',
                 'num_submit': '', 'num_accept': ''}}, multi=True)
   pdocs = problem.get_multi(domain_id, {'_id': 1, 'doc_id': 1}).sort('doc_id', 1)
-  udoc_updates = {}
+  uddoc_updates = {}
+  status_coll = db.Collection('document.status')
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
     # TODO(twd2): ignore no effect statuses like system error, ...
@@ -32,6 +33,7 @@ async def run(domain_id: str):
                                      type=constant.record.TYPE_SUBMISSION,
                                      fields={'_id': 1, 'uid': 1,
                                              'status': 1, 'score': 1}).sort('_id', 1)
+    # journals
     _logger.info('Reading records, rebuilding journals')
     psdocs = {}
     async for rdoc in rdocs:
@@ -41,25 +43,42 @@ async def run(domain_id: str):
         psdocs[rdoc['uid']] = {'journal': [j]}
       else:
         psdocs[rdoc['uid']]['journal'].append(j)
-    _logger.info('Counting numbers')
+    # num_submit, num_accept
+    _logger.info('Counting numbers, updating statuses')
     pdoc_update = {'num_submit': 0, 'num_accept': 0}
+    status_bulk = status_coll.initialize_unordered_bulk_op()
+    execute = False
     for uid, psdoc in psdocs.items():
       status = problem._stat_func(psdoc['journal'])
       pdoc_update['num_submit'] += status['num_submit']
       pdoc_update['num_accept'] += status['num_accept']
-      await document.set_status(domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], uid,
-                                **status, **psdoc)
-      if uid not in udoc_updates:
-        udoc_updates[uid] = {'num_submit': status['num_submit'],
-                             'num_accept': status['num_accept']}
+      execute = True
+      (status_bulk.find({'domain_id': domain_id, 'doc_type': document.TYPE_PROBLEM,
+                         'doc_id': pdoc['doc_id'], 'uid': uid})
+       .upsert().update_one({'$set': {**status, **psdoc}}))
+      if uid not in uddoc_updates:
+        uddoc_updates[uid] = {'num_submit': status['num_submit'],
+                              'num_accept': status['num_accept']}
       else:
-        udoc_updates[uid]['num_submit'] += status['num_submit']
-        udoc_updates[uid]['num_accept'] += status['num_accept']
+        uddoc_updates[uid]['num_submit'] += status['num_submit']
+        uddoc_updates[uid]['num_accept'] += status['num_accept']
+    if execute:
+      _logger.info('Committing')
+      await status_bulk.execute()
     _logger.info('Updating problem')
     await document.set(domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], **pdoc_update)
+  # users' num_submit, num_accept
+  execute = False
+  user_coll = db.Collection('domain.user')
+  user_bulk = user_coll.initialize_unordered_bulk_op()
   _logger.info('Updating users')
-  for uid, udoc_update in udoc_updates.items():
-    await domain.set_user(domain_id, uid, **udoc_update)
+  for uid, uddoc_update in uddoc_updates.items():
+    execute = True
+    (user_bulk.find({'domain_id': domain_id, 'uid': uid})
+     .upsert().update_one({'$set': uddoc_update}))
+  if execute:
+    _logger.info('Committing')
+    await user_bulk.execute()
 
 
 if __name__ == '__main__':
