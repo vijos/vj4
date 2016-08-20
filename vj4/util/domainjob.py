@@ -23,4 +23,4 @@ def wrap(method):
   if method.__module__ == '__main__':
     argmethod._methods[method.__name__] = method
     argmethod._methods[method.__name__ + '_all'] = run
-  return run
+  return method
