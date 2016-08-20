@@ -198,8 +198,8 @@ class Handler(web.View, HandlerBase):
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
     except Exception as e:
-      _logger.error("Unexpected exception occurred when handling %s (UID = %d): %s",
-                    self.request.path, self.user['_id'] or None, repr(e))
+      _logger.error("Unexpected exception occurred when handling %s (IP = %s, UID = %d): %s",
+                    self.request.path, self.remote_ip, self.user['_id'] or None, repr(e))
       raise
     return self.response
 
