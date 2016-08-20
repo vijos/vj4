@@ -9,7 +9,9 @@
       <div class="section__body no-padding">
         <table class="data-table">
           <colgroup>
+            {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
             <col class="col--status">
+            {% endif %}
             <col class="col--name">
             <col class="col--submit_n">
             <col class="col--ac_rate">
@@ -17,7 +19,9 @@
           </colgroup>
           <thead>
             <tr>
-              <th class="col--status">{{ _('Status') }}</th>
+              {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+              <th class="col--status record-status--border">{{ _('Status') }}</th>
+              {% endif %}
               <th class="col--name">{{ _('Problem') }}</th>
               <th class="col--submit_n">{{ _('Submit') }}</th>
               <th class="col--ac_rate">% {{ _('AC') }}</th>
@@ -32,14 +36,16 @@
           {% else %}
           {% for pdoc in pdocs %}
             <tr data-pid="{{ pdoc['doc_id'] }}">
+              {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
               {% if pdoc['psdoc']['rid'] %}
               <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">
                 <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}"></span>
                 <a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</a>
               </td>
               {% else %}
-              <td class="col--status">
+              <td class="col--status record-status--border">
               </td>
+              {% endif %}
               {% endif %}
               <td class="col--name">
                 <form method="post">
