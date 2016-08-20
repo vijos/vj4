@@ -17,7 +17,6 @@ wait = asyncio.get_event_loop().run_until_complete
 
 class DatabaseTestCase(unittest.TestCase):
   def setUp(self):
-    options.set_default_for_test()
     db.Database._instance, db.Collection._instances, db.GridFS._instances = None, {}, {}
     options.options.db_name = 'unittest_' + str(os.getpid())
     wait(tools.ensure_all_indexes())
