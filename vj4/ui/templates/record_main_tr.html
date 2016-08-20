@@ -26,7 +26,7 @@
     ({{ _('Pretest') }})
     {% endif %}
     <a href="{{ reverse_url('problem_detail', pid=rdoc['pid'], domain_id=rdoc['domain_id']) }}">
-{{ rdoc['pdoc']['title'] }}
+      {{ rdoc['pdoc']['title'] }}
     </a>
   </td>
   <td class="col--submit-by"><a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">{{ rdoc['udoc']['uname'] }}</a></td>
