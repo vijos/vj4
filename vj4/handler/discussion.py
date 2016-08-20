@@ -149,8 +149,7 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.route_argument
   @base.require_csrf_token
   @base.sanitize
-  async def star_unstar(self, *, did: document.convert_doc_id, pid: document.convert_doc_id=None, star: bool):
-    # TODO(twd2): fix js not to send pid
+  async def star_unstar(self, *, did: document.convert_doc_id, star: bool):
     ddoc = await discussion.get(self.domain_id, did)
     ddoc = await discussion.set_star(self.domain_id, ddoc['doc_id'], self.user['_id'], star)
     self.json_or_redirect(self.referer_or_main, star=ddoc['star'])

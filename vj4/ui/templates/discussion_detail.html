@@ -21,21 +21,19 @@
         </div>
       </div>
       <div class="section__footer topic__footer">
-        <form method="post">
-          {{ _('{0} views').format(ddoc['views']) }} ·
-          {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
-            {% if not ddoc['dsdoc'] or not ddoc['dsdoc'].get('star') %}
-          <input type="hidden" name="operation" value="star">
-          <button class="star" type="submit"><span class="icon icon-star--outline"></span> {{ _('Star Topic') }}</button>
-            {% else %}
-          <input type="hidden" name="operation" value="unstar">
-          <button class="star activated" type="submit"><span class="icon icon-star"></span> {{ _('Star Topic') }}</button>
-            {% endif %}
+        {{ _('{0} views').format(ddoc['views']) }} ·
+        {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+        <form class="form--inline" method="post">
+          <input type="hidden" name="operation" value="{% if not ddoc['dsdoc'] or not ddoc['dsdoc'].get('star') %}star{% else %}unstar{% endif %}">
           <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-          ·
-          {% endif %}
-          <a href="#"><span class="icon icon-warning"></span> {{ _('Report') }}</a>
+          <button class="star{% if ddoc['dsdoc'] and ddoc['dsdoc'].get('star') %} activated{% endif %}" type="submit">
+            <span class="starred--hide"><span class="icon icon-star--outline"></span> {{ _('Star Topic') }}</span>
+            <span class="starred--show"><span class="icon icon-star"></span> {{ _('Unstar Topic') }}</span>
+          </button>
+        ·
         </form>
+        {% endif %}
+        <a href="#"><span class="icon icon-warning"></span> {{ _('Report') }}</a>
       </div>
     </div>
     <div class="section">

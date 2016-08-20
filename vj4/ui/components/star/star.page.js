@@ -2,13 +2,10 @@ import { AutoloadPage } from '../../misc/PageLoader';
 import * as util from '../../misc/Util';
 
 function setStarButtonState($starButton, star) {
-  const $starIcon = $starButton.find('.icon');
   if (star) {
     $starButton.addClass('activated');
-    $starIcon.removeClass('icon-star--outline').addClass('icon-star');
   } else {
     $starButton.removeClass('activated');
-    $starIcon.removeClass('icon-star').addClass('icon-star--outline');
   }
 }
 
@@ -16,14 +13,11 @@ const starPage = new AutoloadPage(() => {
   $(document).on('click', '.star', (ev) => {
     const $button = $(ev.currentTarget);
     const currentState = $button.hasClass('activated');
-    const operation = currentState ? 'unstar' : 'star';
-    const pid = $button.closest('tr').attr('data-pid');
+    const $form = $button.closest('form');
+    $form.find('[name="operation"]').val(currentState ? 'unstar' : 'star');
     setStarButtonState($button, !currentState);
     util
-      .post($button.closest('form').attr('action'), {
-        operation,
-        pid,
-      })
+      .post($form.attr('action'), $form)
       .then(data => {
         setStarButtonState($button, data.star);
       })

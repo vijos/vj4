@@ -1,5 +1,8 @@
 .tooltip
 
+  &.drop-element
+    pointer-events: none
+
   .drop-content
     transition: transform .1s ease-in-out
     background: #333
@@ -10,7 +13,6 @@
     box-shadow: 1px 1px 4px rgba(#000, 0.3)
     line-height: 1
     position: relative
-    pointer-events: none
 
     &:before
       content: ''

@@ -35,7 +35,7 @@
             </tr>
           {% else %}
           {% for pdoc in pdocs %}
-            <tr data-pid="{{ pdoc['doc_id'] }}">
+            <tr>
               {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
               {% if pdoc['psdoc']['rid'] %}
               <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">
@@ -48,22 +48,20 @@
               {% endif %}
               {% endif %}
               <td class="col--name">
-                <form method="post">
+                {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                <form class="form--inline" method="post">
                   <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
-                  {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
-                    {% if not pdoc['psdoc'].get('star') %}
-                  <input type="hidden" name="operation" value="star">
-                  <button class="star" type="submit"><span class="icon icon-star--outline"></span></button>
-                    {% else %}
-                  <input type="hidden" name="operation" value="unstar">
-                  <button class="star activated" type="submit"><span class="icon icon-star"></span></button>
-                    {% endif %}
-                  {% endif %}
+                  <input type="hidden" name="operation" value="{% if not pdoc['psdoc'].get('star') %}star{% else %}unstar{% endif %}">
                   <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                  <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
-                    {{ pdoc['title'] }}
-                  </a>
+                  <button class="star{% if pdoc['psdoc'].get('star') %} activated{% endif %}" type="submit">
+                    <span class="starred--hide"><span class="icon icon-star--outline" data-tooltip="{{ _('Star') }}"></span></span>
+                    <span class="starred--show"><span class="icon icon-star" data-tooltip="{{ _('Unstar') }}"></span></span>
+                  </button>
                 </form>
+                {% endif %}
+                <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
+                  {{ pdoc['title'] }}
+                </a>
               </td>
               <td class="col--submit_n">{{ pdoc['num_submit'] }}</td>
               <td class="col--ac_rate">{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int if pdoc['num_submit'] > 0 else _('?') }}</td>
