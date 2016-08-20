@@ -43,3 +43,5 @@ gulp.task('locale', () => {
     .pipe(vjGenerateLocale())
     .pipe(gulp.dest('vj4/ui/static/locale'));
 });
+
+gulp.task('default', ['iconfont', 'constant', 'locale'], () => {});

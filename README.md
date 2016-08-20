@@ -44,14 +44,12 @@ You may also want to install [libmaxminddb](https://github.com/maxmind/libmaxmin
 In the root of the repository:
 
 ```bash
-npm run generate:icon
-npm run generate:constant
-npm run generate:locale
+npm run generate
 npm run build  # to watch modifications: npm run watch
 python3.5 -m vj4.server --debug
 ```
 
-* Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
+> Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
 
 As an intuitive example, you may want to add a first user and problem to start:
 
@@ -84,9 +82,7 @@ pm vj4.job.rank rank
 ## Production
 
 ```bash
-npm run generate:icon
-npm run generate:constant
-npm run generate:locale
+npm run generate
 npm run build:production
 python3.5 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
 ```
