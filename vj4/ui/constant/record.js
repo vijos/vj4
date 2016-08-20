@@ -14,6 +14,7 @@ export const STATUS_CANCELED = 9;
 export const STATUS_ETC = 10;
 export const STATUS_JUDGING = 20;
 export const STATUS_COMPILING = 21;
+export const STATUS_FETCHED = 22;
 export const STATUS_IGNORED = 30;
 
 export const TYPE_SUBMISSION = 0;
@@ -33,6 +34,7 @@ export const STATUS_TEXTS = {
   [STATUS_ETC]: 'Unknown Error',
   [STATUS_JUDGING]: 'Running',
   [STATUS_COMPILING]: 'Compiling',
+  [STATUS_FETCHED]: 'Fetched',
   [STATUS_IGNORED]: 'Ignored',
 };
 attachObjectMeta(STATUS_TEXTS, 'intKey', true);
@@ -69,6 +71,7 @@ export const STATUS_CODES = {
   [STATUS_ETC]: 'fail',
   [STATUS_JUDGING]: 'progress',
   [STATUS_COMPILING]: 'progress',
+  [STATUS_FETCHED]: 'progress',
   [STATUS_IGNORED]: 'ignored',
 };
 attachObjectMeta(STATUS_CODES, 'intKey', true);
@@ -89,6 +92,7 @@ export const STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS = {
   [STATUS_ETC]: false,
   [STATUS_JUDGING]: false,
   [STATUS_COMPILING]: false,
+  [STATUS_FETCHED]: false,
   [STATUS_IGNORED]: false,
 };
 attachObjectMeta(STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS, 'exportToPython', false);
