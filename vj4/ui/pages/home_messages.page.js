@@ -28,12 +28,17 @@ const page = new NamedPage('home_messages', async () => {
         if (action !== 'ok') {
           return;
         }
+        const id = _.uniqueId('PLACEHOLDER_');
         store.dispatch({
           type: 'DIALOGUES_CREATE',
           payload: {
-            id: _.uniqueId('PLACEHOLDER_'),
+            id,
             user: userSelector.value(),
           },
+        });
+        store.dispatch({
+          type: 'DIALOGUES_SWITCH_TO',
+          payload: id,
         });
       },
     });

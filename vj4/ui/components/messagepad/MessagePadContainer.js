@@ -4,7 +4,6 @@ import Icon from '../react/IconComponent';
 import MessagePadDialogueList from './MessagePadDialogueListContainer';
 import MessagePadDialogueContent from './MessagePadDialogueContentContainer';
 import MessagePadInput from './MessagePadInputContainer';
-import 'jquery.easing';
 
 import * as util from '../../misc/Util';
 import i18n from '../../utils/i18n';
@@ -23,27 +22,9 @@ export default class MessagePadContainer extends React.PureComponent {
   static propTypes = {
     onAdd: React.PropTypes.func.isRequired,
   };
-  handleSwitch() {
-    const BOUND_TOP = 60;
-    const BOUND_BOTTOM = 20;
-    const node = this.refs.container;
-    if (node.offsetHeight + BOUND_TOP + BOUND_BOTTOM < window.innerHeight) {
-      const rect = node.getBoundingClientRect();
-      const rectBody = document.body.getBoundingClientRect();
-      let targetScrollTop = null;
-      if (rect.top < BOUND_TOP) {
-        targetScrollTop = rect.top - rectBody.top - BOUND_TOP;
-      } else if (rect.top + node.offsetHeight > window.innerHeight) {
-        targetScrollTop = rect.top - rectBody.top + node.offsetHeight + BOUND_BOTTOM - window.innerHeight;
-      }
-      if (targetScrollTop !== null) {
-        $('html, body').stop().animate({ scrollTop: targetScrollTop }, 200, 'easeOutCubic');
-      }
-    }
-  }
   render() {
     return (
-      <div className="messagepad clearfix" ref="container">
+      <div className="messagepad clearfix">
         <div className="messagepad__sidebar">
           <div className="section__header">
             <h1 className="section__title">{i18n('Messages')}</h1>
@@ -56,7 +37,7 @@ export default class MessagePadContainer extends React.PureComponent {
               </button>
             </div>
           </div>
-          <MessagePadDialogueList onSwitch={() => this.handleSwitch()} />
+          <MessagePadDialogueList />
         </div>
         <MessagePadDialogueContent />
         <MessagePadInput />

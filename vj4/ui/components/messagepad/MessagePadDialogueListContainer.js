@@ -20,12 +20,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class MessagePadDialogueListContainer extends React.PureComponent {
-  handleClick(id) {
-    this.props.handleClick(id);
-    if (this.props.onSwitch) {
-      this.props.onSwitch(id);
-    }
-  }
   render() {
     const orderedDialogues = _.orderBy(
       _.values(this.props.dialogues),
@@ -55,7 +49,7 @@ export default class MessagePadDialogueListContainer extends React.PureComponent
             : dialogue.sender_udoc.gravatar_url
           }
           active={dialogue._id === this.props.activeId}
-          onClick={() => this.handleClick(dialogue._id)}
+          onClick={() => this.props.handleClick(dialogue._id)}
         />
       ))}
       </ol>
