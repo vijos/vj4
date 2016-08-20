@@ -6,7 +6,7 @@
     <h1 class="section__title" id="help" data-heading>{{ _('Help') }}</h1>
   </div>
   <div class="section__body typo">
-    TODO
+    <p>角色标识符只能包含 0-9, A-Z, a-z 。</p>
   </div>
 </div>
 <div class="section">
@@ -71,6 +71,21 @@
       </div></div>
     </form>
     <p>{{ _('Users') }}: {{ rudocs[role] }}</p>
+    <form method="post">
+      <div class="row"><div class="columns">
+        <label>
+          {{ _('UID') }}
+          <input name="uid" placeholder="{{ _('UID') }}" class="textbox">
+        </label>
+      </div></div>
+      <div class="row"><div class="columns">
+        <input type="hidden" name="role" value="{{ role }}">
+        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+        <button type="submit" class="rounded primary button" name="operation" value="set_user">
+          {{ _('Add') }}
+        </button>
+      </div></div>
+    </form>
   </div>
 </div>
 {% endfor %}

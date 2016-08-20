@@ -77,3 +77,17 @@ class DomainRoleHandler(base.OperationHandler):
   async def post_delete(self, *, role: str, perm: int=None):
     await domain.delete_role(self.domain_id, role)
     self.json_or_redirect(self.referer_or_main)
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_set_user(self, *, uid: int, role: str):
+    await domain.set_user_role(self.domain_id, uid, role)
+    self.json_or_redirect(self.referer_or_main)
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_unset_user(self, *, uid: int):
+    await domain.unset_user_role(self.domain_id, uid)
+    self.json_or_redirect(self.referer_or_main)

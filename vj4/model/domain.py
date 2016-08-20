@@ -140,6 +140,17 @@ async def unset_user(domain_id, uid, fields):
                                     new=True)
 
 
+@argmethod.wrap
+async def set_user_role(domain_id: str, uid: int, role: str):
+  validator.check_role(role)
+  return await set_user(domain_id, uid, role=role)
+
+
+@argmethod.wrap
+async def unset_user_role(domain_id: str, uid: int):
+  return await unset_user(domain_id, uid, ['role'])
+
+
 async def inc_user(domain_id, uid, **kwargs):
   coll = db.Collection('domain.user')
   return await coll.find_and_modify(query={'domain_id': domain_id, 'uid': uid},
