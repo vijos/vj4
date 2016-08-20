@@ -42,7 +42,7 @@ def invoke_by_args():
                                type=method.__annotations__[argname],
                                nargs='?',
                                default=method.__defaults__[index - argoffset])
-  args = parser.parse_args(options.parse_command_line())
+  args = parser.parse_args(options.leftovers)
   name = getattr(args, '')
   delattr(args, '')
   if not name:

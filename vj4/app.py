@@ -14,6 +14,7 @@ from vj4.util import locale
 from vj4.util import options
 from vj4.util import tools
 
+options.define('debug', default=False, help='Enable debug mode.')
 options.define('static', default=True, help='Serve static files.')
 options.define('ip_header', default='X-Forwarded-For', help='Header name for remote IP.')
 options.define('unsaved_session_expire_seconds', default=43200,
