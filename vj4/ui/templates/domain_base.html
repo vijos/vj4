@@ -1,45 +1,40 @@
 {% extends "layout/basic.html" %}
-{% macro menu_item(icon_name, target_page_name) %}
-<li class="menu__item" id="menu-item-{{ target_page_name }}">
-  <a href="{{ reverse_url(target_page_name) }}" class="menu__link{% if page_name == target_page_name %} active{% endif %}">
-    <span class="icon icon-{{ icon_name }}"></span> {{ _(target_page_name) }}
-  </a>
-</li>
-{% endmacro %}
+{% import "components/sidemenu.html" as sidemenu with context %}
 {% block content %}
 <div class="row" data-sticky-parent>
   <div class="large-9 columns">
-    {% block domain_content %}{% endblock %}
+  {% block domain_content %}{% endblock %}
   </div>
-  <div class="large-3 columns">
-    {% if page_name != 'domain_create' %}
-    <div data-sticky="large"><div class="section side">
-      <ol class="menu">
-        {{ menu_item('cloud', 'domain_main') }}
-        <li class="menu__seperator"></li>
-        {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
-        {{ menu_item('edit', 'domain_edit') }}
-        {% endif %}
-        {{ menu_item('user', 'domain_role') }}
-      </ol>
-    </div></div>
-    {% else %}
+  <div class="large-3 columns"><div data-sticky="large">
     <div class="section side">
-      <div class="section__header">
-        <h1 class="section__title">{{ _('Information') }}</h1>
-      </div>
-      <div class="section__body">
-        <p><strong><big>{{ _('Domain ID cannot be changed once the domain is created.') }}</big></strong></p>
-        <p>{{ _('A domain ID is supposed to be:') }}</p>
-        <ol>
-          <li>{{ _('to be unique') }}</li>
-          <li>{{ _('not be wrapped with space') }}</li>
-          <li>{{ _('not to start with a number') }}</li>
-          <li>{{ _('without slashes or backslashes') }}</li>
-        </ol>
-      </div>
+      <ol class="menu">
+        {{ sidemenu.pageitem('cloud', 'domain_main') }}
+        <li class="menu__item">
+          <div class="menu__link expandable">
+            <span class="icon icon-info"></span> {{ _('Properties') }}
+          </div>
+          <ol class="menu collapsed">
+          {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
+            {{ sidemenu.pageitem(null, 'domain_edit') }}
+          {% endif %}
+            <!-- Discussion Nodes -->
+            <!-- Ranking Settings -->
+          </ol>
+        </li>
+        <li class="menu__item">
+          <div class="menu__link expandable">
+            <span class="icon icon-user"></span> {{ _('Access Control') }}
+          </div>
+          <ol class="menu collapsed">
+            <!-- Users -->
+            {{ sidemenu.pageitem(null, 'domain_user') }}
+            <!-- Roles -->
+            <!-- Permissions -->
+            {{ sidemenu.pageitem(null, 'domain_role') }}
+          </ol>
+        </li>
+      </ol>
     </div>
-    {% endif %}
-  </div>
+  </div></div>
 </div>
 {% endblock %}

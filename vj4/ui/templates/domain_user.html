@@ -1,0 +1,123 @@
+{% extends "domain_base.html" %}
+{% import "components/form.html" as form with context %}
+{% block domain_content %}
+<div style="display: none" class="dialog__body--add-user">
+  <div>
+    <div class="row"><div class="columns">
+      <h1>{{ _('Add User') }}</h1>
+    </div></div>
+    <div class="row">
+      <div class="medium-6 columns">
+        <label>
+          {{ _('Username / UID') }}
+          <input name="user" type="text" class="textbox" data-autofocus>
+        </label>
+      </div>
+      <div class="medium-6 columns">
+        <label>
+          <!-- TODO: replace with role values -->
+          {{ _('Role') }}
+          {{ form.select([('', 'Select a role'), ('admin', 'admin'), ('role_x', 'role_x')], 'role') }}
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section">
+  <div class="section__header">
+    <!-- TODO: replace with domain name -->
+    <h1 class="section__title">{{ _('{0}: Users').format('Vijos') }}</h1>
+    <div class="section__tools">
+      <button class="primary rounded button" name="add_user">Add User to Domain</button>
+      <a href="{{ reverse_url('domain_role') }}" class="rounded button">Manage Roles</a>
+    </div>
+  </div>
+  <noscript><div class="section__body">
+    <blockquote class="note">
+      <p>This page needs JavaScript to work.</p>
+    </blockquote>
+  </div></noscript>
+  <div class="section__body no-padding domain-users">
+    <table class="data-table">
+      <colgroup>
+        <col class="col--checkbox">
+        <col class="col--uid">
+        <col class="col--user">
+        <col class="col--role">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="col--checkbox">
+            <label class="checkbox">
+              <input type="checkbox" name="select_all">
+            </label>
+          </th>
+          <th class="col--uid">User ID</th>
+          <th class="col--user">Username</th>
+          <th class="col--role">Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- TODO: remove this comment when you have read it:
+        this row is for the owner always -->
+        <tr>
+          <td class="col--checkbox">
+            <label class="checkbox">
+              <input type="checkbox" disabled>
+            </label>
+          </td>
+          <td class="col--uid">
+            -1
+          </td>
+          <td class="col--user">
+            <!-- TODO: inline_user (noBadge=true) -->
+            swx
+          </td>
+          <td class="col--role">
+            (Owner)
+          </td>
+        </tr>
+        <!-- TODO: for ... in ... -->
+        <tr data-uid="-3">
+          <td class="col--checkbox">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </td>
+          <td class="col--uid">
+            -2
+          </td>
+          <td class="col--user">
+            <!-- TODO: inline_user (noBadge=true) -->
+            twd2
+          </td>
+          <td class="col--role">
+            {{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='role_x') }}
+          </td>
+        </tr>
+        <tr data-uid="-3">
+          <td class="col--checkbox">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </td>
+          <td class="col--uid">
+            -3
+          </td>
+          <td class="col--user">
+            <!-- TODO: inline_user (noBadge=true) -->
+            twd3
+          </td>
+          <td class="col--role">
+            {{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='admin') }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section__body">
+    <button class="rounded button" name="delete_selected">Delete Selected</button>
+    <button class="rounded button" name="set_roles">Set Roles for Selected</button>
+  </div>
+</div>
+{% endblock %}
