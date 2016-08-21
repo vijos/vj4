@@ -87,7 +87,10 @@ class JudgeNotifyConnection(base.Connection):
           'score': int(kwargs['case']['score']),
           'time_ms': int(kwargs['case']['time_ms']),
           'memory_kb': int(kwargs['case']['memory_kb']),
+          'judge_text': str(kwargs['case']['judge_text']),
         }
+      if 'progress' in kwargs:
+        update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
       await record.next_judge(rid, self.user['_id'], self.id, **update)
       await bus.publish('record_change', rid)
     elif key == 'end':

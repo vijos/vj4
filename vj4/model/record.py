@@ -105,7 +105,8 @@ async def begin_judge(record_id: objectid.ObjectId,
                                                     'judge_at': datetime.datetime.utcnow(),
                                                     'compiler_texts': [],
                                                     'judge_texts': [],
-                                                    'cases': []}},
+                                                    'cases': [],
+                                                    'progress': 0.0}},
                                    new=True)
   return doc
 
@@ -131,7 +132,8 @@ async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: s
                                                     'score': score,
                                                     'time_ms': time_ms,
                                                     'memory_kb': memory_kb},
-                                           '$unset': {'judge_token': ''}},
+                                           '$unset': {'judge_token': '',
+                                                      'progress': ''}},
                                    new=True)
   return doc
 
