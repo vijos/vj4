@@ -265,24 +265,5 @@ async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
           (new_stats['num_accept'] - old_stats['num_accept']))
 
 
-async def attach_pdocs(docs, domain_field_name, pid_field_name):
-  """DEPRECATED: use get_multi() instead.
-
-  Attach pdoc to docs by pid in the specified field.
-  """
-  # TODO(iceboy): projection.
-  key_func = lambda doc: doc[domain_field_name]
-  pids_by_domain = {}
-  for domain_id, domain_docs in itertools.groupby(sorted(docs, key=key_func), key_func):
-    pids = builtins.set(doc[pid_field_name] for doc in domain_docs)
-    pdocs = await document.get_multi(domain_id=domain_id,
-                                     doc_type=document.TYPE_PROBLEM,
-                                     doc_id={'$in': list(pids)}).to_list(None)
-    pids_by_domain[domain_id] = dict((pdoc['doc_id'], pdoc) for pdoc in pdocs)
-  for doc in docs:
-    doc['pdoc'] = pids_by_domain[doc[domain_field_name]].get(doc[pid_field_name])
-  return docs
-
-
 if __name__ == '__main__':
   argmethod.invoke_by_args()
