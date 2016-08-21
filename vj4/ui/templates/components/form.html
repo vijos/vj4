@@ -4,7 +4,7 @@
   name="{{ name }}"
   {% if disabled %}disabled{% endif %}
   {% if required %}required{% endif %}
-  {% if autofocus %}autofocus{% endif %}
+  {% if autofocus %}autofocus data-autofocus{% endif %}
 >
 {% for k, v in items %}
   <option value="{{ k }}"{% if value == k %} selected{% endif %}>
@@ -23,6 +23,6 @@
   placeholder="{{ placeholder }}"
   {% if disabled %}disabled{% endif %}
   {% if required %}required{% endif %}
-  {% if autofocus %}autofocus{% endif %}
+  {% if autofocus %}autofocus data-autofocus{% endif %}
 >
 {% endmacro %}

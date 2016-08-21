@@ -1,5 +1,119 @@
 {% extends "domain_base.html" %}
+{% import "components/form.html" as form with context %}
 {% block domain_content %}
+<div style="display: none" class="dialog__body--create-role">
+  <div>
+    <div class="row"><div class="columns">
+      <h1>{{ _('Create Role') }}</h1>
+    </div></div>
+    <div class="row"><div class="columns">
+      <blockquote class="note">
+        <p>Role name can only contains numbers, letters and underscores.</p>
+      </blockquote>
+      <label>
+        {{ _('Name') }}
+        {{ form.text('role', autofocus=true) }}
+      </label>
+    </div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="section__header">
+    <!-- TODO: replace with domain name -->
+    <h1 class="section__title">{{ _('{0}: Roles').format('Vijos') }}</h1>
+    <div class="section__tools">
+      <button class="primary rounded button" name="create_role">{{ _('Create Role') }}</button>
+    </div>
+  </div>
+  <noscript><div class="section__body">
+    <blockquote class="note">
+      <p>{{ _('This page needs JavaScript to work.') }}</p>
+    </blockquote>
+  </div></noscript>
+  <div class="section__body no-padding domain-roles">
+    <table class="data-table">
+      <colgroup>
+        <col class="col--checkbox">
+        <col class="col--id">
+        <col class="col--description">
+        <col class="col--users">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="col--checkbox">
+            <label class="checkbox">
+              <input type="checkbox" name="select_all">
+            </label>
+          </th>
+          <th class="col--id">Role</th>
+          <th class="col--description">Description</th>
+          <th class="col--users">Users</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- TODO: remove this comment when you have read it:
+        this row is for the builtin always -->
+        <tr>
+          <td class="col--checkbox">
+            <label class="checkbox">
+              <input type="checkbox" disabled>
+            </label>
+          </td>
+          <td class="col--id">
+            guest
+          </td>
+          <td class="col--description">
+            Built-in: Effective for visitors that not logged in
+          </td>
+          <td class="col--users">
+            --
+          </td>
+        </tr>
+        <!-- TODO: remove this comment when you have read it:
+        this row is for the builtin always -->
+        <tr>
+          <td class="col--checkbox">
+            <label class="checkbox">
+              <input type="checkbox" disabled>
+            </label>
+          </td>
+          <td class="col--id">
+            default
+          </td>
+          <td class="col--description">
+            Built-in: Effective for registered users that not a member of the domain
+          </td>
+          <td class="col--users">
+            --
+          </td>
+        </tr>
+        <!-- TODO: for ... in ... -->
+        <tr>
+          <td class="col--checkbox">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </td>
+          <td class="col--id">
+            admin
+          </td>
+          <td class="col--description">
+            User defined role
+            <!-- TODO: remove this comment when you have read it:
+            this column is fixed to that text -->
+          </td>
+          <td class="col--users">
+            5
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section__body">
+    <button class="rounded button" name="delete_selected">{{ _('Delete Selected Roles') }}</button>
+  </div>
+</div>
+<!--
 <div data-heading-extract-to="#menu-item-domain_role">
 <div class="section">
   <div class="section__header">
@@ -37,4 +151,5 @@
 </div>
 {% endfor %}
 </div>
+-->
 {% endblock %}
