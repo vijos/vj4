@@ -1,34 +1,30 @@
 {% extends "home_base.html" %}
+{% import "components/form.html" as form with context %}
 {% block home_content %}
 <div class="section" data-heading-extract-to="#menu-item-home_account">
   <form method="post">
-    {% for family, settings in vj4.model.adaptor.setting.SETTINGS_BY_FAMILY.items() %}
+  {% for family, settings in vj4.model.adaptor.setting.SETTINGS_BY_FAMILY.items() %}
     <div class="section__header">
       <h1 class="section__title" id="{{ family }}" data-heading>{{ _(family) }}</h1>
     </div>
     <div class="section__body">
-      {% for setting in settings %}
-      <div class="row"><div class="medium-4 columns">
-        <label>
-          {{ _(setting.name) }}
-          {% if setting.ui == 'text' %}
-          <input class="textbox" name="{{ setting.key }}" value="{{ handler.get_setting(setting.key) }}">
-          {% endif %}
-          {% if setting.ui == 'select' %}
-          <select class="select" name="{{ setting.key }}">
-          {% for key, value in setting.range.items() %}
-            <option value="{{ key }}"{% if handler.get_setting(setting.key) == key %} selected{% endif %}>{{ _(value) }}</option>
-          {% endfor %}
-          </select>
-          {% endif %}
-        </label>
-        {% if setting.desc %}
-          <p class="help-text">{{ _(setting.desc) }}</p>
-        {% endif %}
+    {% for setting in settings %}
+      <div class="row"><div class="medium-5 columns">
+      <label>
+        {{ _(setting.name) }}
+      {% if setting.ui == 'text' %}
+        {{ form.text(setting.key, handler.get_setting(setting.key)) }}
+      {% elif setting.ui == 'select' %}
+        {{ form.select(setting.key, setting.range.items(), handler.get_setting(setting.key)) }}
+      {% endif %}
+      </label>
+      {% if setting.desc %}
+        <p class="help-text">{{ _(setting.desc) }}</p>
+      {% endif %}
       </div></div>
-      {% endfor %}
-    </div>
     {% endfor %}
+    </div>
+  {% endfor %}
     <div class="section__body">
       <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
       <input type="submit" class="rounded primary button" value="{{ _('Save All Changes') }}">

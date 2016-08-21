@@ -1,0 +1,28 @@
+{% macro select(name, items, current_value='', disabled=false, required=false, autofocus=false) %}
+<select
+  class="select"
+  name="{{ name }}"
+  {% if disabled %}disabled{% endif %}
+  {% if required %}required{% endif %}
+  {% if autofocus %}autofocus{% endif %}
+>
+{% for key, value in items %}
+  <option value="{{ key }}"{% if current_value == key %} selected{% endif %}>
+    {{ _(value) }}
+  </option>
+{% endfor %}
+</select>
+{% endmacro %}
+
+{% macro text(name, current_value='', placeholder='', type='text', disabled=false, required=false, autofocus=false) %}
+<input
+  type="{{ type }}"
+  class="textbox"
+  name="{{ name }}"
+  value="{{ current_value }}"
+  placeholder="{{ placeholder }}"
+  {% if disabled %}disabled{% endif %}
+  {% if required %}required{% endif %}
+  {% if autofocus %}autofocus{% endif %}
+>
+{% endmacro %}
