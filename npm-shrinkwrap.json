@@ -1522,9 +1522,9 @@
       "resolved": "https://registry.npm.taobao.org/faye-websocket/download/faye-websocket-0.11.0.tgz"
     },
     "fbjs": {
-      "version": "0.8.3",
-      "from": "fbjs@>=0.8.1 <0.9.0",
-      "resolved": "https://registry.npm.taobao.org/fbjs/download/fbjs-0.8.3.tgz",
+      "version": "0.8.4",
+      "from": "fbjs@>=0.8.4 <0.9.0",
+      "resolved": "https://registry.npm.taobao.org/fbjs/download/fbjs-0.8.4.tgz",
       "dependencies": {
         "core-js": {
           "version": "1.2.7",
@@ -4162,14 +4162,14 @@
       "resolved": "https://registry.npm.taobao.org/rc-animate/download/rc-animate-2.3.1.tgz"
     },
     "rc-tabs": {
-      "version": "5.9.2",
-      "from": "rc-tabs@>=5.9.2 <6.0.0",
-      "resolved": "https://registry.npm.taobao.org/rc-tabs/download/rc-tabs-5.9.2.tgz"
+      "version": "6.0.0",
+      "from": "rc-tabs@6.0.0",
+      "resolved": "https://registry.npm.taobao.org/rc-tabs/download/rc-tabs-6.0.0.tgz"
     },
     "react": {
-      "version": "15.3.0",
-      "from": "react@>=15.3.0 <16.0.0",
-      "resolved": "https://registry.npm.taobao.org/react/download/react-15.3.0.tgz"
+      "version": "15.3.1",
+      "from": "react@15.3.1",
+      "resolved": "https://registry.npm.taobao.org/react/download/react-15.3.1.tgz"
     },
     "react-codemirror": {
       "version": "0.2.6",
