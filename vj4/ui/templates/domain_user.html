@@ -17,7 +17,7 @@
         <label>
           <!-- TODO: replace with role values -->
           {{ _('Role') }}
-          {{ form.select([('', 'Select a role'), ('admin', 'admin'), ('role_x', 'role_x')], 'role') }}
+          {{ form.select([('', _('Select a role')), ('admin', 'admin'), ('role_x', 'role_x')], 'role') }}
         </label>
       </div>
     </div>
@@ -28,13 +28,13 @@
     <!-- TODO: replace with domain name -->
     <h1 class="section__title">{{ _('{0}: Users').format('Vijos') }}</h1>
     <div class="section__tools">
-      <button class="primary rounded button" name="add_user">Add User to Domain</button>
-      <a href="{{ reverse_url('domain_role') }}" class="rounded button">Manage Roles</a>
+      <button class="primary rounded button" name="add_user">{{ _('Add User to Domain') }}</button>
+      <a href="{{ reverse_url('domain_role') }}" class="rounded button">{{ _('Manage Roles') }}</a>
     </div>
   </div>
   <noscript><div class="section__body">
     <blockquote class="note">
-      <p>This page needs JavaScript to work.</p>
+      <p>{{ _('This page needs JavaScript to work.') }}</p>
     </blockquote>
   </div></noscript>
   <div class="section__body no-padding domain-users">
@@ -116,8 +116,8 @@
     </table>
   </div>
   <div class="section__body">
-    <button class="rounded button" name="delete_selected">Delete Selected</button>
-    <button class="rounded button" name="set_roles">Set Roles for Selected</button>
+    <button class="rounded button" name="delete_selected">{{ _('Delete Selected User') }}</button>
+    <button class="rounded button" name="set_roles">{{ _('Set Roles for Selected User') }}</button>
   </div>
 </div>
 {% endblock %}
