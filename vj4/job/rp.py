@@ -2,9 +2,7 @@ import logging
 
 from vj4 import db
 from vj4 import constant
-from vj4.model import builtin
 from vj4.model import document
-from vj4.model import domain
 from vj4.model.adaptor import problem
 from vj4.util import argmethod
 from vj4.util import domainjob
@@ -47,7 +45,8 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
   status_coll = db.Collection('document.status')
   status_bulk = status_coll.initialize_unordered_bulk_op()
   # Accepteds adjustment
-  psdocs = problem.get_multi_status(domain_id, doc_id=pdoc['doc_id'],
+  psdocs = problem.get_multi_status(domain_id=domain_id,
+                                    doc_id=pdoc['doc_id'],
                                     status=constant.record.STATUS_ACCEPTED).sort('rid', 1)
   order = 0
   rp_func = get_rp_func(pdoc)
@@ -64,7 +63,8 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
     _logger.warning('Problem {0} num_accept may be inconsistent.'.format(pdoc['doc_id']))
   # Was Accepted but Now Not Accepteds adjustment
   # TODO(twd2): should we use $ne? can $ne be indexed?
-  psdocs = problem.get_multi_status(domain_id, doc_id=pdoc['doc_id'],
+  psdocs = problem.get_multi_status(domain_id=domain_id,
+                                    doc_id=pdoc['doc_id'],
                                     status={'$gt': constant.record.STATUS_ACCEPTED},
                                     rp={'$gt': 0.0})
   execute = False
@@ -94,12 +94,14 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
 
 @domainjob.wrap
 async def recalc(domain_id: str):
-  pdocs = problem.get_multi(domain_id, {'_id': 1, 'doc_id': 1, 'num_accept': 1}).sort('doc_id', 1)
+  pdocs = problem.get_multi(domain_id=domain_id,
+                            fields={'_id': 1, 'doc_id': 1, 'num_accept': 1}).sort('doc_id', 1)
   uddoc_updates = {}
   status_coll = db.Collection('document.status')
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
-    psdocs = problem.get_multi_status(domain_id, doc_id=pdoc['doc_id'],
+    psdocs = problem.get_multi_status(domain_id=domain_id,
+                                      doc_id=pdoc['doc_id'],
                                       status=constant.record.STATUS_ACCEPTED).sort('rid', 1)
     order = 0
     rp_func = get_rp_func(pdoc)

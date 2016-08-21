@@ -52,43 +52,34 @@ async def set(domain_id: str, pid: document.convert_doc_id, **kwargs):
 
 @argmethod.wrap
 async def count(domain_id: str):
-  return await document.get_multi(domain_id, document.TYPE_PROBLEM).count()
+  return await document.get_multi(domain_id=domain_id, doc_type=document.TYPE_PROBLEM).count()
 
 
-def get_multi(domain_id: str, fields=None, **kwargs):
-  return document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields, **kwargs)
-
-
-def get_multi_status(domain_id: str, *, fields=None, **kwargs):
-  return document.get_multi_status(domain_id, document.TYPE_PROBLEM, fields=fields, **kwargs)
+def get_multi(*, fields=None, **kwargs):
+  return document.get_multi(doc_type=document.TYPE_PROBLEM, fields=fields, **kwargs)
 
 
 @argmethod.wrap
-async def get_list(domain_id: str, uid: int=None, fields=None, skip: int=0, limit: int=0,
-                   **kwargs):
+async def get_list(domain_id: str, fields=None, skip: int=0, limit: int=0, **kwargs):
   # TODO(iceboy): projection.
-  pdocs = await (document.get_multi(domain_id, document.TYPE_PROBLEM, fields=fields, **kwargs)
-                 .sort([('doc_id', 1)])
-                 .skip(skip)
-                 .limit(limit)
-                 .to_list(None))
-  piter = iter(pdocs)
-  # TODO(twd2): move out:
-  if uid is not None:
-    doc_ids = [pdoc['doc_id'] for pdoc in pdocs]
-    # TODO(iceboy): projection.
-    psdocs = (document.get_multi_status(domain_id, document.TYPE_PROBLEM,
-                                        uid=uid, doc_id={'$in': doc_ids})
-              .sort([('doc_id', 1)]))
-    async for psdoc in psdocs:
-      pdoc = next(piter)
-      while pdoc['doc_id'] != psdoc['doc_id']:
-        pdoc['psdoc'] = {}
-        pdoc = next(piter)
-      pdoc['psdoc'] = psdoc
-  for rest in piter:
-    rest['psdoc'] = {}
+  pdocs = await document.get_multi(domain_id=domain_id,
+                                   doc_type=document.TYPE_PROBLEM,
+                                   fields=fields,
+                                   **kwargs) \
+                        .sort([('doc_id', 1)]) \
+                        .skip(skip) \
+                        .limit(limit) \
+                        .to_list(None)
   return pdocs
+
+
+@argmethod.wrap
+async def get_status(domain_id: str, pid: document.convert_doc_id, uid: int, fields=None):
+  return await document.get_status(domain_id, document.TYPE_PROBLEM, pid, uid, fields=fields)
+
+
+def get_multi_status(*, fields=None, **kwargs):
+  return document.get_multi_status(doc_type=document.TYPE_PROBLEM, fields=fields, **kwargs)
 
 
 @argmethod.wrap
@@ -123,13 +114,15 @@ async def set_solution(domain_id: str, psid: document.convert_doc_id, content: s
 @argmethod.wrap
 async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
                             fields=None, skip: int = 0, limit: int = 0):
-  return await (document.get_multi(domain_id, document.TYPE_PROBLEM_SOLUTION,
-                                     parent_doc_type=document.TYPE_PROBLEM, parent_doc_id=pid,
-                                     fields=fields)
-                .sort([('vote', -1), ('doc_id', -1)])
-                .skip(skip)
-                .limit(limit)
-                .to_list(None))
+  return await document.get_multi(domain_id=domain_id,
+                                  doc_type=document.TYPE_PROBLEM_SOLUTION,
+                                  parent_doc_type=document.TYPE_PROBLEM,
+                                  parent_doc_id=pid,
+                                  fields=fields) \
+                       .sort([('vote', -1), ('doc_id', -1)]) \
+                       .skip(skip) \
+                       .limit(limit) \
+                       .to_list(None)
 
 
 @argmethod.wrap
@@ -139,13 +132,17 @@ async def get_solution_status(domain_id: str, psid: document.convert_doc_id, uid
 
 
 async def attach_pssdocs(docs, domain_field_name, psid_field_name, uid):
-  """Attach pssdoc to docs by domain_id and psid in the specified field."""
+  """DEPRECATED: use get_multi_status() instead.
+
+  Attach pssdoc to docs by domain_id and psid in the specified field.
+  """
   # TODO(twd2): projection.
   key_func = lambda doc: doc[domain_field_name]
   psids_by_domain = {}
   for domain_id, domain_docs in itertools.groupby(sorted(docs, key=key_func), key_func):
     psids = builtins.set(doc[psid_field_name] for doc in domain_docs)
-    pssdocs = await document.get_multi_status(domain_id, document.TYPE_PROBLEM_SOLUTION,
+    pssdocs = await document.get_multi_status(domain_id=domain_id,
+                                              doc_type=document.TYPE_PROBLEM_SOLUTION,
                                               doc_id={'$in': list(psids)}, uid=uid).to_list(None)
     psids_by_domain[domain_id] = dict((pssdoc['doc_id'], pssdoc) for pssdoc in pssdocs)
   for doc in docs:
@@ -269,13 +266,17 @@ async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
 
 
 async def attach_pdocs(docs, domain_field_name, pid_field_name):
-  """Attach pdoc to docs by pid in the specified field."""
+  """DEPRECATED: use get_multi() instead.
+
+  Attach pdoc to docs by pid in the specified field.
+  """
   # TODO(iceboy): projection.
   key_func = lambda doc: doc[domain_field_name]
   pids_by_domain = {}
   for domain_id, domain_docs in itertools.groupby(sorted(docs, key=key_func), key_func):
     pids = builtins.set(doc[pid_field_name] for doc in domain_docs)
-    pdocs = await document.get_multi(domain_id, document.TYPE_PROBLEM,
+    pdocs = await document.get_multi(domain_id=domain_id,
+                                     doc_type=document.TYPE_PROBLEM,
                                      doc_id={'$in': list(pids)}).to_list(None)
     pids_by_domain[domain_id] = dict((pdoc['doc_id'], pdoc) for pdoc in pdocs)
   for doc in docs:

@@ -27,9 +27,11 @@ async def get(domain_id: str, tid: objectid.ObjectId):
 @argmethod.wrap
 async def check(domain_id: str, tid: objectid.ObjectId, uid: int):
   tdoc = await get(domain_id, tid)
-  done_count = await (document.get_multi_status(domain_id, document.TYPE_TRAINING, uid=uid,
-                                                done=True, doc_id={'$in': tdoc['require_tids']})
-                      .count())
+  done_count = await document.get_multi_status(domain_id=domain_id,
+                                               doc_type=document.TYPE_TRAINING,
+                                               uid=uid,
+                                               done=True,
+                                               doc_id={'$in': tdoc['require_tids']}).count()
   if done_count < len(tdoc['require_tids']):
     raise error.TrainingRequirementNotSatisfiedError(domain_id, document.TYPE_TRAINING, tid)
   return tdoc
@@ -37,13 +39,15 @@ async def check(domain_id: str, tid: objectid.ObjectId, uid: int):
 
 @argmethod.wrap
 async def get_list_by_user(domain_id: str, uid: int, *, fields=None):
-  tsdocs = document.get_multi_status(domain_id, document.TYPE_TRAINING,
+  tsdocs = document.get_multi_status(domain_id=domain_id,
+                                     doc_type=document.TYPE_TRAINING,
                                      uid=uid, done=True, fields=['doc_id'])
   done_tids = []
   async for tsdoc in tsdocs:
     done_tids.append(tsdoc['doc_id'])
   # TODO(iceboy): pagination, projection.
-  tdocs = await (document.get_multi(domain_id, document.TYPE_TRAINING,
+  tdocs = await (document.get_multi(domain_id=domain_id,
+                                    doc_type=document.TYPE_TRAINING,
                                     require_tids={'$not': {'$elemMatch': {'$nin': done_tids}}},
                                     fields=fields)
                  .sort([('doc_id', 1)])
@@ -66,7 +70,9 @@ async def _update_status(domain_id, tdoc, uid, key, value):
 
 @argmethod.wrap
 async def update_status_by_pid(domain_id: str, uid: int, pid: document.convert_doc_id):
-  tdocs = document.get_multi(domain_id, document.TYPE_TRAINING, pids=pid,
+  tdocs = document.get_multi(domain_id=domain_id,
+                             doc_type=document.TYPE_TRAINING,
+                             pids=pid,
                              fields=['doc_id', 'pids', 'require_tids'])
   futs = []
   async for tdoc in tdocs:
@@ -76,7 +82,9 @@ async def update_status_by_pid(domain_id: str, uid: int, pid: document.convert_d
 
 @argmethod.wrap
 async def update_status_by_tid(domain_id: str, uid: int, tid: objectid.ObjectId):
-  tdocs = document.get_multi(domain_id, document.TYPE_TRAINING, require_tids=tid,
+  tdocs = document.get_multi(domain_id=domain_id,
+                             doc_type=document.TYPE_TRAINING,
+                             require_tids=tid,
                              fields=['doc_id', 'pids', 'require_tids'])
   futs = []
   async for tdoc in tdocs:

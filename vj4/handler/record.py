@@ -24,10 +24,13 @@ class RecordMainHandler(base.Handler):
     # TODO(twd2): check permission for visibility. (e.g. test).
     rdocs = await record.get_all_multi().sort([('_id', -1)]).to_list(50)
     uids = list(set(rdoc['uid'] for rdoc in rdocs))
+    pdom_and_ids = list(set((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs))
+    pquery = {'$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in pdom_and_ids]}
     # TODO(iceboy): projection.
-    udict, _ = await asyncio.gather(aiters.to_dict(user.get_multi(_id={'$in': uids}), '_id'),
-                                    problem.attach_pdocs(rdocs, 'domain_id', 'pid'))
-    self.render('record_main.html', rdocs=rdocs, udict=udict)
+    udict, pdict = await asyncio.gather(
+        aiters.to_dict(user.get_multi(_id={'$in': uids}), '_id'),
+        aiters.to_dict_multi(problem.get_multi(**pquery), 'domain_id', 'doc_id'))
+    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
@@ -40,11 +43,12 @@ class RecordMainConnection(base.Connection):
     rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
     # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
-    udoc, rdoc['pdoc'] = await asyncio.gather(
-      user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
+    udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
+                                      problem.get(rdoc['domain_id'], rdoc['pid']))
     # TODO(iceboy): check permission for visibility. (e.g. test).
     # TODO(iceboy): remove the rdoc sent.
-    self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc), rdoc=rdoc)
+    self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc),
+              rdoc=rdoc)
 
   async def on_close(self):
     bus.unsubscribe(self.on_record_change)

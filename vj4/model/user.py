@@ -153,9 +153,10 @@ async def set_by_uid(uid, **kwargs):
 
 
 async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTION_VIEW):
-  """DEPRECATED: use get_dict() instead.
+  """DEPRECATED: use get_multi() instead.
 
-  Attach udoc to docs by uid in the specified field."""
+  Attach udoc to docs by uid in the specified field.
+  """
   uids = set(doc[field_name] for doc in docs)
   if uids:
     coll = db.Collection('user')

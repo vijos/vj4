@@ -123,17 +123,19 @@ async def inc_views(domain_id: str, did: document.convert_doc_id):
 
 @argmethod.wrap
 async def count(domain_id: str):
-  return await document.get_multi(domain_id, document.TYPE_DISCUSSION).count()
+  return await document.get_multi(domain_id=domain_id, doc_type=document.TYPE_DISCUSSION).count()
 
 
 @argmethod.wrap
 async def get_list(domain_id: str, *, fields=None, skip: int = 0, limit: int = 0):
   # TODO(twd2): projection.
-  return await (document.get_multi(domain_id, document.TYPE_DISCUSSION, fields=fields)
-                .sort([('doc_id', -1)])
-                .skip(skip)
-                .limit(limit)
-                .to_list(None))
+  return await document.get_multi(domain_id=domain_id,
+                                  doc_type=document.TYPE_DISCUSSION,
+                                  fields=fields) \
+                       .sort([('doc_id', -1)]) \
+                       .skip(skip) \
+                       .limit(limit) \
+                       .to_list(None)
 
 
 @argmethod.wrap
@@ -142,18 +144,20 @@ async def get_vnode_and_list_and_count_for_node(domain_id: str,
                                                 fields=None, skip: int = 0, limit: int = 0):
   vnode = await get_vnode(domain_id, node_or_pid, True)
   count_future = asyncio.ensure_future(
-    document.get_multi(domain_id, document.TYPE_DISCUSSION,
-                       parent_doc_type=vnode['doc_type'],
-                       parent_doc_id=vnode['doc_id']).count())
+      document.get_multi(domain_id=domain_id,
+                         doc_type=document.TYPE_DISCUSSION,
+                         parent_doc_type=vnode['doc_type'],
+                         parent_doc_id=vnode['doc_id']).count())
   # TODO(twd2): projection.
-  ddocs = await (document.get_multi(domain_id, document.TYPE_DISCUSSION,
-                                    parent_doc_type=vnode['doc_type'],
-                                    parent_doc_id=vnode['doc_id'],
-                                    fields=fields)
-                 .sort([('doc_id', -1)])
-                 .skip(skip)
-                 .limit(limit)
-                 .to_list(None))
+  ddocs = await document.get_multi(domain_id=domain_id,
+                                   doc_type=document.TYPE_DISCUSSION,
+                                   parent_doc_type=vnode['doc_type'],
+                                   parent_doc_id=vnode['doc_id'],
+                                   fields=fields) \
+                        .sort([('doc_id', -1)]) \
+                        .skip(skip) \
+                        .limit(limit) \
+                        .to_list(None)
   await attach_vnodes(ddocs, domain_id, 'parent_doc_id')
   return vnode, ddocs, await count_future
 
@@ -178,11 +182,13 @@ async def get_reply(domain_id: str, drid: document.convert_doc_id, did=None):
 
 @argmethod.wrap
 async def get_list_reply(domain_id: str, did: document.convert_doc_id, *, fields=None):
-  return await (document.get_multi(domain_id, document.TYPE_DISCUSSION_REPLY,
-                                   parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did,
-                                   fields=fields)
-                .sort([('doc_id', -1)])
-                .to_list(None))
+  return await document.get_multi(domain_id=domain_id,
+                                  doc_type=document.TYPE_DISCUSSION_REPLY,
+                                  parent_doc_type=document.TYPE_DISCUSSION,
+                                  parent_doc_id=did,
+                                  fields=fields) \
+                       .sort([('doc_id', -1)]) \
+                       .to_list(None)
 
 
 @argmethod.wrap
@@ -197,7 +203,8 @@ async def attach_vnodes(docs, domain_id, field_name):
   # TODO(iceboy): projection.
   nodes = await get_nodes(domain_id)
   pids = set(doc[field_name] for doc in docs if not _get_exist_node(nodes, doc[field_name]))
-  pdocs = await document.get_multi(domain_id, document.TYPE_PROBLEM,
+  pdocs = await document.get_multi(domain_id=domain_id,
+                                   doc_type=document.TYPE_PROBLEM,
                                    doc_id={'$in': list(pids)}).to_list(None)
   pids = dict((pdoc['doc_id'], pdoc) for pdoc in pdocs)
   for doc in docs:

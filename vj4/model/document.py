@@ -4,7 +4,6 @@ from bson import objectid
 
 from vj4 import db
 from vj4.util import argmethod
-from vj4.util import validator
 
 TYPE_PROBLEM = 10
 TYPE_PROBLEM_SOLUTION = 11
@@ -69,9 +68,9 @@ async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
   return doc
 
 
-def get_multi(domain_id, doc_type, *, fields=None, **kwargs):
+def get_multi(*, fields=None, **kwargs):
   coll = db.Collection('document')
-  return coll.find({'domain_id': domain_id, 'doc_type': doc_type, **kwargs}, fields=fields)
+  return coll.find(kwargs, fields=fields)
 
 
 @argmethod.wrap
@@ -125,16 +124,17 @@ async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: s
 
 
 @argmethod.wrap
-async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int, fields=None):
+async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int,
+                     *, fields=None):
   coll = db.Collection('document.status')
   return await coll.find_one({'domain_id': domain_id, 'doc_type': doc_type,
                               'doc_id': doc_id, 'uid': uid},
-                             fields)
+                             fields=fields)
 
 
-def get_multi_status(domain_id, doc_type, *, fields=None, **kwargs):
+def get_multi_status(*, fields=None, **kwargs):
   coll = db.Collection('document.status')
-  return coll.find({'domain_id': domain_id, 'doc_type': doc_type, **kwargs}, fields=fields)
+  return coll.find(**kwargs, fields=fields)
 
 
 async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
