@@ -1,46 +1,15 @@
 {% extends "domain_base.html" %}
 {% block domain_content %}
-    <div class="section">
-      <div class="section__header">
-        <h1 class="section__title">{% if page_name == 'domain_edit' %}{{ _('Edit Domain') }}{% else %}{{ _('Create Domain') }}{% endif %}</h1>
-      </div>
-      <div class="section__body">
-        <form method="post">
-          <div class="row"><div class="medium-4 columns">
-            <label>
-              {{ _('Belongs to') }}
-              {% if page_name == 'domain_edit' %}
-              <input value="{{ udoc['uname'] }}" class="textbox" disabled>
-              {% else %}
-              <input value="{{ handler.user['uname'] }}" class="textbox" disabled>
-              {% endif %}
-            </label>
-          </div><div class="medium-8 columns">
-            <label>
-              {{ _('ID') }}
-              {% if page_name == 'domain_edit' %}
-              <input value="{{ handler.domain_id }}" class="textbox" disabled>
-              {% else %}
-              <input name="id" placeholder="{{ _('ID') }}" value="" class="textbox" autofocus>
-              {% endif %}
-            </label>
-          </div></div>
-          <div class="row"><div class="columns">
-            <label>
-              {{ _('Description') }}
-              <textarea name="description" class="textbox" data-markdown>{% if page_name == 'domain_edit' %}{{ handler.domain['description'] }}{% endif %}</textarea>
-            </label>
-          </div></div>
-          <div class="row"><div class="columns">
-            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            {% if page_name == 'domain_edit' %}
-              <input type="submit" class="rounded primary button" value="{{ _('Update') }}">
-            {% else %}
-              <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
-            {% endif %}
-            <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
-          </div></div>
-        </form>
-      </div>
-    </div>
+<div class="section">
+  <div class="section__body">
+    <form method="post">
+      {% include "domain_edit_form.html" %}
+      <div class="row"><div class="columns">
+        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+        <input type="submit" class="rounded primary button" value="{{ _('Update') }}">
+        <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
+      </div></div>
+    </form>
+  </div>
+</div>
 {% endblock %}

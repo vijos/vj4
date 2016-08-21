@@ -1,5 +1,4 @@
 {% extends "home_base.html" %}
-{% import "components/form.html" as form with context %}
 {% block home_content %}
 <div data-heading-extract-to="#menu-item-home_domain">
 <div class="section">
@@ -17,25 +16,7 @@
       </ul>
     </blockquote>
     <form method="post">
-      <div class="row"><div class="medium-5 columns">
-        <label>
-          {{ _('ID') }} (*)
-          {{ form.text('id', autofocus=true, required=true) }}
-        </label>
-      </div></div>
-      <div class="row"><div class="medium-5 columns">
-        <label>
-          {{ _('Name') }} (*)
-          {{ form.text('name', required=true) }}
-        </label>
-      </div></div>
-      <div class="row"><div class="medium-5 columns">
-        <label>
-          {{ _('Gravatar Email') }}
-          {{ form.text('gravatar') }}
-        </label>
-        <p class="help-text">Will be used as the domain icon.</p>
-      </div></div>
+      {% include "domain_edit_form.html" %}
       <div class="row"><div class="columns">
         <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
         <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
