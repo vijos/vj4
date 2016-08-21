@@ -134,7 +134,7 @@ async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid:
 
 def get_multi_status(*, fields=None, **kwargs):
   coll = db.Collection('document.status')
-  return coll.find(**kwargs, fields=fields)
+  return coll.find(kwargs, fields=fields)
 
 
 async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
