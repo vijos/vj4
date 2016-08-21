@@ -2,11 +2,14 @@
 {% block home_content %}
 <div style="display: none" class="dialog__body--user-select">
   <div>
+    <div class="row"><div class="columns">
+      <h1>{{ _('Select User') }}</h1>
+    </div></div>
     <div class="row">
       <div class="columns">
         <label>
           {{ _('Username / UID') }}
-          <input type="text" class="textbox user-select" data-autofocus>
+          <input name="user" type="text" class="textbox" data-autofocus>
         </label>
       </div>
     </div>
