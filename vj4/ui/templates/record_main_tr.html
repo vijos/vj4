@@ -13,7 +13,7 @@
     {% endif %}
   </td>
   <td class="col--problem">
-    {% if handler.has_perm(vj4.model.builtin.PERM_REJUDGE) %}
+    {% if (rdoc['domain_id'] == handler.domain_id and handler.has_perm(vj4.model.builtin.PERM_REJUDGE)) or handler.has_priv(vj4.model.builtin.PRIV_REJUDGE) %}
     <form class="form--inline" method="post" action="{{ reverse_url('record_rejudge', rid=rdoc['_id']) }}">
       <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
       <button type="submit" class="link text-maroon lighter">
