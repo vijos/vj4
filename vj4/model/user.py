@@ -86,6 +86,12 @@ async def get_by_mail(mail: str, fields=PROJECTION_VIEW):
   return await coll.find_one({'mail_lower': mail_lower}, fields)
 
 
+def get_multi(fields=PROJECTION_VIEW, **kwargs):
+  """Get multiple users."""
+  coll = db.Collection('user')
+  return coll.find(kwargs, fields)
+
+
 @argmethod.wrap
 async def check_password_by_uid(uid: int, password: str):
   """Check password. Returns doc or None."""
@@ -147,7 +153,9 @@ async def set_by_uid(uid, **kwargs):
 
 
 async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTION_VIEW):
-  """Attach udoc to docs by uid in the specified field."""
+  """DEPRECATED: use get_dict() instead.
+
+  Attach udoc to docs by uid in the specified field."""
   uids = set(doc[field_name] for doc in docs)
   if uids:
     coll = db.Collection('user')

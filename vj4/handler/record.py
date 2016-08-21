@@ -6,6 +6,7 @@ from bson import objectid
 from vj4 import app
 from vj4 import constant
 from vj4 import error
+from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
@@ -13,7 +14,7 @@ from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import problem
 from vj4.service import bus
-from vj4.handler import base
+from vj4.util import aiters
 
 
 @app.route('/records', 'record_main')
@@ -22,10 +23,11 @@ class RecordMainHandler(base.Handler):
     # TODO(iceboy): projection, pagination.
     # TODO(twd2): check permission for visibility. (e.g. test).
     rdocs = await record.get_all_multi().sort([('_id', -1)]).to_list(50)
+    uids = list(set(rdoc['uid'] for rdoc in rdocs))
     # TODO(iceboy): projection.
-    await asyncio.gather(user.attach_udocs(rdocs, 'uid'),
-                         problem.attach_pdocs(rdocs, 'domain_id', 'pid'))
-    self.render('record_main.html', rdocs=rdocs)
+    udict, _ = await asyncio.gather(aiters.to_dict(user.get_multi(_id={'$in': uids}), '_id'),
+                                    problem.attach_pdocs(rdocs, 'domain_id', 'pid'))
+    self.render('record_main.html', rdocs=rdocs, udict=udict)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
@@ -38,10 +40,11 @@ class RecordMainConnection(base.Connection):
     rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
     # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
-    rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
+    udoc, rdoc['pdoc'] = await asyncio.gather(
       user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
     # TODO(iceboy): check permission for visibility. (e.g. test).
-    self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc), rdoc=rdoc)
+    # TODO(iceboy): remove the rdoc sent.
+    self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc), rdoc=rdoc)
 
   async def on_close(self):
     bus.unsubscribe(self.on_record_change)

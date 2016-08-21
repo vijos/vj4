@@ -29,7 +29,9 @@
             </tr>
           {% else %}
             {% for rdoc in rdocs %}
+            {% with udoc = udict[rdoc['uid']] %}
             {% include 'record_main_tr.html' %}
+            {% endwith %}
             {% endfor %}
           {% endif %}
           </tbody>

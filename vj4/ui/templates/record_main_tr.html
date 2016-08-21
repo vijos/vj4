@@ -29,6 +29,6 @@
       {{ rdoc['pdoc']['title'] }}
     </a>
   </td>
-  <td class="col--submit-by"><a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">{{ rdoc['udoc']['uname'] }}</a></td>
+  <td class="col--submit-by"><a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">{{ udoc['uname'] }}</a></td>
   <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>
 </tr>
