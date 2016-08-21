@@ -282,17 +282,18 @@ Action: 动作
 Rejudge: 重测
 Oops, there are no results.: 呀，没有结果。
 My Domains: 我的域
+What is domain?: 什么是域?
 View: 查看
 Manage: 管理
-domain_create: 创建域
+home_domain_create: 创建域
 Create Domain: 创建域
-domain_main: 域控制
-domain_edit: 编辑域
+domain_main: 管理域
+domain_edit: 编辑域信息
+domain_user: 管理用户
 domain_role: 角色
 Roles: 角色
 Your role: 您的角色
 Your permission: 您的权限
-ID: 标识符
 Edit Domain: 编辑域
 Description: 说明
 You don't own any domain and don't have privilege to create domain.: 您不拥有任何域也没有创建域名的特权。
@@ -328,10 +329,10 @@ Problem {1} not found.: 题目 {1} 不存在。
 Training requirement is not satisfied.: 不满足训练条件。
 Record {0} not found.: 记录 {0} 不存在。
 '{0} limit exceeded (limit: {2} operations in {1} seconds).': '{0} 超过频率限制。限制：{1} 秒内最多 {2} 次操作。'
-Domain ID cannot be changed once the domain is created.: 域标识符在创建后不能更改。
-'A domain ID is supposed to be:': '域标识符必须满足以下条件：'
-to be unique: 唯一
-not be wrapped with space: 两侧不含空格
-not to start with a number: 首字符不为数字
-without slashes or backslashes: 不含斜杠和反斜杠
+Domain ID cannot be changed once the domain is created.: 在创建后不能更改 ID。
+'A domain ID cannot be changed after creation. It is supposed to be:': '创建后将无法更改 ID。ID 必须满足以下条件：'
+Unique: 唯一
+Not wrapped with space: 两侧不含空格
+Not started with a number: 不以数字开头
+Without slashes or backslashes: 不含斜杠和反斜杠
 Username / UID: 用户名或 UID

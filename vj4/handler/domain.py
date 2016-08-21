@@ -13,22 +13,6 @@ class DomainMainHandler(base.Handler):
                                  (self.translate('domain_main'), None)])
 
 
-@app.route('/domain/create', 'domain_create')
-class DomainCreateHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
-  async def get(self):
-    self.render('domain_edit.html',
-                path_components=[(self.translate('domain_create'), None)])
-
-  @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
-  @base.post_argument
-  @base.require_csrf_token
-  @base.sanitize
-  async def post(self, *, id: str, description: str):
-    domain_id = await domain.add(id, self.user['_id'], description=description)
-    self.json_or_redirect(self.reverse_url('main', domain_id=domain_id))
-
-
 @app.route('/domain/edit', 'domain_edit')
 class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
@@ -50,6 +34,12 @@ class DomainEditHandler(base.Handler):
     self.render('domain_edit.html', udoc=udoc,
                 path_components=[(self.domain_id, self.reverse_url('main')),
                                  (self.translate('domain_edit'), None)])
+
+
+@app.route('/domain/user', 'domain_user')
+class DomainUserHandler(base.Handler):
+  async def get(self):
+    self.render('domain_user.html')
 
 
 @app.route('/domain/role', 'domain_role')

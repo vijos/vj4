@@ -206,8 +206,25 @@ class HomeMessagesConnection(base.Connection):
 
 
 @app.route('/home/domain', 'home_domain')
-class HomeAccountHandler(base.Handler):
+class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     ddocs = await domain.get_list(owner_uid=self.user['_id'])
     self.render('home_domain.html', ddocs=ddocs)
+
+
+@app.route('/home/domain/create', 'home_domain_create')
+class HomeDomainCreateHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
+  async def get(self):
+    self.render('home_domain_create.html')
+
+  @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, id: str, description: str):
+    domain_id = await domain.add(id, self.user['_id'], description=description)
+    self.json_or_redirect(self.reverse_url('main', domain_id=domain_id))
+
+
