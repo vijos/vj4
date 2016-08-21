@@ -113,7 +113,7 @@ class ProblemPageExtender {
 
 }
 
-const page = new NamedPage('problem_detail', async () => {
+const page = new NamedPage('problem_detail', () => {
   let componentMounted = false;
   let $floatingSidebar = null;
   const extender = new ProblemPageExtender();
