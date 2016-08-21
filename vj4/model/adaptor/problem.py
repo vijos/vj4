@@ -270,8 +270,9 @@ async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
 async def attach_pdocs(docs, domain_field_name, pid_field_name):
   """Attach pdoc to docs by pid in the specified field."""
   # TODO(iceboy): projection.
+  key_func = lambda doc: doc[domain_field_name]
   pids_by_domain = {}
-  for domain_id, domain_docs in itertools.groupby(docs, lambda doc: doc[domain_field_name]):
+  for domain_id, domain_docs in itertools.groupby(sorted(docs, key=key_func), key_func):
     pids = builtins.set(doc[pid_field_name] for doc in domain_docs)
     pdocs = await document.get_multi(domain_id, document.TYPE_PROBLEM,
                                      doc_id={'$in': list(pids)}).to_list(None)
