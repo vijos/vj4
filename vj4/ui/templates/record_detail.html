@@ -46,8 +46,8 @@
                 <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}"></span>
                 <span class="record-status--text {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}">
                   {{ vj4.constant.record.STATUS_TEXTS[rcdoc['status']] }}
-                  {{ rcdoc['judge_text'] }}
                 </span>
+                <span>{{ rcdoc['judge_text'] }}</span>
               </td>
               <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
               <td class="col--memory">{{ rcdoc['memory_kb'] / 1000 }}MiB</td>
