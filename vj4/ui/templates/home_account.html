@@ -15,7 +15,7 @@
       {% if setting.ui == 'text' %}
         {{ form.text(setting.key, handler.get_setting(setting.key)) }}
       {% elif setting.ui == 'select' %}
-        {{ form.select(setting.key, setting.range.items(), handler.get_setting(setting.key)) }}
+        {{ form.select(setting.range.items(), setting.key, handler.get_setting(setting.key)) }}
       {% endif %}
       </label>
       {% if setting.desc %}

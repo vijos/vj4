@@ -27,7 +27,7 @@
     vertical-align: top
     position: relative
     outline: 0
-    transition: background .1s linear
+    transition: background .2s linear
     background: none
 
     &:after
@@ -42,10 +42,11 @@
       border-right: none
       background: transparent
       transform: rotate(-65deg) scale(0.8)
-      transition: transform .1s
+      transition: transform .2s, opacity .2s
       transition-timing-function: ease-out-cubic
+      opacity: 0
 
-    &:hover
+    &:enabled:hover
       border-color: rgba($primary-color, 0.7)
 
     &:checked
@@ -53,4 +54,12 @@
       border-color: $primary-color
 
     &:checked:after
+      opacity: 1
       transform: rotate(-45deg)
+
+    &:disabled
+      opacity: 0.5
+
+.data-table
+  .checkbox
+    margin-bottom: 0
