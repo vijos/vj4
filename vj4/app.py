@@ -27,8 +27,8 @@ options.define('registration_token_expire_seconds', default=86400,
                help='Expire time for registration token, in seconds.')
 options.define('lostpass_token_expire_seconds', default=3600,
                help='Expire time for lostpass token, in seconds.')
-options.define('newmail_token_expire_seconds', default=3600,
-               help='Expire time for newmail token, in seconds.')
+options.define('changemail_token_expire_seconds', default=3600,
+               help='Expire time for changemail token, in seconds.')
 options.define('url_prefix', default='https://vijos.org', help='URL prefix.')
 options.define('cdn_prefix', default='/', help='CDN prefix.')
 
