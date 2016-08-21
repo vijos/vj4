@@ -26,7 +26,7 @@ const page = new NamedPage('home_messages', () => {
       $body: $('.dialog__body--user-select > div'),
       onAction: action => {
         if (action !== 'ok') {
-          return;
+          return true;
         }
         const user = userSelector.value();
         if (user === null) {
@@ -44,6 +44,7 @@ const page = new NamedPage('home_messages', () => {
           type: 'DIALOGUES_SWITCH_TO',
           payload: id,
         });
+        return true;
       },
     });
 
