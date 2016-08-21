@@ -141,8 +141,9 @@ async def get_solution_status(domain_id: str, psid: document.convert_doc_id, uid
 async def attach_pssdocs(docs, domain_field_name, psid_field_name, uid):
   """Attach pssdoc to docs by domain_id and psid in the specified field."""
   # TODO(twd2): projection.
+  key_func = lambda doc: doc[domain_field_name]
   psids_by_domain = {}
-  for domain_id, domain_docs in itertools.groupby(docs, lambda doc: doc[domain_field_name]):
+  for domain_id, domain_docs in itertools.groupby(sorted(docs, key=key_func), key_func):
     psids = builtins.set(doc[psid_field_name] for doc in domain_docs)
     pssdocs = await document.get_multi_status(domain_id, document.TYPE_PROBLEM_SOLUTION,
                                               doc_id={'$in': list(psids)}, uid=uid).to_list(None)
