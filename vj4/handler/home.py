@@ -13,7 +13,6 @@ from vj4.model import token
 from vj4.model import user
 from vj4.handler import base
 from vj4.service import bus
-from vj4.service import mailer
 from vj4.util import useragent
 from vj4.util import geoip
 from vj4.util import options
@@ -68,10 +67,9 @@ class HomeSecurityHandler(base.OperationHandler):
     rid, _ = await token.add(token.TYPE_CHANGEMAIL,
                              options.options.changemail_token_expire_seconds,
                              uid=udoc['_id'], mail=mail)
-    content = self.render_html('user_changemail_mail.html', url_prefix=options.options.url_prefix,
-                               url=self.reverse_url('user_changemail_with_code', code=rid),
-                               uname=udoc['uname'])
-    await mailer.send_mail(mail, 'Change Email - Vijos', content)
+    await self.send_mail(mail, 'Change Email', 'user_changemail_mail.html',
+                         url=self.reverse_url('user_changemail_with_code', code=rid),
+                         uname=udoc['uname'])
     self.render('user_changemail_mail_sent.html')
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
