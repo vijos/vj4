@@ -1,43 +1,71 @@
 {% extends "home_base.html" %}
 {% block home_content %}
-<div data-heading-extract-to="#menu-item-home_domain">
-{% if handler.has_priv(vj4.model.builtin.PRIV_CREATE_DOMAIN) %}
 <div class="section">
   <div class="section__header">
-    <h1 class="section__title" id="create" data-heading>{{ _('Create Domain') }}</h1>
+    <h1 class="section__title">{{ _('My Domains') }}</h1>
+    <div class="section__tools">
+      {% if handler.has_priv(vj4.model.builtin.PRIV_CREATE_DOMAIN) %}
+      <a class="primary rounded button" href="{{ reverse_url('home_domain_create') }}"><span class="icon icon-add"></span> {{ _('Create Domain') }}</a>
+      {% endif %}
+      <a class="tool-button" href="#"><span class="icon icon-help"></span> {{ _('What is domain?') }}</a>
+    </div>
   </div>
-  <div class="section__body">
-    <div class="row"><div class="medium-4 columns">
-      <a class="rounded primary button" href="{{ reverse_url('domain_create') }}">{{ _('Create') }}</a>
-    </div></div>
+  <div class="section__body no-padding">
+    <table class="data-table">
+      <colgroup>
+        <col class="col--icon">
+        <col class="col--name">
+        <col class="col--role">
+        <col class="col--action">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="col--icon">&nbsp;</th>
+          <th class="col--name">Name (ID)</th>
+          <th class="col--role">My Role</th>
+          <th class="col--action">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- TODO: remove this comment when you have read it:
+        this row is for the built-in domain always -->
+        <tr>
+          <td class="col--icon">
+            <img src="//gravatar.com/avatar/b90f241b476bc57ae043d2f125ea00f1?s=200&amp;d=retro" width="32" height="32">
+          </td>
+          <td class="col--name">
+            <span data-tooltip="This is a built-in domain that every user is in.">Vijos (system)</span>
+          </td>
+          <td class="col--role">
+            Member
+          </td>
+          <td class="col--action">
+            <!-- TODO (swx): Manage should be visible to those who have privilege -->
+            <a href="{{ reverse_url('main') }}">Visit</a>
+            · <a href="{{ reverse_url('domain_main') }}">Manage</a>
+          </td>
+        </tr>
+        {% for ddoc in ddocs %}
+        <tr>
+          <td class="col--icon">
+            <img src="s=200&amp;d=retro" width="32" height="32">
+          </td>
+          <td class="col--name">
+            ?? ({{ ddoc['_id'] }})
+          </td>
+          <td class="col--role">
+            <!-- TODO (swx): Replace with the real role -->
+            Member
+          </td>
+          <td class="col--action">
+            <!-- TODO (swx): Manage should be visible to those who have privilege -->
+            <a href="{{ reverse_url('main', domain_id=ddoc['_id']) }}">Visit</a>
+            · <a href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">Manage</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-</div>
-{% endif %}
-{% for ddoc in ddocs %}
-<div class="section">
-  <div class="section__header">
-    <h1 class="section__title" id="{{ ddoc['_id'] }}" data-heading>{{ ddoc['_id'] }}</h1>
-  </div>
-  <div class="section__body typo">
-    {{ ddoc['description']|markdown }}
-  </div>
-  <div class="section__body">
-    <div class="row"><div class="medium-4 columns">
-      <a class="rounded primary button" href="{{ reverse_url('main', domain_id=ddoc['_id']) }}">{{ _('View') }}</a>
-      <a class="rounded primary button" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
-    </div></div>
-  </div>
-</div>
-{% endfor %}
-{% if not handler.has_priv(vj4.model.builtin.PRIV_CREATE_DOMAIN) and not ddocs %}
-<div class="section">
-  <div class="section__header">
-    <h1 class="section__title" id="create" data-heading>{{ _('Sorry') }}</h1>
-  </div>
-  <div class="section__body">
-    <p>{{ _('You don\'t own any domain and don\'t have privilege to create domain.') }}</p>
-  </div>
-</div>
-{% endif %}
 </div>
 {% endblock %}
