@@ -29,7 +29,11 @@ class RecordMainHandler(base.Handler):
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
         aiters.to_dict(user.get_multi(_id={'$in': uids}), '_id'),
-        aiters.to_dict_multi(problem.get_multi(**pquery), 'domain_id', 'doc_id'))
+        aiters.to_dict_multi(
+            problem.get_multi(**pquery).hint([('domain_id', 1),
+                                              ('doc_type', 1),
+                                              ('doc_id', 1)]),
+            'domain_id', 'doc_id'))
     self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict)
 
 
