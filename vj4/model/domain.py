@@ -39,21 +39,15 @@ async def get(domain_id: str, fields=None):
   return await coll.find_one(domain_id, fields)
 
 
-def get_multi(owner_uid=None, fields=None):
+def get_multi(*, fields=None, **kwargs):
   coll = db.Collection('domain')
-  query = {}
-  if owner_uid != None:
-    query['owner_uid'] = owner_uid
-  return coll.find(query, fields)
+  return coll.find(kwargs, fields)
 
 
 @argmethod.wrap
-async def get_list(owner_uid: int=None, fields=None, limit: int=None):
+async def get_list(*, fields=None, limit: int=None, **kwargs):
   coll = db.Collection('domain')
-  query = {}
-  if owner_uid != None:
-    query['owner_uid'] = owner_uid
-  return await coll.find(query, fields).to_list(None)
+  return await coll.find(kwargs, fields).to_list(limit)
 
 
 @argmethod.wrap
@@ -140,9 +134,9 @@ async def update_udocs(domain_id, udocs, fields=None):
   return udocs
 
 
-def get_multi_users(domain_id: str, fields=None):
+def get_multi_users(*, fields=None, **kwargs):
   coll = db.Collection('domain.user')
-  return coll.find({'domain_id': domain_id}, fields)
+  return coll.find(kwargs, fields)
 
 
 @argmethod.wrap
@@ -157,6 +151,7 @@ async def ensure_indexes():
   coll = db.Collection('domain')
   await coll.ensure_index('owner_uid')
   user_coll = db.Collection('domain.user')
+  await user_coll.ensure_index('uid')
   await user_coll.ensure_index([('domain_id', 1),
                                 ('uid', 1)], unique=True)
   await user_coll.ensure_index([('domain_id', 1),

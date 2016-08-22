@@ -29,12 +29,13 @@
       <tbody>
         <!-- TODO: remove this comment when you have read it:
         this row is for the built-in domain always -->
+        {% for ddoc in vj4.model.builtin.DOMAINS %}
         <tr>
           <td class="col--icon">
-            <img src="//gravatar.com/avatar/b90f241b476bc57ae043d2f125ea00f1?s=200&amp;d=retro" width="32" height="32">
+            <img src="{{ ddoc['gravatar']|gravatar_url }}" width="32" height="32">
           </td>
           <td class="col--name">
-            <span data-tooltip="This is a built-in domain that every user is in.">Vijos (system)</span>
+            <span data-tooltip="This is a built-in domain that every user is in.">{{ ddoc['name'] }} ({{ ddoc['_id'] }})</span>
           </td>
           <td class="col--role">
             Member
@@ -45,6 +46,7 @@
             · <a href="{{ reverse_url('domain_main') }}">Manage</a>
           </td>
         </tr>
+        {% endfor %}
         {% for ddoc in ddocs %}
         <tr>
           <td class="col--icon">

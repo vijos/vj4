@@ -19,6 +19,7 @@ from vj4.util import geoip
 from vj4.util import options
 from vj4.util import validator
 
+
 TOKEN_TYPE_TEXTS = {
   token.TYPE_SAVED_SESSION: 'Saved session',
   token.TYPE_UNSAVED_SESSION: 'Temporary session',
@@ -209,7 +210,11 @@ class HomeMessagesConnection(base.Connection):
 class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    ddocs = await domain.get_list(owner_uid=self.user['_id'])
+    uddocs = await domain.get_multi_users(uid=self.user['_id']) \
+                         .to_list(None)
+    dids = list(set(uddoc['domain_id'] for uddoc in uddocs))
+    ddocs_in = await domain.get_list(_id={'$in': dids})
+    ddocs_own = await domain.get_list(owner_uid=self.user['_id'])
     self.render('home_domain.html', ddocs=ddocs)
 
 
