@@ -105,18 +105,12 @@ class JudgeNotifyConnection(base.Connection):
       post_coros = [bus.publish('record_change', rid)]
       # TODO(twd2): ignore no effect statuses like system error, ...
       if rdoc['type'] == constant.record.TYPE_SUBMISSION:
-        _, delta_submit, delta_accept = (
-          await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
-                                      rdoc['_id'], rdoc['status'], accept, rdoc['score']))
-        if delta_submit != 0 or delta_accept != 0:
-          post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], delta_submit, delta_accept))
-          post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'],
-                                            num_submit=delta_submit, num_accept=delta_accept))
-        if delta_accept != 0:
+        if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
+                                       rdoc['_id'], rdoc['status']):
+          post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))
+          post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'], num_accept=1))
           # TODO(twd2): enqueue rdoc['pid'] to recalculate rp.
-          if delta_accept == +1:
-            # TODO(twd2): send ac mail
-            pass
+          # TODO(twd2): send ac mail
         if rdoc['tid']:
           post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
                                                   rdoc['_id'], rdoc['pid'], accept, rdoc['score']))

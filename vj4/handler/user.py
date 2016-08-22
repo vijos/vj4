@@ -6,7 +6,6 @@ from vj4 import error
 from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
-from vj4.model import opcount
 from vj4.model import system
 from vj4.model import token
 from vj4.model import user
