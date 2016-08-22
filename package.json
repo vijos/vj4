@@ -54,11 +54,11 @@
     "diff-dom": "^2.1.0",
     "emojify.js": "^1.1.0",
     "highlight.js": "^9.5.0",
-    "jqmath-build": "^0.0.4",
     "jquery": "^3.1.0",
     "jquery-scroll-lock": "^2.2.0",
     "jquery.easing": "^1.4.1",
     "jquery.transit": "^0.9.12",
+    "katex": "^0.6.0",
     "lodash": "^4.14.2",
     "moment": "^2.14.1",
     "normalize.css": "^4.2.0",
@@ -88,7 +88,7 @@
     "generate:locale": "gulp locale",
     "generate": "gulp",
     "build": "webpack --progress --color --display-error-details",
-    "build:production": "npm run build -- -p",
+    "build:production": "npm run build -- -p --optimize-dedupe",
     "watch": "npm run build -- --watch"
   },
   "babel": {

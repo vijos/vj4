@@ -5,7 +5,6 @@ import 'promise.prototype.finally';
 import 'jquery.transit';
 
 import 'normalize.css/normalize.css';
-import 'jqmath-build/webpack.js';
 import 'codemirror/lib/codemirror.css';
 
 import './misc/float.styl';
