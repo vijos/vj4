@@ -85,8 +85,7 @@ class RecordRejudgeHandler(base.Handler):
       self.check_perm(builtin.PERM_REJUDGE)
     else:
       self.check_priv(builtin.PRIV_REJUDGE)
-    rdoc = await record.rejudge(rdoc['_id'])
-    await bus.publish('record_change', rdoc['_id'])
+    await record.rejudge(rdoc['_id'])
     self.json_or_redirect(self.referer_or_main)
 
 

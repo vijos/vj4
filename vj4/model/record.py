@@ -5,7 +5,9 @@ from bson import objectid
 from vj4 import db
 from vj4 import constant
 from vj4.model import document
+from vj4.model import domain
 from vj4.model import queue
+from vj4.model.adaptor import problem
 from vj4.service import bus
 from vj4.util import argmethod
 from vj4.util import validator
@@ -34,7 +36,10 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
                            'tid': tid,
                            'data_id': data_id,
                            'type': type})
-  await queue.publish('judge', rid=rid)
+  await asyncio.gather(queue.publish('judge', rid=rid),
+                       bus.publish('record_change', rid),
+                       problem.inc(domain_id, pid, 'num_submit', 1),
+                       domain.inc_user(domain_id, uid, num_submit=1))
   return rid
 
 
@@ -58,9 +63,13 @@ async def rejudge(record_id: objectid.ObjectId):
                                                     'score': 0,
                                                     'time_ms': 0,
                                                     'memory_kb': 0}},
-                                   new=True)
-  await queue.publish('judge', rid=doc['_id'])
-  return doc
+                                   new=False)
+  post_coros = [queue.publish('judge', rid=doc['_id']),
+                bus.publish('record_change', doc['_id'])]
+  if doc['status'] == constant.record.STATUS_ACCEPTED:
+    post_coros.append(problem.inc(doc['domain_id'], doc['pid'], 'num_accept', -1))
+    post_coros.append(domain.inc_user(doc['domain_id'], doc['uid'], num_accept=-1))
+  await asyncio.gather(*post_coros)
 
 
 @argmethod.wrap
