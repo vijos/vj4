@@ -13,6 +13,7 @@ from vj4.model import token
 from vj4.model import user
 from vj4.handler import base
 from vj4.service import bus
+from vj4.util import aiters
 from vj4.util import useragent
 from vj4.util import geoip
 from vj4.util import options
@@ -208,12 +209,12 @@ class HomeMessagesConnection(base.Connection):
 class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    uddocs = await domain.get_multi_users(uid=self.user['_id']) \
-                         .to_list(None)
-    dids = list(set(uddoc['domain_id'] for uddoc in uddocs))
-    ddocs_in = await domain.get_list(_id={'$in': dids})
-    ddocs_own = await domain.get_list(owner_uid=self.user['_id'])
-    self.render('home_domain.html', ddocs=ddocs)
+    uddict = await aiters.to_dict(domain.get_multi_users(uid=self.user['_id']), 'domain_id')
+    dids = list(uddict.keys())
+    ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
+                                              {'owner_uid': self.user['_id']}]}) \
+                        .to_list(None)
+    self.render('home_domain.html', ddocs=ddocs, uddict=uddict)
 
 
 @app.route('/home/domain/create', 'home_domain_create')
@@ -226,8 +227,8 @@ class HomeDomainCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, id: str, description: str):
-    domain_id = await domain.add(id, self.user['_id'], description=description)
+  async def post(self, *, id: str, name: str, gravatar: str):
+    domain_id = await domain.add(id, self.user['_id'], name=name, gravatar=gravatar)
     self.json_or_redirect(self.reverse_url('main', domain_id=domain_id))
 
 

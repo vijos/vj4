@@ -17,8 +17,7 @@ class DomainMainHandler(base.Handler):
 class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   async def get(self):
-    udoc = await user.get_by_uid(self.domain['owner_uid'], user.PROJECTION_PUBLIC)
-    self.render('domain_edit.html', udoc=udoc,
+    self.render('domain_edit.html',
                 path_components=[(self.domain_id, self.reverse_url('main')),
                                  (self.translate('domain_edit'), None)])
 
@@ -26,12 +25,11 @@ class DomainEditHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, description: str):
-    ddoc = await domain.set(self.domain_id, description=description)
+  async def post(self, *, name: str, gravatar: str):
+    ddoc = await domain.set(self.domain_id, name=name, gravatar=gravatar)
     if ddoc:
       self.domain = ddoc
-    udoc = await user.get_by_uid(self.domain['owner_uid'], user.PROJECTION_PUBLIC)
-    self.render('domain_edit.html', udoc=udoc,
+    self.render('domain_edit.html',
                 path_components=[(self.domain_id, self.reverse_url('main')),
                                  (self.translate('domain_edit'), None)])
 
