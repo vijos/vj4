@@ -49,8 +49,8 @@ const config = {
     ],
     loaders: [
       {
-        // icon fonts
-        test: /vj4icon\.(ttf|eot|woff|woff2)$/,
+        // fonts
+        test: /\.(svg|ttf|eot|woff|woff2)$/,
         loader: 'file',
         query: {
           name: '[path][name].[ext]?[sha512:hash:base62:7]',
@@ -58,7 +58,7 @@ const config = {
       },
       {
         // images
-        test: /\.(png|jpg|svg)$/,
+        test: /\.(png|jpg)$/,
         loader: 'url',
         query: {
           limit: 4024,
