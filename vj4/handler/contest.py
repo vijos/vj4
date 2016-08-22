@@ -1,7 +1,6 @@
 import asyncio
 import collections
 import datetime
-import time
 import pytz
 from bson import objectid
 
@@ -12,7 +11,6 @@ from vj4.model import document
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
-from vj4.service import bus
 from vj4.handler import base
 
 STATUS_TEXTS = {
@@ -122,7 +120,6 @@ class ContestDetailProblemSubmitHandler(base.Handler):
     # TODO(iceboy): Check if contest can be submitted.
     rid = await record.add(self.domain_id, pdoc['doc_id'], record.TYPE_SUBMISSION, self.user['_id'],
                            lang, code, tid=tdoc['doc_id'], hidden=True)
-    await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 

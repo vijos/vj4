@@ -10,7 +10,6 @@ from vj4.model import document
 from vj4.model import domain
 from vj4.model import record
 from vj4.model.adaptor import problem
-from vj4.service import bus
 
 
 @app.route('/p', 'problem_main')
@@ -103,7 +102,6 @@ class ProblemSubmitHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid)
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
                            self.user['_id'], lang, code)
-    await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
@@ -124,7 +122,6 @@ class ProblemPretestHandler(base.Handler):
                              pid=pdoc['doc_id'])
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST,
                            self.user['_id'], lang, code, did)
-    await bus.publish('record_change', rid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
