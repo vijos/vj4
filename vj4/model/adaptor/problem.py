@@ -1,10 +1,10 @@
-import builtins
 import datetime
 import itertools
 
 from bson import objectid
 from pymongo import errors
 
+from vj4 import constant
 from vj4 import db
 from vj4 import error
 from vj4.model import document
@@ -95,7 +95,8 @@ async def get_dict_status(domain_id, uid, pids, *, fields=None):
   result = dict()
   async for psdoc in get_multi_status(domain_id=domain_id,
                                       uid=uid,
-                                      doc_id={'$in': list(set(pids))}):
+                                      doc_id={'$in': list(set(pids))},
+                                      fields=fields):
     result[psdoc['doc_id']] = psdoc
   return result
 
@@ -158,7 +159,7 @@ async def attach_pssdocs(docs, domain_field_name, psid_field_name, uid):
   key_func = lambda doc: doc[domain_field_name]
   psids_by_domain = {}
   for domain_id, domain_docs in itertools.groupby(sorted(docs, key=key_func), key_func):
-    psids = builtins.set(doc[psid_field_name] for doc in domain_docs)
+    psids = set(doc[psid_field_name] for doc in domain_docs)
     pssdocs = await document.get_multi_status(domain_id=domain_id,
                                               doc_type=document.TYPE_PROBLEM_SOLUTION,
                                               doc_id={'$in': list(psids)}, uid=uid).to_list(None)
@@ -224,63 +225,23 @@ async def get_data_list(last: int):
     if last_datetime < date:
       pids.append((pdoc['domain_id'], pdoc['doc_id']))
 
-  return list(builtins.set(pids))
+  return list(set(pids))
 
 
 @argmethod.wrap
-async def inc(domain_id: str, pid: document.convert_doc_id,
-              submit: int, accept: int):
-  await document.inc(domain_id, document.TYPE_PROBLEM, pid, 'num_submit', submit)
-  pdoc = await document.inc(domain_id, document.TYPE_PROBLEM, pid, 'num_accept', accept)
-  if not pdoc:
-    raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
-  return pdoc
-
-
-def _sort_and_uniquify(journal):
-  # Sort and uniquify journal of the contest status document, by rid.
-  key_func = lambda j: j['rid']
-  return [list(g)[-1]
-          for _, g in itertools.groupby(sorted(journal, key=key_func), key=key_func)]
-
-
-def _stat_func(journal):
-  stat = {'num_submit': 0, 'num_accept': 0}
-  if not journal:
-    return stat
-  best_j = journal[-1]
-  for j in journal:
-    stat['num_submit'] += 1
-    if j['accept']:
-      stat['num_accept'] += 1
-      best_j = j
-      # ignore older record
-      break
-  stat['rid'] = best_j['rid']
-  stat['status'] = best_j['status']
-  return stat
+async def inc(domain_id: str, pid: document.convert_doc_id, key: str, value: int):
+  return await document.inc(domain_id, document.TYPE_PROBLEM, pid, key, value)
 
 
 @argmethod.wrap
 async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
-                        rid: objectid.ObjectId, status: int, accept: bool, score: int):
-  """This method returns None when the modification has been superseded by a parallel operation."""
-  pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
-  psdoc = await document.rev_push_status(
-    domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], uid,
-    'journal', {'rid': rid, 'accept': accept, 'status': status, 'score': score})
-  new_journal = _sort_and_uniquify(psdoc['journal'])
-  new_stats = _stat_func(new_journal)
-  psdoc['journal'].pop()
-  old_journal = _sort_and_uniquify(psdoc['journal'])
-  old_stats = _stat_func(old_journal)
-  psdoc = await document.rev_set_status(domain_id, document.TYPE_PROBLEM, pdoc['doc_id'], uid,
-                                        psdoc['rev'], journal=new_journal, **new_stats)
-  # Deltas shouldn't be 0 even if rev_set_status failed (returned None)
-  # because rev_push_status succeeded.
-  return (psdoc,
-          (new_stats['num_submit'] - old_stats['num_submit']),
-          (new_stats['num_accept'] - old_stats['num_accept']))
+                        rid: objectid.ObjectId, status: int):
+  try:
+    return await document.set_if_not_status(domain_id, document.TYPE_PROBLEM, pid, uid,
+                                            'status', status, constant.record.STATUS_ACCEPTED,
+                                            rid=rid)
+  except errors.DuplicateKeyError:
+    return None
 
 
 if __name__ == '__main__':
