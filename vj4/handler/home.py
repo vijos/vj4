@@ -13,7 +13,6 @@ from vj4.model import token
 from vj4.model import user
 from vj4.handler import base
 from vj4.service import bus
-from vj4.service import mailer
 from vj4.util import useragent
 from vj4.util import geoip
 from vj4.util import options
@@ -66,14 +65,13 @@ class HomeSecurityHandler(base.OperationHandler):
       raise error.CurrentPasswordError(self.user['uname'])
     if mail_holder_udoc:
       raise error.UserAlreadyExistError(mail)
-    rid, _ = await token.add(token.TYPE_NEWMAIL,
-                             options.options.newmail_token_expire_seconds,
+    rid, _ = await token.add(token.TYPE_CHANGEMAIL,
+                             options.options.changemail_token_expire_seconds,
                              uid=udoc['_id'], mail=mail)
-    content = self.render_html('user_newmail_mail.html', url_prefix=options.options.url_prefix,
-                               url=self.reverse_url('user_newmail_with_code', code=rid),
-                               uname=udoc['uname'])
-    await mailer.send_mail(mail, 'New Email - Vijos', content)
-    self.render('user_newmail_mail_sent.html')
+    await self.send_mail(mail, 'Change Email', 'user_changemail_mail.html',
+                         url=self.reverse_url('user_changemail_with_code', code=rid),
+                         uname=udoc['uname'])
+    self.render('user_changemail_mail_sent.html')
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
@@ -96,21 +94,21 @@ class HomeSecurityHandler(base.OperationHandler):
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/home/security/{code}', 'user_newmail_with_code')
-class UserNewmailWithCodeHandler(base.Handler):
+@app.route('/home/security/changemail/{code}', 'user_changemail_with_code')
+class UserChangemailWithCodeHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
   @base.sanitize
   async def get(self, *, code: str):
-    tdoc = await token.get(code, token.TYPE_NEWMAIL)
+    tdoc = await token.get(code, token.TYPE_CHANGEMAIL)
     if not tdoc or tdoc['uid'] != self.user['_id']:
-      raise error.InvalidTokenError(token.TYPE_NEWMAIL, code)
+      raise error.InvalidTokenError(token.TYPE_CHANGEMAIL, code)
     mail_holder_udoc = await user.get_by_mail(tdoc['mail'])
     if mail_holder_udoc:
       raise error.UserAlreadyExistError(tdoc['mail'])
     # TODO(twd2): Ensure mail is unique.
     await user.set_mail(self.user['_id'], tdoc['mail'])
-    await token.delete(code, token.TYPE_NEWMAIL)
+    await token.delete(code, token.TYPE_CHANGEMAIL)
     self.json_or_redirect(self.reverse_url('home_security'))
 
 

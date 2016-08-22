@@ -59,10 +59,10 @@ class JudgeNotifyConnection(base.Connection):
     # This callback runs in the receiver loop of the amqp connection. Should not block here.
     async def start():
       # TODO(iceboy): Error handling?
-      rdoc = await record.begin_judge(rid, self.user['_id'], self.id, constant.record.STATUS_COMPILING)
+      rdoc = await record.begin_judge(rid, self.user['_id'], self.id, constant.record.STATUS_FETCHED)
       if rdoc:
         self.rids[tag] = rdoc['_id']
-        self.send(id=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
+        self.send(rid=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
                   lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])
         await bus.publish('record_change', rdoc['_id'])
       else:
@@ -87,7 +87,10 @@ class JudgeNotifyConnection(base.Connection):
           'score': int(kwargs['case']['score']),
           'time_ms': int(kwargs['case']['time_ms']),
           'memory_kb': int(kwargs['case']['memory_kb']),
+          'judge_text': str(kwargs['case']['judge_text']),
         }
+      if 'progress' in kwargs:
+        update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
       await record.next_judge(rid, self.user['_id'], self.id, **update)
       await bus.publish('record_change', rid)
     elif key == 'end':

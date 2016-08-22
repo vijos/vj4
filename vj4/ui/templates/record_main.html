@@ -23,15 +23,17 @@
             </tr>
           </thead>
           <tbody>
-          {% if not rdocs %}
+            {% if not rdocs %}
             <tr class="empty-row">
               <td colspan="4">{{ _('Oh, there is no task in the queue!') }}</td>
             </tr>
-          {% else %}
+            {% else %}
             {% for rdoc in rdocs %}
+            {% with udoc = udict[rdoc['uid']], pdoc = pdict[(rdoc['domain_id'], rdoc['pid'])] %}
             {% include 'record_main_tr.html' %}
+            {% endwith %}
             {% endfor %}
-          {% endif %}
+            {% endif %}
           </tbody>
         </table>
       </div>

@@ -33,16 +33,16 @@ class ProblemTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_star(self):
     await problem.add(DOMAIN_ID, TITLE, CONTENT, UID, PID)
-    pdocs = await problem.get_list(DOMAIN_ID, uid=UID)
-    self.assertFalse(pdocs[0]['psdoc'].get('star'))
+    psdoc = await problem.get_status(DOMAIN_ID, PID, UID)
+    self.assertIsNone(psdoc)
     await problem.set_star(DOMAIN_ID, PID, UID, True)
-    pdocs = await problem.get_list(DOMAIN_ID, uid=UID)
-    self.assertTrue(pdocs[0]['psdoc'].get('star'))
-    pdocs = await problem.get_list(DOMAIN_ID, uid=UID2)
-    self.assertFalse(pdocs[0]['psdoc'].get('star'))
+    psdoc = await problem.get_status(DOMAIN_ID, PID, UID)
+    self.assertTrue(psdoc['star'])
+    psdoc = await problem.get_status(DOMAIN_ID, PID, UID2)
+    self.assertIsNone(psdoc)
     await problem.set_star(DOMAIN_ID, PID, UID2, False)
-    pdocs = await problem.get_list(DOMAIN_ID, uid=UID)
-    self.assertTrue(pdocs[0]['psdoc'].get('star'))
+    psdoc = await problem.get_status(DOMAIN_ID, PID, UID)
+    self.assertTrue(psdoc['star'])
 
 
 class ProblemSolutionTest(base.DatabaseTestCase):

@@ -14,6 +14,11 @@
       <div class="section__body">
         <pre class="compiler-text">{{ rdoc['compiler_texts']|join('\n') }}</pre>
       </div>
+      {% if rdoc['judge_texts'] %}
+      <div class="section__body">
+        <pre class="judge-text">{{ rdoc['judge_texts']|join('\n') }}</pre>
+      </div>
+      {% endif %}
       {% if rdoc['cases'] %}
       <div class="section__body no-padding">
         <table class="data-table record_detail__table">
@@ -42,6 +47,7 @@
                 <span class="record-status--text {{ vj4.constant.record.STATUS_CODES[rcdoc['status']] }}">
                   {{ vj4.constant.record.STATUS_TEXTS[rcdoc['status']] }}
                 </span>
+                <span>{{ rcdoc['judge_text'] }}</span>
               </td>
               <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
               <td class="col--memory">{{ rcdoc['memory_kb'] / 1000 }}MiB</td>

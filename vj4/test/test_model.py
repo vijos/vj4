@@ -82,7 +82,7 @@ class DocumentTest(base.DatabaseTestCase):
     self.assertEqual(doc['domain_id'], DOMAIN_ID)
     self.assertEqual(doc['doc_type'], DOC_TYPE)
     self.assertEqual(doc['doc_id'], doc_id)
-    docs = document.get_multi(DOMAIN_ID, DOC_TYPE, fields=['doc_id', 'title'])
+    docs = document.get_multi(domain_id=DOMAIN_ID, doc_type=DOC_TYPE, fields=['doc_id', 'title'])
     doc = await docs.__anext__()
     self.assertEqual(doc['doc_id'], doc_id)
     self.assertFalse('content' in doc)

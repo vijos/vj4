@@ -23,7 +23,7 @@ async def run(domain_id: str):
     {'domain_id': domain_id, 'doc_type': document.TYPE_PROBLEM},
     {'$unset': {'journal': '', 'rev': '', 'status': '', 'rid': '',
                 'num_submit': '', 'num_accept': ''}}, multi=True)
-  pdocs = problem.get_multi(domain_id, {'_id': 1, 'doc_id': 1}).sort('doc_id', 1)
+  pdocs = problem.get_multi(domain_id=domain_id, fields={'_id': 1, 'doc_id': 1}).sort('doc_id', 1)
   uddoc_updates = {}
   status_coll = db.Collection('document.status')
   async for pdoc in pdocs:

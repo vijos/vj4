@@ -96,7 +96,7 @@ My Profile: 我的资料
 New Email: 新电子邮件
 New Password: 新密码
 Not available: 不可用
-Oh, there is no task in the queue!: 呀，队列中目前没有任务。
+Oh, there is no task in the queue!: 喔，队列中目前没有任务。
 Oops!: Oops!
 Open Scratchpad: 进入在线编程模式
 Login to Use Scratchpad: 请登录后使用在线编程功能
@@ -297,7 +297,7 @@ Your role: 您的角色
 Your permission: 您的权限
 Edit Domain: 编辑域
 Description: 说明
-You don't own any domain and don't have privilege to create domain.: 您不拥有任何域也没有创建域名的特权。
+You don't own any domain and don't have privilege to create domain.: 您不拥有任何域也没有创建域的特权。
 
 An error has occurred.: 发生了一个错误。
 Path {0} not found.: 路径 {0} 不存在。

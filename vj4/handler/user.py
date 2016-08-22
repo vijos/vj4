@@ -10,7 +10,6 @@ from vj4.model import opcount
 from vj4.model import system
 from vj4.model import token
 from vj4.model import user
-from vj4.service import mailer
 from vj4.util import options
 from vj4.util import validator
 from vj4.handler import base
@@ -33,9 +32,8 @@ class UserRegisterHandler(base.Handler):
     rid, _ = await token.add(token.TYPE_REGISTRATION,
                              options.options.registration_token_expire_seconds,
                              mail=mail)
-    content = self.render_html('user_register_mail.html', url_prefix=options.options.url_prefix,
-                               url=self.reverse_url('user_register_with_code', code=rid))
-    await mailer.send_mail(mail, 'Sign Up - Vijos', content)
+    await self.send_mail(mail, 'Sign Up', 'user_register_mail.html',
+                         url=self.reverse_url('user_register_with_code', code=rid))
     self.render('user_register_mail_sent.html')
 
 
@@ -87,10 +85,9 @@ class UserLostpassHandler(base.Handler):
     rid, _ = await token.add(token.TYPE_LOSTPASS,
                              options.options.lostpass_token_expire_seconds,
                              uid=udoc['_id'])
-    content = self.render_html('user_lostpass_mail.html', url_prefix=options.options.url_prefix,
-                               url=self.reverse_url('user_lostpass_with_code', code=rid),
-                               uname=udoc['uname'])
-    await mailer.send_mail(mail, 'Lost Password - Vijos', content)
+    await self.send_mail(mail, 'Lost Password', 'user_lostpass_mail.html',
+                         url=self.reverse_url('user_lostpass_with_code', code=rid),
+                         uname=udoc['uname'])
     self.render('user_lostpass_mail_sent.html')
 
 

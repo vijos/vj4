@@ -9,7 +9,7 @@ from vj4.util import version
 # Domain settings.
 PERM_NONE = 0
 PERM_VIEW = 1 << 0
-PERM_SET_PERM = 1 << 1
+PERM_EDIT_PERM = 1 << 1
 PERM_MOD_BADGE = 1 << 2
 PERM_EDIT_DESCRIPTION = 1 << 3
 PERM_TRANSFER = -1

@@ -30,17 +30,18 @@
           </thead>
           <tbody>
           {% if not pdocs %}
-            <tr class="empty-row">
-              <td colspan="5">{{ _('Sorry, there is no problem in the problem set.') }}</td>
-            </tr>
+          <tr class="empty-row">
+            <td colspan="5">{{ _('Sorry, there is no problem in the problem set.') }}</td>
+          </tr>
           {% else %}
           {% for pdoc in pdocs %}
-            <tr>
-              {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
-              {% if pdoc['psdoc']['rid'] %}
-              <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">
-                <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}"></span>
-                <a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</a>
+          {% with psdoc = psdict.get(pdoc['doc_id']) %}
+          <tr>
+            {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+            {% if psdoc['rid'] %}
+              <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}">
+                <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}"></span>
+                <a href="{{ reverse_url('record_detail', rid=psdoc['rid']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</a>
               </td>
               {% else %}
               <td class="col--status record-status--border">
@@ -51,9 +52,9 @@
                 {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
                 <form class="form--inline" method="post">
                   <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
-                  <input type="hidden" name="operation" value="{% if not pdoc['psdoc'].get('star') %}star{% else %}unstar{% endif %}">
+                  <input type="hidden" name="operation" value="{% if not psdoc['star'] %}star{% else %}unstar{% endif %}">
                   <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                  <button class="star{% if pdoc['psdoc'].get('star') %} activated{% endif %}" type="submit">
+                  <button class="star{% if psdoc['star'] %} activated{% endif %}" type="submit">
                     <span class="starred--hide"><span class="icon icon-star--outline" data-tooltip="{{ _('Star') }}"></span></span>
                     <span class="starred--show"><span class="icon icon-star" data-tooltip="{{ _('Unstar') }}"></span></span>
                   </button>
@@ -67,6 +68,7 @@
               <td class="col--ac_rate">{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int if pdoc['num_submit'] > 0 else _('?') }}</td>
               <td class="col--difficulty">{{ pdoc['difficulty']|default(_('(None)')) }}</td>
             </tr>
+          {% endwith %}
           {% endfor %}
           {% endif %}
           </tbody>

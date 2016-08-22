@@ -90,9 +90,11 @@ async def get(domain_id: str, tid: objectid.ObjectId):
 @argmethod.wrap
 async def get_list(domain_id: str, fields=None):
   # TODO(iceboy): projection, pagination.
-  tdocs = await (document.get_multi(domain_id, document.TYPE_CONTEST, fields=fields)
-                 .sort([('doc_id', -1)])
-                 .to_list(None))
+  tdocs = await document.get_multi(domain_id=domain_id,
+                                   doc_type=document.TYPE_CONTEST,
+                                   fields=fields) \
+                        .sort([('doc_id', -1)]) \
+                        .to_list(None)
   return tdocs
 
 
@@ -117,10 +119,12 @@ async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=No
 async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.
   tdoc = await get(domain_id, tid)
-  tsdocs = await (document.get_multi_status(domain_id, document.TYPE_CONTEST, doc_id=tdoc['doc_id'],
-                                            fields=fields)
-                  .sort(RULES[tdoc['rule']].status_sort)
-                  .to_list(None))
+  tsdocs = await document.get_multi_status(domain_id=domain_id,
+                                           doc_type=document.TYPE_CONTEST,
+                                           doc_id=tdoc['doc_id'],
+                                           fields=fields) \
+                         .sort(RULES[tdoc['rule']].status_sort) \
+                         .to_list(None)
   return tdoc, tsdocs
 
 

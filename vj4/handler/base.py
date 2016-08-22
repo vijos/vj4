@@ -22,6 +22,7 @@ from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
 from vj4.model.adaptor import setting
+from vj4.service import mailer
 from vj4.util import timezone
 from vj4.util import json
 from vj4.util import locale
@@ -198,8 +199,8 @@ class Handler(web.View, HandlerBase):
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
     except Exception as e:
-      _logger.error("Unexpected exception occurred when handling %s (UID = %d): %s",
-                    self.request.path, self.user['_id'] or None, repr(e))
+      _logger.error("Unexpected exception occurred when handling %s (IP = %s, UID = %d): %s",
+                    self.request.path, self.remote_ip, self.user['_id'] or None, repr(e))
       raise
     return self.response
 
@@ -217,6 +218,11 @@ class Handler(web.View, HandlerBase):
     self.response.content_length = len(data)
     await self.response.prepare(self.request)
     self.response.write(data)
+
+  async def send_mail(self, mail, title, template_name, **kwargs):
+    content = self.render_html(template_name, url_prefix=options.options.url_prefix,
+                               **kwargs)
+    await mailer.send_mail(mail, '{0} - Vijos'.format(self.translate(title)), content)
 
   @property
   def prefer_json(self):

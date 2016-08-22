@@ -2,8 +2,8 @@ import asyncio
 import functools
 
 from vj4 import app
-from vj4 import error
 from vj4 import constant
+from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import user
 from vj4.model import document
@@ -11,7 +11,7 @@ from vj4.model import domain
 from vj4.model import record
 from vj4.model.adaptor import problem
 from vj4.service import bus
-from vj4.handler import base
+from vj4.util import aiters
 
 
 @app.route('/p', 'problem_main')
@@ -22,12 +22,20 @@ class ProblemMainHandler(base.OperationHandler):
   @base.get_argument
   @base.sanitize
   async def get(self, *, page: int = 1):
-    uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
+    # TODO(iceboy): projection.
     pcount, pdocs = await asyncio.gather(problem.count(self.domain_id),
-                                         problem.get_list(self.domain_id, uid,
+                                         problem.get_list(self.domain_id,
                                                           skip=(page - 1) * self.PROBLEMS_PER_PAGE,
                                                           limit=self.PROBLEMS_PER_PAGE))
-    self.render('problem_main.html', page=page, pcount=pcount, pdocs=pdocs)
+    if self.has_priv(builtin.PRIV_USER_PROFILE):
+      pids = [pdoc['doc_id'] for pdoc in pdocs]
+      # TODO(iceboy): projection.
+      psdict = await aiters.to_dict(problem.get_multi_status(domain_id=self.domain_id,
+                                                             uid=self.user['_id'],
+                                                             doc_id={'$in': pids}), 'doc_id')
+    else:
+      psdict = {}
+    self.render('problem_main.html', page=page, pcount=pcount, pdocs=pdocs, psdict=psdict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
