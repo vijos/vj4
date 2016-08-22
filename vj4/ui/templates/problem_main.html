@@ -41,7 +41,7 @@
             {% if psdoc['rid'] %}
               <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}">
                 <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}"></span>
-                <a href="{{ reverse_url('record_detail', rid=psdoc['rid']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">{{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}</a>
+                <a href="{{ reverse_url('record_detail', rid=psdoc['rid']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}">{{ vj4.constant.record.STATUS_TEXTS[psdoc['status']] }}</a>
               </td>
               {% else %}
               <td class="col--status record-status--border">
