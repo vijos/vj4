@@ -24,9 +24,9 @@
         {{ _('{0} views').format(ddoc['views']) }} ·
         {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
         <form class="form--inline" method="post">
-          <input type="hidden" name="operation" value="{% if not ddoc['dsdoc'] or not ddoc['dsdoc'].get('star') %}star{% else %}unstar{% endif %}">
+          <input type="hidden" name="operation" value="{% if not ddoc['dsdoc']['star'] %}star{% else %}unstar{% endif %}">
           <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-          <button class="star{% if ddoc['dsdoc'] and ddoc['dsdoc'].get('star') %} activated{% endif %}" type="submit">
+          <button class="star{% if ddoc['dsdoc']['star'] %} activated{% endif %}" type="submit">
             <span class="starred--hide"><span class="icon icon-star--outline"></span> {{ _('Star Topic') }}</span>
             <span class="starred--show"><span class="icon icon-star"></span> {{ _('Unstar Topic') }}</span>
           </button>
@@ -88,7 +88,7 @@
         <div class="balancer sidebar-user-stat">
           <div class="balancer__body">
             <div class="numbox">
-              <div class="numbox__num medium">{{ udoc.get('num_accept', 0) }}</div>
+              <div class="numbox__num medium">{{ udoc['num_accept'] or 0 }}</div>
               <div class="numbox__text">{{ _('Accepted') }}</div>
             </div>
           </div>

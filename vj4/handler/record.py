@@ -14,7 +14,6 @@ from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import problem
 from vj4.service import bus
-from vj4.util import aiters
 
 
 @app.route('/records', 'record_main')
@@ -23,17 +22,10 @@ class RecordMainHandler(base.Handler):
     # TODO(iceboy): projection, pagination.
     # TODO(twd2): check permission for visibility. (e.g. test).
     rdocs = await record.get_all_multi().sort([('_id', -1)]).to_list(50)
-    uids = list(set(rdoc['uid'] for rdoc in rdocs))
-    pdom_and_ids = list(set((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs))
-    pquery = {'$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in pdom_and_ids]}
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
-        aiters.to_dict(user.get_multi(_id={'$in': uids}), '_id'),
-        aiters.to_dict_multi(
-            problem.get_multi(**pquery).hint([('domain_id', 1),
-                                              ('doc_type', 1),
-                                              ('doc_id', 1)]),
-            'domain_id', 'doc_id'))
+        user.get_dict(rdoc['uid'] for rdoc in rdocs),
+        problem.get_dict((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs))
     self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict)
 
 

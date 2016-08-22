@@ -11,7 +11,6 @@ from vj4.model import domain
 from vj4.model import record
 from vj4.model.adaptor import problem
 from vj4.service import bus
-from vj4.util import aiters
 
 
 @app.route('/p', 'problem_main')
@@ -28,13 +27,12 @@ class ProblemMainHandler(base.OperationHandler):
                                                           skip=(page - 1) * self.PROBLEMS_PER_PAGE,
                                                           limit=self.PROBLEMS_PER_PAGE))
     if self.has_priv(builtin.PRIV_USER_PROFILE):
-      pids = [pdoc['doc_id'] for pdoc in pdocs]
       # TODO(iceboy): projection.
-      psdict = await aiters.to_dict(problem.get_multi_status(domain_id=self.domain_id,
-                                                             uid=self.user['_id'],
-                                                             doc_id={'$in': pids}), 'doc_id')
+      psdict = await problem.get_dict_status(self.domain_id,
+                                             self.user['_id'],
+                                             (pdoc['doc_id'] for pdoc in pdocs))
     else:
-      psdict = {}
+      psdict = None
     self.render('problem_main.html', page=page, pcount=pcount, pdocs=pdocs, psdict=psdict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -285,7 +283,7 @@ class ProblemEditHandler(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
     # TODO(twd2): new domain_id
-    await problem.set(self.domain_id, pid, title=title, content=content)
+    await problem.edit(self.domain_id, pid, title=title, content=content)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 

@@ -5,7 +5,6 @@ import itertools
 from bson import objectid
 from pymongo import errors
 
-from vj4 import constant
 from vj4 import db
 from vj4 import error
 from vj4.model import document
@@ -39,7 +38,7 @@ async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
 
 
 @argmethod.wrap
-async def set(domain_id: str, pid: document.convert_doc_id, **kwargs):
+async def edit(domain_id: str, pid: document.convert_doc_id, **kwargs):
   if 'title' in kwargs:
       validator.check_title(kwargs['title'])
   if 'content' in kwargs:
@@ -57,6 +56,16 @@ async def count(domain_id: str):
 
 def get_multi(*, fields=None, **kwargs):
   return document.get_multi(doc_type=document.TYPE_PROBLEM, fields=fields, **kwargs)
+
+
+async def get_dict(pdom_and_ids, *, fields=None):
+  pquery = {'$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in set(pdom_and_ids)]}
+  result = dict()
+  async for pdoc in get_multi(**pquery, fields=fields).hint([('domain_id', 1),
+                                                             ('doc_type', 1),
+                                                             ('doc_id', 1)]):
+    result[(pdoc['domain_id'], pdoc['doc_id'])] = pdoc
+  return result
 
 
 @argmethod.wrap
@@ -80,6 +89,15 @@ async def get_status(domain_id: str, pid: document.convert_doc_id, uid: int, fie
 
 def get_multi_status(*, fields=None, **kwargs):
   return document.get_multi_status(doc_type=document.TYPE_PROBLEM, fields=fields, **kwargs)
+
+
+async def get_dict_status(domain_id, uid, pids, *, fields=None):
+  result = dict()
+  async for psdoc in get_multi_status(domain_id=domain_id,
+                                      uid=uid,
+                                      doc_id={'$in': list(set(pids))}):
+    result[psdoc['doc_id']] = psdoc
+  return result
 
 
 @argmethod.wrap

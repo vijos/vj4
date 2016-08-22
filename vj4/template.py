@@ -4,22 +4,30 @@ from os import path
 from urllib import parse
 
 import jinja2
+import jinja2.ext
+import jinja2.runtime
 import markupsafe
-from jinja2 import ext
 
 import vj4
 import vj4.constant
 from vj4.util import json
 from vj4.util import options
 
+
+class Undefined(jinja2.runtime.Undefined):
+  def __getitem__(self, _):
+    return self
+
+
 class Environment(jinja2.Environment):
   def __init__(self):
     super(Environment, self).__init__(
-      loader=jinja2.FileSystemLoader(path.join(path.dirname(__file__), 'ui/templates')),
-      extensions=[ext.with_],
-      auto_reload=options.options.debug,
-      autoescape=True,
-      trim_blocks=True)
+        loader=jinja2.FileSystemLoader(path.join(path.dirname(__file__), 'ui/templates')),
+        extensions=[jinja2.ext.with_],
+        auto_reload=options.options.debug,
+        autoescape=True,
+        trim_blocks=True,
+        undefined=Undefined)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     self.globals['vj4'] = vj4

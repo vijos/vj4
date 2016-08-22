@@ -35,7 +35,7 @@
           </tr>
           {% else %}
           {% for pdoc in pdocs %}
-          {% with psdoc = psdict.get(pdoc['doc_id']) %}
+          {% with psdoc = psdict[pdoc['doc_id']] %}
           <tr>
             {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
             {% if psdoc['rid'] %}

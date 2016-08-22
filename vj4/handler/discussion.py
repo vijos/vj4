@@ -17,7 +17,7 @@ class DiscussionMainHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.get_argument
   @base.sanitize
-  async def get(self, *, page: int = 1):
+  async def get(self, *, page: int=1):
     # TODO(iceboy): continuation based pagination.
     skip = (page - 1) * self.DISCUSSIONS_PER_PAGE
     limit = self.DISCUSSIONS_PER_PAGE
@@ -41,7 +41,7 @@ class DiscussionNodeHandler(base.Handler):
   @base.get_argument
   @base.route_argument
   @base.sanitize
-  async def get(self, *, node_or_pid: document.convert_doc_id, page: int = 1):
+  async def get(self, *, node_or_pid: document.convert_doc_id, page: int=1):
     # TODO(iceboy): continuation based pagination.
     nodes, (vnode, ddocs, dcount) = await asyncio.gather(
       discussion.get_nodes(self.domain_id),
