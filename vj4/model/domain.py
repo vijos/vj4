@@ -176,6 +176,13 @@ def get_multi_users(*, fields=None, **kwargs):
   return coll.find(kwargs, fields)
 
 
+async def get_dict_users(uid, *, fields=None):
+  result = dict()
+  async for doc in get_multi_users(uid=uid, fields=fields):
+    result[doc['domain_id']] = doc
+  return result
+
+
 @argmethod.wrap
 async def get_list_users_by_role(domain_id: str, role: str, fields=PROJECTION_PUBLIC, limit: int=None):
   coll = db.Collection('domain.user')

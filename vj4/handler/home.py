@@ -13,7 +13,6 @@ from vj4.model import token
 from vj4.model import user
 from vj4.handler import base
 from vj4.service import bus
-from vj4.util import aiters
 from vj4.util import useragent
 from vj4.util import geoip
 from vj4.util import options
@@ -209,7 +208,7 @@ class HomeMessagesConnection(base.Connection):
 class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    uddict = await aiters.to_dict(domain.get_multi_users(uid=self.user['_id']), 'domain_id')
+    uddict = await domain.get_dict_users(self.user['_id'])
     dids = list(uddict.keys())
     ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
                                               {'owner_uid': self.user['_id']}]}) \
@@ -230,5 +229,3 @@ class HomeDomainCreateHandler(base.Handler):
   async def post(self, *, id: str, name: str, gravatar: str):
     domain_id = await domain.add(id, self.user['_id'], name=name, gravatar=gravatar)
     self.json_or_redirect(self.reverse_url('main', domain_id=domain_id))
-
-
