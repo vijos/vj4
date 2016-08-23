@@ -288,10 +288,14 @@ View: 查看
 Manage: 管理
 home_domain_create: 创建域
 Create Domain: 创建域
+Properties: 属性
+Access Control: 访问控制
 domain_main: 管理域
 domain_edit: 编辑域信息
-domain_user: 管理用户
 domain_role: 管理角色
+domain_user: 管理用户
+domain_permission: 管理权限
+Update Permission: 更新权限
 Roles: 角色
 Your role: 您的角色
 Your permission: 您的权限

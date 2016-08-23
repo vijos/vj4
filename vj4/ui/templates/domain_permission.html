@@ -1,0 +1,100 @@
+{% extends "domain_base.html" %}
+{% import "components/form.html" as form with context %}
+{% block domain_content %}
+<div class="section">
+  <div class="section__header">
+    <!-- TODO: replace with domain name -->
+    <h1 class="section__title">{{ _('{0}: Permissions').format('Vijos') }}</h1>
+    <div class="section__tools">
+      <a href="{{ reverse_url('domain_role') }}" class="rounded button">{{ _('Manage Roles') }}</a>
+    </div>
+  </div>
+  <div class="section__body no-padding domain-users">
+    <table class="data-table">
+      <colgroup>
+        <col class="col--description">
+        <!-- TODO: for ... in ... -->
+        <col class="col--p">
+        <col class="col--p">
+        <col class="col--p">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="col--uid">Permission</th>
+          <!-- TODO: for ... in ... -->
+          <th class="col--p"><span data-tooltip="guest">guest</span></th>
+          <th class="col--p"><span data-tooltip="default">default</span></th>
+          <th class="col--p"><span data-tooltip="admin">admin</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- TODO: for ... in ... -->
+        <tr>
+          <td class="col--uid">
+            删除评论
+          </td>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+        </tr>
+        <tr>
+          <td class="col--uid">
+            修改评论
+          </td>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+        </tr>
+        <tr>
+          <td class="col--uid">
+            高亮讨论主题
+          </td>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+          <th class="col--p">
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section__body">
+    <button class="rounded primary button">{{ _('Update Permission') }}</button>
+    <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
+  </div>
+</div>
+{% endblock %}

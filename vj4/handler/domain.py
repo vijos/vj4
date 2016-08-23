@@ -40,6 +40,12 @@ class DomainUserHandler(base.Handler):
     self.render('domain_user.html')
 
 
+@app.route('/domain/permission', 'domain_permission')
+class DomainPermissionHandler(base.Handler):
+  async def get(self):
+    self.render('domain_permission.html')
+
+
 @app.route('/domain/role', 'domain_role')
 class DomainRoleHandler(base.OperationHandler):
   async def get(self):
