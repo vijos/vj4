@@ -8,7 +8,7 @@ import responsiveCutoff from '../../responsive.inc.js';
 const nav = Navigation.instance;
 const $nav = nav.$nav;
 
-function onScroll() {
+function handleScroll() {
   const currentState = $(window).scrollTop() > 20;
   if (nav.floating.get('nonTop') !== currentState) {
     nav.floating.set('nonTop', currentState);
@@ -16,12 +16,13 @@ function onScroll() {
   }
 }
 
-function onNavLogoutClick() {
-  const $logoutLink = $('.command--nav-logout');
+function handleNavLogoutClick(ev) {
+  console.log($(ev.currentTarget));
+  const $logoutLink = $(ev.currentTarget);
   util
     .post($logoutLink.attr('href'))
     .then(() => window.location.reload());
-  return false;
+  ev.preventDefault();
 }
 
 const navigationPage = new AutoloadPage(() => {
@@ -29,17 +30,17 @@ const navigationPage = new AutoloadPage(() => {
     && document.documentElement.getAttribute('data-layout') === 'basic'
     && window.innerWidth >= responsiveCutoff.mobile
   ) {
-    $(window).on('scroll', _.throttle(onScroll, 100));
+    $(window).on('scroll', _.throttle(handleScroll, 100));
     $nav.hover(
       () => nav.floating.set('hover', true),
       () => nav.floating.set('hover', false)
     );
     $nav.on('vjDropdownShow', () => nav.floating.set('dropdown', true));
     $nav.on('vjDropdownHide', () => nav.floating.set('dropdown', false));
-    onScroll();
+    handleScroll();
   }
 
-  $nav.find('.command--nav-logout').click(onNavLogoutClick);
+  $(document).on('click', '[name="nav_logout"]', handleNavLogoutClick);
 
   const slideout = new Slideout({
     panel: document.getElementById('panel'),

@@ -32,7 +32,7 @@
           <li class="menu__seperator"></li>
           <li class="menu__item"><a href="{{ reverse_url('home_domain') }}" class="menu__link">{{ _('My Domains') }}</a></li>
           <li class="menu__seperator"></li>
-          <li class="menu__item"><a href="{{ reverse_url('user_logout') }}" class="menu__link command--nav-logout">{{ _('Logout') }}</a></li>
+          <li class="menu__item"><a href="{{ reverse_url('user_logout') }}" class="menu__link" name="nav_logout">{{ _('Logout') }}</a></li>
         </ol>
       </li>
     {% endif %}
