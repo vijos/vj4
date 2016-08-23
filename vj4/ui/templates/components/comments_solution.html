@@ -44,13 +44,13 @@
             <input type="hidden" name="operation" value="upvote">
             <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <button type="submit" class="vote-button upvote{% if doc['pssdoc']['vote'] == 1 %} active{% endif %}" data-tooltip="{{ _('Upvote') }}" data-tooltip-pos="bottom center" aria-label="{{ _('Upvote') }}"><span class="icon icon-vote--up"></span></button>
+            <button type="submit" class="vote-button upvote{% if pssdict[(doc['domain_id'], doc['doc_id'])]['vote'] == 1 %} active{% endif %}" data-tooltip="{{ _('Upvote') }}" data-tooltip-pos="bottom center" aria-label="{{ _('Upvote') }}"><span class="icon icon-vote--up"></span></button>
           </form>
           <form method="post">
             <input type="hidden" name="operation" value="downvote">
             <input type="hidden" name="psid" value="{{ doc['doc_id'] }}">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <button type="submit" class="vote-button downvote{% if doc['pssdoc']['vote'] == -1 %} active{% endif %}" data-tooltip="{{ _('Downvote') }}" data-tooltip-pos="bottom center" aria-label="{{ _('Downvote') }}"><span class="icon icon-vote--down"></span></button>
+            <button type="submit" class="vote-button downvote{% if pssdict[(doc['domain_id'], doc['doc_id'])]['vote'] == -1 %} active{% endif %}" data-tooltip="{{ _('Downvote') }}" data-tooltip-pos="bottom center" aria-label="{{ _('Downvote') }}"><span class="icon icon-vote--down"></span></button>
           </form>
         </div>
         {% else %}

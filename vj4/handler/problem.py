@@ -149,14 +149,11 @@ class ProblemSolutionHandler(base.OperationHandler):
     await domain.update_udocs(self.domain_id, udocs)  # TODO(iceboy): remove.
     pssdict = await problem.get_dict_solution_status(
         ((psdoc['domain_id'], psdoc['doc_id']) for psdoc in psdocs), self.user['_id'])
-    # TODO(iceboy): Pass in pssdict instead of attaching them to psdocs.
-    for psdoc in psdocs:
-      psdoc['pssdoc'] = pssdict.get((psdoc['domain_id'], psdoc['doc_id']))
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
       (self.translate('problem_solution'), None))
-    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs,
+    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs, pssdict=pssdict,
                 path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
