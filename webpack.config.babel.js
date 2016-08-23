@@ -107,6 +107,7 @@ const config = {
       $: 'jquery',
       jQuery: 'jquery',
       'window.jQuery': 'jquery',
+      katex: 'katex',
     }),
 
     // don't include locale files in momentjs

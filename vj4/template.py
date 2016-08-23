@@ -42,7 +42,9 @@ class Environment(jinja2.Environment):
 MARKDOWN_EXTENSIONS = (hoedown.EXT_TABLES |  # Parse PHP-Markdown style tables.
                        hoedown.EXT_FENCED_CODE |  # Parse fenced code blocks.
                        hoedown.EXT_AUTOLINK |  # Automatically turn safe URLs into links.
-                       hoedown.EXT_NO_INTRA_EMPHASIS)  # Disable emphasis_between_words.
+                       hoedown.EXT_NO_INTRA_EMPHASIS |  # Disable emphasis_between_words.
+                       hoedown.EXT_MATH |  # Allow math exp
+                       hoedown.EXT_MATH_EXPLICIT )  # Explicitly inline/block
 MARKDOWN_RENDER_FLAGS = (hoedown.HTML_ESCAPE |  # Escape all HTML.
                          hoedown.HTML_HARD_WRAP)  # Render each linebreak as <br>.
 
