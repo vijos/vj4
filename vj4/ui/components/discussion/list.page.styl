@@ -41,7 +41,7 @@
     color: #FFF
 
 .dczlist__reply_n
-  width: 70px
+  width: rem(70px)
 
   a
     color: #222
@@ -52,3 +52,7 @@
     &:hover
       color: $primary-color
       text-decoration: none
+
++mobile()
+  .dczlist__item .media__left
+    display: none

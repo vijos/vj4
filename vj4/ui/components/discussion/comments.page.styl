@@ -16,7 +16,7 @@ $downvote-color = red
   resize: none
   font-size: rem($font-size-title)
   color: #AAA
-  padding: 10px
+  padding: rem(10px)
 
 .dczcomments__item,
 .dczcomments__reply
@@ -53,7 +53,7 @@ $downvote-color = red
 
 .dczcomments__item
   .vote-number
-    width: 60px
+    width: rem(60px)
     text-align: center
     font-size: rem(25px)
     font-weight: 300
@@ -97,3 +97,8 @@ $downvote-color = red
       &.active
         background: lighten($downvote-color, 50%)
         color: #FFF
+
++mobile()
+  .dczcomments__item
+    .media__left
+      display: none

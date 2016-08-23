@@ -1,19 +1,29 @@
 .page--record_detail
 
   .compiler-text
-    padding: 20px 0
+    padding: rem(20px 0)
     font-size: rem($font-size-small)
     &:empty
       display: none
 
   .section__title .record-status--icon
-    width: 25px
+    width: rem(25px)
 
   .col--case
-    width: 70px
+    width: rem(70px)
 
   .col--memory, .col--time
-    width: 120px
+    width: rem(120px)
 
   .col--case, .col--status
     border-right: 1px solid $table-border-color
+
+  +mobile()
+    .col--case
+      display: none
+
+    .col--time
+      width: rem(70px)
+
+    .col--memory
+      width: rem(100px)

@@ -17,7 +17,6 @@ function handleScroll() {
 }
 
 function handleNavLogoutClick(ev) {
-  console.log($(ev.currentTarget));
   const $logoutLink = $(ev.currentTarget);
   util
     .post($logoutLink.attr('href'))
