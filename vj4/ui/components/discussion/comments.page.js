@@ -96,7 +96,7 @@ async function onCommentClickReplyReply(ev) {
 
   $evTarget
     .closest('.dczcomments__item')
-    .find('.dczcomments__op-reply-comment').eq(0)
+    .find('[name="dczcomments__op-reply-comment"]').eq(0)
     .trigger('click', { initialText: `@${username}: ` });
 }
 
@@ -171,11 +171,11 @@ function onClickDummyBox(ev) {
 }
 
 const commentsPage = new AutoloadPage(() => {
-  $(document).on('click', '.dczcomments__dummy-box', onClickDummyBox);
-  $(document).on('click', '.dczcomments__op-reply-comment', onCommentClickReplyComment);
-  $(document).on('click', '.dczcomments__op-reply-reply', onCommentClickReplyReply);
-  $(document).on('click', '.dczcomments__op-edit-comment', onCommentClickEditComment);
-  $(document).on('click', '.dczcomments__op-edit-reply', onCommentClickEditReply);
+  $(document).on('click', '[name="dczcomments__dummy-box"]', onClickDummyBox);
+  $(document).on('click', '[name="dczcomments__op-reply-comment"]', onCommentClickReplyComment);
+  $(document).on('click', '[name="dczcomments__op-reply-reply"]', onCommentClickReplyReply);
+  $(document).on('click', '[name="dczcomments__op-edit-comment"]', onCommentClickEditComment);
+  $(document).on('click', '[name="dczcomments__op-edit-reply"]', onCommentClickEditReply);
 });
 
 export default commentsPage;

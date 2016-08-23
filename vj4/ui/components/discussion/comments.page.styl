@@ -2,7 +2,7 @@ $upvote-color = green
 $downvote-color = red
 
 .dczcomments__item .is-editing
-  .dczcomments__dummy-box
+  [name="dczcomments__dummy-box"]
     display: none
   > .typo
     display: none
@@ -11,7 +11,7 @@ $downvote-color = red
   height: rem(180px)
   resize: vertical
 
-.dczcomments__dummy-box.textbox
+.textbox[name="dczcomments__dummy-box"]
   height: rem(60px)
   resize: none
   font-size: rem($font-size-title)

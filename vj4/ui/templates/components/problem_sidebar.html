@@ -30,10 +30,10 @@
       {% endif %}
       {% if page_name == 'problem_detail' %}
         {% if handler.has_perm(vj4.model.builtin.PERM_SUBMIT_PROBLEM) %}
-      <li class="menu__item scratchpad--hide"><a class="menu__link highlight action--problem-sidebar__open-scratchpad" href="javascript:;" data-global-hotkey="alt+e">
+      <li class="menu__item scratchpad--hide"><a class="menu__link highlight" name="problem-sidebar__open-scratchpad" href="javascript:;" data-global-hotkey="alt+e">
         <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }} (Alt+E)
       </a></li>
-      <li class="menu__item non-scratchpad--hide"><a class="menu__link action--problem-sidebar__quit-scratchpad" href="javascript:;" data-global-hotkey="alt+q">
+      <li class="menu__item non-scratchpad--hide"><a class="menu__link" name="problem-sidebar__quit-scratchpad" href="javascript:;" data-global-hotkey="alt+q">
         <span class="icon icon-enlarge"></span> {{ _('Quit Scratchpad') }} (Alt+Q)
       </a></li>
         {% else %}
