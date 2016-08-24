@@ -73,11 +73,12 @@
       <div class="section__body">
         <div class="media sidebar-user-profile">
           <div class="media__left">
-            <img src="{{ udoc['gravatar']|gravatar_url }}" width="80" height="80" class="medium user-profile-avatar">
+            <img src="{{ udict[ddoc['owner_uid']]['gravatar']|gravatar_url }}" width="80" height="80" class="medium user-profile-avatar">
           </div>
           <div class="media__body">
             <p>
-              {% with noAvatar = true, noModBadge = true, user = udoc %}
+              {% with noAvatar = true, noModBadge = true,
+                      user = udict[ddoc['owner_uid']], domain_user = dudict[ddoc['owner_uid']] %}
               {% include "components/inline_user.html" %}
               {% endwith %}
             </p>
@@ -88,7 +89,7 @@
         <div class="balancer sidebar-user-stat">
           <div class="balancer__body">
             <div class="numbox">
-              <div class="numbox__num medium">{{ udoc['num_accept'] or 0 }}</div>
+              <div class="numbox__num medium">{{ dudict[ddoc['owner_uid']]['num_accept'] or 0 }}</div>
               <div class="numbox__text">{{ _('Accepted') }}</div>
             </div>
           </div>
