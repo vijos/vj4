@@ -10,7 +10,7 @@
         <div class="dczdetail__supplementary">
           <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
           <span class="v-center"> · </span>
-          {% with user = udoc %}
+          {% with user = udict[ddoc['owner_uid']], domain_user = dudict[ddoc['owner_uid']] %}
           {% include "components/inline_user.html" %}
           {% endwith %}
           <span class="v-center"> · </span>

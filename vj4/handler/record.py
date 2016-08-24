@@ -66,10 +66,10 @@ class RecordDetailHandler(base.Handler):
         and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
         and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
       del rdoc['code']
-    rdoc['udoc'], rdoc['pdoc'] = await asyncio.gather(
-      user.get_by_uid(rdoc['uid']), problem.get(rdoc['domain_id'], rdoc['pid']))
-    await domain.update_udocs(self.domain_id, [rdoc['udoc']])
-    self.render('record_detail.html', rdoc=rdoc)
+    udoc, dudoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
+                                             domain.get_user(self.domain_id, rdoc['uid']),
+                                             problem.get(rdoc['domain_id'], rdoc['pid']))
+    self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc)
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')

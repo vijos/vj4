@@ -162,9 +162,9 @@ class UserDetailHandler(base.Handler):
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)
-    await domain.update_udocs(self.domain_id, [udoc])
-    sdoc = await token.get_most_recent_session_by_uid(udoc['_id'])
-    self.render('user_detail.html', udoc=udoc, sdoc=sdoc)
+    dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_user, udoc),
+                                       token.get_most_recent_session_by_uid(udoc['_id']))
+    self.render('user_detail.html', udoc=udoc, dudoc=dudoc, sdoc=sdoc)
 
 
 @app.route('/user/search', 'user_search')

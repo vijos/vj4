@@ -131,7 +131,8 @@ class ContestStatusHandler(base.Handler):
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     # TODO(iceboy): This does not work on multi-machine environment.
-    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
+    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
     path_components = self.build_path(
@@ -147,7 +148,8 @@ class ContestCreateHandler(base.Handler):
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
     tz = pytz.timezone(self.timezone)
-    dt = self.now.astimezone(tz)
+    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    dt = now.astimezone(tz)
     ts = int(dt.timestamp())
     # find next quarter
     ts = ts - ts % (15 * 60) + 15 * 60
@@ -173,7 +175,8 @@ class ContestCreateHandler(base.Handler):
       end_at = tz.normalize(begin_at + datetime.timedelta(hours=duration))
     except ValueError as e:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
-    if begin_at <= self.now:
+    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    if begin_at <= now:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     if begin_at >= end_at:
       raise error.ValidationError('duration')

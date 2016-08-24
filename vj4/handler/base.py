@@ -36,28 +36,34 @@ class HandlerBase(setting.SettingMixin):
   TITLE = None
 
   async def prepare(self):
-    self.now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
     self.session = await self.update_session()
-    if self.session and 'uid' in self.session:
+    self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
+    if 'uid' in self.session:
+      uid = self.session['uid']
+      self.user, self.domain, self.domain_user = await asyncio.gather(
+          user.get_by_uid(uid), domain.get(self.domain_id), domain.get_user(self.domain_id, uid))
+      if not self.user:
+        raise error.UserNotFoundError(uid)
+      if not self.domain_user:
+        self.domain_user = {}
       self.user = await user.get_by_uid(self.session['uid']) or copy.deepcopy(builtin.USER_GUEST)
     else:
-      self.user = copy.deepcopy(builtin.USER_GUEST)
-    self.view_lang = self.get_setting('view_lang')
-    self.translate = locale.get_translate(self.view_lang)
-    self.timezone = self.get_setting('timezone')
-    self.datetime_span = _get_datetime_span(self.timezone)
-    self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
-    self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
-    self.build_path = functools.partial(_build_path, domain_id=self.domain_id)
-    self.domain, _ = await asyncio.gather(domain.get(self.domain_id),
-                                          domain.update_udocs(self.domain_id, [self.user]))
+      self.user = builtin.USER_GUEST
+      self.domain = await domain.get(self.domain_id)
+      self.domain_user = {}
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
+    self.view_lang = self.get_setting('view_lang')
+    self.timezone = self.get_setting('timezone')
+    self.translate = locale.get_translate(self.view_lang)
+    self.datetime_span = _get_datetime_span(self.timezone)
+    self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
+    self.build_path = functools.partial(_build_path, domain_id=self.domain_id)
     if not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
       self.check_perm(builtin.PERM_VIEW)
 
   def has_perm(self, perm):
-    role = self.user.get('role', builtin.ROLE_DEFAULT)
+    role = self.domain_user.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
             or self.domain['owner_uid'] == self.user['_id']

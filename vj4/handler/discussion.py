@@ -21,15 +21,13 @@ class DiscussionMainHandler(base.Handler):
     # TODO(iceboy): continuation based pagination.
     skip = (page - 1) * self.DISCUSSIONS_PER_PAGE
     limit = self.DISCUSSIONS_PER_PAGE
-    nodes, ddocs, dcount = await asyncio.gather(discussion.get_nodes(self.domain_id),
-                                                discussion.get_list(self.domain_id,
-                                                                    skip=skip,
-                                                                    limit=limit),
-                                                discussion.count(self.domain_id))
-    udocs = await user.attach_udocs(ddocs, 'owner_uid')
-    await asyncio.gather(domain.update_udocs(self.domain_id, udocs),
-                         discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id'))
-    self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
+    nodes, ddocs, dcount = await asyncio.gather(
+        discussion.get_nodes(self.domain_id),
+        discussion.get_list(self.domain_id, skip=skip, limit=limit),
+        discussion.count(self.domain_id))
+    udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
+    await discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id')
+    self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs, udict=udict,
                 page=page, dcount=dcount)
 
 
@@ -44,24 +42,16 @@ class DiscussionNodeHandler(base.Handler):
   async def get(self, *, node_or_pid: document.convert_doc_id, page: int=1):
     # TODO(iceboy): continuation based pagination.
     nodes, (vnode, ddocs, dcount) = await asyncio.gather(
-      discussion.get_nodes(self.domain_id),
-      discussion.get_vnode_and_list_and_count_for_node(
-        self.domain_id, node_or_pid,
-        skip=(page - 1) * self.DISCUSSIONS_PER_PAGE, limit=self.DISCUSSIONS_PER_PAGE))
-    attach_coros = [user.attach_udocs(ddocs, 'owner_uid')]
-    if 'owner_uid' in vnode:
-      attach_coros.append(user.attach_udocs([vnode], 'owner_uid'))
-    udocss = await asyncio.gather(*attach_coros)
-    update_coros = []
-    for udocs in udocss:
-      update_coros.append(domain.update_udocs(self.domain_id, udocs))
-    if update_coros:
-      await asyncio.gather(*update_coros)
+        discussion.get_nodes(self.domain_id),
+        discussion.get_vnode_and_list_and_count_for_node(
+            self.domain_id, node_or_pid,
+            skip=(page - 1) * self.DISCUSSIONS_PER_PAGE, limit=self.DISCUSSIONS_PER_PAGE))
+    udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
     path_components = self.build_path(
-      (self.translate('discussion_main'), self.reverse_url('discussion_main')),
-      (vnode['title'], None))
+        (self.translate('discussion_main'), self.reverse_url('discussion_main')),
+        (vnode['title'], None))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode,
-                ddocs=ddocs, page=page, dcount=dcount, path_components=path_components)
+                ddocs=ddocs, udict=udict, page=page, dcount=dcount, path_components=path_components)
 
 
 @app.route('/discuss/{node_or_pid}/create', 'discussion_create')
@@ -73,9 +63,9 @@ class DiscussionCreateHandler(base.Handler):
   async def get(self, *, node_or_pid: document.convert_doc_id):
     vnode = await discussion.get_vnode(self.domain_id, node_or_pid, True)
     path_components = self.build_path(
-      (self.translate('discussion_main'), self.reverse_url('discussion_main')),
-      (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
-      (self.translate('discussion_create'), None))
+        (self.translate('discussion_main'), self.reverse_url('discussion_main')),
+        (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
+        (self.translate('discussion_create'), None))
     self.render('discussion_create.html', vnode=vnode, path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -102,23 +92,24 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.sanitize
   async def get(self, *, did: document.convert_doc_id):
     ddoc = await discussion.inc_views(self.domain_id, did)
-    ddoc['dsdoc'] = await discussion.get_status(self.domain_id, did, self.user['_id'])
-    udoc = await user.get_by_uid(ddoc['owner_uid'])
-    vnode = await discussion.get_vnode(self.domain_id, ddoc['parent_doc_id'])
-    drdocs = await discussion.get_list_reply(self.domain_id, ddoc['doc_id'])
-    drdocs_with_reply = list(drdocs)
+    dsdoc, vnode, drdocs = await asyncio.gather(
+        discussion.get_status(self.domain_id, ddoc['doc_id'], self.user['_id']),
+        discussion.get_vnode(self.domain_id, ddoc['parent_doc_id']),
+        discussion.get_list_reply(self.domain_id, ddoc['doc_id']))
+    uids = {ddoc['owner_uid']}
+    uids.update(drdoc['owner_uid'] for drdoc in drdocs)
     for drdoc in drdocs:
       if 'reply' in drdoc:
-        drdocs_with_reply.extend(drdoc['reply'])
-    udocs = await user.attach_udocs(drdocs_with_reply, 'owner_uid')
-    udocs.append(udoc)
-    await domain.update_udocs(self.domain_id, udocs)
+        uids.update(drrdoc['owner_uid'] for drrdoc in drdoc['reply'])
+    udict, dudict = await asyncio.gather(user.get_dict(uids),
+                                         domain.get_dict_user(self.domain_id, uids))
+
     path_components = self.build_path(
-      (self.translate('discussion_main'), self.reverse_url('discussion_main')),
-      (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
-      (ddoc['title'], None))
-    self.render('discussion_detail.html', ddoc=ddoc, udoc=udoc, drdocs=drdocs, vnode=vnode,
-                page_title=ddoc['title'], path_components=path_components)
+        (self.translate('discussion_main'), self.reverse_url('discussion_main')),
+        (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
+        (ddoc['title'], None))
+    self.render('discussion_detail.html', page_title=ddoc['title'], path_components=path_components,
+                ddoc=ddoc, dsdoc=dsdoc, drdocs=drdocs, vnode=vnode, udict=udict, dudict=dudict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_REPLY_DISCUSSION)

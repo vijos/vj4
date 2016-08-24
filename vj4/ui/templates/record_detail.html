@@ -96,7 +96,7 @@
       <div class="section__body typo">
         <p>
           {{ _('Submit By') }}:
-          {% with noModBadge = true, user = rdoc['udoc'] %}
+          {% with noModBadge = true, user = udoc, domain_user = dudoc %}
             {% include "components/inline_user.html" %}
           {% endwith %}
         </p>

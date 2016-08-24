@@ -1,4 +1,3 @@
-import builtins
 import copy
 from pymongo import errors
 
@@ -57,7 +56,7 @@ async def get_list(owner_uid: int=None, fields=None, limit: int=None):
 
 
 @argmethod.wrap
-async def set(domain_id: str, **kwargs):
+async def edit(domain_id: str, **kwargs):
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       return None
@@ -76,7 +75,7 @@ async def unset(domain_id, fields):
   # TODO(twd2): check fields
   coll = db.Collection('domain')
   return await coll.find_and_modify(query={'_id': domain_id},
-                                    update={'$unset': dict((f, '') for f in builtins.set(fields))},
+                                    update={'$unset': dict((f, '') for f in set(fields))},
                                     new=True)
 
 
@@ -135,7 +134,7 @@ async def set_user(domain_id, uid, **kwargs):
 async def unset_user(domain_id, uid, fields):
   coll = db.Collection('domain.user')
   return await coll.find_and_modify(query={'domain_id': domain_id, 'uid': uid},
-                                    update={'$unset': dict((f, '') for f in builtins.set(fields))},
+                                    update={'$unset': dict((f, '') for f in set(fields))},
                                     upsert=True,
                                     new=True)
 
@@ -160,7 +159,7 @@ async def inc_user(domain_id, uid, **kwargs):
 
 
 async def update_udocs(domain_id, udocs, fields=None):
-  uids = builtins.set(udoc['_id'] for udoc in udocs)
+  uids = set(udoc['_id'] for udoc in udocs)
   if uids:
     if fields:
       fields.update({'_id': 0, 'domain_id': 0})
@@ -177,16 +176,17 @@ async def update_udocs(domain_id, udocs, fields=None):
   return udocs
 
 
-def get_multi_users(domain_id: str, fields=None):
-  coll = db.Collection('domain.user')
-  return coll.find({'domain_id': domain_id}, fields)
-
-
 @argmethod.wrap
-async def get_list_users_by_role(domain_id: str, role: str, fields=PROJECTION_PUBLIC, limit: int=None):
+def get_multi_user(domain_id: str, *, fields=None, **kwargs):
   coll = db.Collection('domain.user')
-  return await (coll.find({'domain_id': domain_id, 'role': role}, fields)
-                .to_list(limit))
+  return coll.find({'domain_id': domain_id, **kwargs}, fields)
+
+
+async def get_dict_user(domain_id, uids, *, fields=None):
+  result = dict()
+  async for dudoc in get_multi_user(domain_id, uid={'$in': list(set(uids))}, fields=fields):
+    result[dudoc['uid']] = dudoc
+  return result
 
 
 @argmethod.wrap

@@ -20,7 +20,7 @@
                 {{ _('currently offline') }}.
                 {% endif %}
               </p>
-              <p>{{ _('Solved {0} problems, RP: {1} (No. {2})').format(udoc['num_accept']|default(0), udoc['rp']|default(0.0)|round(2), udoc['rank']|default('?')) }}</p>
+              <p>{{ _('Solved {0} problems, RP: {1} (No. {2})').format(dudoc['num_accept']|default(0), dudoc['rp']|default(0.0)|round(2), dudoc['rank']|default('?')) }}</p>
             </div>
           </div>
         </div>
@@ -29,7 +29,7 @@
         <div class="section__tab-container immersive">
           <ul class="section__tabs">
             <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Submissions') }} ({{ udoc['num_submit']|default(0) }})</h1>
+              <h1 class="section__tab-title">{{ _('Submissions') }} ({{ dudoc['num_submit']|default(0) }})</h1>
               <div class="section__tab-main">
                 blabla
               </div>

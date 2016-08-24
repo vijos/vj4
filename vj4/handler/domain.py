@@ -43,7 +43,7 @@ class DomainEditHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, description: str):
-    ddoc = await domain.set(self.domain_id, description=description)
+    ddoc = await domain.edit(self.domain_id, description=description)
     if ddoc:
       self.domain = ddoc
     udoc = await user.get_by_uid(self.domain['owner_uid'], user.PROJECTION_PUBLIC)
