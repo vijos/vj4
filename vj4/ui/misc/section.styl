@@ -1,4 +1,5 @@
 @import 'section.inc.styl'
+@import '../components/form/var.inc.styl'
 
 .immersive-section, .section
   margin-bottom: rem($section-margin)
@@ -37,6 +38,9 @@
 
 .section__title
   color: #666
+
+.section__header .section__title
+  line-height: $form-standard-height
 
 h1.section__title
   font-size: 1.4rem

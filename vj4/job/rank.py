@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 @domainjob.wrap
 async def run(domain_id: str, keyword: str='rp', rank_field: str='rank', level_field: str='level'):
   _logger.info('Ranking')
-  uddocs = (domain.get_multi_users(domain_id, fields={'_id': 1, 'uid': 1, keyword: 1})
+  uddocs = (domain.get_multi_users(domain_id=domain_id, fields={'_id': 1, 'uid': 1, keyword: 1})
             .sort(keyword, -1))
   last_uddoc = {keyword: None}
   rank = 0

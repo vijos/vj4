@@ -15,17 +15,17 @@ PROJECTION_PUBLIC = {'uid': 1}
 @argmethod.wrap
 async def add(domain_id: str, owner_uid: int,
               roles=builtin.DOMAIN_SYSTEM['roles'],
-              description: str=None):
+              name: str=None, gravatar: str=None):
   validator.check_domain_id(domain_id)
-  if description != None:
-    validator.check_description(description)
+  validator.check_name(name)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.DomainAlreadyExistError(domain_id)
   coll = db.Collection('domain')
   try:
     return await coll.insert({'_id': domain_id, 'owner_uid': owner_uid,
-                              'description': description, 'roles': roles})
+                              'roles': roles, 'name': name,
+                              'gravatar': gravatar})
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
 
@@ -39,21 +39,15 @@ async def get(domain_id: str, fields=None):
   return await coll.find_one(domain_id, fields)
 
 
-def get_multi(owner_uid=None, fields=None):
+def get_multi(*, fields=None, **kwargs):
   coll = db.Collection('domain')
-  query = {}
-  if owner_uid != None:
-    query['owner_uid'] = owner_uid
-  return coll.find(query, fields)
+  return coll.find(kwargs, fields)
 
 
 @argmethod.wrap
-async def get_list(owner_uid: int=None, fields=None, limit: int=None):
+async def get_list(*, fields=None, limit: int=None, **kwargs):
   coll = db.Collection('domain')
-  query = {}
-  if owner_uid != None:
-    query['owner_uid'] = owner_uid
-  return await coll.find(query, fields).to_list(None)
+  return await coll.find(kwargs, fields).to_list(limit)
 
 
 @argmethod.wrap
@@ -64,8 +58,8 @@ async def set(domain_id: str, **kwargs):
   coll = db.Collection('domain')
   if 'owner_uid' in kwargs:
     del kwargs['owner_uid']
-  if 'description' in kwargs and kwargs['description'] != None:
-    validator.check_description(kwargs['description'])
+  if 'name' in kwargs:
+    validator.check_name(kwargs['name'])
   # TODO(twd2): check kwargs
   return await coll.find_and_modify(query={'_id': domain_id},
                                     update={'$set': {**kwargs}},
@@ -177,9 +171,16 @@ async def update_udocs(domain_id, udocs, fields=None):
   return udocs
 
 
-def get_multi_users(domain_id: str, fields=None):
+def get_multi_users(*, fields=None, **kwargs):
   coll = db.Collection('domain.user')
-  return coll.find({'domain_id': domain_id}, fields)
+  return coll.find(kwargs, fields)
+
+
+async def get_dict_users(uid, *, fields=None):
+  result = dict()
+  async for doc in get_multi_users(uid=uid, fields=fields):
+    result[doc['domain_id']] = doc
+  return result
 
 
 @argmethod.wrap
@@ -194,6 +195,7 @@ async def ensure_indexes():
   coll = db.Collection('domain')
   await coll.ensure_index('owner_uid')
   user_coll = db.Collection('domain.user')
+  await user_coll.ensure_index('uid')
   await user_coll.ensure_index([('domain_id', 1),
                                 ('uid', 1)], unique=True)
   await user_coll.ensure_index([('domain_id', 1),

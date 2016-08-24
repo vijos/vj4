@@ -27,15 +27,12 @@ export default class MessagePadContainer extends React.PureComponent {
       <div className="messagepad clearfix">
         <div className="messagepad__sidebar">
           <div className="section__header">
-            <h1 className="section__title">{i18n('Messages')}</h1>
-            <div className="section__tools">
-              <button
-                onClick={() => this.props.onAdd()}
-                className="tool-button"
-              >
-                <Icon name="add" /> {i18n('New')}
-              </button>
-            </div>
+            <button
+              onClick={() => this.props.onAdd()}
+              className="primary rounded button"
+            >
+              <Icon name="add" /> {i18n('New')}
+            </button>
           </div>
           <MessagePadDialogueList />
         </div>

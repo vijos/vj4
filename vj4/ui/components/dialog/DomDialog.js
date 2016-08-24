@@ -78,6 +78,7 @@ export default class DomDialog extends DOMAttachedObject {
 
     $(document).off(`keyup.${this.eventNS}`);
     this.$dom.off(`click.${this.eventNS}`);
+
     this.$dom.css({
       opacity: 1,
     });
@@ -85,6 +86,17 @@ export default class DomDialog extends DOMAttachedObject {
       opacity: 0,
     }, {
       duration: 200,
+    });
+
+    const $dgContent = this.$dom.find('.dialog__content');
+    $dgContent.css({
+      scale: 1,
+    });
+    $dgContent.transition({
+      scale: 0.8,
+    }, {
+      duration: 200,
+      easing: 'easeOutCubic',
       complete: () => this.$dom.css('display', 'none'),
     });
     await delay(200);

@@ -81,6 +81,14 @@ def check_title(s):
   if not is_title(s):
     raise error.ValidationError('title')
 
+def is_name(s):
+  return bool(re.fullmatch(r'.{1,}', s))
+
+
+def check_name(s):
+  if not is_name(s):
+    raise error.ValidationError('name')
+
 
 def is_content(s):
   return isinstance(s, str) and len(str(s)) >= 2
