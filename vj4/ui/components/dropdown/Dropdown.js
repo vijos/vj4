@@ -26,7 +26,7 @@ export default class Dropdown extends DOMAttachedObject {
   }
 
   static initAll() {
-    for (const dom of $('.dropdown-trigger')) {
+    for (const dom of $('[data-dropdown-target]')) {
       Dropdown.initFromDOM($(dom));
     }
   }

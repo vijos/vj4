@@ -74,14 +74,17 @@ class ProblemSolutionTest(base.DatabaseTestCase):
     psid = await problem.add_solution(DOMAIN_ID, PID, UID2, CONTENT2)
     psdoc = await problem.get_solution(DOMAIN_ID, psid)
     self.assertEqual(psdoc['vote'], 0)
-    psdoc = await problem.vote_solution(DOMAIN_ID, psid, UID, 1)
+    psdoc, pssdoc = await problem.vote_solution(DOMAIN_ID, psid, UID, 1)
     self.assertEqual(psdoc['vote'], 1)
-    psdoc = await problem.vote_solution(DOMAIN_ID, psid, UID2, 1)
+    self.assertEqual(pssdoc['vote'], 1)
+    psdoc, pssdoc = await problem.vote_solution(DOMAIN_ID, psid, UID2, 1)
     self.assertEqual(psdoc['vote'], 2)
+    self.assertEqual(pssdoc['vote'], 1)
     with self.assertRaises(error.AlreadyVotedError):
-      psdoc = await problem.vote_solution(DOMAIN_ID, psid, UID2, 1)
-    psdoc = await problem.vote_solution(DOMAIN_ID, psid, UID2, -1)
+      await problem.vote_solution(DOMAIN_ID, psid, UID2, 1)
+    psdoc, pssdoc = await problem.vote_solution(DOMAIN_ID, psid, UID2, -1)
     self.assertEqual(psdoc['vote'], 1)
+    self.assertEqual(pssdoc['vote'], 0)
 
   @base.wrap_coro
   async def test_reply(self):

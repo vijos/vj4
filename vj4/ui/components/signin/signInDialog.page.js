@@ -9,9 +9,9 @@ const signinDialogPage = new AutoloadPage(() => {}, () => {
   });
 
   // don't show quick login dialog if in mobile
-  if ($('.command--nav-login').length > 0 && window.innerWidth >= responsiveCutoff.mobile) {
+  if ($('[name="nav_login"]').length > 0 && window.innerWidth >= responsiveCutoff.mobile) {
     // nav
-    $('.command--nav-login').click((ev) => {
+    $('[name="nav_login"]').click((ev) => {
       if (ev.shiftKey || ev.metaKey || ev.ctrlKey) {
         return;
       }
@@ -22,7 +22,7 @@ const signinDialogPage = new AutoloadPage(() => {}, () => {
 
   if ($('.dialog--signin').length > 0) {
     // dialog
-    $('.command--dialog--signin__close').on('click', () => {
+    $('[name="dialog--signin__close"]').on('click', () => {
       signInDialog.hide();
     });
   }

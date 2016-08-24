@@ -146,37 +146,30 @@ async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
 
 @argmethod.wrap
 async def get_solution_status(domain_id: str, psid: document.convert_doc_id, uid: int):
-  return await document.get_status(domain_id, document.TYPE_PROBLEM_SOLUTION,
-                                   psid, uid)
+  return await document.get_status(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, uid)
 
 
-async def attach_pssdocs(docs, domain_field_name, psid_field_name, uid):
-  """DEPRECATED: use get_multi_status() instead.
-
-  Attach pssdoc to docs by domain_id and psid in the specified field.
-  """
-  # TODO(twd2): projection.
-  key_func = lambda doc: doc[domain_field_name]
-  psids_by_domain = {}
-  for domain_id, domain_docs in itertools.groupby(sorted(docs, key=key_func), key_func):
-    psids = set(doc[psid_field_name] for doc in domain_docs)
-    pssdocs = await document.get_multi_status(domain_id=domain_id,
-                                              doc_type=document.TYPE_PROBLEM_SOLUTION,
-                                              doc_id={'$in': list(psids)}, uid=uid).to_list(None)
-    psids_by_domain[domain_id] = dict((pssdoc['doc_id'], pssdoc) for pssdoc in pssdocs)
-  for doc in docs:
-    doc['pssdoc'] = psids_by_domain[doc[domain_field_name]].get(doc[psid_field_name])
-  return docs
+async def get_dict_solution_status(dom_and_ids, uid, *, fields=None):
+  query = {
+    'doc_type': document.TYPE_PROBLEM_SOLUTION,
+    'uid': uid,
+    '$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in set(dom_and_ids)],
+  }
+  result = dict()
+  async for pssdoc in document.get_multi_status(**query, fields=fields):
+    result[(pssdoc['domain_id'], pssdoc['doc_id'])] = pssdoc
+  return result
 
 
 @argmethod.wrap
 async def vote_solution(domain_id: str, psid: document.convert_doc_id, uid: int, value: int):
   try:
-    await document.capped_inc_status(domain_id, document.TYPE_PROBLEM_SOLUTION, psid,
-                                     uid, 'vote', value)
+    pssdoc = await document.capped_inc_status(domain_id, document.TYPE_PROBLEM_SOLUTION, psid,
+                                              uid, 'vote', value)
   except errors.DuplicateKeyError:
     raise error.AlreadyVotedError(domain_id, psid, uid) from None
-  return await document.inc(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'vote', value)
+  psdoc = await document.inc(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'vote', value)
+  return psdoc, pssdoc
 
 
 @argmethod.wrap

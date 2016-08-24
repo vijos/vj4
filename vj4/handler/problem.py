@@ -19,7 +19,7 @@ class ProblemMainHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.get_argument
   @base.sanitize
-  async def get(self, *, page: int = 1):
+  async def get(self, *, page: int=1):
     # TODO(iceboy): projection.
     pcount, pdocs = await asyncio.gather(problem.count(self.domain_id),
                                          problem.get_list(self.domain_id,
@@ -132,7 +132,7 @@ class ProblemSolutionHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
   @base.route_argument
   @base.sanitize
-  async def get(self, *, pid: document.convert_doc_id, page: int = 1):
+  async def get(self, *, pid: document.convert_doc_id, page: int=1):
     skip = (page - 1) * self.SOLUTIONS_PER_PAGE
     limit = self.SOLUTIONS_PER_PAGE
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
@@ -146,13 +146,14 @@ class ProblemSolutionHandler(base.OperationHandler):
       if 'reply' in psdoc:
         psdocs_with_pdoc_and_reply.extend(psdoc['reply'])
     udocs = await user.attach_udocs(psdocs_with_pdoc_and_reply, 'owner_uid')
-    await asyncio.gather(domain.update_udocs(self.domain_id, udocs),
-                         problem.attach_pssdocs(psdocs, 'domain_id', '_id', self.user['_id']))
+    await domain.update_udocs(self.domain_id, udocs)  # TODO(iceboy): remove.
+    pssdict = await problem.get_dict_solution_status(
+        ((psdoc['domain_id'], psdoc['doc_id']) for psdoc in psdocs), self.user['_id'])
     path_components = self.build_path(
       (self.translate('problem_main'), self.reverse_url('problem_main')),
       (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
       (self.translate('problem_solution'), None))
-    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs,
+    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs, pssdict=pssdict,
                 path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -176,10 +177,10 @@ class ProblemSolutionHandler(base.OperationHandler):
                             value: int):
     pdoc = await problem.get(self.domain_id, pid)
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
-    psdoc = await problem.vote_solution(self.domain_id, psdoc['doc_id'], self.user['_id'], value)
-    await problem.attach_pssdocs([psdoc], 'domain_id', '_id', self.user['_id'])
+    psdoc, pssdoc = await problem.vote_solution(self.domain_id, psdoc['doc_id'],
+                                                self.user['_id'], value)
     self.json_or_redirect(self.reverse_url('problem_solution', pid=pid),
-                          vote=psdoc['vote'], user_vote=psdoc['pssdoc']['vote'])
+                          vote=psdoc['vote'], user_vote=pssdoc['vote'])
 
   post_upvote = functools.partialmethod(upvote_downvote, value=1)
   post_downvote = functools.partialmethod(upvote_downvote, value=-1)

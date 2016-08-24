@@ -1,14 +1,14 @@
 .page--record_main
   .col--status
-    width: 180px
+    width: rem(150px)
     position: relative
 
   .col--submit-at
-    width: 160px
+    width: rem(160px)
     text-align: center
 
   .col--submit-by
-    width: 120px
+    width: rem(120px)
     text-align: right
 
   .col--status, .col--submit-by
@@ -32,3 +32,8 @@
     top: 0
     height: 100%
     background: #fff6d1
+
+  +mobile()
+    .col--submit-by,
+    .col--submit-at
+      display: none

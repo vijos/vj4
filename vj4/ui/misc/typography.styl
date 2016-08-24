@@ -3,6 +3,10 @@
 html
   box-sizing: border-box
 
++mobile()
+  html
+    font-size: 13px
+
 *, *:before, *:after
   box-sizing: inherit
 
@@ -35,7 +39,7 @@ audio, canvas, video
 body
   font-family: $primary-font-family
   font-weight: 400
-  font-size: $font-size
+  font-size: rem($font-size)
   line-height: 1
 
 button, input, optgroup, select, textarea
@@ -124,8 +128,8 @@ u, .typo-u
 mark
   background: #fffdd1
   border-bottom: 1px solid #ffedce
-  padding: 2px
-  margin: 0 5px
+  padding: rem(2px)
+  margin: rem(0 5px)
 
 pre, code, pre tt
   font-family: $code-font-family

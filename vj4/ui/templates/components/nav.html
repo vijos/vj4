@@ -18,10 +18,10 @@
     </ol>
     <ol class="nav__list nav__list--secondary clearfix">
     {% if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
-      <li class="nav__list-item"><a href="{{ reverse_url('user_login') }}" class="nav__item command--nav-login">{{ _('Login') }}</a></li>
-      <li class="nav__list-item"><a href="{{ reverse_url('user_register') }}" class="nav__item--round command--nav-signup">{{ _('Sign Up') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('user_login') }}" class="nav__item" name="nav_login">{{ _('Login') }}</a></li>
+      <li class="nav__list-item"><a href="{{ reverse_url('user_register') }}" class="nav__item--round">{{ _('Sign Up') }}</a></li>
     {% else %}
-      <li class="nav__list-item dropdown-trigger" data-dropdown-pos="bottom right" data-dropdown-target="#menu-nav-user" data-dropdown-trigger-desktop-only>
+      <li class="nav__list-item" data-dropdown-pos="bottom right" data-dropdown-target="#menu-nav-user" data-dropdown-trigger-desktop-only>
         <a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="nav__item">{{ handler.user['uname'] }} <span class="icon icon-expand_more"></span></a>
         <ol class="dropdown-target menu" id="menu-nav-user">
           <li class="menu__item"><a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="menu__link">{{ _('My Profile') }}</a></li>
@@ -32,7 +32,7 @@
           <li class="menu__seperator"></li>
           <li class="menu__item"><a href="{{ reverse_url('home_domain') }}" class="menu__link">{{ _('My Domains') }}</a></li>
           <li class="menu__seperator"></li>
-          <li class="menu__item"><a href="{{ reverse_url('user_logout') }}" class="menu__link command--nav-logout">{{ _('Logout') }}</a></li>
+          <li class="menu__item"><a href="{{ reverse_url('user_logout') }}" class="menu__link" name="nav_logout">{{ _('Logout') }}</a></li>
         </ol>
       </li>
     {% endif %}

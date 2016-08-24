@@ -20,7 +20,7 @@
       position: absolute
       width: 0
       height: 0
-      border: 6px solid transparent
+      border: rem(6px) solid transparent
       pointer-events: none
 
   &.drop-after-open
@@ -47,21 +47,21 @@
 
   // Triangle Borders
   &.drop-element-attached-bottom .drop-content
-    bottom: 10px
+    bottom: rem(10px)
     &:before
       border-top-color: #333
   &.drop-element-attached-top .drop-content
-    top: 10px
+    top: rem(10px)
     &:before
       border-bottom-color: #333
 
   // Triangle Positions
   &.drop-element-attached-bottom .drop-content:before
-    bottom: -12px
+    bottom: rem(-12px)
   &.drop-element-attached-top .drop-content:before
-    top: -12px
+    top: rem(-12px)
   &.drop-element-attached-center .drop-content:before
-    margin-left: -6px
+    margin-left: rem(-6px)
     left: 50%
   &.drop-element-attached-left .drop-content:before
     left: 0

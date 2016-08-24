@@ -8,6 +8,7 @@
     display: none
 
   li
+    margin: 0
     display: inline-block
     margin-top: -2px
 
@@ -27,3 +28,14 @@
   &.current
     color: $primary-color
     border-color: $primary-color
+
+
++mobile()
+  .pager__item
+    &.ellipsis,
+    &.first,
+    &.previous,
+    &.next,
+    &.last
+      display: none
+

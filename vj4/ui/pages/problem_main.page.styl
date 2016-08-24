@@ -1,10 +1,10 @@
 .page--problem_main
   .col--status
-    width: 180px
+    width: rem(180px)
     position: relative
 
   .col--submit_n, .col--ac_rate, .col--difficulty
-    width: 70px
+    width: rem(70px)
     text-align: center
 
   .col--status
@@ -12,3 +12,12 @@
 
   .col--submit_n, .col--difficulty
     border-left: 1px solid $table-border-color
+
+  +mobile()
+    .col--status,
+    .col--submit_n,
+    .col--difficulty
+      display: none
+
+    .col--ac_rate
+      border-left: 1px solid $table-border-color

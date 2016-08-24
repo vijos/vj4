@@ -1,12 +1,12 @@
 {% macro comment_form() %}
 <div class="hasjs--hide">
-  <form method="post" class="dczcomments__box dczcomments__box__form" data-hotkey="ctrl+enter:submit,esc:vjCommentBoxCancel">
+  <form method="post" class="dczcomments__box" name="dczcomments__box__form" data-hotkey="ctrl+enter:submit,esc:vjCommentBoxCancel">
     <div>
       <textarea name="content" class="textbox" data-markdown required></textarea>
     </div>
     <div>
       <input type="submit" class="rounded primary button dczcomments__box__submit" value="{{ _(comment_post_text) }} (Ctrl+Enter)" data-value-reply="{{ _(reply_post_text) }} (Ctrl+Enter)" data-value-comment="{{ _(comment_post_text) }} (Ctrl+Enter)" data-value-comment-update="{{ _(comment_edit_text) }} (Ctrl+Enter)" data-value-reply-update="{{ _(reply_edit_text) }} (Ctrl+Enter)">
-      <input type="button" class="rounded button nojs--hide dczcomments__box__cancel" value="{{ _('Cancel') }} (Esc)">
+      <input type="button" class="rounded button nojs--hide" name="dczcomments__box__cancel" value="{{ _('Cancel') }} (Esc)">
     </div>
     <input type="hidden" name="operation" value="{{ comment_post_op }}">
     <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
@@ -14,35 +14,33 @@
 </div>
 <div class="nojs--hide">
   {% if handler.has_perm(comment_post_perm) %}
-  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ _(comment_placeholder) }}"></textarea>
-  {% else %}
-  <textarea class="dczcomments__dummy-box textbox" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ _(('Login to ' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to ') + comment_placeholder) }}" disabled></textarea>
+  <textarea class="textbox" name="dczcomments__dummy-box" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ _(comment_placeholder) }}"></textarea>
   {% endif %}
 </div>
 {% endmacro %}
 {% macro comment_operations(doc) %}
 <div class="dczcomments__operations nojs--hide">
   {% if handler.has_perm(reply_post_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Reply') }}" class="dczcomments__op-reply-comment" data-form="{{ {'operation': reply_post_op, comment_ref: doc['doc_id']}|json }}"><span class="icon icon-reply"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Reply') }}" name="dczcomments__op-reply-comment" data-form="{{ {'operation': reply_post_op, comment_ref: doc['doc_id']}|json }}"><span class="icon icon-reply"></span></a>
   {% endif %}
   {% if handler.has_perm(comment_edit_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" class="dczcomments__op-edit-comment" data-form="{{ {'operation': comment_edit_op, comment_ref: doc['doc_id']}|json }}"><span class="icon icon-edit"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-comment" data-form="{{ {'operation': comment_edit_op, comment_ref: doc['doc_id']}|json }}"><span class="icon icon-edit"></span></a>
   {% endif %}
   {% if handler.has_perm(comment_delete_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
   {% endif %}
 </div>
 {% endmacro %}
 {% macro reply_operations(doc, rdoc) %}
 <div class="dczcomments__operations nojs--hide">
   {% if handler.has_perm(reply_post_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Reply') }}" class="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Reply') }}" name="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a>
   {% endif %}
   {% if handler.has_perm(reply_edit_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" class="dczcomments__op-edit-reply" data-form="{{ {'operation': reply_edit_op, comment_ref: doc['doc_id'], reply_ref: 'TODO'}|json }}"><span class="icon icon-edit"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-reply" data-form="{{ {'operation': reply_edit_op, comment_ref: doc['doc_id'], reply_ref: 'TODO'}|json }}"><span class="icon icon-edit"></span></a>
   {% endif %}
   {% if handler.has_perm(reply_delete_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" class="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
   {% endif %}
 </div>
 {% endmacro %}

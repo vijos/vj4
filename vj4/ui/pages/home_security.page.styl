@@ -21,3 +21,13 @@
   .sessionlist__current-session
     line-height: rem($form-standard-height)
     color: green
+
+  +mobile()
+    .sessionlist__item
+      .media__left
+        display: none
+
+      .media__body, .media__right
+        display: block
+        padding: 0
+        margin: 0
