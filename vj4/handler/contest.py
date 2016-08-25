@@ -47,10 +47,11 @@ class ContestDetailHandler(base.OperationHandler):
       attended = tsdoc.get('attend') == 1
     else:
       attended = False
+    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], None))
-    self.render('contest_detail.html', tdoc=tdoc, attended=attended,
+    self.render('contest_detail.html', tdoc=tdoc, attended=attended, now=now,
                 path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
