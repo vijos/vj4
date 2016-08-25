@@ -3,7 +3,18 @@ import _ from 'lodash';
 export default function reducer(state = {}, action) {
   switch (action.type) {
   case 'DIALOGUES_LOAD_DIALOGUES_FULFILLED': {
-    return _.keyBy(action.payload.messages, '_id');
+    const { messages, udict } = action.payload;
+    return _.keyBy(
+      _.filter(
+        _.map(messages, m => ({
+          sendee_udoc: udict[m.sendee_uid],
+          sender_udoc: udict[m.sender_uid],
+          ...m,
+        })),
+        m => m.sendee_udoc && m.sender_udoc
+      ),
+      '_id'
+    );
   }
   case 'DIALOGUES_CREATE': {
     const { id, user } = action.payload;
