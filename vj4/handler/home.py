@@ -1,5 +1,6 @@
 import asyncio
 import hmac
+import itertools
 
 from bson import objectid
 
@@ -131,18 +132,17 @@ class HomeMessagesHandler(base.OperationHandler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
     mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
-    await asyncio.gather(
-      user.attach_udocs(mdocs, 'sender_uid', 'sender_udoc', user.PROJECTION_PUBLIC),
-      user.attach_udocs(mdocs, 'sendee_uid', 'sendee_udoc', user.PROJECTION_PUBLIC))
+    udict = await user.get_dict(
+        itertools.chain.from_iterable((mdoc['sender_uid'], mdoc['sendee_uid']) for mdoc in mdocs),
+        fields=user.PROJECTION_PUBLIC)
     # TODO(twd2): improve here:
     for mdoc in mdocs:
-      if 'gravatar' in mdoc['sender_udoc']:
-        mdoc['sender_udoc']['gravatar_url'] = (
-          template.gravatar_url(mdoc['sender_udoc'].pop('gravatar')))
-      if 'gravatar' in mdoc['sendee_udoc']:
-        mdoc['sendee_udoc']['gravatar_url'] = (
-          template.gravatar_url(mdoc['sendee_udoc'].pop('gravatar')))
-    self.json_or_render('home_messages.html', messages=mdocs)
+      sender_udoc, sendee_udoc = udict[mdoc['sender_uid']], udict[mdoc['sendee_uid']]
+      if 'gravatar' in sender_udoc:
+        sender_udoc['gravatar_url'] = template.gravatar_url(sender_udoc.pop('gravatar'))
+      if 'gravatar' in sendee_udoc:
+        sendee_udoc['gravatar_url'] = template.gravatar_url(sendee_udoc.pop('gravatar'))
+    self.json_or_render('home_messages.html', messages=mdocs, udict=udict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token

@@ -1,4 +1,3 @@
-import copy
 import datetime
 
 from pymongo import errors
@@ -59,7 +58,7 @@ async def get_by_uid(uid: int, fields=PROJECTION_VIEW):
   """Get a user by uid."""
   for user in builtin.USERS:
     if user['_id'] == uid:
-      return copy.deepcopy(user)
+      return user
   coll = db.Collection('user')
   return await coll.find_one({'_id': uid}, fields)
 
@@ -70,7 +69,7 @@ async def get_by_uname(uname: str, fields=PROJECTION_VIEW):
   uname_lower = uname.strip().lower()
   for user in builtin.USERS:
     if user['uname_lower'] == uname_lower:
-      return copy.deepcopy(user)
+      return user
   coll = db.Collection('user')
   return await coll.find_one({'uname_lower': uname_lower}, fields)
 
@@ -81,7 +80,7 @@ async def get_by_mail(mail: str, fields=PROJECTION_VIEW):
   mail_lower = mail.strip().lower()
   for user in builtin.USERS:
     if user['mail_lower'] == mail_lower:
-      return copy.deepcopy(user)
+      return user
   coll = db.Collection('user')
   return await coll.find_one({'mail_lower': mail_lower}, fields)
 
@@ -159,23 +158,6 @@ async def set_by_uid(uid, **kwargs):
   return doc
 
 
-async def attach_udocs(docs, field_name, udoc_field_name='udoc', fields=PROJECTION_VIEW):
-  """DEPRECATED: use get_dict() instead.
-
-  Attach udoc to docs by uid in the specified field.
-  """
-  uids = set(doc[field_name] for doc in docs)
-  if uids:
-    coll = db.Collection('user')
-    udocs = await coll.find({'_id': {'$in': list(uids)}}, fields).to_list(None)
-    uids = dict((udoc['_id'], udoc) for udoc in udocs)
-    uids.update(dict((udoc['_id'], copy.deepcopy(udoc)) for udoc in builtin.USERS))
-    for doc in docs:
-      doc[udoc_field_name] = uids.get(doc[field_name])
-    return list(uids.values())
-  return []
-
-
 @argmethod.wrap
 async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
   prefix = prefix.lower()
@@ -185,7 +167,7 @@ async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
                  .to_list(limit))
   for udoc in builtin.USERS:
     if udoc['uname_lower'].startswith(prefix):
-      udocs.append(copy.deepcopy(udoc))
+      udocs.append(udoc)
   return udocs
 
 
