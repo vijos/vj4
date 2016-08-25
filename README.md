@@ -9,10 +9,9 @@ Next generation of Vijos, built with asyncio on Python 3.5.
 
 ## Prerequisites
 
-* [Python 3.5+ and its header files](https://www.python.org/downloads/source/)
+* [Python 3.5+](https://www.python.org/downloads/)
 * [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
-* Node.js 0.11+ from [official repo](https://github.com/nodejs/node-v0.x-archive/wiki/Installing-Node.js-via-package-manager)
-  or [manual install](http://npm.taobao.org/mirrors/node)
+* [Node.js 0.11.15+](https://nodejs.org/en/download/) - better use a modern version ;)
 * [RabbitMQ](http://www.rabbitmq.com/)
 
 ## Install requirements
