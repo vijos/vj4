@@ -158,24 +158,6 @@ async def inc_user(domain_id, uid, **kwargs):
                                     new=True)
 
 
-async def update_udocs(domain_id, udocs, fields=None):
-  uids = set(udoc['_id'] for udoc in udocs)
-  if uids:
-    if fields:
-      fields.update({'_id': 0, 'domain_id': 0})
-    else:
-      fields = {'_id': 0, 'domain_id': 0}
-    coll = db.Collection('domain.user')
-    uddocs = await (coll.find({'domain_id': domain_id, 'uid': {'$in': list(uids)}},
-                              fields)
-                    .to_list(None))
-    uids = dict((uddoc['uid'], uddoc) for uddoc in uddocs)
-    for udoc in udocs:
-      if udoc['_id'] in uids:
-        udoc.update(uids[udoc['_id']])
-  return udocs
-
-
 @argmethod.wrap
 def get_multi_user(domain_id: str, *, fields=None, **kwargs):
   coll = db.Collection('domain.user')

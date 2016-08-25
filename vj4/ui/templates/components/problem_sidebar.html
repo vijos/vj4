@@ -98,7 +98,7 @@
     <p>{{ _('Accepted Rate') }}: {% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</p>
     <p>{{ _('Uploaded By') }}:
     {% if pdoc['owner_uid'] != 0 %}
-      {% with noBadge = true, user = pdoc['udoc'] %}
+      {% with noBadge = true, user = udoc %}
         {% include "components/inline_user.html" %}
       {% endwith %}
     {% else %}

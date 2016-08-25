@@ -67,7 +67,7 @@
     {% if not mode_create %}
       <div class="clearfix">
         <div class="dczcomments__supplementary">
-          {% with user = udoc %}
+          {% with user = udoc, domain_user = dudict[udoc['_id']] %}
           {% include "components/inline_user.html" %}
           {% endwith %}
           <span class="v-center">@ {{ datetime_span(doc['_id'].generation_time) }}</span>
@@ -86,7 +86,7 @@
     {% else %}
       <div class="clearfix">
         <div class="dczcomments__supplementary">
-          {% with noAvatar = false, user = udoc %}
+          {% with noAvatar = false, user = udoc, domain_user = dudict[udoc['_id']] %}
           {% include "components/inline_user.html" %}
           {% endwith %}
         </div>

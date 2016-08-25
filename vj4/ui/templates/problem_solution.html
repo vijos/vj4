@@ -34,7 +34,9 @@
     </div>
   </div>
   <div class="large-3 columns">
+    {% with udoc = udict[pdoc['owner_uid']] %}
     {% include "components/problem_sidebar.html" %}
+    {% endwith %}
   </div>
 </div>
 {% endblock %}

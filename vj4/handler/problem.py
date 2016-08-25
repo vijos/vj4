@@ -54,14 +54,13 @@ class ProblemDetailHandler(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    # TODO(twd2): attach tdoc
-    pdoc['tdoc'] = {'_id': 'todo', 'title': 'test', 'end_at': 'TODO'}
-    udocs = await user.attach_udocs([pdoc], 'owner_uid')
-    await domain.update_udocs(self.domain_id, udocs)
+    udoc = await user.get_by_uid(pdoc['owner_uid'])
+    # TODO(twd2): tdoc
+    #tdoc = {'_id': 'todo', 'title': 'test', 'end_at': 'TODO'}
     path_components = self.build_path(
-      (self.translate('problem_main'), self.reverse_url('problem_main')),
-      (pdoc['title'], None))
-    self.render('problem_detail.html', pdoc=pdoc,
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (pdoc['title'], None))
+    self.render('problem_detail.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
 
 
@@ -74,8 +73,7 @@ class ProblemSubmitHandler(base.Handler):
     # TODO(twd2): check status, eg. test, hidden problem, ...
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    udocs = await user.attach_udocs([pdoc], 'owner_uid')
-    await domain.update_udocs(self.domain_id, udocs)
+    udoc = await user.get_by_uid(pdoc['owner_uid'])
     if uid == None:
       rdocs = []
     else:
@@ -85,10 +83,10 @@ class ProblemSubmitHandler(base.Handler):
           .sort([('_id', -1)]) \
           .to_list(10)
     path_components = self.build_path(
-      (self.translate('problem_main'), self.reverse_url('problem_main')),
-      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
-      (self.translate('problem_submit'), None))
-    self.json_or_render('problem_submit.html', pdoc=pdoc, rdocs=rdocs,
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+        (self.translate('problem_submit'), None))
+    self.json_or_render('problem_submit.html', pdoc=pdoc, udoc=udoc, rdocs=rdocs,
                         page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -137,24 +135,23 @@ class ProblemSolutionHandler(base.OperationHandler):
     limit = self.SOLUTIONS_PER_PAGE
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'],
-                                             skip=skip,
-                                             limit=limit)
-    psdocs_with_pdoc_and_reply = list(psdocs)
-    psdocs_with_pdoc_and_reply.append(pdoc)
+    psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'], skip=skip, limit=limit)
+    uids = {pdoc['owner_uid']}
+    uids.update(psdoc['owner_uid'] for psdoc in psdocs)
     for psdoc in psdocs:
       if 'reply' in psdoc:
-        psdocs_with_pdoc_and_reply.extend(psdoc['reply'])
-    udocs = await user.attach_udocs(psdocs_with_pdoc_and_reply, 'owner_uid')
-    await domain.update_udocs(self.domain_id, udocs)  # TODO(iceboy): remove.
-    pssdict = await problem.get_dict_solution_status(
-        ((psdoc['domain_id'], psdoc['doc_id']) for psdoc in psdocs), self.user['_id'])
+        uids.update(psrdoc['owner_uid'] for psrdoc in psdoc['reply'])
+    udict, dudict, pssdict = await asyncio.gather(
+        user.get_dict(uids),
+        domain.get_dict_user(self.domain_id, uids),
+        problem.get_dict_solution_status(
+            ((psdoc['domain_id'], psdoc['doc_id']) for psdoc in psdocs), self.user['_id']))
     path_components = self.build_path(
-      (self.translate('problem_main'), self.reverse_url('problem_main')),
-      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
-      (self.translate('problem_solution'), None))
-    self.render('problem_solution.html', pdoc=pdoc, psdocs=psdocs, pssdict=pssdict,
-                path_components=path_components)
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+        (self.translate('problem_solution'), None))
+    self.render('problem_solution.html', path_components=path_components,
+                pdoc=pdoc, psdocs=psdocs, udict=udict, dudict=dudict, pssdict=pssdict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM_SOLUTION)
@@ -264,13 +261,12 @@ class ProblemEditHandler(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    udocs = await user.attach_udocs([pdoc], 'owner_uid')
-    await domain.update_udocs(self.domain_id, udocs)
+    udoc = await user.get_by_uid(pdoc['owner_uid'])
     path_components = self.build_path(
-      (self.translate('problem_main'), self.reverse_url('problem_main')),
-      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
-      (self.translate('problem_edit'), None))
-    self.render('problem_edit.html', pdoc=pdoc,
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+        (self.translate('problem_edit'), None))
+    self.render('problem_edit.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -295,13 +291,12 @@ class ProblemSettingsHandler(base.Handler):
     # TODO(twd2)
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    udocs = await user.attach_udocs([pdoc], 'owner_uid')
-    await domain.update_udocs(self.domain_id, udocs)
+    udoc = await user.get_by_uid(pdoc['owner_uid'])
     path_components = self.build_path(
-      (self.translate('problem_main'), self.reverse_url('problem_main')),
-      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
-      (self.translate('problem_settings'), None))
-    self.render('problem_settings.html', pdoc=pdoc,
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+        (self.translate('problem_settings'), None))
+    self.render('problem_settings.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
 
 
@@ -313,11 +308,10 @@ class ProblemStatisticsHandler(base.Handler):
     # TODO(twd2)
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
-    udocs = await user.attach_udocs([pdoc], 'owner_uid')
-    await domain.update_udocs(self.domain_id, udocs)
+    udoc = await user.get_by_uid(pdoc['owner_uid'])
     path_components = self.build_path(
-      (self.translate('problem_main'), self.reverse_url('problem_main')),
-      (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
-      (self.translate('problem_statistics'), None))
-    self.render('problem_statistics.html', pdoc=pdoc,
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+        (self.translate('problem_statistics'), None))
+    self.render('problem_statistics.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
