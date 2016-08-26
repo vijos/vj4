@@ -5064,9 +5064,9 @@
       }
     },
     "vj-simplemde": {
-      "version": "0.0.5",
-      "from": "vj-simplemde@0.0.5",
-      "resolved": "https://registry.npm.taobao.org/vj-simplemde/download/vj-simplemde-0.0.5.tgz"
+      "version": "0.0.6",
+      "from": "vj-simplemde@0.0.6",
+      "resolved": "https://registry.npm.taobao.org/vj-simplemde/download/vj-simplemde-0.0.6.tgz"
     },
     "vm-browserify": {
       "version": "0.0.4",
