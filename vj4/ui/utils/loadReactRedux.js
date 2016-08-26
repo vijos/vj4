@@ -4,7 +4,7 @@ export default async function loadReactRedux(storeReducer) {
   const { Provider } = await System.import('react-redux');
   const { createStore, applyMiddleware } = await System.import('redux');
   const { default: reduxThunk } = await System.import('redux-thunk');
-  const reduxPromise = await System.import('redux-promise-middleware');
+  const { default: reduxPromise } = await System.import('redux-promise-middleware');
   const reduxLogger = await System.import('redux-logger');
 
   const reduxMiddlewares = [];
