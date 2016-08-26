@@ -1,5 +1,5 @@
 import SimpleMDE from 'vj-simplemde';
-import delay from '../../utils/delay';
+import * as util from '../../misc/Util';
 
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/pascal/pascal';
@@ -76,8 +76,7 @@ export default class VjCmEditor extends SimpleMDE {
   }
 
   async markdown(text) {
-    await delay(3000);
-    return 'renderred ' + text;
+    return (await util.ajax({ url: '/preview', method: 'post', data: $.param({ text }, true) })).html;
   }
 
 }
