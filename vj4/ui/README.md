@@ -238,7 +238,7 @@ Optionally, a menu item can be `active` or `highlight` (notice that the decorato
 </li>
 ```
 
-Menu can be put inside a section. It should be placed inside `section__body no-padding` (in this case, there will be vertical margins around the menu) or directly inside `section` (in this case, there will be totally no margins around the menu):
+Menu can be put inside a section. It should be placed inside `section__body no-padding` or directly inside `section`:
 
 ```html
 <div class="section">
