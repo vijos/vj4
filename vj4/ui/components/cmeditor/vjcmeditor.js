@@ -76,7 +76,20 @@ export default class VjCmEditor extends SimpleMDE {
   }
 
   async markdown(text) {
-    return (await util.ajax({ url: '/preview', method: 'post', data: $.param({ text }, true) })).html;
+    const data = await util.ajax({
+      url: '/preview',
+      method: 'post',
+      data: $.param({ text }, true)
+    });
+    setTimeout(this.preparePreview.bind(this), 100);
+    return data.html;
+  }
+
+  preparePreview() {
+    const $preview = $(this.wrapper).find('.simplemde-preview');
+    $preview.addClass('typo');
+    $preview.attr('data-emoji-enabled', 'true');
+    $preview.trigger('vjContentNew');
   }
 
 }
