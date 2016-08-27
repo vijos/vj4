@@ -19,13 +19,7 @@
           <div class="row"><div class="columns">
             <label>
               {{ _('Content') }}
-              <textarea name="content" class="textbox" data-markdown style="height: 500px">
-              {% if pdoc %}
-                {{ pdoc['content'] }}
-              {% else %}
-                {% include 'components/problem_default.md' %}
-              {% endif %}
-              </textarea>
+              <textarea name="content" class="textbox" data-markdown style="height: 500px">{% if pdoc %}{{ pdoc['content'] }}{% else %}{% include 'components/problem_default.md' %}{% endif %}</textarea>
             </label>
           </div></div>
           <div class="row"><div class="columns">
@@ -45,14 +39,6 @@
   {% if page_name == 'problem_edit' %}
     {% include "components/problem_sidebar.html" %}
   {% endif %}
-    <div class="section side">
-      <div class="section__header">
-        <h1 class="section__title">{{ _('Information') }}</h1>
-      </div>
-      <div class="section__body">
-        <p>foo bar</p>
-      </div>
-    </div>
   </div>
 </div>
 {% endblock %}
