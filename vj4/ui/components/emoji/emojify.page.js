@@ -4,6 +4,10 @@ import emojify from 'emojify.js';
 import 'emojify.js/dist/css/basic/emojify.css';
 
 function runEmojify($container) {
+  if ($container.is('[data-emoji-enabled]')) {
+    emojify.run($container[0]);
+    return;
+  }
   for (const element of $container.find('[data-emoji-enabled]')) {
     emojify.run(element);
   }
