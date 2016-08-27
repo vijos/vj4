@@ -5,7 +5,7 @@ motor
 hoedown
 accept
 aioamqp
-smtplibaio
+git+https://github.com/LukeXuan/aiosmtplib #custom aiosmtlib with ssl support
 pytz
 colorlog
 httpagentparser
