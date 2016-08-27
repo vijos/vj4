@@ -1,16 +1,18 @@
 @import './var.inc.styl'
 
+$checkbox-size = 16px
+
 .checkbox
   font-size: rem($font-size-secondary)
-  line-height: rem($form-standard-height)
+  line-height: 1.4
   border: 0
-  height: rem($form-standard-height)
   display: inline-block
-  vertical-align: top
+  vertical-align: middle
   cursor: pointer
   user-select: none
   color: lighten($text-color, 30%)
   margin: $input-margin
+  padding: ((rem($form-control-height) - (@line-height * @font-size)) / 2) 0
 
   &:hover
     color: $text-color
@@ -20,14 +22,14 @@
     border: 1px solid #D0D0D0
     display: inline-block
     border-radius: 1px
-    width: rem(16px)
-    height: rem(16px)
-    margin: rem(($form-standard-height - 16) / 2, 0)
-    margin-right: rem(5px)
     vertical-align: top
+    width: rem($checkbox-size)
+    height: rem($checkbox-size)
+    margin: ((@line-height * @font-size - rem($checkbox-size)) / 2) 0
+    margin-right: rem(5px)
     position: relative
     outline: 0
-    transition: background .2s linear
+    transition: background .1s linear
     background: none
 
     &:after
@@ -41,8 +43,8 @@
       border-top: none
       border-right: none
       background: transparent
-      transform: rotate(-65deg) scale(0.8)
-      transition: transform .2s, opacity .2s
+      transform: rotate(-65deg) scale(0.5)
+      transition: transform .1s, opacity .1s
       transition-timing-function: ease-out-cubic
       opacity: 0
 
@@ -60,6 +62,11 @@
     &:disabled
       opacity: 0.5
 
-.data-table
-  .checkbox
+  &.compact
     margin-bottom: 0
+    line-height: 1.2
+    padding: ((rem($compact-control-height) - (@line-height * @font-size)) / 2) 0
+
+    input
+      margin: ((@line-height * @font-size - rem($checkbox-size)) / 2) 0
+      margin-right: rem(5px)

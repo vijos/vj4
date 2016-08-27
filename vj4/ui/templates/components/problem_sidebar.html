@@ -96,14 +96,13 @@
     <p>{{ _('Submit') }}: {{ pdoc['num_submit'] }}</p>
     <p>{{ _('Accepted') }}: {{ pdoc['num_accept'] }}</p>
     <p>{{ _('Accepted Rate') }}: {% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</p>
-    <p>{{ _('Uploaded By') }}:
     {% if pdoc['owner_uid'] != 0 %}
+    <p><span class="v-center">{{ _('Uploaded By') }}:</span>
       {% with noBadge = true, user = udoc %}
         {% include "components/inline_user.html" %}
       {% endwith %}
-    {% else %}
-      {{ _('Vijos Official') }}
-    {% endif %}</p>
+    </p>
+    {% endif %}
   </div>
 </div>
 <div class="section side">

@@ -38,7 +38,6 @@ const config = {
     modules: [root('node_modules'), root('vj4/ui')],
     extensions: ['.js', ''],
   },
-  devtool: 'source-map',
   module: {
     preLoaders: [
       {

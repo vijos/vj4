@@ -48,7 +48,7 @@
       <thead>
         <tr>
           <th class="col--checkbox">
-            <label class="checkbox">
+            <label class="compact checkbox">
               <input type="checkbox" name="select_all">
             </label>
           </th>
@@ -62,7 +62,7 @@
         this row is for the owner always -->
         <tr>
           <td class="col--checkbox">
-            <label class="checkbox">
+            <label class="compact checkbox">
               <input type="checkbox" disabled>
             </label>
           </td>
@@ -74,13 +74,13 @@
             swx
           </td>
           <td class="col--role">
-            (Owner)
+            {{ form.select([('', '(Owner)')], 'role', value='', disabled=true, class='compact') }}
           </td>
         </tr>
         <!-- TODO: for ... in ... -->
         <tr data-uid="-3">
           <td class="col--checkbox">
-            <label class="checkbox">
+            <label class="compact checkbox">
               <input type="checkbox">
             </label>
           </td>
@@ -92,12 +92,12 @@
             twd2
           </td>
           <td class="col--role">
-            {{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='role_x') }}
+            {{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='role_x', class='compact') }}
           </td>
         </tr>
         <tr data-uid="-3">
           <td class="col--checkbox">
-            <label class="checkbox">
+            <label class="compact checkbox">
               <input type="checkbox">
             </label>
           </td>
@@ -109,7 +109,7 @@
             twd3
           </td>
           <td class="col--role">
-            {{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='admin') }}
+            {{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='admin', class='compact') }}
           </td>
         </tr>
       </tbody>

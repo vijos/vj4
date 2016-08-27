@@ -1,6 +1,6 @@
-{% macro select(items, name='', value='', disabled=false, required=false, autofocus=false) %}
+{% macro select(items, name='', value='', disabled=false, required=false, autofocus=false, class=None) %}
 <select
-  class="select"
+  class="select{% if class %} {{ class }}{% endif %}"
   name="{{ name }}"
   {% if disabled %}disabled{% endif %}
   {% if required %}required{% endif %}
@@ -14,10 +14,10 @@
 </select>
 {% endmacro %}
 
-{% macro text(name='', value='', placeholder='', type='text', disabled=false, required=false, autofocus=false) %}
+{% macro text(name='', value='', placeholder='', type='text', disabled=false, required=false, autofocus=false, class=None) %}
 <input
   type="{{ type }}"
-  class="textbox"
+  class="textbox{% if class %} {{ class }}{% endif %}"
   name="{{ name }}"
   value="{{ value }}"
   placeholder="{{ placeholder }}"

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import SimpleMDE from 'vj-simplemde';
 import * as util from '../../misc/Util';
 
@@ -81,7 +82,7 @@ export default class VjCmEditor extends SimpleMDE {
       method: 'post',
       data: $.param({ text }, true),
     });
-    setTimeout(this.preparePreview.bind(this), 100);
+    _.defer(this.preparePreview.bind(this));
     return data.html;
   }
 
