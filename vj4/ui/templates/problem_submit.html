@@ -1,4 +1,5 @@
 {% extends "layout/basic.html" %}
+{% import "components/form.html" as form with context %}
 {% block content %}
 <div class="row">
   <div class="large-9 columns">
@@ -48,10 +49,7 @@
           <div class="row"><div class="medium-4 columns">
             <label>
               {{ _('Code language') }}:
-              <select name="lang" class="select">
-              {% for key, value in vj4.constant.language.LANG_TEXTS.items() %}
-                <option value="{{ key }}"{% if handler.get_setting('code_lang') == key %} selected{% endif %}>{{ value }}</option>
-              {% endfor %}
+              {{ form.select(vj4.constant.language.LANG_TEXTS.items(), 'lang', handler.get_setting('code_lang')) }}
               </select>
             </label>
           </div></div>

@@ -17,11 +17,18 @@ input.textbox, textarea.textbox
   &:read-only
     outline: 0
 
+  &:disabled
+    opacity: 0.5
+
 input.textbox
   height: rem($form-standard-height)
 
 textarea.textbox
   height: rem(200px)
+
+.data-table
+  input.textbox, textarea.textbox
+    margin-bottom: 0
 
 // Material Textbox
 label.textbox.material

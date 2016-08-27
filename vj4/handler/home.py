@@ -19,6 +19,7 @@ from vj4.util import geoip
 from vj4.util import options
 from vj4.util import validator
 
+
 TOKEN_TYPE_TEXTS = {
   token.TYPE_SAVED_SESSION: 'Saved session',
   token.TYPE_UNSAVED_SESSION: 'Temporary session',
@@ -204,8 +205,27 @@ class HomeMessagesConnection(base.Connection):
 
 
 @app.route('/home/domain', 'home_domain')
-class HomeAccountHandler(base.Handler):
+class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    ddocs = await domain.get_list(owner_uid=self.user['_id'])
-    self.render('home_domain.html', ddocs=ddocs)
+    uddict = await domain.get_dict_users(self.user['_id'])
+    dids = list(uddict.keys())
+    ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
+                                              {'owner_uid': self.user['_id']}]}) \
+                        .to_list(None)
+    self.render('home_domain.html', ddocs=ddocs, uddict=uddict)
+
+
+@app.route('/home/domain/create', 'home_domain_create')
+class HomeDomainCreateHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
+  async def get(self):
+    self.render('home_domain_create.html')
+
+  @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, id: str, name: str, gravatar: str):
+    domain_id = await domain.add(id, self.user['_id'], name=name, gravatar=gravatar)
+    self.json_or_redirect(self.reverse_url('main', domain_id=domain_id))

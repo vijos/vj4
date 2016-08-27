@@ -1,0 +1,29 @@
+{% import "components/form.html" as form with context %}
+{% if page_name == 'domain_edit' %}
+<div class="row"><div class="medium-5 columns">
+  <label>
+    {{ _('ID') }}
+    {{ form.text('id', ddoc['_id'], disabled=true) }}
+  </label>
+</div></div>
+{% elif page_name == 'home_domain_create' %}
+<div class="row"><div class="medium-5 columns">
+  <label>
+    {{ _('ID') }} (*)
+    {{ form.text('id', autofocus=true, required=true) }}
+  </label>
+</div></div>
+{% endif %}
+<div class="row"><div class="medium-5 columns">
+  <label>
+    {{ _('Name') }} (*)
+    {{ form.text('name', ddoc['name']|default(''), autofocus=(page_name == 'domain_edit'), required=true) }}
+  </label>
+</div></div>
+<div class="row"><div class="medium-5 columns">
+  <label>
+    {{ _('Gravatar Email') }}
+    {{ form.text('gravatar', ddoc['gravatar']|default('')) }}
+  </label>
+  <p class="help-text">Will be used as the domain icon.</p>
+</div></div>

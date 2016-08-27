@@ -1,0 +1,31 @@
+{% extends "home_base.html" %}
+{% block home_content %}
+<div data-heading-extract-to="#menu-item-home_domain">
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title" id="create" data-heading>{{ _('Create Domain') }}</h1>
+  </div>
+  <div class="section__body">
+    <blockquote class="note typo">
+      <p>{{ _('A domain ID cannot be changed after creation. It is supposed to be:') }}</p>
+      <ul>
+        <li>{{ _('Unique') }}</li>
+        <li>{{ _('Not wrapped with space') }}</li>
+        <li>{{ _('Not started with a number') }}</li>
+        <li>{{ _('Without slashes or backslashes') }}</li>
+      </ul>
+    </blockquote>
+    <form method="post">
+      {% with ddoc={} %}
+      {% include "domain_edit_form.html" %}
+      {% endwith %}
+      <div class="row"><div class="columns">
+        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+        <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+        <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
+      </div></div>
+    </form>
+  </div>
+</div>
+</div>
+{% endblock %}

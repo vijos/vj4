@@ -5,7 +5,7 @@ import loadReactRedux from '../utils/loadReactRedux';
 import { ActionDialog } from '../components/dialog';
 import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
 
-const page = new NamedPage('home_messages', async () => {
+const page = new NamedPage('home_messages', () => {
   async function mountComponent() {
     const SockJs = await System.import('sockjs-client');
     const { default: MessagePadApp } = await System.import('../components/messagepad');
@@ -21,25 +21,30 @@ const page = new NamedPage('home_messages', async () => {
       });
     };
 
-    const userSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--user-select .user-select'));
+    const userSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--user-select [name="user"]'));
     const userSelectDialog = new ActionDialog({
       $body: $('.dialog__body--user-select > div'),
       onAction: action => {
         if (action !== 'ok') {
-          return;
+          return true;
+        }
+        const user = userSelector.value();
+        if (user === null) {
+          return false;
         }
         const id = _.uniqueId('PLACEHOLDER_');
         store.dispatch({
           type: 'DIALOGUES_CREATE',
           payload: {
             id,
-            user: userSelector.value(),
+            user,
           },
         });
         store.dispatch({
           type: 'DIALOGUES_SWITCH_TO',
           payload: id,
         });
+        return true;
       },
     });
 

@@ -59,8 +59,22 @@ blockquote
   color: $blockquote-color
   font-weight: 400
   border-left: 3px solid #DDD
-  padding-left: 1em
-  margin: 1em 3em 1em 0
+  padding: 1rem
+  margin: 0.5rem 0 1rem 0
+  font-size: ($font-size-secondary)
+
+  &:before
+    display: block
+    margin-bottom: 0.6rem
+
+  &.note
+    border-color: $primary-color
+    background: #F8F8F8
+    color: lighten($text-color, 10%)
+
+    &:before
+      content: 'NOTE:'
+      color: $primary-color
 
 acronym, abbr
   border-bottom: 1px dotted

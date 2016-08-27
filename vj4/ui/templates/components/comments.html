@@ -2,7 +2,7 @@
 {% import "components/comments_" ~ view ~ ".html" as comment_impl with context %}
 <ul class="dczcomments__list view--{{ view }}">
   {{ comment_impl.comment(true, handler.user) }}
-  {% for doc in docs %}
+{% for doc in docs %}
   {{ comment_impl.comment(false, udict[doc['owner_uid']], doc) }}
-  {% endfor %}
+{% endfor %}
 </ul>
