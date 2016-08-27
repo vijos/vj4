@@ -182,7 +182,7 @@ class ContestCreateHandler(base.Handler):
     if begin_at >= end_at:
       raise error.ValidationError('duration')
     pids = list(set(map(document.convert_doc_id, pids.split(','))))
-    pdocs = (await problem.get_multi(self.domain_id, fields={'doc_id': 1}, doc_id={'$in': pids})
+    pdocs = (await problem.get_multi(domain_id=self.domain_id, fields={'doc_id': 1}, doc_id={'$in': pids})
              .sort('doc_id', 1)
              .to_list(None))
     exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
