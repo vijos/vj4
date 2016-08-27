@@ -79,7 +79,7 @@ export default class VjCmEditor extends SimpleMDE {
     const data = await util.ajax({
       url: '/preview',
       method: 'post',
-      data: $.param({ text }, true)
+      data: $.param({ text }, true),
     });
     setTimeout(this.preparePreview.bind(this), 100);
     return data.html;
