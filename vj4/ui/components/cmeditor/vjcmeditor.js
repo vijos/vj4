@@ -1,5 +1,5 @@
 import SimpleMDE from 'vj-simplemde';
-import commonmark from 'commonmark';
+import * as util from '../../misc/Util';
 
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/pascal/pascal';
@@ -62,6 +62,7 @@ export default class VjCmEditor extends SimpleMDE {
         {
           name: 'preview',
           action: SimpleMDE.togglePreview,
+          preAction: SimpleMDE.preRenderPreview,
           className: 'icon icon-preview no-disable',
           title: 'Toggle Preview',
           default: true,
@@ -74,11 +75,21 @@ export default class VjCmEditor extends SimpleMDE {
     });
   }
 
-  markdown(text) {
-    const reader = new commonmark.Parser();
-    const writer = new commonmark.HtmlRenderer(this.options.commonmark);
-    const parsed = reader.parse(text);
-    return writer.render(parsed);
+  async markdown(text) {
+    const data = await util.ajax({
+      url: '/preview',
+      method: 'post',
+      data: $.param({ text }, true),
+    });
+    setTimeout(this.preparePreview.bind(this), 100);
+    return data.html;
+  }
+
+  preparePreview() {
+    const $preview = $(this.wrapper).find('.simplemde-preview');
+    $preview.addClass('typo');
+    $preview.attr('data-emoji-enabled', 'true');
+    $preview.trigger('vjContentNew');
   }
 
 }

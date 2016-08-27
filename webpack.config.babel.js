@@ -73,11 +73,6 @@ const config = {
         query: require('./package.json').babelForProject,
       },
       {
-        // JSON loader for commonmark.js
-        test: /\.json$/,
-        loader: 'json',
-      },
-      {
         // fix pickadate loading
         test: /pickadate/,
         loader: 'imports',
