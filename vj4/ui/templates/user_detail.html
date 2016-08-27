@@ -14,11 +14,11 @@
               <p>
                 {{ _('Registered at') }} {{ datetime_span(udoc['regat']) }},
                 {{ _('last login at') }} {{ datetime_span(udoc['loginat']) }},
-                {% if sdoc %}
+              {% if sdoc %}
                 {{ _('last active at') }} {{ datetime_span(sdoc['update_at']) }}.
-                {% else %}
+              {% else %}
                 {{ _('currently offline') }}.
-                {% endif %}
+              {% endif %}
               </p>
               <p>{{ _('Solved {0} problems, RP: {1} (No. {2})').format(dudoc['num_accept']|default(0), dudoc['rp']|default(0.0)|round(2), dudoc['rank']|default('?')) }}</p>
             </div>

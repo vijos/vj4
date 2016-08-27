@@ -1,6 +1,6 @@
 <div class="footer">
   <div class="row"><div class="columns">
-    {% if show_topics|default(true) %}
+  {% if show_topics|default(true) %}
     <div class="footer__links clearfix">
       <div class="footer__category">
         <h1>{{ _('Status') }}</h1>
@@ -25,7 +25,7 @@
         </ul>
       </div>
     </div>
-    {% endif %}
+  {% endif %}
     <div class="footer__extra-link clearfix">
       <div class="footer__extra-left">
         <ol class="clearfix">
@@ -36,18 +36,18 @@
           <li class="footer__extra-link-item" data-dropdown-target="#menu-footer-lang">
             <span><span class="icon icon-global"></span> Language <span class="icon icon-expand_less"></span></span>
             <ol class="dropdown-target menu" id="menu-footer-lang">
-              {% for code, name in vj4.util.locale.VIEW_LANGS.items() %}
+            {% for code, name in vj4.util.locale.VIEW_LANGS.items() %}
               <li class="menu__item"><a class="menu__link" href="/lang/{{ code }}">{{ name }}</a></li>
-              {% endfor %}
+            {% endfor %}
             </ol>
           </li>
         </ol>
       </div>
       <div class="footer__extra-right">
         <ol class="clearfix">
-          {% for html in vj4.model.builtin.FOOTER_EXTRA_HTMLS %}
+        {% for html in vj4.model.builtin.FOOTER_EXTRA_HTMLS %}
           <li class="footer__extra-link-item">{{ html|safe }}</li>
-          {% endfor %}
+        {% endfor %}
         </ol>
       </div>
     </div>

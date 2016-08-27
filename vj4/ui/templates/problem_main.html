@@ -6,9 +6,9 @@
       <div class="section__body no-padding">
         <table class="data-table">
           <colgroup>
-            {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+          {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
             <col class="col--status">
-            {% endif %}
+          {% endif %}
             <col class="col--name">
             <col class="col--submit_n">
             <col class="col--ac_rate">
@@ -16,9 +16,9 @@
           </colgroup>
           <thead>
             <tr>
-              {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+            {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
               <th class="col--status record-status--border">{{ _('Status') }}</th>
-              {% endif %}
+            {% endif %}
               <th class="col--name">{{ _('Problem') }}</th>
               <th class="col--submit_n">{{ _('Submit') }}</th>
               <th class="col--ac_rate">% {{ _('AC') }}</th>
@@ -27,26 +27,26 @@
           </thead>
           <tbody>
           {% if not pdocs %}
-          <tr class="empty-row">
-            <td colspan="5">{{ _('Sorry, there is no problem in the problem set.') }}</td>
-          </tr>
+            <tr class="empty-row">
+              <td colspan="5">{{ _('Sorry, there is no problem in the problem set.') }}</td>
+            </tr>
           {% else %}
           {% for pdoc in pdocs %}
           {% with psdoc = psdict[pdoc['doc_id']] %}
-          <tr>
+            <tr>
             {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
             {% if psdoc['rid'] %}
               <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}">
                 <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}"></span>
                 <a href="{{ reverse_url('record_detail', rid=psdoc['rid']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}">{{ vj4.constant.record.STATUS_TEXTS[psdoc['status']] }}</a>
               </td>
-              {% else %}
+            {% else %}
               <td class="col--status record-status--border">
               </td>
-              {% endif %}
-              {% endif %}
+            {% endif %}
+            {% endif %}
               <td class="col--name">
-                {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+              {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
                 <form class="form--inline" method="post">
                   <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
                   <input type="hidden" name="operation" value="{% if not psdoc['star'] %}star{% else %}unstar{% endif %}">
@@ -56,7 +56,7 @@
                     <span class="starred--show"><span class="icon icon-star" data-tooltip="{{ _('Unstar') }}"></span></span>
                   </button>
                 </form>
-                {% endif %}
+              {% endif %}
                 <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
                   {{ pdoc['title'] }}
                 </a>
@@ -70,14 +70,14 @@
           {% endif %}
           </tbody>
         </table>
-        {% with num_pages = (pcount + handler.PROBLEMS_PER_PAGE - 1) // handler.PROBLEMS_PER_PAGE %}
-          {% include "components/paginator.html" %}
-        {% endwith %}
+      {% with num_pages = (pcount + handler.PROBLEMS_PER_PAGE - 1) // handler.PROBLEMS_PER_PAGE %}
+        {% include "components/paginator.html" %}
+      {% endwith %}
       </div>
     </div>
   </div>
   <div class="large-3 columns">
-    {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_PROBLEM) %}
+  {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_PROBLEM) %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">
@@ -88,7 +88,7 @@
         <p><a href="{{ reverse_url('problem_create') }}" class="expanded primary button">{{ _('Create a problem') }}</a></p>
       </div>
     </div>
-    {% endif %}
+  {% endif %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>

@@ -8,9 +8,9 @@
     {% if not mode_create %}
       <div class="clearfix">
         <div class="dczcomments__supplementary">
-          {% with noAvatar = true, user = udoc, domain_user = dudict[udoc['_id']] %}
+        {% with noAvatar = true, user = udoc, domain_user = dudict[udoc['_id']] %}
           {% include "components/inline_user.html" %}
-          {% endwith %}
+        {% endwith %}
           <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
         </div>
         {{ comment_base.reply_operations(doc, rdoc) }}
@@ -37,9 +37,9 @@
     {% if not mode_create %}
       <div class="clearfix">
         <div class="dczcomments__supplementary">
-          {% with noAvatar = true, user = udoc, domain_user = dudict[udoc['_id']] %}
+        {% with noAvatar = true, user = udoc, domain_user = dudict[udoc['_id']] %}
           {% include "components/inline_user.html" %}
-          {% endwith %}
+        {% endwith %}
           <span class="v-center">@ {{ datetime_span(doc['_id'].generation_time) }}</span>
         </div>
         {{ comment_base.comment_operations(doc) }}
@@ -49,9 +49,9 @@
       </div>
       <div class="commentbox-edit-target"></div>
       <ul class="dczcomments__replies commentbox-reply-target">
-        {% for rdoc in doc['reply'] %}
-          {{ reply(mode_create, udict[rdoc['owner_uid']], doc, rdoc) }}
-        {% endfor %}
+      {% for rdoc in doc['reply'] %}
+        {{ reply(mode_create, udict[rdoc['owner_uid']], doc, rdoc) }}
+      {% endfor %}
       </ul>
     {% else %}
       {{ comment_base.comment_form() }}

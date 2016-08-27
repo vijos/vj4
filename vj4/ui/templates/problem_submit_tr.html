@@ -6,18 +6,18 @@
         {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
       </a>
     </div>
-    {% if rdoc['status'] == vj4.constant.record.STATUS_JUDGING %}
+  {% if rdoc['status'] == vj4.constant.record.STATUS_JUDGING %}
     <div class="col--status__progress-container">
       <div class="col--status__progress" style="width: 50%"></div>
     </div>
-    {% endif %}
+  {% endif %}
   </td>
   <td class="col--pretest">
-    {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
-      {{ _('Yes') }}
-    {% else %}
-      {{ _('No') }}
-    {% endif %}
+  {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
+    {{ _('Yes') }}
+  {% else %}
+    {{ _('No') }}
+  {% endif %}
   </td>
   <td class="col--memory">
     {{ (rdoc['memory_kb'] / 1000)|round(0, 'ceil')|int }} MB

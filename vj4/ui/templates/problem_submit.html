@@ -31,9 +31,9 @@
               <td colspan="5">{{ _('You have not submitted any solutions for this problem.') }}</td>
             </tr>
           {% else %}
-            {% for rdoc in rdocs %}
+          {% for rdoc in rdocs %}
             {% include 'problem_submit_tr.html' %}
-            {% endfor %}
+          {% endfor %}
           {% endif %}
           </tbody>
         </table>

@@ -3,12 +3,12 @@
 {% block content %}
 <div class="row">
   <div class="large-9 columns">
-    {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
+  {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
     <p>\[E=mc^2\]</p>
-    {% else %}
+  {% else %}
     <h3>Domain {{ domain_id }}'s Main Page</h3>
     <p>\[e^{i\pi}+1=0\]</p>
-    {% endif %}
+  {% endif %}
   </div>
   <div class="large-3 columns">
     {% include 'discussion_nodes_widget.html' %}

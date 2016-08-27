@@ -4,9 +4,9 @@
   <div class="section__header">
     <h1 class="section__title">{{ _('My Domains') }}</h1>
     <div class="section__tools">
-      {% if handler.has_priv(vj4.model.builtin.PRIV_CREATE_DOMAIN) %}
+    {% if handler.has_priv(vj4.model.builtin.PRIV_CREATE_DOMAIN) %}
       <a class="primary rounded button" href="{{ reverse_url('home_domain_create') }}"><span class="icon icon-add"></span> {{ _('Create Domain') }}</a>
-      {% endif %}
+    {% endif %}
       <a class="tool-button" href="#"><span class="icon icon-help"></span> {{ _('What\'s domain?') }}</a>
     </div>
   </div>
@@ -27,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for ddoc in vj4.model.builtin.DOMAINS %}
+      {% for ddoc in vj4.model.builtin.DOMAINS %}
         <tr>
           <td class="col--icon">
             <img src="{{ ddoc['gravatar']|gravatar_url }}" width="32" height="32">
@@ -44,8 +44,8 @@
             · <a href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
           </td>
         </tr>
-        {% endfor %}
-        {% for ddoc in ddocs %}
+      {% endfor %}
+      {% for ddoc in ddocs %}
         <tr>
           <td class="col--icon">
             <img src="{{ ddoc['gravatar']|gravatar_url }}" width="32" height="32">
@@ -54,11 +54,11 @@
             {{ ddoc['name'] }} ({{ ddoc['_id'] }})
           </td>
           <td class="col--role">
-            {% if ddoc['owner_uid'] == handler.user['_id'] %}
+          {% if ddoc['owner_uid'] == handler.user['_id'] %}
             ({{ _('owner') }})
-            {% else %}
+          {% else %}
             {{ uddict.get(ddoc['_id'], {})['role']|default(vj4.model.builtin.ROLE_DEFAULT) }}
-            {% endif %}
+          {% endif %}
           </td>
           <td class="col--action">
             <!-- TODO (swx): Manage should be visible to those who have privilege -->
@@ -66,7 +66,7 @@
             · <a href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
           </td>
         </tr>
-        {% endfor %}
+      {% endfor %}
       </tbody>
     </table>
   </div>

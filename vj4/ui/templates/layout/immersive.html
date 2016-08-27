@@ -10,10 +10,9 @@
   <div class="main">
     {% block content %}{% endblock %}
   </div>
-
-  {% with show_topics = false %}
-    {% include "components/footer.html" %}
-  {% endwith %}
+{% with show_topics = false %}
+  {% include "components/footer.html" %}
+{% endwith %}
 </div>
 
 {% include "components/login_dialog.html" %}

@@ -7,9 +7,9 @@
         <div class="dczdetail__supplementary">
           <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
           <span class="v-center"> · </span>
-          {% with user = udict[ddoc['owner_uid']], domain_user = dudict[ddoc['owner_uid']] %}
+        {% with user = udict[ddoc['owner_uid']], domain_user = dudict[ddoc['owner_uid']] %}
           {% include "components/inline_user.html" %}
-          {% endwith %}
+        {% endwith %}
           <span class="v-center"> · </span>
           <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
         </div>
@@ -19,7 +19,7 @@
       </div>
       <div class="section__footer topic__footer">
         {{ _('{0} views').format(ddoc['views']) }} ·
-        {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+      {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
         <form class="form--inline" method="post">
           <input type="hidden" name="operation" value="{% if not ddoc['dsdoc']['star'] %}star{% else %}unstar{% endif %}">
           <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
@@ -29,7 +29,7 @@
           </button>
         ·
         </form>
-        {% endif %}
+      {% endif %}
         <a href="#"><span class="icon icon-warning"></span> {{ _('Report') }}</a>
       </div>
     </div>
@@ -38,29 +38,29 @@
         <h1 class="dczdetail__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
       </div>
       <div class="section__body">
-        {% with
-          view = 'discussion',
-          docs = drdocs,
-          comment_placeholder = 'Write Your Comment',
-          comment_ref = 'drid',
-          comment_post_op = 'reply',
-          comment_edit_op = 'edit_reply',
-          comment_post_text = 'Comment',
-          comment_edit_text = 'Update',
-          comment_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
-          comment_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
-          comment_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
-          reply_ref = 'drrid',
-          reply_post_op = 'tail_reply',
-          reply_post_text = 'Reply',
-          reply_edit_op = 'edit_tail_reply',
-          reply_edit_text = 'Update',
-          reply_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
-          reply_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
-          reply_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY
-        %}
+      {% with
+        view = 'discussion',
+        docs = drdocs,
+        comment_placeholder = 'Write Your Comment',
+        comment_ref = 'drid',
+        comment_post_op = 'reply',
+        comment_edit_op = 'edit_reply',
+        comment_post_text = 'Comment',
+        comment_edit_text = 'Update',
+        comment_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
+        comment_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+        comment_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
+        reply_ref = 'drrid',
+        reply_post_op = 'tail_reply',
+        reply_post_text = 'Reply',
+        reply_edit_op = 'edit_tail_reply',
+        reply_edit_text = 'Update',
+        reply_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
+        reply_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+        reply_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY
+      %}
         {% include "components/comments.html" %}
-        {% endwith %}
+      {% endwith %}
       </div>
     </div>
   </div>
@@ -74,10 +74,10 @@
           </div>
           <div class="media__body">
             <p>
-              {% with noAvatar = true, noModBadge = true,
+            {% with noAvatar = true, noModBadge = true,
                       user = udict[ddoc['owner_uid']], domain_user = dudict[ddoc['owner_uid']] %}
               {% include "components/inline_user.html" %}
-              {% endwith %}
+            {% endwith %}
             </p>
           </div>
         </div>
