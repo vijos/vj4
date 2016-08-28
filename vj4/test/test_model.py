@@ -22,6 +22,7 @@ UID = 22
 UNAME = 'twd2'
 OWNER_UID = 22
 DOMAIN_ID = 'dummy_domain'
+DOMAIN_NAME = 'Dummy Domain'
 DOC_TYPE = document.TYPE_PROBLEM
 STATUS_KEY = 'dummy_key'
 ROLES = {'dummy': 777}
@@ -101,15 +102,17 @@ class DocumentTest(base.DatabaseTestCase):
 class DomainTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_get_transfer(self):
-    await domain.add(DOMAIN_ID, OWNER_UID, ROLES)
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     ddoc = await domain.get(DOMAIN_ID)
     self.assertEqual(ddoc['_id'], DOMAIN_ID)
     self.assertEqual(ddoc['owner_uid'], OWNER_UID)
     self.assertEqual(ddoc['roles'], ROLES)
+    self.assertEqual(ddoc['name'], DOMAIN_NAME)
     ddoc = await domain.transfer(DOMAIN_ID, OWNER_UID, OWNER_UID2)
     self.assertEqual(ddoc['_id'], DOMAIN_ID)
     self.assertEqual(ddoc['owner_uid'], OWNER_UID2)
     self.assertEqual(ddoc['roles'], ROLES)
+    self.assertEqual(ddoc['name'], DOMAIN_NAME)
     ddoc = await domain.transfer(DOMAIN_ID, OWNER_UID, OWNER_UID2)
     self.assertIsNone(ddoc)
     ddoc = await domain.get('null')
@@ -117,7 +120,7 @@ class DomainTest(base.DatabaseTestCase):
 
   @base.wrap_coro
   async def test_user_in_domain(self):
-    await domain.add(DOMAIN_ID, OWNER_UID, ROLES)
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     await domain.set_user(DOMAIN_ID, UID, test_field='test tset', num=1)
     dudoc = await domain.get_user(DOMAIN_ID, UID)
     self.assertEqual(dudoc['test_field'], 'test tset')
@@ -131,7 +134,7 @@ class DomainTest(base.DatabaseTestCase):
 
   @base.wrap_coro
   async def test_user_in_domain_projection(self):
-    await domain.add(DOMAIN_ID, OWNER_UID, ROLES)
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     await domain.set_user(DOMAIN_ID, UID, test_field='test tset', num=1)
     dudoc = await domain.get_user(DOMAIN_ID, UID)
     self.assertEqual(dudoc['test_field'], 'test tset')
