@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import path from 'path';
 import webpack from 'webpack';
+import HappyPack from 'happypack';
 import fs from 'fs-extra';
 
 import DummyOutputPlugin from './scripts/build/webpackDummyOutputPlugin.js';
@@ -80,6 +81,7 @@ export default function (env = {}) {
               ? root('.cache/babel')
               : false,
           },
+          happy: { id: 'js' },
         },
         {
           // fix pickadate loading
@@ -116,6 +118,12 @@ export default function (env = {}) {
       ],
     },
     plugins: [
+
+      new HappyPack({
+        id: 'js',
+        tempDir: root('.cache/happypack'),
+      }),
+
       new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery',
