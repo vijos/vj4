@@ -97,7 +97,7 @@ class ProblemSubmitHandler(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
     # TODO(twd2): check status, eg. test, hidden problem, ...
-    pdoc = await problem.get(self.domain_id, pid)
+    pdoc = await problem.inc(self.domain_id, pid, 'num_submit', 1)
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
                            self.user['_id'], lang, code)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))

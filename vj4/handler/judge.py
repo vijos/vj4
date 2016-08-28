@@ -105,6 +105,7 @@ class JudgeNotifyConnection(base.Connection):
       post_coros = [bus.publish('record_change', rid)]
       # TODO(twd2): ignore no effect statuses like system error, ...
       if rdoc['type'] == constant.record.TYPE_SUBMISSION:
+        # TODO(twd2): rejudge
         if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
                                        rdoc['_id'], rdoc['status']):
           post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))

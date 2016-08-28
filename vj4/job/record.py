@@ -1,4 +1,6 @@
 import asyncio
+import collections
+import functools
 import logging
 
 from vj4 import db
@@ -24,7 +26,8 @@ async def run(domain_id: str):
     {'$unset': {'journal': '', 'rev': '', 'status': '', 'rid': '',
                 'num_submit': '', 'num_accept': ''}}, multi=True)
   pdocs = problem.get_multi(domain_id=domain_id, fields={'_id': 1, 'doc_id': 1}).sort('doc_id', 1)
-  uddoc_updates = {}
+  dudoc_factory = functools.partial(dict, num_submit=0, num_accept=0)
+  uddoc_updates = collections.defaultdict(dudoc_factory)
   status_coll = db.Collection('document.status')
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
@@ -33,35 +36,28 @@ async def run(domain_id: str):
                                      type=constant.record.TYPE_SUBMISSION,
                                      fields={'_id': 1, 'uid': 1,
                                              'status': 1, 'score': 1}).sort('_id', 1)
-    # journals
-    _logger.info('Reading records, rebuilding journals')
-    psdocs = {}
+    _logger.info('Reading records, counting numbers, updating statuses')
+    factory = functools.partial(dict, num_submit=0, num_accept=0, status=0, rid='')
+    psdocs = collections.defaultdict(factory)
+    pdoc_update = {'num_submit': 0, 'num_accept': 0}
     async for rdoc in rdocs:
       accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
-      j = {'rid': rdoc['_id'], 'accept': accept, 'status': rdoc['status'], 'score': rdoc['score']}
-      if rdoc['uid'] not in psdocs:
-        psdocs[rdoc['uid']] = {'journal': [j]}
-      else:
-        psdocs[rdoc['uid']]['journal'].append(j)
-    # num_submit, num_accept
-    _logger.info('Counting numbers, updating statuses')
-    pdoc_update = {'num_submit': 0, 'num_accept': 0}
+      pdoc_update['num_submit'] += 1
+      psdocs[rdoc['uid']]['num_submit'] += 1
+      uddoc_updates[rdoc['uid']]['num_submit'] += 1
+      if psdocs[rdoc['uid']]['status'] != constant.record.STATUS_ACCEPTED:
+        psdocs[rdoc['uid']]['status'] = rdoc['status']
+        psdocs[rdoc['uid']]['rid'] = rdoc['_id']
+        if accept:
+          pdoc_update['num_accept'] += 1
+          uddoc_updates[rdoc['uid']]['num_accept'] += 1
     status_bulk = status_coll.initialize_unordered_bulk_op()
     execute = False
     for uid, psdoc in psdocs.items():
-      status = problem._stat_func(psdoc['journal'])
-      pdoc_update['num_submit'] += status['num_submit']
-      pdoc_update['num_accept'] += status['num_accept']
       execute = True
       (status_bulk.find({'domain_id': domain_id, 'doc_type': document.TYPE_PROBLEM,
                          'doc_id': pdoc['doc_id'], 'uid': uid})
-       .upsert().update_one({'$set': {**status, **psdoc}}))
-      if uid not in uddoc_updates:
-        uddoc_updates[uid] = {'num_submit': status['num_submit'],
-                              'num_accept': status['num_accept']}
-      else:
-        uddoc_updates[uid]['num_submit'] += status['num_submit']
-        uddoc_updates[uid]['num_accept'] += status['num_accept']
+       .upsert().update_one({'$set': {**psdoc}}))
     if execute:
       _logger.info('Committing')
       await status_bulk.execute()
