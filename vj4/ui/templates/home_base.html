@@ -7,12 +7,12 @@
   <div class="large-3 columns"><div data-sticky="large">
     <div class="section side">
       <ol class="menu">
-        {{ sidemenu.pageitem('message', 'home_messages') }}
+        {{ sidemenu.render_item('message', 'home_messages') }}
         <li class="menu__seperator"></li>
-        {{ sidemenu.pageitem('user', 'home_account') }}
-        {{ sidemenu.pageitem('security', 'home_security') }}
+        {{ sidemenu.render_item('user', 'home_account') }}
+        {{ sidemenu.render_item('security', 'home_security') }}
         <li class="menu__seperator"></li>
-        {{ sidemenu.pageitem('cloud', 'home_domain') }}
+        {{ sidemenu.render_item('cloud', 'home_domain') }}
       </ol>
     </div>
     {% block home_sidebar %}{% endblock %}

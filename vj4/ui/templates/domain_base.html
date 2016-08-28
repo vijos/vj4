@@ -7,14 +7,14 @@
   <div class="large-3 columns"><div data-sticky="large">
     <div class="section side">
       <ol class="menu">
-        {{ sidemenu.pageitem('cloud', 'domain_main') }}
+        {{ sidemenu.render_item('cloud', 'domain_main') }}
         <li class="menu__item">
           <div class="menu__link expandable">
             <span class="icon icon-info"></span> {{ _('Properties') }}
           </div>
           <ol class="menu collapsed">
         {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
-          {{ sidemenu.pageitem(null, 'domain_edit') }}
+          {{ sidemenu.render_item(null, 'domain_edit') }}
         {% endif %}
             <!-- Discussion Nodes -->
             <!-- Ranking Settings -->
@@ -25,9 +25,9 @@
             <span class="icon icon-user"></span> {{ _('Access Control') }}
           </div>
           <ol class="menu collapsed">
-            {{ sidemenu.pageitem(null, 'domain_role') }}
-            {{ sidemenu.pageitem(null, 'domain_user') }}
-            {{ sidemenu.pageitem(null, 'domain_permission') }}
+            {{ sidemenu.render_item(null, 'domain_role') }}
+            {{ sidemenu.render_item(null, 'domain_user') }}
+            {{ sidemenu.render_item(null, 'domain_permission') }}
           </ol>
         </li>
       </ol>
