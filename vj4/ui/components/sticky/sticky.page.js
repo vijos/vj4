@@ -1,5 +1,6 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 
+import Navigation from '../navigation';
 import responsiveCutoff from '../../responsive.inc.js';
 import 'sticky-kit/dist/sticky-kit';
 import _ from 'lodash';
@@ -16,11 +17,7 @@ function updateStickies($stickies) {
       if ($stickyParent.length > 0) {
         stickyOptions.parent = $stickyParent;
       }
-      stickyOptions.offset_top = 10;
-      const $nav = $('.nav');
-      if ($nav.length > 0) {
-        stickyOptions.offset_top += $nav.height();
-      }
+      stickyOptions.offset_top = 10 + Navigation.instance.getHeight();
       $sticky.stick_in_parent(stickyOptions);
       $sticky.data('sticky-enabled', true);
     } else if (!shouldEnableSticky && stickyEnabled) {

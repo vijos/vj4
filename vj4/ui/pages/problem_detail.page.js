@@ -1,6 +1,6 @@
 import Tether from 'tether';
 import { NamedPage } from '../misc/PageLoader';
-import Navigation from '../components/navigation/navigation';
+import Navigation from '../components/navigation';
 import loadReactRedux from '../utils/loadReactRedux';
 import delay from '../utils/delay';
 

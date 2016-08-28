@@ -1,3 +1,6 @@
+import Navigation from '../navigation';
+import 'sticky-kit/dist/sticky-kit';
+
 import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 
@@ -32,6 +35,13 @@ export default class StyledTable extends DOMAttachedObject {
       .append(this.$dom);
 
     this.update();
+
+    const stickyOptions = {
+      parent: this.$container,
+      offset_top: Navigation.instance.getHeight(),
+    };
+    this.$header.stick_in_parent(stickyOptions);
+
     return true;
   }
 

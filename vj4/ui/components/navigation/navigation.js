@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import responsiveCutoff from '../../responsive.inc.js';
 
 class MultipleStateContainer {
   constructor(onStateChange, initialState = false) {
@@ -72,6 +73,16 @@ class Navigation {
       $(window).off('resize', this.updateExpandWidth);
       this.$navRow.css('max-width', '');
     }
+  }
+
+  getHeight() {
+    if (this.$nav.length === 0) {
+      return 0;
+    }
+    if (window.innerWidth < responsiveCutoff.mobile) {
+      return 0;
+    }
+    return this.$nav.height();
   }
 }
 

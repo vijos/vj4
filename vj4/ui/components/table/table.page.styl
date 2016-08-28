@@ -40,7 +40,16 @@
   overflow: hidden
 
 .section__table-header
+  background: rgba(#FFF, 0.95)
   box-shadow: 0 3px 2px rgba(#000, 0.03)
+  position: relative
+  z-index: 100
+
+  thead > tr
+    border-bottom: 0
+
+  &.is_stuck
+    box-shadow: 0 2px 5px rgba(#000, 0.2)
 
 .section__table-container,
 .section__body
