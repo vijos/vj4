@@ -1,5 +1,6 @@
 // load all page stylesheets
-require.context('../', true, /\.page\.styl$/i);
+const pageStyleReq = require.context('../', true, /\.page\.styl$/i);
+pageStyleReq.keys().map(key => pageStyleReq(key).default);
 
 export class Page {
   constructor(name, autoload, afterLoading, beforeLoading) {

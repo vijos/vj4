@@ -1,6 +1,9 @@
+import _ from 'lodash';
 import path from 'path';
 import webpack from 'webpack';
+import fs from 'fs-extra';
 
+import DummyOutputPlugin from './scripts/build/webpackDummyOutputPlugin.js';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import postcssAutoprefixerPlugin from 'autoprefixer';
@@ -21,130 +24,157 @@ function vjResponsivePlugin() {
   };
 }
 
-const config = {
-  context: root('vj4/ui'),
-  watchOptions: {
-    aggregateTimeout: 1000,
-  },
-  entry: {
-    vj4: './Entry.js',
-  },
-  output: {
-    path: root('vj4/.uibuild'),
-    filename: '[name].js',
-    chunkFilename: '[name].chunk.js',
-  },
-  resolve: {
-    modules: [root('node_modules'), root('vj4/ui')],
-    extensions: ['.js', ''],
-  },
-  module: {
-    preLoaders: [
-      {
-        test: /\.js?$/,
-        loader: 'eslint',
-        exclude: /node_modules\//,
-      }
-    ],
-    loaders: [
-      {
-        // fonts
-        test: /\.(svg|ttf|eot|woff|woff2)$/,
-        loader: 'file',
-        query: {
-          name: '[path][name].[ext]?[sha512:hash:base62:7]',
-        },
-      },
-      {
-        // images
-        test: /\.(png|jpg)$/,
-        loader: 'url',
-        query: {
-          limit: 4024,
-          name: '[path][name].[ext]?[sha512:hash:base62:7]',
+export default function (env = {}) {
+  const config = {
+    context: root('vj4/ui'),
+    watchOptions: {
+      aggregateTimeout: 1000,
+    },
+    entry: {
+      vj4: './Entry.js',
+    },
+    output: {
+      path: root('vj4/.uibuild'),
+      publicPath: '/',    // overwrite in entry.js
+      filename: '[name].js',
+      chunkFilename: '[name].chunk.js',
+    },
+    resolve: {
+      modules: [root('node_modules'), root('vj4/ui')],
+      extensions: ['.js', ''],
+    },
+    module: {
+      preLoaders: [
+        {
+          test: /\.js?$/,
+          loader: 'eslint',
+          exclude: /node_modules\//,
         }
-      },
-      {
-        // ES2015 scripts
-        test: /\.js$/,
-        exclude: /node_modules\//,
-        loader: 'babel',
-        query: require('./package.json').babelForProject,
-      },
-      {
-        // fix pickadate loading
-        test: /pickadate/,
-        loader: 'imports',
-        query: { define: '>false' },
-      },
-      {
-        // project stylus stylesheets
-        test: /\.styl$/,
-        loader: extractProjectCSS.extract(['css', 'postcss', 'stylus?resolve url']),
-      },
-      {
-        // vendors stylesheets
-        test: /\.css$/,
-        include: /node_modules\//,
-        loader: extractVendorCSS.extract(['css']),
-      },
-      {
-        // project stylesheets
-        test: /\.css$/,
-        exclude: /node_modules\//,
-        loader: extractProjectCSS.extract(['css', 'postcss']),
-      },
+      ],
+      loaders: [
+        {
+          // fonts
+          test: /\.(svg|ttf|eot|woff|woff2)$/,
+          loader: 'file',
+          query: {
+            name: '[path][name].[ext]?[sha512:hash:base62:7]',
+          },
+        },
+        {
+          // images
+          test: /\.(png|jpg)$/,
+          loader: 'url',
+          query: {
+            limit: 4024,
+            name: '[path][name].[ext]?[sha512:hash:base62:7]',
+          }
+        },
+        {
+          // ES2015 scripts
+          test: /\.js$/,
+          exclude: /node_modules\//,
+          loader: 'babel',
+          query: {
+            ...require('./package.json').babelForProject,
+            cacheDirectory: !_.isError(_.attempt(() => fs.ensureDirSync(root('.cache/babel'))))
+              ? root('.cache/babel')
+              : false,
+          },
+        },
+        {
+          // fix pickadate loading
+          test: /pickadate/,
+          loader: 'imports',
+          query: { define: '>false' },
+        },
+        {
+          // project stylus stylesheets
+          test: /\.styl$/,
+          loader: env.watch
+            ? ['style', 'css', 'postcss', 'stylus?resolve url']
+            : extractProjectCSS.extract(['css', 'postcss', 'stylus?resolve url'])
+            ,
+        },
+        {
+          // vendors stylesheets
+          test: /\.css$/,
+          include: /node_modules\//,
+          loader: env.watch
+            ? ['style', 'css']
+            : extractVendorCSS.extract(['css'])
+            ,
+        },
+        {
+          // project stylesheets
+          test: /\.css$/,
+          exclude: /node_modules\//,
+          loader: env.watch
+            ? ['style', 'css']
+            : extractProjectCSS.extract(['css', 'postcss'])
+            ,
+        },
+      ],
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery',
+        katex: 'katex',
+      }),
+
+      // don't include locale files in momentjs
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+
+      // extract stylesheets into a standalone file
+      env.watch
+        ? new DummyOutputPlugin('vendors.css')
+        : extractVendorCSS
+        ,
+
+      env.watch
+        ? new DummyOutputPlugin('vj4.css')
+        : extractProjectCSS
+        ,
+
+      // extract 3rd-party JavaScript libraries into a standalone file
+      env.watch
+        ? new DummyOutputPlugin('vendors.js')
+        : new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendors',
+            filename: 'vendors.js',
+            minChunks: (module, count) => (
+              module.resource
+              && module.resource.indexOf(root('vj4/ui/')) === -1
+              && module.resource.match(/\.js$/)
+            ),
+          })
+        ,
+
+      // copy static assets
+      new CopyWebpackPlugin([{ from: root('vj4/ui/static') }]),
+
+      // copy emoji images
+      new CopyWebpackPlugin([{ from: root('node_modules/emojify.js/dist/images/basic'), to: 'img/emoji/' }]),
+
     ],
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
-      katex: 'katex',
-    }),
+    postcss: () => [postcssAutoprefixerPlugin],
+    stylus: {
+      use: [
+        vjResponsivePlugin(),
+        stylusRupturePlugin(),
+      ],
+      import: [
+        '~common/common.inc.styl',
+      ]
+    },
+    eslint: {
+      configFile: root('vj4/ui/.eslintrc.yml'),
+    },
+    stats: {
+      children: false,
+    },
+  };
 
-    // don't include locale files in momentjs
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-
-    // extract stylesheets into a standalone file
-    extractVendorCSS,
-    extractProjectCSS,
-
-    // extract 3rd-party JavaScript libraries into a standalone file
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendors',
-      filename: 'vendors.js',
-      minChunks: (module, count) => (
-        module.resource
-        && module.resource.indexOf(root('vj4/ui/')) === -1
-        && module.resource.match(/\.js$/)
-      ),
-    }),
-
-    // copy static assets
-    new CopyWebpackPlugin([{ from: root('vj4/ui/static') }]),
-
-    // copy emoji images
-    new CopyWebpackPlugin([{ from: root('node_modules/emojify.js/dist/images/basic'), to: 'img/emoji/' }]),
-
-  ],
-  postcss: () => [postcssAutoprefixerPlugin],
-  stylus: {
-    use: [
-      vjResponsivePlugin(),
-      stylusRupturePlugin(),
-    ],
-    import: [
-      '~common/common.inc.styl',
-    ]
-  },
-  eslint: {
-    configFile: root('vj4/ui/.eslintrc.yml'),
-  },
-  stats: {
-    children: false,
-  },
+  return config;
 };
-
-export default config;

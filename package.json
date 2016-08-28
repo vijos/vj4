@@ -27,6 +27,7 @@
     "eslint-plugin-react": "^5.2.2",
     "extract-text-webpack-plugin": "^2.0.0-beta.3",
     "file-loader": "^0.9.0",
+    "fs-extra": "^0.30.0",
     "gulp": "^3.9.1",
     "gulp-cli": "^1.2.2",
     "gulp-iconfont": "^8.0.1",
@@ -86,8 +87,8 @@
     "generate:locale": "gulp locale",
     "generate": "gulp",
     "build": "webpack --progress --color --display-error-details",
-    "build:production": "npm run build -- -p --optimize-dedupe",
-    "watch": "npm run build -- --watch"
+    "build:production": "npm run build -- --env.production -p --optimize-dedupe",
+    "watch": "npm run build -- --env.watch -d --watch"
   },
   "babel": {
     "plugins": [
