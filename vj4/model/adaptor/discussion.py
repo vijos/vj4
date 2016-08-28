@@ -55,7 +55,7 @@ def _get_exist_node(nodes, node_name):
 
 
 @argmethod.wrap
-async def add_node(domain_id: str, category_name: str, node_name: str, node_pic: str = None):
+async def add_node(domain_id: str, category_name: str, node_name: str, node_pic: str=None):
   validator.check_node_name(node_name)
   nodes = await get_nodes(domain_id)
   if category_name not in nodes:
@@ -83,18 +83,23 @@ async def check_node(domain_id, node_name):
     raise error.DiscussionNodeNotFoundError(domain_id, node_name)
 
 
-@argmethod.wrap
-async def get_vnode(domain_id: str, node_or_pid: document.convert_doc_id, attach_node: bool = False):
-  node = await get_exist_node(domain_id, node_or_pid)
+async def get_nodes_and_vnode(domain_id, node_or_pid):
+  nodes = await get_nodes(domain_id)
+  node = _get_exist_node(nodes, node_or_pid)
   if node:
     vnode = {'doc_id': node['name'],
-             'doc_type': document.TYPE_DISCUSSION_NODE,
-             'title': node['name']}
-    if attach_node:
-      vnode['node'] = node
-    return vnode
+            'doc_type': document.TYPE_DISCUSSION_NODE,
+            'title': node['name'],
+            'pic': node['pic']}
   else:
-    return await problem.get(domain_id, node_or_pid)
+    vnode = await problem.get(domain_id, node_or_pid)
+  return nodes, vnode
+
+
+@argmethod.wrap
+async def get_vnode(domain_id: str, node_or_pid: document.convert_doc_id):
+  _, vnode = await get_nodes_and_vnode(domain_id, node_or_pid)
+  return vnode
 
 
 @argmethod.wrap
@@ -122,44 +127,22 @@ async def inc_views(domain_id: str, did: document.convert_doc_id):
 
 
 @argmethod.wrap
-async def count(domain_id: str):
-  return await document.get_multi(domain_id=domain_id, doc_type=document.TYPE_DISCUSSION).count()
+async def count(domain_id: str, **kwargs):
+  return await document.get_multi(domain_id=domain_id, doc_type=document.TYPE_DISCUSSION,
+                                  **kwargs).count()
 
 
 @argmethod.wrap
-async def get_list(domain_id: str, *, fields=None, skip: int = 0, limit: int = 0):
+async def get_list(domain_id: str, *, fields=None, skip: int=0, limit: int=0, **kwargs):
   # TODO(twd2): projection.
   return await document.get_multi(domain_id=domain_id,
                                   doc_type=document.TYPE_DISCUSSION,
-                                  fields=fields) \
+                                  fields=fields,
+                                  **kwargs) \
                        .sort([('doc_id', -1)]) \
                        .skip(skip) \
                        .limit(limit) \
                        .to_list(None)
-
-
-@argmethod.wrap
-async def get_vnode_and_list_and_count_for_node(domain_id: str,
-                                                node_or_pid: document.convert_doc_id, *,
-                                                fields=None, skip: int = 0, limit: int = 0):
-  vnode = await get_vnode(domain_id, node_or_pid, True)
-  count_future = asyncio.ensure_future(
-      document.get_multi(domain_id=domain_id,
-                         doc_type=document.TYPE_DISCUSSION,
-                         parent_doc_type=vnode['doc_type'],
-                         parent_doc_id=vnode['doc_id']).count())
-  # TODO(twd2): projection.
-  ddocs = await document.get_multi(domain_id=domain_id,
-                                   doc_type=document.TYPE_DISCUSSION,
-                                   parent_doc_type=vnode['doc_type'],
-                                   parent_doc_id=vnode['doc_id'],
-                                   fields=fields) \
-                        .sort([('doc_id', -1)]) \
-                        .skip(skip) \
-                        .limit(limit) \
-                        .to_list(None)
-  await attach_vnodes(ddocs, domain_id, 'parent_doc_id')
-  return vnode, ddocs, await count_future
 
 
 @argmethod.wrap
@@ -199,21 +182,20 @@ async def add_tail_reply(domain_id: str, drid: document.convert_doc_id,
                              'reply', content, owner_uid)
 
 
-async def attach_vnodes(docs, domain_id, field_name):
-  # TODO(iceboy): projection.
+async def get_dict_vnodes(domain_id, node_or_pids):
   nodes = await get_nodes(domain_id)
-  pids = set(doc[field_name] for doc in docs if not _get_exist_node(nodes, doc[field_name]))
-  pdocs = await document.get_multi(domain_id=domain_id,
-                                   doc_type=document.TYPE_PROBLEM,
-                                   doc_id={'$in': list(pids)}).to_list(None)
-  pids = dict((pdoc['doc_id'], pdoc) for pdoc in pdocs)
-  for doc in docs:
-    if _get_exist_node(nodes, doc[field_name]):
-      doc['vnode'] = {'doc_id': doc[field_name],
-                      'doc_type': document.TYPE_DISCUSSION_NODE,
-                      'title': doc[field_name]}
+  result = dict()
+  pids = set()
+  for node_or_pid in node_or_pids:
+    if _get_exist_node(nodes, node_or_pid):
+      result[node_or_pid] = {'doc_id': node_or_pid,
+                             'doc_type': document.TYPE_DISCUSSION_NODE,
+                             'title': node_or_pid}
     else:
-      doc['vnode'] = pids.get(doc[field_name])
+      pids.add(node_or_pid)
+  async for pdoc in problem.get_multi(domain_id=domain_id, doc_id={'$in': list(pids)}):
+    result[pdoc['doc_id']] = pdoc
+  return result
 
 
 @argmethod.wrap

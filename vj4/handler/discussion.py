@@ -25,10 +25,11 @@ class DiscussionMainHandler(base.Handler):
         discussion.get_nodes(self.domain_id),
         discussion.get_list(self.domain_id, skip=skip, limit=limit),
         discussion.count(self.domain_id))
-    udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
-    await discussion.attach_vnodes(ddocs, self.domain_id, 'parent_doc_id')
-    self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs, udict=udict,
-                page=page, dcount=dcount)
+    udict, vndict = await asyncio.gather(
+        user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
+        discussion.get_dict_vnodes(self.domain_id, (ddoc['parent_doc_id'] for ddoc in ddocs)))
+    self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
+                udict=udict, vndict=vndict, page=page, dcount=dcount)
 
 
 @app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
@@ -40,18 +41,23 @@ class DiscussionNodeHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, node_or_pid: document.convert_doc_id, page: int=1):
+    nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_pid)
     # TODO(iceboy): continuation based pagination.
-    nodes, (vnode, ddocs, dcount) = await asyncio.gather(
-        discussion.get_nodes(self.domain_id),
-        discussion.get_vnode_and_list_and_count_for_node(
-            self.domain_id, node_or_pid,
-            skip=(page - 1) * self.DISCUSSIONS_PER_PAGE, limit=self.DISCUSSIONS_PER_PAGE))
-    udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
+    skip = (page - 1) * self.DISCUSSIONS_PER_PAGE
+    limit = self.DISCUSSIONS_PER_PAGE
+    ddocs, dcount = await asyncio.gather(
+        discussion.get_list(self.domain_id, skip=skip, limit=limit,
+                            parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id']),
+        discussion.count(self.domain_id,
+                         parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id']))
+    udict, vndict = await asyncio.gather(
+        user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
+        discussion.get_dict_vnodes(self.domain_id, (ddoc['parent_doc_id'] for ddoc in ddocs)))
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], None))
-    self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode,
-                ddocs=ddocs, udict=udict, page=page, dcount=dcount, path_components=path_components)
+    self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode, ddocs=ddocs,
+                udict=udict, vndict=vndict, page=page, dcount=dcount, path_components=path_components)
 
 
 @app.route('/discuss/{node_or_pid}/create', 'discussion_create')
@@ -61,7 +67,7 @@ class DiscussionCreateHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, node_or_pid: document.convert_doc_id):
-    vnode = await discussion.get_vnode(self.domain_id, node_or_pid, True)
+    vnode = await discussion.get_vnode(self.domain_id, node_or_pid)
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
