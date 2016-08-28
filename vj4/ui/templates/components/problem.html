@@ -1,3 +1,4 @@
+{% macro render_sidebar(pdoc, owner_udoc) %}
 {% if pdoc['tdoc'] %}
 <div class="section side section--problem__contest-info">
   <div class="section__header">
@@ -100,7 +101,7 @@
     <p>{{ _('Accepted Rate') }}: {% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</p>
   {% if pdoc['owner_uid'] != 0 %}
     <p><span class="v-center">{{ _('Uploaded By') }}:</span>
-  {% with noBadge = true, user = udoc %}
+  {% with noBadge = true, user = owner_udoc %}
     {% include "components/inline_user.html" %}
   {% endwith %}
     </p>
@@ -118,3 +119,4 @@
   {% endif %}
   </div>
 </div>
+{% endmacro %}

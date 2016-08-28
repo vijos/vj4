@@ -70,9 +70,7 @@
           {% endif %}
           </tbody>
         </table>
-      {% with num_pages = (pcount + handler.PROBLEMS_PER_PAGE - 1) // handler.PROBLEMS_PER_PAGE %}
-        {% include "components/paginator.html" %}
-      {% endwith %}
+        {{ paginator.render(page, (pcount + handler.PROBLEMS_PER_PAGE - 1) // handler.PROBLEMS_PER_PAGE) }}
       </div>
     </div>
   </div>

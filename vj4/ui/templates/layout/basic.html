@@ -1,10 +1,11 @@
 {% set layout_name = "basic" %}
 {% extends "layout/html5.html" %}
 {% block body %}
-{% include "components/nav.html" %}
+
+{% include "partials/nav.html" %}
 
 <div class="slideout-panel" id="panel">
-  {% include "components/nav_hamburger.html" %}
+  {% include "partials/nav_hamburger.html" %}
   <div class="header{% if header_mini %} mini{% endif %}">
     <div class="header-content"><div class="row"><div class="columns">
       <a class="header__logo" href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
@@ -25,9 +26,9 @@
     {% block content %}{% endblock %}
   </div>
 
-  {% include "components/footer.html" %}
+  {% include "partials/footer.html" %}
 </div>
 
-{% include "components/login_dialog.html" %}
+{% include "partials/login_dialog.html" %}
 
 {% endblock %}

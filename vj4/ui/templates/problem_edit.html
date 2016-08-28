@@ -1,4 +1,5 @@
 {% extends "layout/basic.html" %}
+{% import "components/problem.html" as problem with context %}
 {% block content %}
 <div class="row">
   <div class="large-9 columns">
@@ -37,7 +38,7 @@
   </div>
   <div class="large-3 columns">
   {% if page_name == 'problem_edit' %}
-    {% include "components/problem_sidebar.html" %}
+    {{ problem.render_sidebar(pdoc, udoc) }}
   {% endif %}
   </div>
 </div>

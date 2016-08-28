@@ -1,5 +1,5 @@
 {% extends "layout/basic.html" %}
-{% import "components/form.html" as form with context %}
+{% import "components/problem.html" as problem with context %}
 {% block content %}
 <div class="row">
   <div class="large-9 columns">
@@ -68,10 +68,8 @@
     </div>
   </div>
   <div class="large-3 columns">
-    {% include "components/problem_sidebar.html" %}
+    {{ problem.render_sidebar(pdoc, udoc) }}
   </div>
 </div>
-
-{# TODO(iceboy): psdoc #}
 
 {% endblock %}

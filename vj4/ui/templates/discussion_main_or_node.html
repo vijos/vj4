@@ -1,4 +1,5 @@
 {% extends "layout/basic.html" %}
+{% import "components/problem.html" as problem with context %}
 {% block content %}
 <div class="row">
   <div class="large-9 columns">
@@ -36,17 +37,13 @@
         </li>
       {% endfor %}
       </ol>
-    {% with num_pages = (dcount + handler.DISCUSSIONS_PER_PAGE - 1) // handler.DISCUSSIONS_PER_PAGE %}
-      {% include "components/paginator.html" %}
-    {% endwith %}
+      {{ paginator.render(page, (dcount + handler.DISCUSSIONS_PER_PAGE - 1) // handler.DISCUSSIONS_PER_PAGE) }}
     {% endif %}
     </div>
   </div>
   <div class="large-3 columns">
   {% if vnode['doc_type'] == vj4.model.document.TYPE_PROBLEM %}
-  {% with pdoc = vnode %}
-    {% include "components/problem_sidebar.html" %}
-  {% endwith %}
+    {{ problem.render_sidebar(vnode, udoc) }}{# TODO: where is udoc? #}
   {% else %}
     <div class="section side">
       {% if vnode['pic'] %}<div class="dcznode-bg {{ vnode['pic'] }}"></div>{% endif %}

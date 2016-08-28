@@ -1,20 +1,23 @@
 {% set layout_name = "immersive" %}
 {% extends "layout/html5.html" %}
 {% block body %}
-{% include "components/nav.html" %}
+
+{% include "partials/nav.html" %}
 
 <div class="slideout-panel" id="panel">
-  {% include "components/nav_hamburger.html" %}
+  {% include "partials/nav_hamburger.html" %}
   <div class="nav--placeholder"></div>
 
   <div class="main">
     {% block content %}{% endblock %}
   </div>
+
 {% with show_topics = false %}
-  {% include "components/footer.html" %}
+  {% include "partials/footer.html" %}
 {% endwith %}
+
 </div>
 
-{% include "components/login_dialog.html" %}
+{% include "partials/login_dialog.html" %}
 
 {% endblock %}
