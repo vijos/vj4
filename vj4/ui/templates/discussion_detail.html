@@ -1,4 +1,5 @@
 {% extends "layout/basic.html" %}
+{% import "components/comments.html" as comments with context %}
 {% block content %}
 <div class="row">
   <div class="large-9 columns">
@@ -38,29 +39,19 @@
         <h1 class="dczdetail__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
       </div>
       <div class="section__body">
-      {% with
-        view = 'discussion',
-        docs = drdocs,
-        comment_placeholder = 'Write Your Comment',
-        comment_ref = 'drid',
-        comment_post_op = 'reply',
-        comment_edit_op = 'edit_reply',
-        comment_post_text = 'Comment',
-        comment_edit_text = 'Update',
-        comment_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
-        comment_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
-        comment_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
-        reply_ref = 'drrid',
-        reply_post_op = 'tail_reply',
-        reply_post_text = 'Reply',
-        reply_edit_op = 'edit_tail_reply',
-        reply_edit_text = 'Update',
-        reply_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
-        reply_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
-        reply_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY
-      %}
-        {% include "components/comments.html" %}
-      {% endwith %}
+        {{ comments.render(
+          view = 'discussion',
+          docs = drdocs,
+          udict = udict,
+          comment_ref = 'drid',
+          reply_ref = 'drrid',
+          comment_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
+          comment_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+          comment_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
+          reply_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
+          reply_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+          reply_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY
+        ) }}
       </div>
     </div>
   </div>

@@ -1,4 +1,5 @@
 {% extends "layout/basic.html" %}
+{% import "components/comments.html" as comments with context %}
 {% import "components/problem.html" as problem with context %}
 {% block content %}
 <div class="row">
@@ -8,29 +9,25 @@
         <h1 class="dczdetail__title">{{ _('{0} solutions').format(psdocs|length) }}</h1>
       </div>
       <div class="section__body">
-      {% with
-        view = 'solution',
-        docs = psdocs,
-        comment_placeholder = 'Write Your Solution',
-        comment_ref = 'psid',
-        comment_post_op = 'submit',
-        comment_edit_op = 'edit_solution',
-        comment_post_text = 'Share',
-        comment_edit_text = 'Update',
-        comment_post_perm = vj4.model.builtin.PERM_CREATE_PROBLEM_SOLUTION,
-        comment_edit_perm = vj4.model.builtin.PERM_EDIT_PROBLEM_SOLUTION,
-        comment_delete_perm = vj4.model.builtin.PERM_DELETE_PROBLEM_SOLUTION,
-        reply_ref = 'psrid',
-        reply_post_op = 'reply',
-        reply_post_text = 'Reply',
-        reply_edit_op = 'edit_reply',
-        reply_edit_text = 'Update',
-        reply_post_perm = vj4.model.builtin.PERM_REPLY_PROBLEM_SOLUTION,
-        reply_edit_perm = vj4.model.builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY,
-        reply_delete_perm = vj4.model.builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY
-      %}
-        {% include "components/comments.html" %}
-      {% endwith %}
+        {{ comments.render(
+          view = 'solution',
+          docs = psdocs,
+          udict = udict,
+          comment_ref = 'psid',
+          reply_ref = 'psrid',
+          comment_placeholder = 'Write Your Solution',
+          comment_post_op = 'submit',
+          comment_edit_op = 'edit_solution',
+          comment_post_text = 'Share',
+          reply_post_op = 'reply',
+          reply_edit_op = 'edit_reply',
+          comment_post_perm = vj4.model.builtin.PERM_CREATE_PROBLEM_SOLUTION,
+          comment_edit_perm = vj4.model.builtin.PERM_EDIT_PROBLEM_SOLUTION,
+          comment_delete_perm = vj4.model.builtin.PERM_DELETE_PROBLEM_SOLUTION,
+          reply_post_perm = vj4.model.builtin.PERM_REPLY_PROBLEM_SOLUTION,
+          reply_edit_perm = vj4.model.builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY,
+          reply_delete_perm = vj4.model.builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY
+        ) }}
       </div>
     </div>
   </div>
