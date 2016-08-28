@@ -4,6 +4,7 @@ import webpack from 'webpack';
 import HappyPack from 'happypack';
 import fs from 'fs-extra';
 
+import DummyPlugin from './scripts/build/webpackDummyPlugin.js';
 import DummyOutputPlugin from './scripts/build/webpackDummyOutputPlugin.js';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -119,10 +120,13 @@ export default function (env = {}) {
     },
     plugins: [
 
-      new HappyPack({
-        id: 'js',
-        tempDir: root('.cache/happypack'),
-      }),
+      env.watch
+        ? new DummyPlugin()
+        : new HappyPack({
+            id: 'js',
+            tempDir: root('.cache/happypack'),
+          })
+        ,
 
       new webpack.ProvidePlugin({
         $: 'jquery',
