@@ -8,6 +8,9 @@
         <h1 class="section__title">{{ _('Recent {0} Records').format(10) }}</h1>
       </div>
       <div class="section__body no-padding">
+      {% if not rdocs %}
+        {{ nothing.render('You have not submitted any solutions for this problem') }}
+      {% else %}
         <table class="data-table">
           <colgroup>
             <col class="col--status">
@@ -26,17 +29,12 @@
             </tr>
           </thead>
           <tbody>
-          {% if not rdocs %}
-            <tr class="empty-row">
-              <td colspan="5">{{ _('You have not submitted any solutions for this problem.') }}</td>
-            </tr>
-          {% else %}
           {% for rdoc in rdocs %}
             {% include 'problem_submit_tr.html' %}
           {% endfor %}
-          {% endif %}
           </tbody>
         </table>
+      {% endif %}
       </div>
     </div>
 

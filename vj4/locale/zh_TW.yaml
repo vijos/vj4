@@ -142,7 +142,7 @@ Sign Up Now: 現在註冊
 Sign up mail has been sent to your email.: 註冊郵件已經發送到您的電子郵箱。
 Solutions: 題解
 'Solved {0} problems, RP: {1} (No. {2})': '解決了 {0} 個問題，RP: {1} (No. {2})'
-Sorry, there is no problem in the problem set.: 題庫中目前沒有題目。
+Sorry, there is no problem in the problem set: 題庫中目前沒有題目
 Statistics: 統計
 Status: 狀態
 Submission Statistics: 遞交統計
@@ -245,7 +245,7 @@ Submit Your Code: 遞交程式碼進行正式評測
 Toggle Pretest Panel: 切換對拍面板
 Toggle Records Panel: 切換評測記錄面板
 Recent {0} Records: 最近 {0} 條記錄
-You have not submitted any solutions for this problem.: 您在該題下沒有遞交過任何解答。
+You have not submitted any solutions for this problem: 您在該題下沒有遞交過任何解答
 Submit to Judge: 遞交以評測
 Code language: 程式碼語言
 'Yes': 是

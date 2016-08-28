@@ -4,6 +4,9 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__body no-padding">
+      {% if not pdocs %}
+        {{ nothing.render('Sorry, there is no problem in the problem set') }}
+      {% else %}
         <table class="data-table">
           <colgroup>
           {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
@@ -26,11 +29,6 @@
             </tr>
           </thead>
           <tbody>
-          {% if not pdocs %}
-            <tr class="empty-row">
-              <td colspan="5">{{ _('Sorry, there is no problem in the problem set.') }}</td>
-            </tr>
-          {% else %}
           {% for pdoc in pdocs %}
           {% with psdoc = psdict[pdoc['doc_id']] %}
             <tr>
@@ -67,10 +65,10 @@
             </tr>
           {% endwith %}
           {% endfor %}
-          {% endif %}
           </tbody>
         </table>
         {{ paginator.render(page, (pcount + handler.PROBLEMS_PER_PAGE - 1) // handler.PROBLEMS_PER_PAGE) }}
+      {% endif %}
       </div>
     </div>
   </div>

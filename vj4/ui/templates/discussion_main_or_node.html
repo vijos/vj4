@@ -5,9 +5,7 @@
   <div class="large-9 columns">
     <div class="section">
     {% if not ddocs %}
-    {% with text = _('no discussion yet...') %}
-      {% include "components/nothing.html" %}
-    {% endwith %}
+      {{ nothing.render('no discussion yet...') }}
     {% else %}
       <ol class="dczlist">
       {% for ddoc in ddocs %}

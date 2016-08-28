@@ -151,7 +151,7 @@ Sign up mail has been sent to your email.: 注册邮件已经发送到您的电�
 Solutions: 题解
 'Solved {0} problems, RP: {1} (No. {2})': '解决了 {0} 个问题，RP: {1} (No. {2})'
 Sorry: 对不起
-Sorry, there is no problem in the problem set.: 题库中目前没有题目。
+Sorry, there is no problem in the problem set: 题库中目前没有题目
 Solutions Liked: 题解被赞
 Statistics: 统计
 Status: 状态
@@ -267,7 +267,7 @@ Submit Your Code: 递交代码进行正式评测
 Toggle Pretest Panel: 切换对拍面板
 Toggle Records Panel: 切换评测记录面板
 Recent {0} Records: 最近 {0} 条记录
-You have not submitted any solutions for this problem.: 您在该题下没有递交过任何解答。
+You have not submitted any solutions for this problem: 您在该题下没有递交过任何解答
 Submit to Judge: 递交以评测
 Code language: 代码语言
 'Yes': 是

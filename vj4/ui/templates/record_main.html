@@ -4,6 +4,9 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__body no-padding">
+      {% if not rdocs %}
+        {{ nothing.render('Oh, there is no task in the queue!') }}
+      {% else %}
         <table class="data-table record_main__table">
           <colgroup>
             <col class="col--status">
@@ -20,19 +23,14 @@
             </tr>
           </thead>
           <tbody>
-          {% if not rdocs %}
-            <tr class="empty-row">
-              <td colspan="4">{{ _('Oh, there is no task in the queue!') }}</td>
-            </tr>
-          {% else %}
           {% for rdoc in rdocs %}
           {% with udoc = udict[rdoc['uid']], pdoc = pdict[(rdoc['domain_id'], rdoc['pid'])] %}
             {% include 'record_main_tr.html' %}
           {% endwith %}
           {% endfor %}
-          {% endif %}
           </tbody>
         </table>
+      {% endif %}
       </div>
     </div>
   </div>
