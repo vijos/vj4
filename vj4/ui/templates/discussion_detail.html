@@ -8,9 +8,7 @@
         <div class="dczdetail__supplementary">
           <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
           <span class="v-center"> · </span>
-        {% with user = udict[ddoc['owner_uid']], domain_user = dudict[ddoc['owner_uid']] %}
-          {% include "components/inline_user.html" %}
-        {% endwith %}
+          {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']]) }}
           <span class="v-center"> · </span>
           <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
         </div>
@@ -65,10 +63,7 @@
           </div>
           <div class="media__body">
             <p>
-            {% with noAvatar = true, noModBadge = true,
-                      user = udict[ddoc['owner_uid']], domain_user = dudict[ddoc['owner_uid']] %}
-              {% include "components/inline_user.html" %}
-            {% endwith %}
+              {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']], avatar=false, modbadge=false) }}
             </p>
           </div>
         </div>

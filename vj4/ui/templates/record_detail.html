@@ -96,9 +96,7 @@
       <div class="section__body typo">
         <p>
           <span class="v-center">{{ _('Submit By') }}:</span>
-        {% with noModBadge = true, user = udoc, domain_user = dudoc %}
-          {% include "components/inline_user.html" %}
-        {% endwith %}
+          {{ user.render_inline(udoc, dudoc, modbadge=false) }}
         </p>
         <p>
           {{ _('Type') }}: {{ _(vj4.constant.record.TYPE_TEXTS[rdoc['type']]) }}

@@ -1,3 +1,4 @@
+{% import "components/user.html" as user with context %}
 {% macro reply(mode_create = false, udoc, doc = {}, rdoc = {}) %}
 <li class="dczcomments__reply{% if mode_create %} commentbox-container{% endif %}">
   <div class="media">
@@ -8,9 +9,7 @@
     {% if not mode_create %}
       <div class="clearfix">
         <div class="dczcomments__supplementary">
-        {% with noAvatar = true, user = udoc, domain_user = dudict[udoc['_id']] %}
-          {% include "components/inline_user.html" %}
-        {% endwith %}
+          {{ user.render_inline(udoc, dudict[udoc['_id']], avatar=false) }}
           <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
         </div>
         {{ comment_base.reply_operations(doc, rdoc) }}
@@ -37,9 +36,7 @@
     {% if not mode_create %}
       <div class="clearfix">
         <div class="dczcomments__supplementary">
-        {% with noAvatar = true, user = udoc, domain_user = dudict[udoc['_id']] %}
-          {% include "components/inline_user.html" %}
-        {% endwith %}
+          {{ user.render_inline(udoc, dudict[udoc['_id']], avatar=false) }}
           <span class="v-center">@ {{ datetime_span(doc['_id'].generation_time) }}</span>
         </div>
         {{ comment_base.comment_operations(doc) }}

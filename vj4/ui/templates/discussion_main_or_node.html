@@ -22,9 +22,7 @@
               <div class="dczlist__supplementary">
                 <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['parent_doc_id']) }}">{% if ddoc['parent_doc_type'] == vj4.model.document.TYPE_DISCUSSION_NODE %}<span class="icon icon-tag"></span>{% else %}<span class="icon icon-flag"></span>{% endif %}{{ vndict[ddoc['parent_doc_id']]['title'] }}</a>
                 <span class="v-center"> · </span>
-              {% with user = udict[ddoc['owner_uid']], noBadge = true %}
-                {% include "components/inline_user.html" %}
-              {% endwith %}
+                {{ user.render_inline(udict[ddoc['owner_uid']], badge=false) }}
                 <span class="v-center"> · </span>
                 <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
                 <span class="v-center"> · </span>
