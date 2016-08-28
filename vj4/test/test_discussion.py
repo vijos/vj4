@@ -91,7 +91,10 @@ class DiscussionTest(base.SmallcacheTestCase):
   async def test_add_get(self):
     await discussion.add_category(DOMAIN_ID_DUMMY, 'cat')
     await discussion.add_node(DOMAIN_ID_DUMMY, 'cat', 'meow')
-    _, ddocs, _ = await discussion.get_vnode_and_list_and_count_for_node(DOMAIN_ID_DUMMY, 'meow')
+    vnode = await discussion.get_vnode(DOMAIN_ID_DUMMY, 'meow')
+    ddocs = await discussion.get_list(DOMAIN_ID_DUMMY,
+                                      parent_doc_type=vnode['doc_type'],
+                                      parent_doc_id=vnode['doc_id'])
     self.assertEqual(len(ddocs), 0)
     did = await discussion.add(DOMAIN_ID_DUMMY, 'meow', OWNER_UID, TITLE, CONTENT)
     ddoc = await discussion.get(DOMAIN_ID_DUMMY, did)
@@ -102,10 +105,13 @@ class DiscussionTest(base.SmallcacheTestCase):
     self.assertEqual(ddoc['owner_uid'], OWNER_UID)
     self.assertEqual(ddoc['title'], TITLE)
     self.assertEqual(ddoc['content'], CONTENT)
-    _, ddocs, _ = await discussion.get_vnode_and_list_and_count_for_node(DOMAIN_ID_DUMMY, 'meow',
-                                                                         fields=['title',
-                                                                                 'owner_uid',
-                                                                                 'parent_doc_id'])
+    vnode = await discussion.get_vnode(DOMAIN_ID_DUMMY, 'meow')
+    ddocs = await discussion.get_list(DOMAIN_ID_DUMMY,
+                                      parent_doc_type=vnode['doc_type'],
+                                      parent_doc_id=vnode['doc_id'],
+                                      fields=['title',
+                                              'owner_uid',
+                                              'parent_doc_id'])
     self.assertEqual(len(ddocs), 1)
     self.assertEqual(ddocs[0]['title'], TITLE)
     self.assertFalse('content' in ddocs[0])
