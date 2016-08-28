@@ -51,7 +51,7 @@
     <div class="section side">
       {% if vnode['pic'] %}<div class="dcznode-bg {{ vnode['pic'] }}"></div>{% endif %}
       <div class="section__header">
-        <h1 class="section__title">{{ vnode['title'] }}</h1>
+        <h1 class="section__title">{{ vnode['title'] or _('Create Discussion') }}</h1>
       </div>
       <div class="section__body">
       {% if vnode %}
