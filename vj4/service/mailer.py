@@ -19,7 +19,7 @@ async def send_mail(to: str, subject: str, content: str):
   msg['From'] = options.options.mail_from
   msg['To'] = to
 
-  async with asmtp.SMTP_SSL(host=options.options.smtp_host, port=options.options.smtp_port) as server:
+  async with asmtp.SMTP_SSL(hostname=options.options.smtp_host, port=options.options.smtp_port) as server:
     await server.ehlo()
     await server.login(options.options.smtp_user, options.options.smtp_password)
     await server.sendmail(options.options.mail_from, to, msg.as_string())
