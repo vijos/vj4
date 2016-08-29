@@ -11,13 +11,13 @@
   outline: 0
   margin: 0 0 1rem
   color: $text-color
-  transition: background-color .1s linear, box-shadow .1s linear
+  transition: background-color .2s linear, box-shadow .2s linear
   cursor: pointer
 
   &:hover, &:focus
     background-color: darken($default-color, 10%)
     text-decoration: none
-    box-shadow: 0 2px 10px rgba(#000, 0.2)
+    box-shadow: 0 4px 15px rgba(darken($default-color, 20%), 0.5)
 
   &.expanded
     padding-left: 0
@@ -34,6 +34,7 @@
 
     &:hover
       background-color: lighten($primary-color, 10%)
+      box-shadow: 0 4px 15px rgba(darken($primary-color, 20%), 0.3)
 
   &.secondary
     background-color: $secondary-color
@@ -41,6 +42,7 @@
 
     &:hover
       background-color: lighten($secondary-color, 10%)
+      box-shadow: 0 4px 15px rgba($secondary-color, 0.3)
 
 .button.inverse
   line-height: rem($form-control-height - 4)
