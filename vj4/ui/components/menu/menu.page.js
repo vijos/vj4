@@ -1,14 +1,20 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import { slideDown } from '../../utils/slide';
+import delay from '../../utils/delay';
 
-async function expandMenu($menu) {
+function expandMenu($menu) {
   slideDown($menu, 500, { opacity: 0 }, { opacity: 1 });
 }
 
-const menuPage = new AutoloadPage(() => {
+async function expandAllMenus() {
+  await delay(200);
   for (const menu of $('.menu.collapsed')) {
     expandMenu($(menu));
   }
+}
+
+const menuPage = new AutoloadPage(() => {
+  expandAllMenus();
 });
 
 export default menuPage;
