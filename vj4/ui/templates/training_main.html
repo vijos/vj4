@@ -1,14 +1,14 @@
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
-  <div class="large-9 columns">
+  <div class="medium-9 columns">
     <ol>
     {% for tdoc in tdocs %}
       <a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}">{{ tdoc }}</a>
     {% endfor %}
     </ol>
   </div>
-  <div class="large-3 columns">
+  <div class="medium-3 columns">
     <h1>{{ _('Swx Template!') }}</h1>
   </div>
 </div>
