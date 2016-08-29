@@ -5,7 +5,7 @@ using namespace std;
 
 int main()
 {
-    return 0;
+\treturn 0;
 }
 `.trim();
 

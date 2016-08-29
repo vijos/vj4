@@ -12,6 +12,8 @@ import * as languageEnum from '../../constant/language';
 const getOptions = (lang) => ({
   lineNumbers: true,
   tabSize: 4,
+  indentUnit: 4,
+  indentWithTabs: true,
   mode: languageEnum.LANG_CODEMIRROR_MODES[lang],
 });
 
