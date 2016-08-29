@@ -20,6 +20,11 @@ STATUS_DONE = 3
 RULE_OI = 2
 RULE_ACM = 3
 
+RULE_TEXTS = {
+  RULE_OI: 'OI',
+  RULE_ACM: 'ACM',
+}
+
 Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
 
 

@@ -1,5 +1,7 @@
 $highlight-button-color = #F6DF45
 
+$contest_colors = (#F3A7AE #ECB0CE #9CC2DD #83CDD7 #96CEA3 #DEE78A #F1CD80 #D6D6D6 #E7818B #E089B5 #70A9D1 #48B3C1 #6EBE7E #C3D053 #F6C356 #ABABAB)
+
 .page--contest_main
 
   .section--contest.live
@@ -96,7 +98,7 @@ $highlight-button-color = #F6DF45
     transition: box-shadow .2s ease-out-cubic
 
     &:hover
-      box-shadow: 0 7px 25px rgba(#000, 0.2)
+      box-shadow: 0 8px 25px rgba(#000, 0.3)
 
   .contest__card__image
     position: absolute
@@ -104,7 +106,11 @@ $highlight-button-color = #F6DF45
     top: 0
     width: 100%
     height: 100%
-    background-color: $primary-color
+    background-color: $contest_colors[0]
+
+  for num in range(0, (length($contest_colors) - 1))
+    .cci--{num}
+      background-color: $contest_colors[num]
 
   .contest__card__info
     z-index: 1
