@@ -2,7 +2,7 @@
 {% import "components/problem.html" as problem with context %}
 {% block content %}
 <div class="row">
-  <div class="large-9 columns">
+  <div class="medium-9 columns">
     <div class="section">
     {% if not ddocs %}
       {{ nothing.render('no discussion yet...') }}
@@ -37,7 +37,7 @@
     {% endif %}
     </div>
   </div>
-  <div class="large-3 columns">
+  <div class="medium-3 columns">
   {% if vnode['doc_type'] == vj4.model.document.TYPE_PROBLEM %}
     {{ problem.render_sidebar(vnode, udoc) }}{# TODO: where is udoc? #}
   {% else %}

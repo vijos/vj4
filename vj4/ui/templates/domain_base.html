@@ -1,10 +1,10 @@
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row" data-sticky-parent>
-  <div class="large-9 columns">
+  <div class="medium-9 columns">
   {% block domain_content %}{% endblock %}
   </div>
-  <div class="large-3 columns"><div data-sticky="large">
+  <div class="medium-3 columns"><div data-sticky="large">
     <div class="section side">
       <ol class="menu">
         {{ sidemenu.render_item('cloud', 'domain_manage') }}
