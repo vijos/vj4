@@ -1,10 +1,16 @@
 $highlight-button-color = #F6DF45
 
 .page--contest_main
-  .contest__now
+
+  .section--contest.live
+    background: #E98696
+    background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #E98696 0%, #E96B6B 100%)
+
+  .section--contest.ready
     background: #469DCF
     background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #8ACDE6 0%, #469DCF 100%)
 
+  .section--contest
     .status_title
       display: inline-block
       font-size: rem($font-size-secondary)
@@ -29,6 +35,11 @@ $highlight-button-color = #F6DF45
       li
         display: inline-block
         margin-right: rem(10px)
+
+    .attandance
+      margin-top: rem(15px)
+      font-size: rem($font-size-secondary)
+      opacity: 0.8
 
     .detail-button
       cursor: pointer
@@ -75,3 +86,48 @@ $highlight-button-color = #F6DF45
 
       .detail-button
         width: auto
+
+  .contest__card
+    display: block
+    position: relative
+    padding-bottom: 75%
+    margin-bottom: rem(20px)
+    overflow: hidden
+    transition: box-shadow .2s ease-out-cubic
+
+    &:hover
+      box-shadow: 0 7px 25px rgba(#000, 0.2)
+
+  .contest__card__image
+    position: absolute
+    left: 0
+    top: 0
+    width: 100%
+    height: 100%
+    background-color: $primary-color
+
+  .contest__card__info
+    z-index: 1
+    position: absolute
+    left: 0
+    bottom: 0
+    width: 100%
+    padding: rem(15px)
+    background: rgba(#000, 0.5)
+    color: #FFF
+    font-size: rem($font-size-small)
+
+    h1
+      color: #FFF
+      font-size: rem($font-size)
+      margin-bottom: 0.5em
+
+      +mobile()
+        font-size: rem($font-size-title)
+
+    li
+      display: inline-block
+      margin-right: rem(10px)
+
+    .icon
+      color: #FFEB81
