@@ -11,25 +11,28 @@
         <ul class="info">
           <li>
             <span class="icon icon-award"></span>
-            赛制: {{ vj4.model.adaptor.contest.RULE_TEXTS[tdoc['rule']] }}
+            {{ _('Rule') }}: {{ vj4.model.adaptor.contest.RULE_TEXTS[tdoc['rule']] }}
           </li>
           <li>
             <span class="icon icon-calendar"></span>
-            开始时间: {{ datetime_span(tdoc['begin_at']) }}
+            {{ _('Start at') }}: {{ datetime_span(tdoc['begin_at']) }}
           </li>
           <li>
             <span class="icon icon-clock"></span>
-            持续时间: {{ ((tdoc['end_at'] - tdoc['begin_at']).seconds/3600)|round(2) }} 小时
+            {{ _('Duration') }}: {{ ((tdoc['end_at'] - tdoc['begin_at']).seconds/3600)|round(2) }} {{ _('Hour(s)') }}
           </li>
         </ul>
       </div>
     </div>
     <div class="media__right middle">
       <div class="section__body">
-        <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="detail-button">查看详情</a>
+        <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="detail-button">{{ _('Detail') }}</a>
         <div class="typo text-center">
-          <p><span class="icon icon-check"></span> 已参加</p>
-          <p><span class="icon icon-clock"></span> 未参加</p>
+          {% if tsdict[tdoc['doc_id']]['attend'] == 1%}
+          <p><span class="icon icon-check"></span> {{ _('Attended') }}</p>
+          {% else %}
+          <p><span class="icon icon-clock"></span> {{ _('Unattended') }}</p>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -40,14 +43,14 @@
 <div class="row">
   <div class="medium-9 columns">
   {% for tdoc in tdocs if tdoc['status'] == vj4.model.adaptor.contest.STATUS_LIVE or True %}
-    {{ render_important_contest('live', '正在进行...', tdoc) }}
+    {{ render_important_contest('live', 'Living...', tdoc) }}
   {% endfor %}
   {% for tdoc in tdocs if tdoc['status'] == vj4.model.adaptor.contest.STATUS_READY or True %}
-    {{ render_important_contest('ready', '即将开始 (☆▽☆)', tdoc) }}
+    {{ render_important_contest('ready', 'Ready (☆▽☆)', tdoc) }}
   {% endfor %}
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">所有比赛</h1>
+        <h1 class="section__title">{{ _('All Contests') }}</h1>
       </div>
       <div class="section__body"><ol class="contest__list">
       {% for row in tdocs|batch(3, '') %}

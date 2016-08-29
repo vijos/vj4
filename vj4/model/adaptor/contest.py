@@ -120,6 +120,20 @@ async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=No
                                    uid=uid, fields=fields)
 
 
+def get_multi_status(*, fields=None, **kwargs):
+  return document.get_multi_status(doc_type=document.TYPE_CONTEST, fields=fields, **kwargs)
+
+
+async def get_dict_status(domain_id, uid, tids, *, fields=None):
+  result = dict()
+  async for tsdoc in get_multi_status(domain_id=domain_id,
+                                      uid=uid,
+                                      doc_id={'$in': list(set(tids))},
+                                      fields=fields):
+    result[tsdoc['doc_id']] = tsdoc
+  return result
+
+
 @argmethod.wrap
 async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.

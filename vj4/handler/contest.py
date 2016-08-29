@@ -31,7 +31,10 @@ class ContestMainHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   async def get(self):
     tdocs = await contest.get_list(self.domain_id)
-    self.render('contest_main.html', tdocs=tdocs)
+    tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'], 
+                                           [tdoc['doc_id'] for tdoc in tdocs])
+    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    self.render('contest_main.html', tdocs=tdocs, now=now, tsdict=tsdict)
 
 
 @app.route('/tests/{tid:\w{24}}', 'contest_detail')
