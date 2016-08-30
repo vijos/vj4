@@ -1,16 +1,20 @@
 from vj4 import app
 from vj4.model import builtin
 from vj4.model import domain
-from vj4.model import user
+from vj4.model.adaptor import discussion
 from vj4.handler import base
 
 
-@app.route('/domain', 'domain_main')
+@app.route('/', 'domain_main')
 class DomainMainHandler(base.Handler):
   async def get(self):
-    self.render('domain_main.html',
-                path_components=[(self.domain_id, self.reverse_url('main')),
-                                 (self.translate('domain_main'), None)])
+    self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id))
+
+
+@app.route('/manage', 'domain_manage')
+class DomainMainHandler(base.Handler):
+  async def get(self):
+    self.render('domain_manage.html')
 
 
 @app.route('/domain/edit', 'domain_edit')

@@ -108,7 +108,7 @@ class DiscussionDetailHandler(base.OperationHandler):
       if 'reply' in drdoc:
         uids.update(drrdoc['owner_uid'] for drrdoc in drdoc['reply'])
     udict, dudict = await asyncio.gather(user.get_dict(uids),
-                                         domain.get_dict_user(self.domain_id, uids))
+                                         domain.get_dict_user_by_uid(self.domain_id, uids))
 
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),

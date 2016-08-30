@@ -208,7 +208,7 @@ class HomeMessagesConnection(base.Connection):
 class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    uddict = await domain.get_dict_users(self.user['_id'])
+    uddict = await domain.get_dict_user_by_domain_id(self.user['_id'])
     dids = list(uddict.keys())
     ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
                                               {'owner_uid': self.user['_id']}]}) \

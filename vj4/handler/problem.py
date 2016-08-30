@@ -143,7 +143,7 @@ class ProblemSolutionHandler(base.OperationHandler):
         uids.update(psrdoc['owner_uid'] for psrdoc in psdoc['reply'])
     udict, dudict, pssdict = await asyncio.gather(
         user.get_dict(uids),
-        domain.get_dict_user(self.domain_id, uids),
+        domain.get_dict_user_by_uid(self.domain_id, uids),
         problem.get_dict_solution_status(
             ((psdoc['domain_id'], psdoc['doc_id']) for psdoc in psdocs), self.user['_id']))
     path_components = self.build_path(

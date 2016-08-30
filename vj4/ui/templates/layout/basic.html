@@ -8,7 +8,7 @@
   {% include "partials/nav_hamburger.html" %}
   <div class="header{% if header_mini %} mini{% endif %}">
     <div class="header-content"><div class="row"><div class="columns">
-      <a class="header__logo" href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
+      <a class="header__logo" href="{{ reverse_url('domain_main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
     </div></div></div>
     <div class="header__layer"><div class="row"><div class="columns">
     {% if not header_mini %}

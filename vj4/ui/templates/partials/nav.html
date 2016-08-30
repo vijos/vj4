@@ -8,13 +8,12 @@
 <nav class="nav slideout-menu" id="menu">
   <div class="row"><div class="columns clearfix">
     <ol class="nav__list nav__list--main clearfix">
-      <li class="nav__list-item"><a href="{{ reverse_url('main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
-      {{ nav_item('main', 'main') }}
+      <li class="nav__list-item"><a href="{{ reverse_url('domain_main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
+      {{ nav_item('domain_main', 'domain') }}
       {{ nav_item('problem_main', 'problem') }}
       {{ nav_item('training_main', 'training') }}
       {{ nav_item('discussion_main', 'discussion') }}
       {{ nav_item('contest_main', 'contest') }}
-      {{ nav_item('domain_main', 'domain') }}
     </ol>
     <ol class="nav__list nav__list--secondary clearfix">
     {% if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}

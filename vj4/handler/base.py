@@ -317,7 +317,7 @@ def _reverse_url(name, *, domain_id, **kwargs):
 
 @functools.lru_cache()
 def _build_path(*args, domain_id):
-  return [(domain_id, _reverse_url('main', domain_id=domain_id)), *args]
+  return [(domain_id, _reverse_url('domain_main', domain_id=domain_id)), *args]
 
 
 @functools.lru_cache()
