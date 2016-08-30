@@ -47,6 +47,8 @@ Current Email: 当前电子邮件
 Current Location: 当前位置
 Current Password: 当前密码
 Default Code Language: 默认代码语言
+Default Code Template: 默认代码模板
+If leaved blank, the built-in template of the selected language will be used.: 若留空，则将使用对应语言的内置代码模板
 Development: 开发
 Difficulty: 难度
 Disabled: 关闭
@@ -182,6 +184,7 @@ Title: 标题
 Total Time: 总耗时
 Type: 类型
 UI Language: 用户界面语言
+Timezone: 时区
 Unknown: 未知
 Update: 更新
 Uploaded By: 上传者
@@ -214,6 +217,7 @@ discussion_main: 讨论
 discussion_node: 讨论
 error: 错误
 home_account: 账户设置
+home_preference: 偏好设置
 home_messages: 站内消息
 home_security: 安全设置
 home_domain: 我的域
@@ -234,9 +238,9 @@ problem_submit: 递交代码
 record_detail: 记录详情
 record_main: 评测队列
 reply: 回复
-setting_function: 功能
+setting_usage: 使用
 setting_info: 个人信息
-setting_preference: 偏好
+setting_display: 显示
 setting_privacy: 隐私
 title: 标题
 training_main: 训练

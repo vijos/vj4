@@ -113,6 +113,20 @@ class UserChangemailWithCodeHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('home_security'))
 
 
+@app.route('/home/preference', 'home_preference')
+class HomePreferenceHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  async def get(self):
+    self.render('home_preference.html')
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.post_argument
+  @base.require_csrf_token
+  async def post(self, **kwargs):
+    await self.set_settings(**kwargs)
+    self.json_or_redirect(self.referer_or_main)
+
+
 @app.route('/home/account', 'home_account')
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
