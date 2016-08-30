@@ -23,9 +23,7 @@ class DomainMainHandler(base.Handler):
 class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   async def get(self):
-    self.render('domain_edit.html',
-                path_components=[(self.domain_id, self.reverse_url('main')),
-                                 (self.translate('domain_edit'), None)])
+    self.render('domain_edit.html')
 
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   @base.post_argument
@@ -33,11 +31,10 @@ class DomainEditHandler(base.Handler):
   @base.sanitize
   async def post(self, *, name: str, gravatar: str):
     ddoc = await domain.edit(self.domain_id, name=name, gravatar=gravatar)
+    # TODO(iceboy): FIXME!!! THIS IS DISASTER!!!
     if ddoc:
       self.domain = ddoc
-    self.render('domain_edit.html',
-                path_components=[(self.domain_id, self.reverse_url('main')),
-                                 (self.translate('domain_edit'), None)])
+    self.render('domain_edit.html')
 
 
 @app.route('/domain/user', 'domain_user')
