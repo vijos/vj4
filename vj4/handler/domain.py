@@ -1,3 +1,5 @@
+import collections
+
 from vj4 import app
 from vj4.model import builtin
 from vj4.model import domain
@@ -53,14 +55,12 @@ class DomainPermissionHandler(base.Handler):
 @app.route('/domain/role', 'domain_role')
 class DomainRoleHandler(base.OperationHandler):
   async def get(self):
-    rudocs = dict((role, []) for role in self.domain['roles'])
-    uddocs = await domain.get_list_users_by_role(self.domain_id, {'$gt': ''}, {'uid': 1, 'role': 1})
-    for uddoc in uddocs:
-      if uddoc['role'] in rudocs:
+    rudocs = collections.defaultdict(list)
+    async for uddoc in domain.get_multi_user(domain_id=self.domain_id,
+                                             fields={'uid': 1, 'role': 1}):
+      if 'role' in uddoc:
         rudocs[uddoc['role']].append(uddoc)
-    self.render('domain_role.html', rudocs=rudocs,
-                path_components=[(self.domain_id, self.reverse_url('main')),
-                                 (self.translate('domain_role'), None)])
+    self.render('domain_role.html', rudocs=rudocs)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
