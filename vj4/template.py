@@ -51,7 +51,7 @@ MARKDOWN_RENDER_FLAGS = (hoedown.HTML_ESCAPE |  # Escape all HTML.
 
 def markdown(text):
   return markupsafe.Markup(
-    hoedown.html(text, extensions=MARKDOWN_EXTENSIONS, render_flags=MARKDOWN_RENDER_FLAGS))
+      hoedown.html(text, extensions=MARKDOWN_EXTENSIONS, render_flags=MARKDOWN_RENDER_FLAGS))
 
 
 def gravatar_url(gravatar, size=200):
@@ -60,7 +60,7 @@ def gravatar_url(gravatar, size=200):
     gravatar_hash = hashlib.md5(gravatar.lower().encode()).hexdigest()
   else:
     gravatar_hash = ''
-  return ('//gravatar.lug.ustc.edu.cn/avatar/' + gravatar_hash + "?" +
+  return ('//gravatar.proxy.ustclug.org/avatar/' + gravatar_hash + "?" +
           parse.urlencode({'d': 'mm', 's': str(size)}))
 
 
