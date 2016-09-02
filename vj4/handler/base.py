@@ -239,7 +239,7 @@ class Handler(web.View, HandlerBase):
 
   @property
   def referer_or_main(self):
-    return self.request.headers.get('referer', self.reverse_url('main'))
+    return self.request.headers.get('referer', self.reverse_url('domain_main'))
 
   def redirect(self, redirect_url):
     self.response.set_status(web.HTTPFound.status_code, None)

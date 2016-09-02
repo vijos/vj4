@@ -228,4 +228,4 @@ class HomeDomainCreateHandler(base.Handler):
   @base.sanitize
   async def post(self, *, id: str, name: str, gravatar: str):
     domain_id = await domain.add(id, self.user['_id'], name=name, gravatar=gravatar)
-    self.json_or_redirect(self.reverse_url('main', domain_id=domain_id))
+    self.json_or_redirect(self.reverse_url('domain_main', domain_id=domain_id))
