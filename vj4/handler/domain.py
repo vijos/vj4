@@ -31,7 +31,7 @@ class DomainEditHandler(base.Handler):
   @base.sanitize
   async def post(self, *, name: str, gravatar: str):
     ddoc = await domain.edit(self.domain_id, name=name, gravatar=gravatar)
-    # TODO(iceboy): FIXME!!! THIS IS DISASTER!!!
+    # TODO(iceboy): FIXME!!! THIS IS A DISASTER!!!
     if ddoc:
       self.domain = ddoc
     self.render('domain_edit.html')
