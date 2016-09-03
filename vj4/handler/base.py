@@ -239,7 +239,7 @@ class Handler(web.View, HandlerBase):
 
   @property
   def referer_or_main(self):
-    return self.request.headers.get('referer', self.reverse_url('main'))
+    return self.request.headers.get('referer', self.reverse_url('domain_main'))
 
   def redirect(self, redirect_url):
     self.response.set_status(web.HTTPFound.status_code, None)
@@ -317,7 +317,7 @@ def _reverse_url(name, *, domain_id, **kwargs):
 
 @functools.lru_cache()
 def _build_path(*args, domain_id):
-  return [(domain_id, _reverse_url('main', domain_id=domain_id)), *args]
+  return [(domain_id, _reverse_url('domain_main', domain_id=domain_id)), *args]
 
 
 @functools.lru_cache()
