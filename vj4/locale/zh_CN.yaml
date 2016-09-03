@@ -225,7 +225,6 @@ home_domain: 我的域
 judge_playground: 评测游乐场
 last active at: 最后活动于
 last login at: 最后登录于
-main: 首页
 no discussion yet...: 目前没有讨论…
 pager_first: « 第一页
 pager_last: 末页 »
@@ -293,7 +292,8 @@ home_domain_create: 创建域
 Create Domain: 创建域
 Properties: 属性
 Access Control: 访问控制
-domain_main: 管理域
+domain_main: 首页
+domain_manage: 管理域
 domain_edit: 编辑域信息
 domain_role: 管理角色
 domain_user: 管理用户

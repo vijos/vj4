@@ -151,16 +151,23 @@ async def inc_user(domain_id, uid, **kwargs):
                                     new=True)
 
 
-@argmethod.wrap
-def get_multi_user(domain_id: str, *, fields=None, **kwargs):
+def get_multi_user(*, fields=None, **kwargs):
   coll = db.Collection('domain.user')
-  return coll.find({'domain_id': domain_id, **kwargs}, fields)
+  return coll.find(kwargs, fields)
 
 
-async def get_dict_user(domain_id, uids, *, fields=None):
+async def get_dict_user_by_uid(domain_id, uids, *, fields=None):
   result = dict()
-  async for dudoc in get_multi_user(domain_id, uid={'$in': list(set(uids))}, fields=fields):
+  async for dudoc in get_multi_user(
+      domain_id=domain_id, uid={'$in': list(set(uids))}, fields=fields):
     result[dudoc['uid']] = dudoc
+  return result
+
+
+async def get_dict_user_by_domain_id(uid, *, fields=None):
+  result = dict()
+  async for dudoc in get_multi_user(uid=uid, fields=fields):
+    result[dudoc['domain_id']] = dudoc
   return result
 
 

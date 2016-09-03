@@ -1,25 +1,29 @@
+import collections
+
 from vj4 import app
 from vj4.model import builtin
 from vj4.model import domain
-from vj4.model import user
+from vj4.model.adaptor import discussion
 from vj4.handler import base
 
 
-@app.route('/domain', 'domain_main')
+@app.route('/', 'domain_main')
 class DomainMainHandler(base.Handler):
   async def get(self):
-    self.render('domain_main.html',
-                path_components=[(self.domain_id, self.reverse_url('main')),
-                                 (self.translate('domain_main'), None)])
+    self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id))
+
+
+@app.route('/manage', 'domain_manage')
+class DomainMainHandler(base.Handler):
+  async def get(self):
+    self.render('domain_manage.html')
 
 
 @app.route('/domain/edit', 'domain_edit')
 class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   async def get(self):
-    self.render('domain_edit.html',
-                path_components=[(self.domain_id, self.reverse_url('main')),
-                                 (self.translate('domain_edit'), None)])
+    self.render('domain_edit.html')
 
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   @base.post_argument
@@ -27,11 +31,10 @@ class DomainEditHandler(base.Handler):
   @base.sanitize
   async def post(self, *, name: str, gravatar: str):
     ddoc = await domain.edit(self.domain_id, name=name, gravatar=gravatar)
+    # TODO(iceboy): FIXME!!! THIS IS DISASTER!!!
     if ddoc:
       self.domain = ddoc
-    self.render('domain_edit.html',
-                path_components=[(self.domain_id, self.reverse_url('main')),
-                                 (self.translate('domain_edit'), None)])
+    self.render('domain_edit.html')
 
 
 @app.route('/domain/user', 'domain_user')
@@ -49,14 +52,12 @@ class DomainPermissionHandler(base.Handler):
 @app.route('/domain/role', 'domain_role')
 class DomainRoleHandler(base.OperationHandler):
   async def get(self):
-    rudocs = dict((role, []) for role in self.domain['roles'])
-    uddocs = await domain.get_list_users_by_role(self.domain_id, {'$gt': ''}, {'uid': 1, 'role': 1})
-    for uddoc in uddocs:
-      if uddoc['role'] in rudocs:
+    rudocs = collections.defaultdict(list)
+    async for uddoc in domain.get_multi_user(domain_id=self.domain_id,
+                                             fields={'uid': 1, 'role': 1}):
+      if 'role' in uddoc:
         rudocs[uddoc['role']].append(uddoc)
-    self.render('domain_role.html', rudocs=rudocs,
-                path_components=[(self.domain_id, self.reverse_url('main')),
-                                 (self.translate('domain_role'), None)])
+    self.render('domain_role.html', rudocs=rudocs)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token

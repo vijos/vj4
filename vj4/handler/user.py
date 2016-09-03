@@ -63,7 +63,7 @@ class UserRegisterWithCodeHandler(base.Handler):
     await user.add(uid, uname, password, doc['mail'], self.remote_ip)
     await token.delete(code, token.TYPE_REGISTRATION)
     await self.update_session(new_saved=False, uid=uid)
-    self.json_or_redirect(self.reverse_url('main'))
+    self.json_or_redirect(self.reverse_url('domain_main'))
 
 
 @app.route('/lostpass', 'user_lostpass')
@@ -116,14 +116,14 @@ class UserLostpassWithCodeHandler(base.Handler):
       raise error.VerifyPasswordError()
     await user.set_password(tdoc['uid'], password)
     await token.delete(code, token.TYPE_LOSTPASS)
-    self.json_or_redirect(self.reverse_url('main'))
+    self.json_or_redirect(self.reverse_url('domain_main'))
 
 
 @app.route('/login', 'user_login')
 class UserLoginHandler(base.Handler):
   async def get(self):
     if self.has_priv(builtin.PRIV_USER_PROFILE):
-      self.redirect(self.reverse_url('main'))
+      self.redirect(self.reverse_url('domain_main'))
     else:
       self.render('user_login.html')
 
