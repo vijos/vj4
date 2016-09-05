@@ -44,8 +44,10 @@ async function load() {
     }
   }
   for (const section of $('.section')) {
-    $(section).addClass('visible');
+    const $section = $(section);
+    $section.addClass('visible');
     await delay(150);
+    $section.trigger('vjLayout');
   }
 }
 
