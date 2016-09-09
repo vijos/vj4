@@ -11,7 +11,7 @@ reviewers:
     name: backend
     required: 0
     members:
-      - iceboy-sjtu
+      - iceb0y
     conditions:
       branches:
         - master
@@ -35,7 +35,7 @@ reviewers:
     required: 2
     members:
       - breeswish
-      - iceboy-sjtu
+      - iceb0y
       - twd2
     conditions:
       branches:
