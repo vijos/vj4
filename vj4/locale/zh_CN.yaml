@@ -5,8 +5,6 @@ API: API
 About: 关于
 Accepted: 已通过
 Accepted Rate: 通过率
-Account Settings: 账户设置
-Preferences: 偏好设置
 Active Sessions: 活动会话
 Arguments: 参数
 Attend Contest: 参加比赛
@@ -138,7 +136,6 @@ Saved session: 已保存的会话
 Score: 分数
 Secret: 保密
 Security: 安全
-Security Settings: 安全设置
 Select a node to create discussion.: 选择一个节点来发表讨论。
 Send: 发送
 Send Code after acceptance: 通过题目后发送源代码

@@ -1,13 +1,13 @@
-{% extends "home_base.html" %}
+{% extends "layout/home_base.html" %}
 {% block home_content %}
-<div class="section" data-heading-extract-to="#menu-item-home_account">
+<div class="section" data-heading-extract-to="#menu-item-home_{{ category }}">
   <form method="post">
-  {% for family, settings in vj4.model.adaptor.setting.get_settings('account', handler.get_setting) %}
+  {% for family, settings in vj4.model.adaptor.setting.SETTINGS_BY_CATEGORY[category]|groupby('family') %}
     <div class="section__header">
       <h1 class="section__title" id="{{ family }}" data-heading>{{ _(family) }}</h1>
     </div>
     <div class="section__body">
-      {{ form.render(settings) }}
+      {{ form.render(settings_to_form(settings)) }}
     </div>
   {% endfor %}
     <div class="section__body">

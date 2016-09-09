@@ -47,23 +47,21 @@ SETTINGS = [
 
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
 SETTINGS_BY_CATEGORY = collections.OrderedDict(
-  (c, collections.OrderedDict(
-    (f, list(fl)) for f, fl in itertools.groupby(list(cl), lambda s: s.family)))
-      for c, cl in itertools.groupby(SETTINGS, lambda s: s.category))
-
-def get_settings(category, get_setting):
-  return collections.OrderedDict(
-    (f, list({
-      'label': setting.name,
-      'name': setting.key,
-      'help_text': setting.desc,
-      'value': get_setting(setting.key),
-      'type': setting.ui,
-      'options': setting.range.items() if (setting.ui == 'select') else 'None',
-    } for setting in fl)) for f, fl in SETTINGS_BY_CATEGORY[category].items()).items()
+  (f, list(l)) for f, l in itertools.groupby(SETTINGS, lambda s: s.category))
 
 
 class SettingMixin(object):
+
+  def settings_to_form(self, settings):
+    form = [{'label': setting.name,
+             'type': setting.ui,
+             'name': setting.key,
+             'help_text': setting.desc,
+             'options': setting.range.items() if setting.ui == 'select' else None,
+             'value': self.get_setting(setting.key),
+            } for setting in settings]
+    return form
+
   def get_setting(self, key):
     if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.user:
       return self.user[key]
@@ -77,11 +75,13 @@ class SettingMixin(object):
       return next(iter(setting.range))
     return setting.factory()
 
-  async def set_settings(self, **kwargs):
+  async def set_settings(self, category, **kwargs):
     for key, value in kwargs.items():
       if key not in SETTINGS_BY_KEY:
         raise error.UnknownFieldError(key)
       setting = SETTINGS_BY_KEY[key]
+      if category != setting.category:
+        raise error.UnknownFieldError(key)
       kwargs[key] = setting.factory(value)
       if setting.range and kwargs[key] not in setting.range:
         raise error.ValidationError(key)

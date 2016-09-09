@@ -12,6 +12,7 @@ from vj4.model import domain
 from vj4.model import message
 from vj4.model import token
 from vj4.model import user
+from vj4.model.adaptor import setting
 from vj4.handler import base
 from vj4.service import bus
 from vj4.util import useragent
@@ -113,31 +114,31 @@ class UserChangemailWithCodeHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('home_security'))
 
 
-@app.route('/home/preference', 'home_preference')
-class HomePreferenceHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  async def get(self):
-    self.render('home_preference.html')
-
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.post_argument
-  @base.require_csrf_token
-  async def post(self, **kwargs):
-    await self.set_settings(**kwargs)
-    self.json_or_redirect(self.referer_or_main)
-
-
 @app.route('/home/account', 'home_account')
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    self.render('home_account.html')
+    self.render('home_settings.html', category='account', settings_to_form=self.settings_to_form)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument
   @base.require_csrf_token
   async def post(self, **kwargs):
-    await self.set_settings(**kwargs)
+    await self.set_settings('account', **kwargs)
+    self.json_or_redirect(self.referer_or_main)
+
+
+@app.route('/home/preference', 'home_preference')
+class HomeAccountHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  async def get(self):
+    self.render('home_settings.html', category='preference', settings_to_form=self.settings_to_form)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.post_argument
+  @base.require_csrf_token
+  async def post(self, **kwargs):
+    await self.set_settings('preference', **kwargs)
     self.json_or_redirect(self.referer_or_main)
 
 
