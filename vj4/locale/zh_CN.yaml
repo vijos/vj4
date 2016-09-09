@@ -47,7 +47,7 @@ Current Location: 当前位置
 Current Password: 当前密码
 Default Code Language: 默认代码语言
 Default Code Template: 默认代码模板
-If leaved blank, the built-in template of the selected language will be used.: 若留空，则将使用对应语言的内置代码模板
+If left blank, the built-in template of the corresponding language will be used.: 若留空，则将使用对应语言的内置代码模板。
 Development: 开发
 Difficulty: 难度
 Disabled: 关闭

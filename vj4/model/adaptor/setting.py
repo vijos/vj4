@@ -30,7 +30,7 @@ SETTINGS = [
           ui='select', name='Default Code Language'),
   Setting('preference', 'setting_usage', 'code_template', str,
           ui='textarea', name='Default Code Template',
-          desc='If leaved blank, the built-in template of the selected language will be used.'),
+          desc='If left blank, the built-in template of the corresponding language will be used.'),
   Setting('account', 'setting_info', 'gravatar', str,
           name='Gravatar Email',
           desc='We use Gravatar to present your avatar icon.'),
