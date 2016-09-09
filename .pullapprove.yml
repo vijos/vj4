@@ -21,7 +21,7 @@ reviewers:
     name: frontend
     required: 1
     members:
-      - SummerWish
+      - breeswish
     conditions:
       branches:
         - master
@@ -34,7 +34,7 @@ reviewers:
     name: project
     required: 2
     members:
-      - SummerWish
+      - breeswish
       - iceboy-sjtu
       - twd2
     conditions:
