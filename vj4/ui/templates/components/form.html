@@ -1,12 +1,20 @@
-{% macro select(items, name='', value='', disabled=false, required=false, autofocus=false, class=None) %}
-<select
-  class="select{% if class %} {{ class }}{% endif %}"
-  name="{{ name }}"
+{% macro form_attr(form_class) %}
+  {% set extra_class = kwargs.pop('extra_class', None) %}
+  {% set disabled = kwargs.pop('disabled', false) %}
+  {% set required = kwargs.pop('required', false) %}
+  {% set autofocus = kwargs.pop('autofocus', false) %}
+  class="{{ form_class }}{% if extra_class %} {{ extra_class }}{% endif %}"
   {% if disabled %}disabled{% endif %}
   {% if required %}required{% endif %}
   {% if autofocus %}autofocus data-autofocus{% endif %}
+{% endmacro %}
+
+{% macro select(options, name='', value='') %}
+<select
+  name="{{ name }}"
+  {{ form_attr('select', **kwargs) }}
 >
-{% for k, v in items %}
+{% for k, v in options %}
   <option value="{{ k }}"{% if value == k %} selected{% endif %}>
     {{ _(v) }}
   </option>
@@ -14,46 +22,49 @@
 </select>
 {% endmacro %}
 
-{% macro text(name='', value='', placeholder='', type='text', disabled=false, required=false, autofocus=false, class=None) %}
+{% macro text(name='', value='', placeholder='', type='text') %}
 <input
   type="{{ type }}"
-  class="textbox{% if class %} {{ class }}{% endif %}"
   name="{{ name }}"
   value="{{ value }}"
   placeholder="{{ placeholder }}"
-  {% if disabled %}disabled{% endif %}
-  {% if required %}required{% endif %}
-  {% if autofocus %}autofocus data-autofocus{% endif %}
+  {{ form_attr('textbox', **kwargs) }}
 >
 {% endmacro %}
 
-{% macro textarea(name='', value='', placeholder='', disabled=false, required=false, autofocus=false, class=None) %}
+{% macro textarea(name='', value='', placeholder='') %}
 <textarea
-  class="textbox{% if class %} {{ class }}{% endif %}"
   name="{{ name }}"
   placeholder="{{ placeholder }}"
-  {% if disabled %}disabled{% endif %}
-  {% if required %}required{% endif %}
-  {% if autofocus %}autofocus data-autofocus{% endif %}
+  {{ form_attr('textbox', **kwargs) }}
 >{{ value }}</textarea>
+{% endmacro %}
+
+{% macro render_row(type, label, help_text=None, columns=None) %}
+<div class="row"><div class="medium-{{ columns|default(8 if type == 'textarea' else 5, true) }} columns">
+  <label>
+    {{ _(label) }}
+  {% if kwargs.required %}
+    (required)
+  {% endif %}
+  {% if type == 'text' %}
+    {{ text(**kwargs) }}
+  {% elif type == 'password' %}
+    {{ text(type='password', **kwargs) }}
+  {% elif type == 'select' %}
+    {{ select(**kwargs) }}
+  {% elif type == 'textarea' %}
+    {{ textarea(**kwargs) }}
+  {% endif %}
+  </label>
+{% if help_text %}
+  <p class="help-text">{{ _(help_text) }}</p>
+{% endif %}
+</div></div>
 {% endmacro %}
 
 {% macro render(rows) %}
 {% for input in rows %}
-<div class="row"><div class="medium-{{ input.columns|default(8 if input.type == 'textarea' else 5) }} columns">
-  <label>
-    {{ _(input.label) }}
-  {% if input.type == 'text' %}
-    {{ text(input.name, input.value, input.placeholder, input.disabled, input.required, input.autofocus, input.class) }}
-  {% elif input.type == 'select' %}
-    {{ select(input.options, input.name, input.value, input.disabled, input.required, input.autofocus, input.class) }}
-  {% elif input.type == 'textarea' %}
-    {{ textarea(input.name, input.value, input.placeholder, input.disabled, input.required, input.autofocus, input.class) }}
-  {% endif %}
-  </label>
-{% if input.help_text %}
-  <p class="help-text">{{ _(input.help_text) }}</p>
-{% endif %}
-</div></div>
+  {{ render_row(**input) }}
 {% endfor %}
 {% endmacro %}
