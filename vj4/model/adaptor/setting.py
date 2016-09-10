@@ -52,16 +52,6 @@ SETTINGS_BY_CATEGORY = collections.OrderedDict(
 
 class SettingMixin(object):
 
-  def settings_to_form(self, settings):
-    form = [{'label': setting.name,
-             'type': setting.ui,
-             'name': setting.key,
-             'help_text': setting.desc,
-             'options': setting.range.items() if setting.ui == 'select' else None,
-             'value': self.get_setting(setting.key),
-            } for setting in settings]
-    return form
-
   def get_setting(self, key):
     if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.user:
       return self.user[key]
