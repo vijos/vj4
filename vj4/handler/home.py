@@ -118,7 +118,7 @@ class UserChangemailWithCodeHandler(base.Handler):
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    self.render('home_settings.html', category='account')
+    self.render('home_settings.html', category='account', settings=setting.ACCOUNT_SETTINGS)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument
@@ -132,7 +132,7 @@ class HomeAccountHandler(base.Handler):
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    self.render('home_settings.html', category='preference')
+    self.render('home_settings.html', category='preference', settings=setting.PREFERENCE_SETTINGS)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument

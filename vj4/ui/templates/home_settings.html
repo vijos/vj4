@@ -2,12 +2,12 @@
 {% block home_content %}
 <div class="section" data-heading-extract-to="#menu-item-home_{{ category }}">
   <form method="post">
-  {% for family, settings in vj4.model.adaptor.setting.SETTINGS_BY_CATEGORY[category]|groupby('family') %}
+  {% for family, family_settings in settings|groupby('family') %}
     <div class="section__header">
       <h1 class="section__title" id="{{ family }}" data-heading>{{ _(family) }}</h1>
     </div>
     <div class="section__body">
-    {% for setting in settings %}
+    {% for setting in family_settings %}
     {% if setting.ui == 'text' or setting.ui == 'password' %}
       {{ form.form_text(type=setting.ui, label=setting.name, help_text=setting.desc, name=setting.key, value=handler.get_setting(setting.key)) }}
     {% elif setting.ui == 'select' %}
