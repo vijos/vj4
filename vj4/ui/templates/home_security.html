@@ -1,4 +1,4 @@
-{% extends "home_base.html" %}
+{% extends "layout/home_base.html" %}
 {% block home_content %}
 <div data-heading-extract-to="#menu-item-home_security">
 <div class="row">
@@ -9,24 +9,9 @@
       </div>
       <div class="section__body">
         <form method="post">
-          <div class="row"><div class="medium-10 columns">
-            <label>
-              {{ _('Current Password') }} (*)
-              {{ form.text('current_password', type='password', required=true) }}
-            </label>
-          </div></div>
-          <div class="row"><div class="medium-10 columns">
-            <label>
-              {{ _('Current Email') }}
-              {{ form.text('current_email', handler.user['mail'], disabled=true) }}
-            </label>
-          </div></div>
-          <div class="row"><div class="medium-10 columns">
-            <label>
-              {{ _('New Email') }} (*)
-              {{ form.text('mail', required=true) }}
-            </label>
-          </div></div>
+          {{ form.form_text(type='password', label='Current Password', columns=10, name='current_password', required=true) }}
+          {{ form.form_text(type='text', label='Current Email', columns=10, name='current_email', value=handler.user['mail'], disabled=true) }}
+          {{ form.form_text(type='text', label='New Email', columns=10, name='mail', required=true) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <input type="hidden" name="operation" value="change_mail">
@@ -43,24 +28,9 @@
       </div>
       <div class="section__body">
         <form method="post">
-          <div class="row"><div class="medium-10 columns">
-            <label>
-              {{ _('Current Password') }} (*)
-              {{ form.text('current_password', type='password', required=true) }}
-            </label>
-          </div></div>
-          <div class="row"><div class="medium-10 columns">
-            <label>
-              {{ _('New Password') }} (*)
-              {{ form.text('new_password', type='password', required=true) }}
-            </label>
-          </div></div>
-          <div class="row"><div class="medium-10 columns">
-            <label>
-              {{ _('Repeat Password') }} (*)
-              {{ form.text('verify_password', type='password', required=true) }}
-            </label>
-          </div></div>
+          {{ form.form_text(type='password', label='Current Password', columns=10, name='current_password', required=true) }}
+          {{ form.form_text(type='password', label='New Password', columns=10, name='new_password', required=true) }}
+          {{ form.form_text(type='password', label='Repeat Password', columns=10, name='verify_password', required=true) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <input type="hidden" name="operation" value="change_password">
