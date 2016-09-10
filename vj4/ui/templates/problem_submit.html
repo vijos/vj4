@@ -44,19 +44,8 @@
       </div>
       <div class="section__body">
         <form method="post">
-          <div class="row"><div class="medium-4 columns">
-            <label>
-              {{ _('Code language') }}:
-              {{ form.select(vj4.constant.language.LANG_TEXTS.items(), 'lang', handler.get_setting('code_lang')) }}
-              </select>
-            </label>
-          </div></div>
-          <div class="row"><div class="columns">
-            <label>
-              {{ _('Code') }}:
-              <textarea class="monospace textbox" name="code" autofocus></textarea>
-            </label>
-          </div></div>
+          {{ form.form_select(label='Code language', options=vj4.constant.language.LANG_TEXTS.items(), name='lang', value=handler.get_setting('code_lang')) }}
+          {{ form.form_textarea(label='Code', columns=12, name='code', extra_class='monospace', autofocus=true) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <input type="submit" class="rounded primary button" value="{{ _('Submit') }}">

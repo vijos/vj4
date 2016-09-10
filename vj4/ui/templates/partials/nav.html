@@ -26,8 +26,9 @@
           <li class="menu__item"><a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="menu__link">{{ _('My Profile') }}</a></li>
           <li class="menu__item"><a href="{{ reverse_url('home_messages') }}" class="menu__link">{{ _('Messages') }}</a></li>
           <li class="menu__seperator"></li>
-          <li class="menu__item"><a href="{{ reverse_url('home_account') }}" class="menu__link">{{ _('Account Settings') }}</a></li>
-          <li class="menu__item"><a href="{{ reverse_url('home_security') }}" class="menu__link">{{ _('Security Settings') }}</a></li>
+          <li class="menu__item"><a href="{{ reverse_url('home_account') }}" class="menu__link">{{ _('home_account') }}</a></li>
+          <li class="menu__item"><a href="{{ reverse_url('home_preference') }}" class="menu__link">{{ _('home_preference') }}</a></li>
+          <li class="menu__item"><a href="{{ reverse_url('home_security') }}" class="menu__link">{{ _('home_security') }}</a></li>
           <li class="menu__seperator"></li>
           <li class="menu__item"><a href="{{ reverse_url('home_domain') }}" class="menu__link">{{ _('My Domains') }}</a></li>
           <li class="menu__seperator"></li>

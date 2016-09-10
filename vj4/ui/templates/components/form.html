@@ -1,12 +1,41 @@
-{% macro select(items, name='', value='', disabled=false, required=false, autofocus=false, class=None) %}
-<select
-  class="select{% if class %} {{ class }}{% endif %}"
-  name="{{ name }}"
+{% macro form_begin() %}
+{% set label = kwargs.pop('label') %}
+{% set columns = kwargs.pop('columns') %}
+{% set required = kwargs.pop('required', false) %}
+<div class="row"><div class="medium-{{ columns }} columns">
+  <label>
+    {{ _(label) }}
+  {% if required %}
+    (required)
+  {% endif %}
+{% endmacro %}
+
+{% macro form_end() %}
+{% set help_text = kwargs.pop('help_text', None) %}
+  </label>
+{% if help_text %}
+  <p class="help-text">{{ _(help_text) }}</p>
+{% endif %}
+</div></div>
+{% endmacro %}
+
+{% macro form_attr(form_class) %}
+{% set extra_class = kwargs.pop('extra_class', None) %}
+{% set disabled = kwargs.pop('disabled', false) %}
+{% set required = kwargs.pop('required', false) %}
+{% set autofocus = kwargs.pop('autofocus', false) %}
+  class="{{ form_class }}{% if extra_class %} {{ extra_class }}{% endif %}"
   {% if disabled %}disabled{% endif %}
   {% if required %}required{% endif %}
   {% if autofocus %}autofocus data-autofocus{% endif %}
+{% endmacro %}
+
+{% macro select(options, name='', value='') %}
+<select
+  name="{{ name }}"
+  {{ form_attr('select', **kwargs) }}
 >
-{% for k, v in items %}
+{% for k, v in options %}
   <option value="{{ k }}"{% if value == k %} selected{% endif %}>
     {{ _(v) }}
   </option>
@@ -14,15 +43,38 @@
 </select>
 {% endmacro %}
 
-{% macro text(name='', value='', placeholder='', type='text', disabled=false, required=false, autofocus=false, class=None) %}
+{% macro form_select(columns=5) %}
+{{ form_begin(columns=columns, **kwargs) }}
+{{ select(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, **kwargs) }}
+{% endmacro %}
+
+{% macro text(name='', value='', placeholder='', type='text') %}
 <input
   type="{{ type }}"
-  class="textbox{% if class %} {{ class }}{% endif %}"
   name="{{ name }}"
   value="{{ value }}"
   placeholder="{{ placeholder }}"
-  {% if disabled %}disabled{% endif %}
-  {% if required %}required{% endif %}
-  {% if autofocus %}autofocus data-autofocus{% endif %}
+  {{ form_attr('textbox', **kwargs) }}
 >
+{% endmacro %}
+
+{% macro form_text(columns=5) %}
+{{ form_begin(columns=columns, **kwargs) }}
+{{ text(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, **kwargs) }}
+{% endmacro %}
+
+{% macro textarea(name='', value='', placeholder='') %}
+<textarea
+  name="{{ name }}"
+  placeholder="{{ placeholder }}"
+  {{ form_attr('textbox', **kwargs) }}
+>{{ value }}</textarea>
+{% endmacro %}
+
+{% macro form_textarea(columns=8) %}
+{{ form_begin(columns=columns, **kwargs) }}
+{{ textarea(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, **kwargs) }}
 {% endmacro %}

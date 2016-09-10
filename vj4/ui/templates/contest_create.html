@@ -11,40 +11,40 @@
           <div class="row"><div class="medium-4 columns">
             <label>
               {{ _('Rule') }}
-              {{ form.select(vj4.handler.contest.TYPE_TEXTS.items(), 'rule') }}
+              <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select(vj4.handler.contest.TYPE_TEXTS.items(), 'rule') }}
             </label>
           </div><div class="medium-8 columns">
             <label>
               {{ _('Title') }}
-              <input type="text" name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
+              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
             </label>
           </div></div>
           <div class="row"><div class="medium-4 columns">
             <label>
               {{ _('Begin Date') }}
-              <input type="text" name="begin_at_date" value="{{ date_text }}" class="textbox" placeholder="YYYY-mm-dd" data-pick-date>
+              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="begin_at_date" value="{{ date_text }}" class="textbox" placeholder="YYYY-mm-dd" data-pick-date>
             </label>
           </div><div class="medium-4 columns">
             <label>
               {{ _('Begin Time') }}
-              <input type="text" name="begin_at_time" value="{{ time_text }}" class="textbox" placeholder="HH:MM" data-pick-time>
+              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="begin_at_time" value="{{ time_text }}" class="textbox" placeholder="HH:MM" data-pick-time>
             </label>
           </div><div class="medium-4 columns">
             <label>
               {{ _('Duration (hours)') }}
-              <input type="text" name="duration" value="3" class="textbox">
+              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="duration" value="3" class="textbox">
             </label>
           </div></div>
           <div class="row"><div class="columns">
             <label>
               {{ _('Problems') }}
-              <input type="text" name="pids" value="1000,1001" class="textbox">
+              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="pids" value="1000,1001" class="textbox">
             </label>
           </div></div>
           <div class="row"><div class="columns">
             <label>
               {{ _('Content') }}
-              <textarea name="content" class="textbox" data-markdown></textarea>
+              <!-- FIXME: Deprecated: use form.form_xxx --><textarea name="content" class="textbox" data-markdown></textarea>
             </label>
           </div></div>
           <div class="row"><div class="columns">

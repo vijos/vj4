@@ -15,16 +15,24 @@ Setting = functools.partial(
   range=None, default=None, ui='text', name='', desc='')
 
 # Setting keys should not duplicate with user keys or session keys.
-SETTINGS = [
-  Setting('setting_preference', 'view_lang', str, range=locale.VIEW_LANGS,
+PREFERENCE_SETTINGS = [
+  Setting('setting_display', 'view_lang', str, range=locale.VIEW_LANGS,
           default=options.options.default_locale, ui='select', name='UI Language'),
-  Setting('setting_preference', 'timezone', str, range=builtin.TIMEZONES,
+  Setting('setting_display', 'timezone', str, range=builtin.TIMEZONES,
           default='Asia/Shanghai', ui='select', name='Timezone'),
-  Setting('setting_preference', 'code_lang', str, range=constant.language.LANG_TEXTS,
-          ui='select', name='Default Code Language'),
-  Setting('setting_preference', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE,
+  Setting('setting_display', 'show_tags', int, range=constant.setting.SHOW_TAGS_RANGE,
           ui='select', name='Problem Tags Visibility',
           desc='Whether to show tags in the problem list.'),
+  Setting('setting_usage', 'send_code', int, range=constant.setting.FUNCTION_RANGE,
+          ui='select', name='Send Code after acceptance',
+          desc='If enabled, source code will be emailed to you after the submission is accepted.'),
+  Setting('setting_usage', 'code_lang', str, range=constant.language.LANG_TEXTS,
+          ui='select', name='Default Code Language'),
+  Setting('setting_usage', 'code_template', str,
+          ui='textarea', name='Default Code Template',
+          desc='If left blank, the built-in template of the corresponding language will be used.')]
+
+ACCOUNT_SETTINGS = [
   Setting('setting_info', 'gravatar', str,
           name='Gravatar Email',
           desc='We use Gravatar to present your avatar icon.'),
@@ -37,14 +45,10 @@ SETTINGS = [
   Setting('setting_privacy', 'show_qq', int, range=constant.setting.PRIVACY_RANGE,
           ui='select', name='QQ Visibility'),
   Setting('setting_privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE,
-          ui='select', name='Gender Visibility'),
-  Setting('setting_function', 'send_code', int, range=constant.setting.FUNCTION_RANGE,
-          ui='select', name='Send Code after acceptance',
-          desc='If enabled, source code will be emailed to you after the submission is accepted.')]
+          ui='select', name='Gender Visibility')]
 
+SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
-SETTINGS_BY_FAMILY = collections.OrderedDict(
-  (f, list(l)) for f, l in itertools.groupby(SETTINGS, lambda s: s.family))
 
 
 class SettingMixin(object):
