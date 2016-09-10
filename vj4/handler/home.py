@@ -124,6 +124,7 @@ class HomeAccountHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   async def post(self, **kwargs):
+    # TODO(swx): @twd2 check parameters
     await self.set_settings(**kwargs)
     self.json_or_redirect(self.reverse_url('home_account'))
 
@@ -138,6 +139,7 @@ class HomeAccountHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   async def post(self, **kwargs):
+    # TODO(swx): @twd2 check parameters
     await self.set_settings(**kwargs)
     self.json_or_redirect(self.reverse_url('home_preference'))
 
