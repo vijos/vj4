@@ -125,7 +125,7 @@ class HomeAccountHandler(base.Handler):
   @base.require_csrf_token
   async def post(self, **kwargs):
     await self.set_settings(**kwargs)
-    self.json_or_redirect(self.referer_or_main)
+    self.json_or_redirect(self.reverse_url('home_account'))
 
 
 @app.route('/home/preference', 'home_preference')
@@ -139,7 +139,7 @@ class HomeAccountHandler(base.Handler):
   @base.require_csrf_token
   async def post(self, **kwargs):
     await self.set_settings(**kwargs)
-    self.json_or_redirect(self.referer_or_main)
+    self.json_or_redirect(self.reverse_url('home_preference'))
 
 
 @app.route('/home/messages', 'home_messages')
