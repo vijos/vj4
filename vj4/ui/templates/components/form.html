@@ -1,8 +1,29 @@
+{% macro form_begin() %}
+{% set label = kwargs.pop('label') %}
+{% set columns = kwargs.pop('columns') %}
+{% set required = kwargs.pop('required', false) %}
+<div class="row"><div class="medium-{{ columns }} columns">
+  <label>
+    {{ _(label) }}
+  {% if required %}
+    (required)
+  {% endif %}
+{% endmacro %}
+
+{% macro form_end() %}
+{% set help_text = kwargs.pop('help_text', None) %}
+  </label>
+{% if help_text %}
+  <p class="help-text">{{ _(help_text) }}</p>
+{% endif %}
+</div></div>
+{% endmacro %}
+
 {% macro form_attr(form_class) %}
-  {% set extra_class = kwargs.pop('extra_class', None) %}
-  {% set disabled = kwargs.pop('disabled', false) %}
-  {% set required = kwargs.pop('required', false) %}
-  {% set autofocus = kwargs.pop('autofocus', false) %}
+{% set extra_class = kwargs.pop('extra_class', None) %}
+{% set disabled = kwargs.pop('disabled', false) %}
+{% set required = kwargs.pop('required', false) %}
+{% set autofocus = kwargs.pop('autofocus', false) %}
   class="{{ form_class }}{% if extra_class %} {{ extra_class }}{% endif %}"
   {% if disabled %}disabled{% endif %}
   {% if required %}required{% endif %}
@@ -22,6 +43,12 @@
 </select>
 {% endmacro %}
 
+{% macro form_select(columns=5) %}
+{{ form_begin(columns=columns, **kwargs) }}
+{{ select(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, **kwargs) }}
+{% endmacro %}
+
 {% macro text(name='', value='', placeholder='', type='text') %}
 <input
   type="{{ type }}"
@@ -32,6 +59,12 @@
 >
 {% endmacro %}
 
+{% macro form_text(columns=5) %}
+{{ form_begin(columns=columns, **kwargs) }}
+{{ text(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, **kwargs) }}
+{% endmacro %}
+
 {% macro textarea(name='', value='', placeholder='') %}
 <textarea
   name="{{ name }}"
@@ -40,31 +73,8 @@
 >{{ value }}</textarea>
 {% endmacro %}
 
-{% macro render_row(type, label, help_text=None, columns=None) %}
-<div class="row"><div class="medium-{{ columns|default(8 if type == 'textarea' else 5, true) }} columns">
-  <label>
-    {{ _(label) }}
-  {% if kwargs.required %}
-    (required)
-  {% endif %}
-  {% if type == 'text' %}
-    {{ text(**kwargs) }}
-  {% elif type == 'password' %}
-    {{ text(type='password', **kwargs) }}
-  {% elif type == 'select' %}
-    {{ select(**kwargs) }}
-  {% elif type == 'textarea' %}
-    {{ textarea(**kwargs) }}
-  {% endif %}
-  </label>
-{% if help_text %}
-  <p class="help-text">{{ _(help_text) }}</p>
-{% endif %}
-</div></div>
-{% endmacro %}
-
-{% macro render(rows) %}
-{% for input in rows %}
-  {{ render_row(**input) }}
-{% endfor %}
+{% macro form_textarea(columns=8) %}
+{{ form_begin(columns=columns, **kwargs) }}
+{{ textarea(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, **kwargs) }}
 {% endmacro %}

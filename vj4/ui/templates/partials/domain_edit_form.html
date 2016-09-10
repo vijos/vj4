@@ -1,8 +1,8 @@
 {% import "components/form.html" as form with context %}
 {% if page_name == 'domain_edit' %}
-{{ form.render_row('text', 'ID', name='id', value=ddoc['_id'], disabled=true) }}
+{{ form.form_text(label='ID', name='id', value=ddoc['_id'], disabled=true) }}
 {% elif page_name == 'home_domain_create' %}
-{{ form.render_row('text', 'ID', name='id', autofocus=true, required=true) }}
+{{ form.form_text(label='ID', name='id', autofocus=true, required=true) }}
 {% endif %}
-{{ form.render_row('text', 'Name', name='name', value=ddoc['name']|default(''), autofocus=(page_name == 'domain_edit'), required=true) }}
-{{ form.render_row('text', 'Gravatar Email', 'Will be used as the domain icon.', name='gravatar', value=ddoc['gravatar']|default('')) }}
+{{ form.form_text(label='Name', name='name', value=ddoc['name']|default(''), autofocus=(page_name == 'domain_edit'), required=true) }}
+{{ form.form_text(label='Gravatar Email', help_text='Will be used as the domain icon.', name='gravatar', value=ddoc['gravatar']|default('')) }}

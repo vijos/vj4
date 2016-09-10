@@ -7,7 +7,15 @@
       <h1 class="section__title" id="{{ family }}" data-heading>{{ _(family) }}</h1>
     </div>
     <div class="section__body">
-      {{ form.render(settings_to_form(settings)) }}
+    {% for setting in settings %}
+    {% if setting.ui == 'text' or setting.ui == 'password' %}
+      {{ form.form_text(type=setting.ui, label=setting.name, help_text=setting.desc, name=setting.key, value=handler.get_setting(setting.key)) }}
+    {% elif setting.ui == 'select' %}
+      {{ form.form_select(options=setting.range.items(), label=setting.name, help_text=setting.desc, name=setting.key, value=handler.get_setting(setting.key)) }}
+    {% elif setting.ui == 'textarea' %}
+      {{ form.form_textarea(label=setting.name, help_text=setting.desc, name=setting.key, value=handler.get_setting(setting.key)) }}
+    {% endif %}
+    {% endfor %}
     </div>
   {% endfor %}
     <div class="section__body">

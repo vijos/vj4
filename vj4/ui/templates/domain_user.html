@@ -16,7 +16,7 @@
         <label>
           <!-- TODO: replace with role values -->
           {{ _('Role') }}
-          <!-- FIXME: Deprecated: use form.render_row -->{{ form.select([('', _('Select a role')), ('admin', 'admin'), ('role_x', 'role_x')], 'role') }}
+          <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', _('Select a role')), ('admin', 'admin'), ('role_x', 'role_x')], 'role') }}
         </label>
       </div>
     </div>
@@ -73,7 +73,7 @@
             swx
           </td>
           <td class="col--role">
-            <!-- FIXME: Deprecated: use form.render_row -->{{ form.select([('', '(Owner)')], 'role', value='', disabled=true, class='compact') }}
+            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', '(Owner)')], 'role', value='', disabled=true, class='compact') }}
           </td>
         </tr>
         <!-- TODO: for ... in ... -->
@@ -91,7 +91,7 @@
             twd2
           </td>
           <td class="col--role">
-            <!-- FIXME: Deprecated: use form.render_row -->{{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='role_x', class='compact') }}
+            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='role_x', class='compact') }}
           </td>
         </tr>
         <tr data-uid="-3">
@@ -108,7 +108,7 @@
             twd3
           </td>
           <td class="col--role">
-            <!-- FIXME: Deprecated: use form.render_row -->{{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='admin', class='compact') }}
+            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='admin', class='compact') }}
           </td>
         </tr>
       </tbody>
