@@ -65,13 +65,11 @@ class SettingMixin(object):
       return next(iter(setting.range))
     return setting.factory()
 
-  async def set_settings(self, category, **kwargs):
+  async def set_settings(self, **kwargs):
     for key, value in kwargs.items():
       if key not in SETTINGS_BY_KEY:
         raise error.UnknownFieldError(key)
       setting = SETTINGS_BY_KEY[key]
-      if category != setting.category:
-        raise error.UnknownFieldError(key)
       kwargs[key] = setting.factory(value)
       if setting.range and kwargs[key] not in setting.range:
         raise error.ValidationError(key)
