@@ -204,7 +204,7 @@ class Handler(web.View, HandlerBase):
                     path_components=self.build_path((self.translate('error'), None)))
     except Exception as e:
       _logger.error("Unexpected exception occurred when handling %s (IP = %s, UID = %d): %s",
-                    self.request.path, self.remote_ip, self.user['_id'] or None, repr(e))
+                    self.url, self.remote_ip, self.user['_id'] or None, repr(e))
       raise
     return self.response
 
@@ -238,8 +238,12 @@ class Handler(web.View, HandlerBase):
     return False
 
   @property
+  def url(self):
+    return self.request.path
+
+  @property
   def referer_or_main(self):
-    return self.request.headers.get('referer', self.reverse_url('domain_main'))
+    return self.request.headers.get('referer') or self.reverse_url('domain_main')
 
   def redirect(self, redirect_url):
     self.response.set_status(web.HTTPFound.status_code, None)

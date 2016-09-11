@@ -1,7 +1,5 @@
 from vj4 import app
-from vj4 import error
 from vj4.handler import base
-from vj4.util import locale
 
 
 @app.route('/lang/{lang}', 'language_set')
