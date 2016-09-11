@@ -3,6 +3,7 @@ import collections
 from vj4 import app
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.handler import base
 
@@ -16,7 +17,7 @@ class DomainMainHandler(base.Handler):
 @app.route('/manage', 'domain_manage')
 class DomainMainHandler(base.Handler):
   async def get(self):
-    self.render('domain_manage.html')
+    self.render('domain_manage.html', owner_udoc=await user.get_by_uid(self.domain['owner_uid']))
 
 
 @app.route('/domain/edit', 'domain_edit')
