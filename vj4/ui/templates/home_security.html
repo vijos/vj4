@@ -66,8 +66,8 @@
                 <p class="sessionlist__current-session"><span class="icon icon-check"></span> {{ _('This is the current session') }}</p>
                 {% endif %}
               </div>
+              {% if not session['is_current'] %}
               <div class="media__right medium">
-                {% if not session['is_current'] %}
                 <form method="post">
                   <input type="hidden" name="operation" value="delete_token">
                   <input type="hidden" name="token_type" value="{{ session['token_type'] }}">
@@ -75,8 +75,8 @@
                   <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                   <input type="submit" value="{{ _('Logout This Session') }}" class="rounded button">
                 </form>
-                {% endif %}
               </div>
+              {% endif %}
             </div>
           </li>
           {% endfor %}
