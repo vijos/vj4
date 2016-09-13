@@ -18,7 +18,7 @@
             {{ _('Start at') }}: {{ datetime_span(tdoc['begin_at']) }}
           </li>
           <li>
-            <span class="icon icon-clock"></span>
+            <span class="icon icon-schedule"></span>
             {{ _('Duration') }}: {{ ((tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600)|round(2) }} {{ _('hour(s)') }}
           </li>
         </ul>
@@ -31,7 +31,7 @@
           {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
           <p><span class="icon icon-check"></span> {{ _('Attended') }}</p>
           {% else %}
-          <p><span class="icon icon-clock"></span> {{ _('Unattended') }}</p>
+          <p><span class="icon icon-schedule"></span> {{ _('Unattended') }}</p>
           {% endif %}
         </div>
       </div>
