@@ -2,6 +2,63 @@
 {% block content %}
 <div class="row">
   <div class="large-9 columns">
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('My Training Plans') }}</h1>
+        <div class="section__tools">
+          <a class="tool-button" href="#">See Full List <span class="icon icon-chevron_right"></span></a>
+        </div>
+      </div>
+      <div class="section__body"><ol class="training__list my">
+        <div class="row">
+          <div class="medium-6 columns">
+            <li class="training__item"><div class="media"><div class="media__left">
+              <span class="icon record-status--icon pending"></span>
+            </div><div class="media__body">
+              <h1 class="training__title"><a href="#">Vijos 基础算法与数据结构</a></h1>
+              <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:23%;"></div></div> 已完成 23%</div>
+            </div></div></li>
+          </div>
+          <div class="medium-6 columns">
+            <li class="training__item"><div class="media"><div class="media__left">
+              <span class="icon record-status--icon pending"></span>
+            </div><div class="media__body">
+              <h1 class="training__title"><a href="#">Vijos 高级算法与数据结构</a></h1>
+              <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:95%;"></div></div> 已完成 95%</div>
+            </div></div></li>
+          </div>
+        </div>
+        <div class="row">
+          <div class="medium-6 columns">
+            <li class="training__item"><div class="media"><div class="media__left">
+              <span class="icon record-status--icon pass"></span>
+            </div><div class="media__body">
+              <h1 class="training__title"><a href="#">Vijos 编程入门</a></h1>
+              <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:100%;"></div></div> 已完成 100%</div>
+            </div></div></li>
+          </div>
+        </div>
+      </ol></div>
+    </div>
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('All Training Plans') }}</h1>
+        <div class="section__tools">
+          {{ _('Sort by') }}:
+          <select class="inline select">
+            <option>↓ Participants</option>
+            <option>↓ Likes</option>
+            <option>↓ Stars</option>
+            <option>↓ Create Time</option>
+            <option>↓ Update Time</option>
+            <option>↓ Comments</option>
+          </select>
+        </div>
+      </div>
+      <div class="section__body">
+        haha
+      </div>
+    </div>
     <ol>
     {% for tdoc in tdocs %}
       <a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}">{{ tdoc }}</a>
@@ -9,7 +66,14 @@
     </ol>
   </div>
   <div class="large-3 columns">
-    <h1>{{ _('Swx Template!') }}</h1>
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Monthly Popular') }}</h1>
+      </div>
+      <div class="section__body">
+        123
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
