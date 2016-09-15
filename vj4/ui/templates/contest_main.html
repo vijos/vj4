@@ -19,7 +19,7 @@
           </li>
           <li>
             <span class="icon icon-clock"></span>
-            {{ _('Duration') }}: {{ ((tdoc['end_at'] - tdoc['begin_at']).seconds/3600)|round(2) }} {{ _('hour(s)') }}
+            {{ _('Duration') }}: {{ ((tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600)|round(2) }} {{ _('hour(s)') }}
           </li>
         </ul>
       </div>
@@ -28,7 +28,7 @@
       <div class="section__body">
         <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="detail-button">{{ _('View Detail') }}</a>
         <div class="typo text-center">
-          {% if tsdict[tdoc['doc_id']]['attend'] == 1%}
+          {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
           <p><span class="icon icon-check"></span> {{ _('Attended') }}</p>
           {% else %}
           <p><span class="icon icon-clock"></span> {{ _('Unattended') }}</p>
@@ -42,10 +42,10 @@
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
-  {% for tdoc in tdocs if tdoc['status'] == vj4.model.adaptor.contest.STATUS_LIVE or True %}
+  {% for tdoc in tdocs if vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_LIVE %}
     {{ render_important_contest('live', 'Live...', tdoc) }}
   {% endfor %}
-  {% for tdoc in tdocs if tdoc['status'] == vj4.model.adaptor.contest.STATUS_READY or True %}
+  {% for tdoc in tdocs if vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_READY %}
     {{ render_important_contest('ready', 'Ready (☆▽☆)', tdoc) }}
   {% endfor %}
     <div class="section">

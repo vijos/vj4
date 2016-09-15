@@ -1,5 +1,6 @@
 import asyncio
 import functools
+from bson import objectid
 
 from vj4 import app
 from vj4 import constant
@@ -21,8 +22,12 @@ class ProblemMainHandler(base.OperationHandler):
   @base.sanitize
   async def get(self, *, page: int=1):
     # TODO(iceboy): projection.
-    pcount, pdocs = await asyncio.gather(problem.count(self.domain_id),
-                                         problem.get_list(self.domain_id,
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    pcount, pdocs = await asyncio.gather(problem.count(self.domain_id, **f),
+                                         problem.get_list(self.domain_id, **f,
                                                           skip=(page - 1) * self.PROBLEMS_PER_PAGE,
                                                           limit=self.PROBLEMS_PER_PAGE))
     if self.has_priv(builtin.PRIV_USER_PROFILE):
@@ -54,6 +59,8 @@ class ProblemDetailHandler(base.Handler):
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
     # TODO(twd2): tdoc
     #tdoc = {'_id': 'todo', 'title': 'test', 'end_at': 'TODO'}
@@ -73,6 +80,8 @@ class ProblemSubmitHandler(base.Handler):
     # TODO(twd2): check status, eg. test, hidden problem, ...
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
     if uid == None:
       rdocs = []
@@ -97,6 +106,9 @@ class ProblemSubmitHandler(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
     # TODO(twd2): check status, eg. test, hidden problem, ...
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     pdoc = await problem.inc(self.domain_id, pid, 'num_submit', 1)
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
                            self.user['_id'], lang, code)
@@ -114,6 +126,7 @@ class ProblemPretestHandler(base.Handler):
                  data_input: str, data_output: str):
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdoc = await problem.get(self.domain_id, pid)
+    # don't need to check hidden status
     content = list(zip(self.request.POST.getall('data_input'),
                        self.request.POST.getall('data_output')))
     did = await document.add(self.domain_id, content, self.user['_id'], document.TYPE_PRETEST_DATA,
@@ -135,6 +148,8 @@ class ProblemSolutionHandler(base.OperationHandler):
     limit = self.SOLUTIONS_PER_PAGE
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'], skip=skip, limit=limit)
     uids = {pdoc['owner_uid']}
     uids.update(psdoc['owner_uid'] for psdoc in psdocs)
@@ -160,6 +175,8 @@ class ProblemSolutionHandler(base.OperationHandler):
   @base.sanitize
   async def post_submit(self, *, pid: document.convert_doc_id, content: str):
     pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     await problem.add_solution(self.domain_id, pdoc['doc_id'], self.user['_id'], content)
     self.json_or_redirect(self.reverse_url('problem_solution', pid=pdoc['doc_id']))
 
@@ -173,6 +190,8 @@ class ProblemSolutionHandler(base.OperationHandler):
                             psid: document.convert_doc_id,
                             value: int):
     pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
     psdoc, pssdoc = await problem.vote_solution(self.domain_id, psdoc['doc_id'],
                                                 self.user['_id'], value)
@@ -192,6 +211,8 @@ class ProblemSolutionHandler(base.OperationHandler):
                        psid: document.convert_doc_id,
                        content: str):
     pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
     await problem.reply_solution(self.domain_id, psdoc['doc_id'], self.user['_id'], content)
     self.json_or_redirect(self.reverse_url('problem_solution', pid=pid))
@@ -308,6 +329,8 @@ class ProblemStatisticsHandler(base.Handler):
     # TODO(twd2)
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),

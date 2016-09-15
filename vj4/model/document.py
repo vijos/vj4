@@ -226,6 +226,10 @@ async def ensure_indexes():
                            ('parent_doc_id', 1),
                            ('vote', -1),
                            ('doc_id', -1)], sparse=True)
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('hidden', 1),
+                           ('doc_id', -1)], sparse=True)
   status_coll = db.Collection('document.status')
   await status_coll.ensure_index([('domain_id', 1),
                                   ('doc_type', 1),
