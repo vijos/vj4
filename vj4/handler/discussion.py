@@ -125,7 +125,7 @@ class DiscussionDetailHandler(base.OperationHandler):
   async def post_reply(self, *, did: document.convert_doc_id, content: str):
     ddoc = await discussion.get(self.domain_id, did)
     await discussion.add_reply(self.domain_id, ddoc['doc_id'], self.user['_id'], content)
-    self.json_or_redirect(self.reverse_url('discussion_detail', did=did))
+    self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_REPLY_DISCUSSION)
@@ -139,7 +139,7 @@ class DiscussionDetailHandler(base.OperationHandler):
     ddoc = await discussion.get(self.domain_id, did)
     drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
     await discussion.add_tail_reply(self.domain_id, drdoc['doc_id'], self.user['_id'], content)
-    self.json_or_redirect(self.reverse_url('discussion_detail', did=did))
+    self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -149,7 +149,7 @@ class DiscussionDetailHandler(base.OperationHandler):
   async def star_unstar(self, *, did: document.convert_doc_id, star: bool):
     ddoc = await discussion.get(self.domain_id, did)
     ddoc = await discussion.set_star(self.domain_id, ddoc['doc_id'], self.user['_id'], star)
-    self.json_or_redirect(self.referer_or_main, star=ddoc['star'])
+    self.json_or_redirect(self.url, star=ddoc['star'])
 
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)

@@ -52,7 +52,7 @@ class HomeSecurityHandler(base.OperationHandler):
     doc = await user.change_password(self.user['_id'], current_password, new_password)
     if not doc:
       raise error.CurrentPasswordError(self.user['_id'])
-    self.json_or_redirect(self.referer_or_main)
+    self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
@@ -87,13 +87,13 @@ class HomeSecurityHandler(base.OperationHandler):
         break
     else:
       raise error.InvalidTokenDigestError(token_type, token_digest)
-    self.json_or_redirect(self.referer_or_main)
+    self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
   async def post_delete_all_tokens(self):
     await token.delete_by_uid(self.user['_id'])
-    self.json_or_redirect(self.referer_or_main)
+    self.json_or_redirect(self.url)
 
 
 @app.route('/home/security/changemail/{code}', 'user_changemail_with_code')
@@ -126,7 +126,7 @@ class HomeAccountHandler(base.Handler):
   async def post(self, **kwargs):
     # TODO(swx): @twd2 check parameters
     await self.set_settings(**kwargs)
-    self.json_or_redirect(self.reverse_url('home_account'))
+    self.json_or_redirect(self.url)
 
 
 @app.route('/home/preference', 'home_preference')
@@ -141,7 +141,7 @@ class HomeAccountHandler(base.Handler):
   async def post(self, **kwargs):
     # TODO(swx): @twd2 check parameters
     await self.set_settings(**kwargs)
-    self.json_or_redirect(self.reverse_url('home_preference'))
+    self.json_or_redirect(self.url)
 
 
 @app.route('/home/messages', 'home_messages')
@@ -181,7 +181,7 @@ class HomeMessagesHandler(base.OperationHandler):
       template.gravatar_url(mdoc['sendee_udoc'].pop('gravatar')))
     if self.user['_id'] != uid:
       await bus.publish('message_received-' + str(uid), {'type': 'new', 'data': mdoc})
-    self.json_or_redirect(self.referer_or_main, mdoc=mdoc)
+    self.json_or_redirect(self.url, mdoc=mdoc)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
@@ -197,14 +197,14 @@ class HomeMessagesHandler(base.OperationHandler):
         other_uid = mdoc['sender_uid']
       mdoc['reply'] = [reply]
       await bus.publish('message_received-' + str(other_uid), {'type': 'reply', 'data': mdoc})
-    self.json_or_redirect(self.referer_or_main, reply=reply)
+    self.json_or_redirect(self.url, reply=reply)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
   @base.sanitize
   async def post_delete_message(self, *, message_id: objectid.ObjectId):
     await message.delete(message_id, self.user['_id'])
-    self.json_or_redirect(self.referer_or_main)
+    self.json_or_redirect(self.url)
 
 
 @app.connection_route('/home/messages-conn', 'home_messages-conn')

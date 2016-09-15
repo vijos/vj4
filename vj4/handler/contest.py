@@ -96,7 +96,7 @@ class ContestDetailHandler(base.OperationHandler):
     if status_func(tdoc, now) == STATUS_DONE:
       raise error.ContestNotLiveError(tdoc['doc_id'])
     await contest.attend(self.domain_id, tdoc['doc_id'], self.user['_id'])
-    self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
+    self.json_or_redirect(self.url)
 
 
 @app.route('/tests/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')

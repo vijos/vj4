@@ -70,6 +70,7 @@ class RecordDetailHandler(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
+    # TODO(iceboy): Check domain permission in place.
     if rdoc['domain_id'] != self.domain_id:
       self.redirect(self.reverse_url('record_detail', rid=rid, domain_id=rdoc['domain_id']))
       return
