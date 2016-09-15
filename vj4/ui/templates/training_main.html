@@ -4,44 +4,6 @@
   <div class="large-9 columns">
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{{ _('My Training Plans') }}</h1>
-        <div class="section__tools">
-          <a class="tool-button" href="#">See Full List <span class="icon icon-chevron_right"></span></a>
-        </div>
-      </div>
-      <div class="section__body"><ol class="training__list my">
-        <div class="row">
-          <div class="medium-6 columns">
-            <li class="training__item"><div class="media"><div class="media__left">
-              <span class="icon record-status--icon pending"></span>
-            </div><div class="media__body">
-              <h1 class="training__title"><a href="#">Vijos 基础算法与数据结构</a></h1>
-              <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:23%;"></div></div> 已完成 23%</div>
-            </div></div></li>
-          </div>
-          <div class="medium-6 columns">
-            <li class="training__item"><div class="media"><div class="media__left">
-              <span class="icon record-status--icon pending"></span>
-            </div><div class="media__body">
-              <h1 class="training__title"><a href="#">Vijos 高级算法与数据结构</a></h1>
-              <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:95%;"></div></div> 已完成 95%</div>
-            </div></div></li>
-          </div>
-        </div>
-        <div class="row">
-          <div class="medium-6 columns">
-            <li class="training__item"><div class="media"><div class="media__left">
-              <span class="icon record-status--icon pass"></span>
-            </div><div class="media__body">
-              <h1 class="training__title"><a href="#">Vijos 编程入门</a></h1>
-              <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:100%;"></div></div> 已完成 100%</div>
-            </div></div></li>
-          </div>
-        </div>
-      </ol></div>
-    </div>
-    <div class="section">
-      <div class="section__header">
         <h1 class="section__title">{{ _('All Training Plans') }}</h1>
         <div class="section__tools">
           {{ _('Sort by') }}:
@@ -68,10 +30,54 @@
   <div class="large-3 columns">
     <div class="section side">
       <div class="section__header">
+        <h1 class="section__title">{{ _('My Training Plans') }}</h1>
+      </div>
+      <div class="section__body">
+        <ol class="training__list my">
+          <li class="training__item"><div class="media"><div class="media__left">
+            <span class="icon training-status--icon progress"></span>
+          </div><div class="media__body">
+            <p><a class="training__title" href="#">Vijos 基础算法与数据结构</a></p>
+            <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:23%;"></div></div> 已完成 23%</div>
+          </div></div></li>
+          <li class="training__item"><div class="media"><div class="media__left">
+            <span class="icon training-status--icon progress"></span>
+          </div><div class="media__body">
+            <p><a class="training__title" href="#">Vijos 高级算法与数据结构</a></p>
+            <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:76%;"></div></div> 已完成 76%</div>
+          </div></div></li>
+          <li class="training__item"><div class="media"><div class="media__left">
+            <span class="icon training-status--icon done"></span>
+          </div><div class="media__body">
+            <p><a class="training__title" href="#">Vijos 编程入门</a></p>
+            <div class="training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:100%;"></div></div> 已完成 100%</div>
+          </div></div></li>
+        </ol>
+        <p><a href="#">See Full List <span class="icon icon-chevron_right"></span></a></p>
+      </div>
+    </div>
+    <div class="section side">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Monthly Popular') }}</h1>
       </div>
       <div class="section__body">
-        123
+        <ol class="training__list popular">
+          <li class="training__item">
+            <a href="#"><span class="icon training-status--icon outside"></span> Vijos 基础算法与数据结构2</a>
+          </li>
+          <li class="training__item">
+            <a href="#"><span class="icon training-status--icon progress"></span> Vijos 基础算法与数据结构8</a>
+          </li>
+          <li class="training__item">
+            <a href="#"><span class="icon training-status--icon outside"></span> Vijos 基础算法与数据结构4</a>
+          </li>
+          <li class="training__item">
+            <a href="#"><span class="icon training-status--icon done"></span> Vijos 基础算法与数据结构1</a>
+          </li>
+          <li class="training__item">
+            <a href="#"><span class="icon training-status--icon outside"></span> Vijos 基础算法与数据结构5</a>
+          </li>
+        </ol>
       </div>
     </div>
   </div>

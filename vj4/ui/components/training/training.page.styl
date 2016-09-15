@@ -1,0 +1,7 @@
+.training-status--icon
+  display: inline-block
+  width: 1.15em
+  for key, value in $training-status-icon
+    &.{key}:before
+      content: value
+      color: $training-status-color[key]

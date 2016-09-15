@@ -15,6 +15,15 @@ class TrainingMainHandler(base.Handler):
     self.render('training_main.html', tdocs=tdocs)
 
 
+@app.route('/training/my', 'training_my')
+class TrainingMainHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_TRAINING)
+  async def get(self):
+    # TODO: twd2
+    self.render('training_my.html')
+
+
 @app.route('/training/{tid}', 'training_detail')
 class TrainingDetailHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)

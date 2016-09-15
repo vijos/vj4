@@ -1,16 +1,7 @@
 .page--training_main
-  .training__item
-    margin: rem(20px 0)
-
-    .record-status--icon
-      font-size: rem(25px)
-
-  .training__title
-    font-size: rem($font-size-title)
-    margin-bottom: 0.3em
-
-    a, a:hover
-      color: $text-color
+  .training__title, .training__title:hover
+    color: $text-color
+    line-height: 1.5
 
   .training__progress
     font-size: rem($font-size-small)
@@ -36,5 +27,10 @@
     width: 0%
     background-color: green
 
-  .training__detail-link
-    white-space: nowrap
+  .my.training__list
+    .training__item
+      margin-bottom: rem(15px)
+    .record-status--icon
+      font-size: rem(18px)
+    .training__title
+      font-size: rem($font-size)
