@@ -32,7 +32,8 @@ class DiscussionMainHandler(base.Handler):
                 udict=udict, vndict=vndict, page=page, dcount=dcount)
 
 
-@app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
+@app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node-legacy')
+@app.route('/discuss/{node_or_pid}/', 'discussion_node')
 class DiscussionNodeHandler(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
