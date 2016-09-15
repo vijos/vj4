@@ -5,12 +5,15 @@
   <div class="medium-9 columns">
     <div class="section">
       <div class="section__body">
-        <div class="dczdetail__supplementary">
-          <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
-          <span class="v-center"> · </span>
-          {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']]) }}
-          <span class="v-center"> · </span>
-          <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
+        <div class="discussion__supplementary">
+          <li>
+            <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
+          </li>
+          <li>
+            {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']]) }}
+            @
+            {{ datetime_span(ddoc['_id'].generation_time) }}
+          </li>
         </div>
         <div class="typo topic__content" data-emoji-enabled>
           {{ ddoc['content']|markdown }}
