@@ -7,13 +7,13 @@
   <div class="medium-3 columns"><div data-sticky="large">
     <div class="section side">
       <ol class="menu">
-        {{ sidemenu.render_item('message', 'home_messages') }}
+        {{ sidemenu.render_item('comment--multiple', 'home_messages') }}
         <li class="menu__seperator"></li>
         {{ sidemenu.render_item('user', 'home_account') }}
         {{ sidemenu.render_item('sliders', 'home_preference') }}
         {{ sidemenu.render_item('security', 'home_security') }}
         <li class="menu__seperator"></li>
-        {{ sidemenu.render_item('cloud', 'home_domain') }}
+        {{ sidemenu.render_item('web', 'home_domain') }}
       </ol>
     </div>
     {% block home_sidebar %}{% endblock %}

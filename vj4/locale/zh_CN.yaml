@@ -359,3 +359,30 @@ Host: 主持人
 Rank: 排名
 Solve: 解决
 Time: 时间
+required: 必填
+Name: 名称
+Will be used as the domain icon.: 将被用作域图标。
+My Role: 我的角色
+What's domain?: 什么是域？
+Visit: 查看
+owner: 所有者
+delete: 删除
+User ID: 用户 ID
+'{0}: Users': '{0}: 用户'
+'{0}: Roles': '{0}: 角色'
+'{0}: Permissions': '{0}: 权限'
+Role: 角色
+Select a role: 选择一个角色
+Add User: 添加用户
+Add User to Domain: 添加用户到域
+Delete Selected User: 删除所选用户
+Set Roles for Selected User: 设置所选用户的角色
+Create Role: 创建角色
+Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
+'Built-in: Effective for visitors that not logged in': '内置: 对未登录的游客有效'
+'Built-in: Effective for registered users that not a member of the domain': '内置: 对域外注册用户有效'
+User defined role: 用户定义的角色
+Users: 用户
+Delete Selected Roles: 删除所选角色
+Owner: 所有者
+Permission: 权限
