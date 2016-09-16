@@ -315,7 +315,7 @@ Document {2} not found.: 文档 {2} 不存在。
 Data of Problem {0} not found.: 题目 {0} 的数据缺失。
 You're not logged in.: 您没有登录。
 You don't have the required privilege.: 您没有相应的特权。
-You don't have the required permission in this domain.: 您在该域中无相应权限。
+You don't have the required permission ({0}) in this domain.: 您在该域中无相应权限 ({0})。
 You've already voted.: 您已经投过票。
 User not found.: 用户不存在。
 Current password doesn't match.: 当前密码输入错误。
