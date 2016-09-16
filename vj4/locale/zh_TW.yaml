@@ -369,10 +369,10 @@ Delete Selected Roles: 刪除所選角色
 Owner: 所有者
 Permission: 許可權
 
-View this domain: 檢視此域名
+View this domain: 檢視此域
 Edit permissions of a role: 修改角色許可權
 Show MOD badge: 展示 MOD 徽章
-Edit description of this domain: 修改此域名描述
+Edit description of this domain: 修改此域描述
 Create problems: 創建題目
 Edit problems: 修改題目
 Edit own problems: 修改自己的題目
@@ -387,14 +387,14 @@ View problem solutions: 檢視題解
 Create problem solutions: 創建題解
 Vote problem solutions: 為題解投票
 Edit problem solutions: 修改題解
-Edit own problem solutions: 修改自己題目的題解
+Edit own problem solutions: 修改自己的題解
 Delete problem solutions: 刪除題解
-Delete own problem solutions: 刪除自己題目的題解
+Delete own problem solutions: 刪除自己的題解
 Reply problem solutions: 回覆題解
 Edit problem solution replies: 修改題解的回覆
-Edit own problem solution replies: 修改自己題目題解的回覆
+Edit own problem solution replies: 修改題解中自己的回覆
 Delete problem solution replies: 刪除題解的回覆
-Delete own problem solution replies: 刪除自己題目題解的回覆
+Delete own problem solution replies: 刪除題解中自己的回覆
 View discussions: 檢視討論
 Create discussions: 創建討論
 Highlight discussions: 高亮討論
@@ -415,4 +415,4 @@ View hidden contest status: 檢視隱藏的比賽狀態
 Create contests: 創建比賽
 Attend contests: 參加比賽
 View training: 檢視訓練
-Have ALL PERMISSIONS in this domain: 在此域名中擁有全部許可權
+Have ALL PERMISSIONS in this domain: 在此域中擁有全部許可權
