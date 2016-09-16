@@ -6,7 +6,7 @@
     <h1>{{ tdoc['title'] }}</h1>
   </div>
   <div class="section__body">
-    <p>{{ _('End at {0}'.format(tdoc['end_at'])) }}</p>
+    <p>{{ _('End at {0}'.format(datetime_span(tdoc['end_at'])))|safe }}</p>
   </div>
 </div>
 {% endif %}

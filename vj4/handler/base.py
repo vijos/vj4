@@ -56,7 +56,8 @@ class HandlerBase(setting.SettingMixin):
     self.translate = locale.get_translate(self.view_lang)
     self.datetime_span = _get_datetime_span(self.timezone)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
-    self.build_path = functools.partial(_build_path, domain_id=self.domain_id)
+    self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
+                                        domain_name=self.domain['name'])
     if not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
       self.check_perm(builtin.PERM_VIEW)
 
@@ -320,8 +321,8 @@ def _reverse_url(name, *, domain_id, **kwargs):
 
 
 @functools.lru_cache()
-def _build_path(*args, domain_id):
-  return [(domain_id, _reverse_url('domain_main', domain_id=domain_id)), *args]
+def _build_path(*args, domain_id, domain_name):
+  return [(domain_name, _reverse_url('domain_main', domain_id=domain_id)), *args]
 
 
 @functools.lru_cache()

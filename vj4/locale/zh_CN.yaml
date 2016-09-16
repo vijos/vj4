@@ -149,7 +149,7 @@ Sign Up: 注册
 Sign Up Now: 现在注册
 Sign up mail has been sent to your email.: 注册邮件已经发送到您的电子邮箱。
 Solutions: 题解
-'Solved {0} problems, RP: {1} (No. {2})': '解决了 {0} 个问题，RP: {1} (No. {2})'
+'Solved {0} problems, RP: {1} (No. {2})': '解决了 {0} 道题目，RP: {1} (No. {2})'
 Sorry: 对不起
 Sorry, there is no problem in the problem set: 题库中目前没有题目
 Solutions Liked: 题解被赞
@@ -310,7 +310,7 @@ Field {0} validation failed.: 字段 {0} 验证失败。
 Unknown field {0}.: 未知字段 {0}。
 Passwords don't match.: 验证密码不匹配。
 User {0} already exists.: 用户 {0} 已存在。
-Inexistent user {0} or wrong password.: 用户 {0} 不存在或密码错误。
+Invalid user {0} or password.: 用户 {0} 不存在或密码错误。
 Document {2} not found.: 文档 {2} 不存在。
 Data of Problem {0} not found.: 题目 {0} 的数据缺失。
 You're not logged in.: 您没有登录。
@@ -386,3 +386,52 @@ Users: 用户
 Delete Selected Roles: 删除所选角色
 Owner: 所有者
 Permission: 权限
+
+View this domain: 查看此域
+Edit permissions of a role: 修改角色权限
+Show MOD badge: 展示 MOD 徽章
+Edit description of this domain: 修改此域描述
+Create problems: 创建题目
+Edit problems: 修改题目
+Edit own problems: 修改自己的题目
+View problems: 查看题目
+Submit problem: 递交题目
+Read data of problem: 读取题目数据
+Read data of own problems: 读取自己题目的数据
+Read record codes: 读取记录的代码
+Rejudge problems: 重测题目
+Rejudge records: 重测记录
+View problem solutions: 查看题解
+Create problem solutions: 创建题解
+Vote problem solutions: 为题解投票
+Edit problem solutions: 修改题解
+Edit own problem solutions: 修改自己的题解
+Delete problem solutions: 删除题解
+Delete own problem solutions: 删除自己的题解
+Reply problem solutions: 回复题解
+Edit problem solution replies: 修改题解的回复
+Edit own problem solution replies: 修改题解中自己的回复
+Delete problem solution replies: 删除题解的回复
+Delete own problem solution replies: 删除题解中自己的回复
+View discussions: 查看讨论
+Create discussions: 创建讨论
+Highlight discussions: 高亮讨论
+Edit discussions: 修改讨论
+Edit own discussions: 修改自己的讨论
+Delete discussions: 删除讨论
+Delete own discussions: 删除自己的讨论
+Reply discussions: 回复讨论
+Edit discussion replies: 修改讨论的回复
+Edit own discussion replies: 修改讨论中自己的回复
+Edit discussion replies of own discussion: 修改自己讨论中的回复
+Delete discussion replies: 删除讨论回复
+Delete own discussion replies: 删除讨论中自己的回复
+Delete discussion replies of own discussion: 删除自己讨论中的回复
+View contests: 查看比赛
+View contest status: 查看比赛状态
+View hidden contest status: 查看隐藏的比赛状态
+Create contests: 创建比赛
+Attend contests: 参加比赛
+View training: 查看训练
+Have ALL PERMISSIONS in this domain: 在此域中拥有全部权限
+Select User: 选择用户
