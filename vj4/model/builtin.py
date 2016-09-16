@@ -71,7 +71,7 @@ PERM_ALL = -1
 PERM_TEXTS = collections.OrderedDict([
   (PERM_VIEW, 'View this domain'),
   (PERM_EDIT_PERM, 'Edit permissions of a role'),
-  (PERM_MOD_BADGE, 'Show MOD badges'),
+  (PERM_MOD_BADGE, 'Show MOD badge'),
   (PERM_EDIT_DESCRIPTION, 'Edit description of this domain'),
   (PERM_CREATE_PROBLEM, 'Create problems'),
   (PERM_EDIT_PROBLEM, 'Edit problems'),
@@ -103,7 +103,7 @@ PERM_TEXTS = collections.OrderedDict([
   (PERM_DELETE_DISCUSSION, 'Delete discussions'),
   (PERM_DELETE_DISCUSSION_SELF, 'Delete own discussions'),
   (PERM_REPLY_DISCUSSION, 'Reply discussions'),
-  (PERM_EDIT_DISCUSSION_REPLY, 'Edit discussion replys'),
+  (PERM_EDIT_DISCUSSION_REPLY, 'Edit discussion replies'),
   (PERM_EDIT_DISCUSSION_REPLY_SELF, 'Edit own discussion replies'),
   (PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION, 'Edit discussion replies of own discussion'),
   (PERM_DELETE_DISCUSSION_REPLY, 'Delete discussion replies'),
