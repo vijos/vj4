@@ -14,9 +14,8 @@
       </div>
       <div class="medium-6 columns">
         <label>
-          <!-- TODO: replace with role values -->
           {{ _('Role') }}
-          <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', _('Select a role')), ('admin', 'admin'), ('role_x', 'role_x')], 'role') }}
+          <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', _('Select a role'))] + roles_with_text, 'role') }}
         </label>
       </div>
     </div>
@@ -24,8 +23,7 @@
 </div>
 <div class="section">
   <div class="section__header">
-    <!-- TODO: replace with domain name -->
-    <h1 class="section__title">{{ _('{0}: Users').format('Vijos') }}</h1>
+    <h1 class="section__title">{{ _('{0}: Users').format(handler.domain['name']) }}</h1>
     <div class="section__tools">
       <button class="primary rounded button" name="add_user">{{ _('Add User to Domain') }}</button>
     </div>
@@ -50,14 +48,12 @@
               <input type="checkbox" name="select_all">
             </label>
           </th>
-          <th class="col--uid">User ID</th>
-          <th class="col--user">Username</th>
-          <th class="col--role">Role</th>
+          <th class="col--uid">{{ _('User ID') }}</th>
+          <th class="col--user">{{ _('Username') }}</th>
+          <th class="col--role">{{ _('Role') }}</th>
         </tr>
       </thead>
       <tbody>
-        <!-- TODO: remove this comment when you have read it:
-        this row is for the owner always -->
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
@@ -65,51 +61,37 @@
             </label>
           </td>
           <td class="col--uid">
-            -1
+            {{ handler.domain['owner_uid'] }}
           </td>
           <td class="col--user">
-            <!-- TODO: inline_user (noBadge=true) -->
-            swx
+            {{ user.render_inline(udict[handler.domain['owner_uid']], badge=false) }}
           </td>
           <td class="col--role">
             <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', '(Owner)')], 'role', value='', disabled=true, class='compact') }}
           </td>
         </tr>
-        <!-- TODO: for ... in ... -->
-        <tr data-uid="-3">
+        {% for role in roles %}
+        {% for rudoc in rudocs[role] %}
+        {% if rudoc['uid'] != handler.domain['owner_uid'] %}
+        <tr data-uid="{{ rudoc['uid'] }}">
           <td class="col--checkbox">
             <label class="compact checkbox">
               <input type="checkbox">
             </label>
           </td>
           <td class="col--uid">
-            -2
+            {{ rudoc['uid'] }}
           </td>
           <td class="col--user">
-            <!-- TODO: inline_user (noBadge=true) -->
-            twd2
+            {{ user.render_inline(udict[rudoc['uid']], badge=false) }}
           </td>
           <td class="col--role">
-            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='role_x', class='compact') }}
+            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select(roles_with_text, 'role', value='role_x', class='compact') }}
           </td>
         </tr>
-        <tr data-uid="-3">
-          <td class="col--checkbox">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
-          <td class="col--uid">
-            -3
-          </td>
-          <td class="col--user">
-            <!-- TODO: inline_user (noBadge=true) -->
-            twd3
-          </td>
-          <td class="col--role">
-            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('admin', 'admin'), ('role_x', 'role_x')], 'role', value='admin', class='compact') }}
-          </td>
-        </tr>
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
       </tbody>
     </table>
   </div>
