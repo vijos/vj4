@@ -332,7 +332,6 @@ def _get_datetime_span(tzname):
   @functools.lru_cache()
   def _datetime_span(dt):
     dt = timezone.ensure_tzinfo(dt)
-    # TODO(iceboy): add a class for javascript selection.
     return markupsafe.Markup(
       '<span class="time" data-timestamp="{0}">{1}</span>'.format(
         int(dt.astimezone(pytz.utc).timestamp()),
