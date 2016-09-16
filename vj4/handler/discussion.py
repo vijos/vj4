@@ -142,6 +142,68 @@ class DiscussionDetailHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_edit_reply(self, *, did: document.convert_doc_id,
+                            drid: document.convert_doc_id, content: str):
+    ddoc = await discussion.get(self.domain_id, did)
+    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
+    if (not self.own(ddoc, builtin.PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION)
+        and not self.own(drdoc, builtin.PERM_EDIT_DISCUSSION_REPLY_SELF)):
+      self.check_perm(builtin.PERM_EDIT_DISCUSSION_REPLY)
+    drdoc = await discussion.edit_reply(self.domain_id, drdoc['doc_id'],
+                                        content=content)
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete_reply(self, *, did: document.convert_doc_id,
+                              drid: document.convert_doc_id):
+    ddoc = await discussion.get(self.domain_id, did)
+    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
+    if (not self.own(ddoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION)
+        and not self.own(drdoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF)):
+      self.check_perm(builtin.PERM_DELETE_DISCUSSION_REPLY)
+    drdoc = await discussion.delete_reply(self.domain_id, drdoc['doc_id'])
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_edit_tail_reply(self, *, did: document.convert_doc_id,
+                                 drid: document.convert_doc_id, drrid: document.convert_doc_id,
+                                 content: str):
+    ddoc = await discussion.get(self.domain_id, did)
+    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
+    # TODO(twd2): get drrdoc
+    drrdoc = {}
+    if (not self.own(ddoc, builtin.PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION)
+        and not self.own(drrdoc, builtin.PERM_EDIT_DISCUSSION_REPLY_SELF)):
+      self.check_perm(builtin.PERM_EDIT_DISCUSSION_REPLY)
+    # TODO(twd2): edit
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete_tail_reply(self, *, did: document.convert_doc_id,
+                                   drid: document.convert_doc_id, drrid: document.convert_doc_id):
+    ddoc = await discussion.get(self.domain_id, did)
+    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
+    # TODO(twd2): get drrdoc
+    drrdoc = {}
+    if (not self.own(ddoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION)
+        and not self.own(drrdoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF)):
+      self.check_perm(builtin.PERM_DELETE_DISCUSSION_REPLY)
+    # TODO(twd2): delete
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
   @base.require_csrf_token

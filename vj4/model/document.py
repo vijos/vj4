@@ -68,6 +68,13 @@ async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
   return doc
 
 
+async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
+  coll = db.Collection('document')
+  return await coll.remove({'domain_id': domain_id,
+                            'doc_type': doc_type,
+                            'doc_id': doc_id}, just_one=True)
+
+
 def get_multi(*, fields=None, **kwargs):
   coll = db.Collection('document')
   return coll.find(kwargs, fields=fields)
