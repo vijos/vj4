@@ -86,7 +86,7 @@ class DomainPermissionHandler(base.Handler):
     new_roles = dict()
     for role in self.domain['roles']:
       perms = 0
-      for perm in self.request.POST.getall(role):
+      for perm in self.request.POST.getall(role, []):
        perm = int(perm)
        if perm in builtin.PERM_TEXTS:
           perms |= perm
