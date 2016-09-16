@@ -2,16 +2,104 @@
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
-    {{ tdoc }}
+    <div class="section">
+      <div class="section__body">
+        {{ tdoc['content']|markdown }}
+      </div>
+    </div>
+  {% if vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_LIVE or vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_DONE %}
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Problem') }}</h1>
+      </div>
+      {% if attended or vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_DONE %}
+      <div class="section__body no-padding">
+        <table class="data-table">
+          <colgroup>
+            <col class="col--status">
+            <col class="col--submit-at">
+            <col class="col--problem">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="col--status record-status--border">{{ _('Status') }}</th>
+              <th class="col--submit-at">{{ _('Last Submit At') }}</th>
+              <th class="col--problem">{{ _('Problem') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for pid in tdoc['pids'] %}
+            <tr>
+            {% if jdict[pid] %}
+              {% with rdoc=rdict[jdict[pid]['rid']] %}
+                {% if vj4.model.adaptor.contest.RULES[tdoc['rule']].show_func(tdoc, now) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS) %}
+              <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
+                <div class="col--status__text">
+                  <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
+                  <a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
+                    {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
+                  </a>
+                </div>
+                  {% if rdoc['status'] == vj4.constant.record.STATUS_JUDGING %}
+                <div class="col--status__progress-container">
+                  <div class="col--status__progress" style="width: {{ rdoc['progress']|default(50)|int }}%"></div>
+                </div>
+                  {% endif %}
+              </td>
+                {% else %}
+              <td class="col--status record-status--border">*</td>
+                {% endif %}
+              <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>
+              {% endwith %}
+            {% else %}
+              <td class="col--status record-status--border">{{ _('No Submission') }}</td>
+              <td class="col--submit-at">-</td>
+            {% endif %}
+              <td class="col--problem"><a href="{{ reverse_url('contest_detail_problem', tid=tdoc['_id'], pid=pid) }}">#{{ loop.index }}: {{ pdict[(tdoc['domain_id'], pid)]['title'] }}</a></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="section__body">
+        <blockquote class="warn">
+          <p>{{ _('Please attend to see the problems.') }}</p>
+          </blockquote>
+      </div>
+      {% endif %}
+    </div>
+  {% endif %}
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('{0} comments').format(0) }}</h1>
+      </div>
+      <div class="section__body">
+        <blockquote class="warn">
+          <p>{{ _('Do not discuss solutions otherwise you will be treated as a cheater and lose qualifications.') }}</p>
+        </blockquote>
+      </div>
+    </div>
   </div>
   <div class="medium-3 columns">
     <div class="section side">
-      <div class="section__header">
-        <h1 class="section__title">
-          {{ _('Contest Status') }}
-        </h1>
-      </div>
-      <div class="section__body">
+      <div class="section__body typo">
+        <dl class="large horizontal">
+          <dt>{{ _('Status') }}</dt><dd>{{ _(vj4.handler.contest.STATUS_TEXTS[vj4.handler.contest.status_func(tdoc, now)]) }}</dd>
+          <dt>{{ _('Rule') }}</dt><dd>{{ vj4.model.adaptor.contest.RULE_TEXTS[tdoc['rule']] }}</dd>
+          <dt>{{ _('Problem') }}</dt><dd>{{ tdoc['pids']|length }}</dd>
+          <dt>{{ _('Start at') }}</dt><dd>{{ datetime_span(tdoc['begin_at']) }}</dd>
+          <dt>{{ _('End at') }}</dt><dd>{{ datetime_span(tdoc['end_at']) }}</dd>
+          <dt>{{ _('Duration') }}</dt><dd>{{ ((tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600)|round(2) }} {{ _('hour(s)') }}</dd>
+          <dt>{{ _('Host') }}</dt><dd>{{ user.render_inline(udoc, badge=false) }}</dd>
+          <dt>{{ _('Attended') }}</dt>
+          <dd>
+            {{ tdoc['attend'] }}
+            {% if attended %}
+            ({{ _('Attended') }})
+            {% endif %}
+          </dd>
+        </dl>
       {% if handler.has_perm(vj4.model.builtin.PERM_ATTEND_CONTEST) %}
       {% if not attended %}
         <form method="POST">
@@ -19,12 +107,8 @@
           <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
           <button class="expanded primary button" type="submit">{{ _('Attend Contest') }}</button>
         </form>
-      {% else %}
-        <a href="javascript:;" class="expanded primary button">{{ _('Attended') }}</a>
       {% endif %}
-      {% else %}
-        <a href="javascript:;" class="expanded primary button">{{ _('Login to Attend Contest' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Attend Contest') }}</a>
-      {% endif %}{# has_perm #}
+      {% endif %}
       {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_STATUS) %}
       {% if vj4.model.adaptor.contest.RULES[tdoc['rule']].show_func(tdoc, now) %}
         <p><a href="{{ reverse_url('contest_status', tid=tdoc['_id']) }}" class="expanded button">{{ _('Status') }}</a></p>

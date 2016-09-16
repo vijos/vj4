@@ -226,6 +226,10 @@ async def ensure_indexes():
                            ('parent_doc_id', 1),
                            ('vote', -1),
                            ('doc_id', -1)], sparse=True)
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('hidden', 1),
+                           ('doc_id', -1)], sparse=True)
   status_coll = db.Collection('document.status')
   await status_coll.ensure_index([('domain_id', 1),
                                   ('doc_type', 1),
@@ -238,6 +242,18 @@ async def ensure_indexes():
                                   ('status', 1),
                                   ('rid', 1),
                                   ('rp', 1)], sparse=True)
+
+  # contest rule OI
+  await status_coll.ensure_index([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('doc_id', 1),
+                                  ('score', -1)], sparse=True)
+  # contest rule ACM
+  await status_coll.ensure_index([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('doc_id', 1),
+                                  ('accept', -1),
+                                  ('time', 1)], sparse=True)
 
 
 if __name__ == '__main__':

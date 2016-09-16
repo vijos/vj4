@@ -1,0 +1,17 @@
+{% set header_mini = true %}
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="row">
+  <div class="medium-9 columns">
+  {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
+    <p>\[E=mc^2\]</p>
+  {% else %}
+    <h3>Domain {{ domain_id }}'s Main Page</h3>
+    <p>\[e^{i\pi}+1=0\]</p>
+  {% endif %}
+  </div>
+  <div class="medium-3 columns">
+    {% include 'discussion_nodes_widget.html' %}
+  </div>
+</div>
+{% endblock %}

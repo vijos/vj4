@@ -25,9 +25,13 @@
   {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
     ({{ _('Pretest') }})
   {% endif %}
+  {% if not pdoc['hidden'] or (pdoc['domain_id'] == handler.domain_id and handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM_HIDDEN)) %}
     <a href="{{ reverse_url('problem_detail', pid=rdoc['pid'], domain_id=rdoc['domain_id']) }}">
-      {{ pdoc['title'] }}
+      {{ pdoc['title'] }}{% if pdoc['hidden'] %} ({{ _('Hidden') }}){% endif %}
     </a>
+  {% else %}
+    *
+  {% endif %}
   </td>
   <td class="col--submit-by"><a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">{{ udoc['uname'] }}</a></td>
   <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>

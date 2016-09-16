@@ -12,13 +12,13 @@ from vj4.util import timezone
 from vj4.util import validator
 
 
-STATUS_NEW = 0
-STATUS_READY = 1
-STATUS_LIVE = 2
-STATUS_DONE = 3
-
 RULE_OI = 2
 RULE_ACM = 3
+
+RULE_TEXTS = {
+  RULE_OI: 'OI',
+  RULE_ACM: 'ACM/ICPC',
+}
 
 Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
 
@@ -75,7 +75,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
     raise error.ValidationError('begin_at', 'end_at')
   # TODO(twd2): should we check problem existance here?
   return await document.add(domain_id, content, owner_uid, document.TYPE_CONTEST,
-                            title=title, status=STATUS_NEW, rule=rule,
+                            title=title, rule=rule,
                             begin_at=begin_at, end_at=end_at, pids=pids, attend=0)
 
 
@@ -115,6 +115,20 @@ async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=No
                                    uid=uid, fields=fields)
 
 
+def get_multi_status(*, fields=None, **kwargs):
+  return document.get_multi_status(doc_type=document.TYPE_CONTEST, fields=fields, **kwargs)
+
+
+async def get_dict_status(domain_id, uid, tids, *, fields=None):
+  result = dict()
+  async for tsdoc in get_multi_status(domain_id=domain_id,
+                                      uid=uid,
+                                      doc_id={'$in': list(set(tids))},
+                                      fields=fields):
+    result[tsdoc['doc_id']] = tsdoc
+  return result
+
+
 @argmethod.wrap
 async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.
@@ -150,6 +164,7 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
   tsdoc = await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, uid, tsdoc['rev'],
                                         journal=journal, **stats)
   return tsdoc
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()
