@@ -207,10 +207,10 @@ class ContestStatusHandler(base.Handler):
                                         problem.get_dict(pdom_and_ids))
     tspdict = {}
     for tsdoc in tsdocs:
-      pdict = {}
+      psdict = {}
       for pdetail in tsdoc.get('detail', []):
-        pdict[pdetail['pid']] = pdetail
-      tspdict[tsdoc['uid']] = pdict
+        psdict[pdetail['pid']] = pdetail
+      tspdict[tsdoc['uid']] = psdict
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
