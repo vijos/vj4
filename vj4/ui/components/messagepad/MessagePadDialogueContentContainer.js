@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Message from './MessageComponent';
+import TimeAgo from 'timeago-react';
 import moment from 'moment';
 import 'jquery-scroll-lock';
 import 'jquery.easing';
@@ -30,7 +31,9 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
         }
       >
         <div>{reply.content}</div>
-        <time>{moment(reply.at).fromNow()}</time>
+        <time data-tooltip={moment(reply.at).format('YYYY-MM-DD HH:mm:ss')}>
+          <TimeAgo date={reply.at} />
+        </time>
       </Message>
     ));
   }

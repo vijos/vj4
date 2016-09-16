@@ -4769,6 +4769,16 @@
       "from": "time-stamp@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npm.taobao.org/time-stamp/download/time-stamp-1.0.1.tgz"
     },
+    "timeago-react": {
+      "version": "1.0.3",
+      "from": "timeago-react@latest",
+      "resolved": "https://registry.npm.taobao.org/timeago-react/download/timeago-react-1.0.3.tgz"
+    },
+    "timeago.js": {
+      "version": "1.1.0",
+      "from": "timeago.js@latest",
+      "resolved": "https://registry.npm.taobao.org/timeago.js/download/timeago.js-1.1.0.tgz"
+    },
     "timers-browserify": {
       "version": "1.4.2",
       "from": "timers-browserify@>=1.0.1 <2.0.0",
