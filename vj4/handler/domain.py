@@ -36,31 +36,81 @@ class DomainEditHandler(base.Handler):
 
 
 @app.route('/domain/user', 'domain_user')
-class DomainUserHandler(base.Handler):
+class DomainUserHandler(base.OperationHandler):
+  @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
-    self.render('domain_user.html')
-
-
-@app.route('/domain/permission', 'domain_permission')
-class DomainPermissionHandler(base.Handler):
-  async def get(self):
-    self.render('domain_permission.html')
-
-
-@app.route('/domain/role', 'domain_role')
-class DomainRoleHandler(base.OperationHandler):
-  async def get(self):
+    uids = [self.domain['owner_uid']]
     rudocs = collections.defaultdict(list)
-    async for uddoc in domain.get_multi_user(domain_id=self.domain_id,
+    async for dudoc in domain.get_multi_user(domain_id=self.domain_id,
                                              fields={'uid': 1, 'role': 1}):
-      if 'role' in uddoc:
-        rudocs[uddoc['role']].append(uddoc)
-    self.render('domain_role.html', rudocs=rudocs)
+      if 'role' in dudoc:
+        uids.append(dudoc['uid'])
+        rudocs[dudoc['role']].append(dudoc)
+    roles = sorted(list(self.domain['roles'].keys()))
+    roles_with_text = [(role, role) for role in roles]
+    udict = await user.get_dict(uids)
+    self.render('domain_user.html', roles=roles, roles_with_text=roles_with_text,
+                rudocs=rudocs, udict=udict)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
   @base.sanitize
-  async def post_set(self, *, role: str, perm: int):
+  async def post_set_user(self, *, uid: int, role: str):
+    if role:
+      await domain.set_user_role(self.domain_id, uid, role)
+    else:
+      await domain.unset_user_role(self.domain_id, uid)
+    self.json_or_redirect(self.url)
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_unset_user(self, *, uid: int):
+    await domain.unset_user_role(self.domain_id, uid)
+    self.json_or_redirect(self.url)
+
+
+@app.route('/domain/permission', 'domain_permission')
+class DomainPermissionHandler(base.Handler):
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  async def get(self):
+    def bitand(a, b):
+      return a & b
+    roles = sorted(list(self.domain['roles'].keys()))
+    self.render('domain_permission.html', bitand=bitand, roles=roles)
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.post_argument
+  @base.require_csrf_token
+  async def post(self, **kwargs):
+    new_roles = dict()
+    for role in self.domain['roles']:
+      perms = 0
+      for perm in self.request.POST.getall(role):
+       perm = int(perm)
+       if perm in builtin.PERM_TEXTS:
+          perms |= perm
+      new_roles[role] = perms
+    await domain.edit(self.domain_id, roles=new_roles)
+    self.json_or_redirect(self.url)
+
+
+@app.route('/domain/role', 'domain_role')
+class DomainRoleHandler(base.OperationHandler):
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  async def get(self):
+    rucounts = collections.defaultdict(int)
+    async for uddoc in domain.get_multi_user(domain_id=self.domain_id,
+                                             fields={'uid': 1, 'role': 1}):
+      if 'role' in uddoc:
+        rucounts[uddoc['role']] += 1
+    roles = sorted(list(self.domain['roles'].keys()))
+    self.render('domain_role.html', rucounts=rucounts, roles=roles)
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_set(self, *, role: str, perm: int=builtin.DEFAULT_PERMISSIONS):
     await domain.set_role(self.domain_id, role, perm)
     self.json_or_redirect(self.url)
 
@@ -69,18 +119,4 @@ class DomainRoleHandler(base.OperationHandler):
   @base.sanitize
   async def post_delete(self, *, role: str, perm: int=None):
     await domain.delete_role(self.domain_id, role)
-    self.json_or_redirect(self.url)
-
-  @base.require_perm(builtin.PERM_EDIT_PERM)
-  @base.require_csrf_token
-  @base.sanitize
-  async def post_set_user(self, *, uid: int, role: str):
-    await domain.set_user_role(self.domain_id, uid, role)
-    self.json_or_redirect(self.url)
-
-  @base.require_perm(builtin.PERM_EDIT_PERM)
-  @base.require_csrf_token
-  @base.sanitize
-  async def post_unset_user(self, *, uid: int):
-    await domain.unset_user_role(self.domain_id, uid)
     self.json_or_redirect(self.url)

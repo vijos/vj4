@@ -7,27 +7,28 @@
     {% if not ddocs %}
       {{ nothing.render('no discussion yet...') }}
     {% else %}
-      <ol class="dczlist">
+      <ol class="discussion__list">
       {% for ddoc in ddocs %}
-        <li class="dczlist__item{% if ddoc['highlight'] %} highlight{% endif %}">
+        <li class="discussion__item{% if ddoc['highlight'] %} highlight{% endif %}">
           <div class="media">
             <div class="media__left">
-              <div class="dczlist__reply_n numbox">
+              <div class="discussion__replies numbox">
                 <div class="numbox__num large"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}">{{ ddoc['num_replies'] }}</a></div>
                 <div class="numbox__text">{{ _('Comments') }}</div>
               </div>
             </div>
             <div class="media__body top">
-              <h1 class="dczlist__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}" data-emoji-enabled>{{ ddoc['title'] }}</a></h1>
-              <div class="dczlist__supplementary">
-                <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['parent_doc_id']) }}">{% if ddoc['parent_doc_type'] == vj4.model.document.TYPE_DISCUSSION_NODE %}<span class="icon icon-tag"></span>{% else %}<span class="icon icon-flag"></span>{% endif %}{{ vndict[ddoc['parent_doc_id']]['title'] }}</a>
-                <span class="v-center"> · </span>
-                {{ user.render_inline(udict[ddoc['owner_uid']], badge=false) }}
-                <span class="v-center"> · </span>
-                <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
-                <span class="v-center"> · </span>
-                <a class="v-center dczlist__reply-link" href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}"><span class="icon icon-bubble"></span> {{ _('{0} comments').format(ddoc['num_replies']) }}</a>
-              </div>
+              <h1 class="discussion__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}" data-emoji-enabled>{{ ddoc['title'] }}</a></h1>
+              <ul class="discussion__supplementary">
+                <li>
+                  <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['parent_doc_id']) }}">{% if ddoc['parent_doc_type'] == vj4.model.document.TYPE_DISCUSSION_NODE %}<span class="icon icon-tag"></span>{% else %}<span class="icon icon-flag"></span>{% endif %}{{ vndict[ddoc['parent_doc_id']]['title'] }}</a>
+                </li>
+                <li>
+                  {{ user.render_inline(udict[ddoc['owner_uid']], badge=false) }}
+                  @
+                  <span class="v-center">{{ datetime_span(ddoc['_id'].generation_time) }}</span>
+                </li>
+              </ul>
             </div>
           </div>
         </li>
