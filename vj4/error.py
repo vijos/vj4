@@ -83,7 +83,7 @@ class UserAlreadyExistError(ForbiddenError):
 class LoginError(ForbiddenError):
   @property
   def message(self):
-    return "Inexistent user {0} or wrong password."
+    return "Invalid user {0} or password."
 
 
 class DocumentNotFoundError(NotFoundError):
