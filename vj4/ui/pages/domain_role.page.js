@@ -9,6 +9,12 @@ const page = new NamedPage('domain_role', () => {
       if (action !== 'ok') {
         return true;
       }
+      const role = createRoleDialog.$dom.find('[name="role"]').val();
+      if (role === '') {
+        return true;
+      }
+      // TODO: send ajax
+      alert(role);
       window.location.reload();
       return true;
     },

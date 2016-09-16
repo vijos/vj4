@@ -107,7 +107,7 @@ class DomainRoleHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
   @base.sanitize
-  async def post_set(self, *, role: str, perm: int):
+  async def post_set(self, *, role: str, perm: int=builtin.PERM_NONE):
     await domain.set_role(self.domain_id, role, perm)
     self.json_or_redirect(self.url)
 
