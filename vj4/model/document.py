@@ -243,6 +243,18 @@ async def ensure_indexes():
                                   ('rid', 1),
                                   ('rp', 1)], sparse=True)
 
+  # contest rule OI
+  await status_coll.ensure_index([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('doc_id', 1),
+                                  ('score', -1)], sparse=True)
+  # contest rule ACM
+  await status_coll.ensure_index([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('doc_id', 1),
+                                  ('accept', -1),
+                                  ('time', 1)], sparse=True)
+
 
 if __name__ == '__main__':
   argmethod.invoke_by_args()

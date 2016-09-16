@@ -202,11 +202,22 @@ class ContestStatusHandler(base.Handler):
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
+    pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
+    udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
+                                        problem.get_dict(pdom_and_ids))
+    tspdict = {}
+    for tsdoc in tsdocs:
+      pdict = {}
+      for pdetail in tsdoc.get('detail', []):
+        pdict[pdetail['pid']] = pdetail
+      tspdict[tsdoc['uid']] = pdict
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
       (self.translate('contest_status'), None))
-    self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs, path_components=path_components)
+    self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs,
+                pdict=pdict, udict=udict, tspdict=tspdict,
+                path_components=path_components)
 
 
 @app.route('/tests/create', 'contest_create')
