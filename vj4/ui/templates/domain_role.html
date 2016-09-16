@@ -7,7 +7,7 @@
     </div></div>
     <div class="row"><div class="columns">
       <blockquote class="note">
-        <p>Role name can only contains numbers, letters and underscores.</p>
+        <p>{{ _('Role name can only contains numbers, letters and underscores.') }}</p>
       </blockquote>
       <label>
         {{ _('Name') }}
@@ -18,8 +18,7 @@
 </div>
 <div class="section">
   <div class="section__header">
-    <!-- TODO: replace with domain name -->
-    <h1 class="section__title">{{ _('{0}: Roles').format('Vijos') }}</h1>
+    <h1 class="section__title">{{ _('{0}: Roles').format(handler.domain['name']) }}</h1>
     <div class="section__tools">
       <button class="primary rounded button" name="create_role">{{ _('Create Role') }}</button>
     </div>
@@ -44,14 +43,12 @@
               <input type="checkbox" name="select_all">
             </label>
           </th>
-          <th class="col--id">Role</th>
-          <th class="col--description">Description</th>
-          <th class="col--users">Users</th>
+          <th class="col--id">{{ _('Role') }}</th>
+          <th class="col--description">{{ _('Description') }}</th>
+          <th class="col--users">{{ _('Users') }}</th>
         </tr>
       </thead>
       <tbody>
-        <!-- TODO: remove this comment when you have read it:
-        this row is for the builtin always -->
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
@@ -62,14 +59,12 @@
             guest
           </td>
           <td class="col--description">
-            Built-in: Effective for visitors that not logged in
+            {{ _('Built-in: Effective for visitors that not logged in') }}
           </td>
           <td class="col--users">
-            --
+            {{ rucounts['guest'] }}
           </td>
         </tr>
-        <!-- TODO: remove this comment when you have read it:
-        this row is for the builtin always -->
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
@@ -80,31 +75,32 @@
             default
           </td>
           <td class="col--description">
-            Built-in: Effective for registered users that not a member of the domain
+            {{ _('Built-in: Effective for registered users that not a member of the domain') }}
           </td>
           <td class="col--users">
-            --
+            {{ rucounts['default'] }}
           </td>
         </tr>
-        <!-- TODO: for ... in ... -->
-        <tr>
+        {% for role in roles %}
+        {% if role != 'guest' and role != 'default' %}
+        <tr data-role="{{ role }}">
           <td class="col--checkbox">
             <label class="compact checkbox">
               <input type="checkbox">
             </label>
           </td>
           <td class="col--id">
-            admin
+            {{ role }}
           </td>
           <td class="col--description">
-            User defined role
-            <!-- TODO: remove this comment when you have read it:
-            this column is fixed to that text -->
+            {{ _('User defined role') }}
           </td>
           <td class="col--users">
-            5
+            {{ rucounts[role] }}
           </td>
         </tr>
+        {% endif %}
+        {% endfor %}
       </tbody>
     </table>
   </div>

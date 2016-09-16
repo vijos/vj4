@@ -49,7 +49,7 @@
       </div>
       <div class="section__body">
         <ul class="sessionlist">
-        {% for session in sessions %}
+          {% for session in sessions %}
           <li class="sessionlist__item">
             <div class="media">
               <div class="media__left medium">
@@ -62,17 +62,12 @@
                 <p>{{ _('Browser') }}: {{ session['update_ua']['browser'] }}</p>
                 <!-- {{ _('User-Agent') }}: {{ session['update_ua']['str'] }} -->
                 <p>{{ _('Type') }}: {{ _(vj4.handler.home.TOKEN_TYPE_TEXTS[session['token_type']]) }}</p>
-              {% if session['is_current'] %}
+                {% if session['is_current'] %}
                 <p class="sessionlist__current-session"><span class="icon icon-check"></span> {{ _('This is the current session') }}</p>
-              {% endif %}
+                {% endif %}
               </div>
+              {% if not session['is_current'] %}
               <div class="media__right medium">
-              {% if session['is_current'] %}
-                <form method="POST" action="{{ reverse_url('user_logout') }}">
-                  <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-                  <input type="submit" value="{{ _('Logout This Session') }}" class="rounded button">
-                </form>
-              {% else %}
                 <form method="post">
                   <input type="hidden" name="operation" value="delete_token">
                   <input type="hidden" name="token_type" value="{{ session['token_type'] }}">
@@ -80,11 +75,11 @@
                   <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
                   <input type="submit" value="{{ _('Logout This Session') }}" class="rounded button">
                 </form>
-              {% endif %}
               </div>
+              {% endif %}
             </div>
           </li>
-        {% endfor %}
+          {% endfor %}
         </ul>
       </div>
       <div class="section__body">

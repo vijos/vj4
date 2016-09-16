@@ -2,7 +2,7 @@
 {% import "components/comments.html" as comments with context %}
 {% block content %}
 <div class="row">
-  <div class="large-9 columns">
+  <div class="medium-9 columns">
     <div class="section">
       <div class="section__body">
         <div class="discussion__supplementary">
@@ -37,7 +37,7 @@
     </div>
     <div class="section">
       <div class="section__header">
-        <h1 class="dczdetail__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
+        <h1 class="section__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
       </div>
       <div class="section__body">
         {{ comments.render(
@@ -56,7 +56,7 @@
       </div>
     </div>
   </div>
-  <div class="large-3 columns">
+  <div class="medium-3 columns">
     <div class="section side">
       <div class="profile__bg user-profile-bg--12"></div>
       <div class="section__body">

@@ -13,7 +13,17 @@
 
 .section
   background: #FFF
-  box-shadow: 0 2px 2px rgba(#000, 0.2)
+  box-shadow: rem(0) rem(6px) rem(22px) rgba(#AFC2C9, 0.5)
+  transition: transform .5s, opacity .5s
+  transition-timing-function: ease-out-cubic
+
+.hasjs .section
+  transform: translateY(rem(30px))
+  opacity: 0
+
+  &.visible
+    transform: none
+    opacity: 1
 
 .section__header
   padding: rem($section-gap-v) rem($section-gap-h) 0.7em

@@ -1,7 +1,7 @@
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
-  <div class="large-9 columns">
+  <div class="medium-9 columns">
     <div class="section">
       <div class="section__body no-padding">
       {% if not pdocs %}
@@ -72,7 +72,7 @@
       </div>
     </div>
   </div>
-  <div class="large-3 columns">
+  <div class="medium-3 columns">
   {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_PROBLEM) %}
     <div class="section side">
       <div class="section__header">

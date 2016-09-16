@@ -3,11 +3,13 @@ import { NamedPage } from '../misc/PageLoader';
 import { ActionDialog } from '../components/dialog';
 import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
 
+import * as util from '../misc/Util';
+
 const page = new NamedPage('domain_user', () => {
   const userSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--add-user [name="user"]'));
   const addUserDialog = new ActionDialog({
     $body: $('.dialog__body--add-user > div'),
-    onAction: action => {
+    onAction: async action => {
       if (action !== 'ok') {
         return true;
       }
@@ -19,11 +21,12 @@ const page = new NamedPage('domain_user', () => {
       if (role === '') {
         return false;
       }
-      // TODO: send ajax
-      alert(JSON.stringify({
-        user,
-        role,
-      }, null, 4));
+      await util
+        .post('', {
+          operation: 'set_user',
+          uid: user._id,
+          role,
+        });
       window.location.reload();
       return true;
     },
@@ -39,17 +42,35 @@ const page = new NamedPage('domain_user', () => {
     $('.domain-users tbody input[type="checkbox"]:enabled').prop('checked', $(ev.currentTarget).prop('checked'));
   }
 
-  function handleUserRoleChange(ev) {
+  function handleDeleteSelected() {
+    $('.domain-users tbody input[type="checkbox"]:checked').closest('tr').each((i, e) => {
+      alert($(e).attr('data-uid'));
+    });
+  }
+
+  function handleSetSelected() {
+    $('.domain-users tbody input[type="checkbox"]:checked').closest('tr').each((i, e) => {
+      alert($(e).attr('data-uid'));
+    });
+  }
+
+  async function handleUserRoleChange(ev) {
     const row = $(ev.currentTarget).closest('tr');
-    alert(JSON.stringify({
-      uid: row.attr('data-uid'),
-      role: $(ev.currentTarget).val(),
-    }, null, 4));
+    const role = $(ev.currentTarget).val();
+    await util
+      .post('', {
+        operation: 'set_user',
+        uid: row.attr('data-uid'),
+        role,
+      });
+    if (role === '') {
+      window.location.reload();
+    }
   }
 
   $('[name="add_user"]').click(() => openAddUserDialog());
-  $('[name="delete_selected"]').click(() => alert('not implemented'));
-  $('[name="set_roles"]').click(() => alert('not implemented'));
+  $('[name="delete_selected"]').click(() => handleDeleteSelected());
+  $('[name="set_roles"]').click(() => handleSetSelected());
   $('.domain-users [name="role"]').change(ev => handleUserRoleChange(ev));
   $('.domain-users [name="select_all"]').change(ev => handleSelectAllChange(ev));
 });
