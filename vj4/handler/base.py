@@ -334,7 +334,7 @@ def _get_datetime_span(tzname):
     dt = timezone.ensure_tzinfo(dt)
     # TODO(iceboy): add a class for javascript selection.
     return markupsafe.Markup(
-      '<span data-timestamp="{0}">{1}</span>'.format(
+      '<span class="time" data-timestamp="{0}">{1}</span>'.format(
         int(dt.astimezone(pytz.utc).timestamp()),
         dt.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')))
 

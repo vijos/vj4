@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import TimeAgo from 'timeago-react';
 import moment from 'moment';
 import _ from 'lodash';
 import { parse as parseMongoId } from '../../utils/mongoId';
@@ -53,7 +54,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 export default class ScratchpadRecordsRowContainer extends React.PureComponent {
   render() {
     const { data } = this.props;
-    const submitAt = moment(parseMongoId(data._id).timestamp * 1000);
+    const submitAt = parseMongoId(data._id).timestamp * 1000;
     return (
       <tr>
         <td className={`col--detail record-status--border ${recordEnum.STATUS_CODES[data.status]}`}>
@@ -73,7 +74,9 @@ export default class ScratchpadRecordsRowContainer extends React.PureComponent {
           {shouldShowDetail(data) ? `${(data.time_ms / 1000).toFixed(1)}s` : '-'}
         </td>
         <td className="col--at">
-          {submitAt.fromNow()}
+          <time data-tooltip={moment(submitAt).format('YYYY-MM-DD HH:mm:ss')}>
+            <TimeAgo date={submitAt} />
+          </time>
         </td>
       </tr>
     );
