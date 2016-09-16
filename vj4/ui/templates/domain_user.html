@@ -86,7 +86,7 @@
             {{ user.render_inline(udict[rudoc['uid']], badge=false) }}
           </td>
           <td class="col--role">
-            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select(roles_with_text, 'role', value='role_x', class='compact') }}
+            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', '(Delete)')] + roles_with_text, 'role', value=rudoc['role'], class='compact') }}
           </td>
         </tr>
         {% endif %}

@@ -83,7 +83,7 @@
         </tr>
         {% for role in roles %}
         {% if role != 'guest' and role != 'default' %}
-        <tr>
+        <tr data-role="{{ role }}">
           <td class="col--checkbox">
             <label class="compact checkbox">
               <input type="checkbox">
