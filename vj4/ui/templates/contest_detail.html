@@ -31,8 +31,8 @@
           {% for pid in tdoc['pids'] %}
             <tr>
             {% if psdict[pid] %}
-              {% with rdoc=rdict[psdict[pid]['rid']] %}
-                {% if vj4.model.adaptor.contest.RULES[tdoc['rule']].show_func(tdoc, now) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS) %}
+            {% with rdoc=rdict[psdict[pid]['rid']] %}
+            {% if vj4.model.adaptor.contest.RULES[tdoc['rule']].show_func(tdoc, now) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS) %}
               <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}">
                 <div class="col--status__text">
                   <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[rdoc['status']] }}"></span>
@@ -40,17 +40,12 @@
                     {{ vj4.constant.record.STATUS_TEXTS[rdoc['status']] }}
                   </a>
                 </div>
-                  {% if rdoc['status'] == vj4.constant.record.STATUS_JUDGING %}
-                <div class="col--status__progress-container">
-                  <div class="col--status__progress" style="width: {{ rdoc['progress']|default(50)|int }}%"></div>
-                </div>
-                  {% endif %}
               </td>
-                {% else %}
+            {% else %}
               <td class="col--status record-status--border"><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}">{{ _('Submitted') }}</a></td>
-                {% endif %}
+            {% endif %}
               <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>
-              {% endwith %}
+            {% endwith %}
             {% else %}
               <td class="col--status record-status--border">{{ _('No Submission') }}</td>
               <td class="col--submit-at">-</td>
@@ -117,7 +112,7 @@
       {% else %}
         <p><a href="javascript:;" class="expanded button">{{ _('Status is hidden') }}</a></p>
       {% endif %}
-      {% endif %}{# has_perm #}
+      {% endif %}
       </div>
     </div>
   </div>
