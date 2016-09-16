@@ -36,7 +36,8 @@ class DomainEditHandler(base.Handler):
 
 
 @app.route('/domain/user', 'domain_user')
-class DomainUserHandler(base.Handler):
+class DomainUserHandler(base.OperationHandler):
+  @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     uids = [self.domain['owner_uid']]
     rudocs = collections.defaultdict(list)
@@ -50,6 +51,20 @@ class DomainUserHandler(base.Handler):
     udict = await user.get_dict(uids)
     self.render('domain_user.html', roles=roles, roles_with_text=roles_with_text,
                 rudocs=rudocs, udict=udict)
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_set_user(self, *, uid: int, role: str):
+    await domain.set_user_role(self.domain_id, uid, role)
+    self.json_or_redirect(self.url)
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_unset_user(self, *, uid: int):
+    await domain.unset_user_role(self.domain_id, uid)
+    self.json_or_redirect(self.url)
 
 
 @app.route('/domain/permission', 'domain_permission')
@@ -101,18 +116,4 @@ class DomainRoleHandler(base.OperationHandler):
   @base.sanitize
   async def post_delete(self, *, role: str, perm: int=None):
     await domain.delete_role(self.domain_id, role)
-    self.json_or_redirect(self.url)
-
-  @base.require_perm(builtin.PERM_EDIT_PERM)
-  @base.require_csrf_token
-  @base.sanitize
-  async def post_set_user(self, *, uid: int, role: str):
-    await domain.set_user_role(self.domain_id, uid, role)
-    self.json_or_redirect(self.url)
-
-  @base.require_perm(builtin.PERM_EDIT_PERM)
-  @base.require_csrf_token
-  @base.sanitize
-  async def post_unset_user(self, *, uid: int):
-    await domain.unset_user_role(self.domain_id, uid)
     self.json_or_redirect(self.url)
