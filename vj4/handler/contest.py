@@ -61,7 +61,7 @@ class ContestDetailHandler(base.OperationHandler):
   @base.sanitize
   async def post_attend(self, *, tid: objectid.ObjectId):
     await contest.attend(self.domain_id, tid, self.user['_id'])
-    self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
+    self.json_or_redirect(self.url)
 
 
 # TODO(twd2): combine with problem submit?

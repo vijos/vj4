@@ -40,7 +40,7 @@ class ProblemMainHandler(base.OperationHandler):
   async def star_unstar(self, *, pid: document.convert_doc_id, star: bool):
     pdoc = await problem.get(self.domain_id, pid)
     pdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
-    self.json_or_redirect(self.referer_or_main, star=pdoc['star'])
+    self.json_or_redirect(self.url, star=pdoc['star'])
 
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)
@@ -161,7 +161,7 @@ class ProblemSolutionHandler(base.OperationHandler):
   async def post_submit(self, *, pid: document.convert_doc_id, content: str):
     pdoc = await problem.get(self.domain_id, pid)
     await problem.add_solution(self.domain_id, pdoc['doc_id'], self.user['_id'], content)
-    self.json_or_redirect(self.reverse_url('problem_solution', pid=pdoc['doc_id']))
+    self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VOTE_PROBLEM_SOLUTION)
@@ -176,8 +176,7 @@ class ProblemSolutionHandler(base.OperationHandler):
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
     psdoc, pssdoc = await problem.vote_solution(self.domain_id, psdoc['doc_id'],
                                                 self.user['_id'], value)
-    self.json_or_redirect(self.reverse_url('problem_solution', pid=pid),
-                          vote=psdoc['vote'], user_vote=pssdoc['vote'])
+    self.json_or_redirect(self.url, vote=psdoc['vote'], user_vote=pssdoc['vote'])
 
   post_upvote = functools.partialmethod(upvote_downvote, value=1)
   post_downvote = functools.partialmethod(upvote_downvote, value=-1)
@@ -194,7 +193,7 @@ class ProblemSolutionHandler(base.OperationHandler):
     pdoc = await problem.get(self.domain_id, pid)
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
     await problem.reply_solution(self.domain_id, psdoc['doc_id'], self.user['_id'], content)
-    self.json_or_redirect(self.reverse_url('problem_solution', pid=pid))
+    self.json_or_redirect(self.url)
 
 
 @app.route('/p/{pid}/data', 'problem_data')

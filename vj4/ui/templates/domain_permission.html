@@ -1,98 +1,47 @@
 {% extends "domain_base.html" %}
 {% block domain_content %}
+<form method="post">
 <div class="section">
   <div class="section__header">
-    <!-- TODO: replace with domain name -->
-    <h1 class="section__title">{{ _('{0}: Permissions').format('Vijos') }}</h1>
-    <div class="section__tools">
-      <a href="{{ reverse_url('domain_role') }}" class="rounded button">{{ _('Manage Roles') }}</a>
-    </div>
+    <h1 class="section__title">{{ _('{0}: Permissions').format(handler.domain['name']) }}</h1>
   </div>
   <div class="section__body no-padding domain-users">
     <table class="data-table">
       <colgroup>
         <col class="col--description">
-        <!-- TODO: for ... in ... -->
+        {% for role in roles %}
         <col class="col--p">
-        <col class="col--p">
-        <col class="col--p">
+        {% endfor %}
       </colgroup>
       <thead>
         <tr>
-          <th class="col--uid">Permission</th>
-          <!-- TODO: for ... in ... -->
-          <th class="col--p"><span data-tooltip="guest">guest</span></th>
-          <th class="col--p"><span data-tooltip="default">default</span></th>
-          <th class="col--p"><span data-tooltip="admin">admin</span></th>
+          <th class="col--uid">{{ _('Permission') }}</th>
+          {% for role in roles %}
+          <th class="col--p"><span data-tooltip="{{ role }}">{{ role }}</span></th>
+          {% endfor %}
         </tr>
       </thead>
       <tbody>
-        <!-- TODO: for ... in ... -->
+        {% for perm, desc in vj4.model.builtin.PERM_TEXTS.items() %}
         <tr>
           <td class="col--uid">
-            删除评论
+            {{ _(desc) }}
           </td>
+          {% for role in roles %}
           <td class="col--p">
             <label class="compact checkbox">
-              <input type="checkbox">
+              <input name="{{ role }}" value="{{ perm }}" type="checkbox"{% if bitand(handler.domain['roles'][role], perm) == perm %} checked{% endif %}>
             </label>
           </td>
-          <td class="col--p">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
-          <td class="col--p">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
+          {% endfor %}
         </tr>
-        <tr>
-          <td class="col--uid">
-            修改评论
-          </td>
-          <td class="col--p">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
-          <td class="col--p">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
-          <td class="col--p">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
-        </tr>
-        <tr>
-          <td class="col--uid">
-            高亮讨论主题
-          </td>
-          <td class="col--p">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
-          <td class="col--p">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
-          <td class="col--p">
-            <label class="compact checkbox">
-              <input type="checkbox">
-            </label>
-          </td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
   <div class="section__body">
-    <button class="rounded primary button">{{ _('Update Permission') }}</button>
+    <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+    <button class="rounded primary button" role="submit">{{ _('Update Permission') }}</button>
     <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
   </div>
 </div>

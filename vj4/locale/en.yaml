@@ -31,3 +31,10 @@ user_login: Login
 user_logout: Logout
 user_lostpass: Lost Password
 user_register: Register
+home_domain_create: Create Domain
+domain_main: Main
+domain_manage: Domain Manage
+domain_edit: Domain Edit
+domain_role: Domain Role
+domain_user: Domain User
+domain_permission: Domain Permission
