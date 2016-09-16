@@ -67,14 +67,13 @@ class ContestDetailHandler(base.OperationHandler):
                                                                  self.user['_id']),
                                               user.get_by_uid(tdoc['owner_uid']),
                                               problem.get_dict(pdom_and_ids))
-    jdict = dict()
+    psdict = dict()
     rdict = dict()
     if tsdoc:
       attended = tsdoc.get('attend') == 1
-      if 'journal' in tsdoc:
-        for j in tsdoc['journal']:
-          jdict[j['pid']] = j
-        rdict = await record.get_dict([j['rid'] for j in jdict.values()])
+      for pdetail in tsdoc.get('detail', []):
+        psdict[pdetail['pid']] = pdetail
+      rdict = await record.get_dict([psdoc['rid'] for psdoc in psdict.values()])
     else:
       attended = False
     now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
@@ -82,7 +81,7 @@ class ContestDetailHandler(base.OperationHandler):
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], None))
     self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udoc=udoc,
-                pdict=pdict, jdict=jdict, rdict=rdict, now=now, page_title=tdoc['title'],
+                pdict=pdict, psdict=psdict, rdict=rdict, now=now, page_title=tdoc['title'],
                 path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)

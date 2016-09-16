@@ -23,8 +23,8 @@ from vj4.service import bus
 class RecordMainHandler(base.Handler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
-    # TODO(twd2): check permission for visibility. (e.g. test).
-    rdocs = await record.get_all_multi().sort([('_id', -1)]).to_list(50)
+    rdocs = await record.get_all_multi(
+      get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).to_list(50)
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
         user.get_dict(rdoc['uid'] for rdoc in rdocs),
