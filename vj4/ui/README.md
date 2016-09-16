@@ -277,10 +277,10 @@ A sample of sticky sidebar:
 
 ```html
 <div class="row" data-sticky-parent>
-  <div class="large-9 columns">
+  <div class="medium-9 columns">
     <!-- main content -->
   </div>
-  <div class="large-3 columns">
+  <div class="medium-3 columns">
     <div data-sticky="large">
       <div class="section">Sticky!</div>
     </div>

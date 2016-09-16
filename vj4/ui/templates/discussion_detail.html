@@ -2,15 +2,18 @@
 {% import "components/comments.html" as comments with context %}
 {% block content %}
 <div class="row">
-  <div class="large-9 columns">
+  <div class="medium-9 columns">
     <div class="section">
       <div class="section__body">
-        <div class="dczdetail__supplementary">
-          <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
-          <span class="v-center"> · </span>
-          {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']]) }}
-          <span class="v-center"> · </span>
-          <span class="v-center">{{ _('Published at') }} {{ datetime_span(ddoc['_id'].generation_time) }}</span>
+        <div class="discussion__supplementary">
+          <li>
+            <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
+          </li>
+          <li>
+            {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']]) }}
+            @
+            {{ datetime_span(ddoc['_id'].generation_time) }}
+          </li>
         </div>
         <div class="typo topic__content" data-emoji-enabled>
           {{ ddoc['content']|markdown }}
@@ -34,7 +37,7 @@
     </div>
     <div class="section">
       <div class="section__header">
-        <h1 class="dczdetail__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
+        <h1 class="section__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
       </div>
       <div class="section__body">
         {{ comments.render(
@@ -53,7 +56,7 @@
       </div>
     </div>
   </div>
-  <div class="large-3 columns">
+  <div class="medium-3 columns">
     <div class="section side">
       <div class="profile__bg user-profile-bg--12"></div>
       <div class="section__body">

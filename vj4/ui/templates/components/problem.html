@@ -58,12 +58,12 @@
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
-        <span class="icon icon-bubble--outline"></span> {{ _('Discussions') }}
+        <span class="icon icon-comment--text"></span> {{ _('Discussions') }}
       </a></li>
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM_SOLUTION) %}
       <li class="menu__item"><a class="menu__link{% if page_name == 'problem_solution' %} active{% endif %}" href="{{ reverse_url('problem_solution', pid=pdoc['doc_id']) }}">
-        <span class="icon icon-bubble--outline"></span> {{ _('Solutions') }}
+        <span class="icon icon-comment--text"></span> {{ _('Solutions') }}
       </a></li>
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_PROBLEM) %}

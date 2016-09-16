@@ -36,6 +36,10 @@ function getCutoff(str) {
   return 0;
 }
 
+function stickyRelayout() {
+  $('body').trigger('sticky_kit:recalc');
+}
+
 const stickyPage = new AutoloadPage(() => {
   let shouldListenResize = false;
   const $stickies = $('[data-sticky]');
@@ -52,6 +56,7 @@ const stickyPage = new AutoloadPage(() => {
   if (shouldListenResize) {
     $(window).on('resize', _.throttle(() => updateStickies($stickies), 300));
   }
+  $(document).on('vjLayout', _.throttle(stickyRelayout, 100));
 });
 
 export default stickyPage;

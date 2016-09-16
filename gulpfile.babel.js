@@ -15,7 +15,7 @@ gulp.task('iconfont', () => {
     .pipe(gulp.dest('vj4/ui/misc/icons'))
     .pipe(iconfont({
       fontHeight: 1000,
-      prependUnicode: true,
+      prependUnicode: false,
       descent: 6.25 / 100 * 1000,
       fontName: 'vj4icon',
       formats: ['svg', 'ttf', 'eot', 'woff', 'woff2'],

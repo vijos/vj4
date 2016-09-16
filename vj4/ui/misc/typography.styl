@@ -30,6 +30,27 @@ dt
 dd
   margin-bottom: rem(10px)
 
++above(rupture.desktop-cutoff)
+  dl.large.horizontal
+    overflow: hidden
+    dt
+      float: left
+      width: 40%
+      overflow: hidden
+      clear: left
+      text-align: right
+      text-overflow: ellipsis
+      white-space: nowrap
+      box-sizing: border-box
+      padding-right: rem(10px)
+    dd
+      float: left
+      width: 60%
+
+    dt, dd
+      line-height: 1.2rem
+      margin-bottom: rem(10px)
+
 article, aside, details, figcaption, figure, footer, header, menu, nav, section
   display: block
 
@@ -75,6 +96,15 @@ blockquote
     &:before
       content: 'NOTE:'
       color: $primary-color
+
+  &.warn
+    border-color: red
+    background: #F8F8F8
+    color: lighten($text-color, 10%)
+
+    &:before
+      content: 'WARN:'
+      color: red
 
 acronym, abbr
   border-bottom: 1px dotted
