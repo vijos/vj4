@@ -1,16 +1,17 @@
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
-  <div class="medium-9 columns">
-    {{ tsdocs }}
-  </div>
-  <div class="medium-3 columns">
-    <div>
-      <ul>
-        <li><big>{{ _('Swx Template') }}</big></li>
-        <li><big>{{ _('Swx Template') }}</big></li>
-        <li><big>{{ _('Swx Template') }}</big></li>
-      </ul>
+  <div class="section medium-12 columns">
+    <div class="section__header">
+      <h1 class="section__title">{{ _('Status') }}</h1>
+    </div>
+    <div class="section__body no-padding">
+      {% if tdoc['rule'] == vj4.model.adaptor.contest.RULE_OI %}
+        {% include 'partials/contest_status_oi.html' %}
+      {% endif %}
+      {% if tdoc['rule'] == vj4.model.adaptor.contest.RULE_ACM %}
+        {% include 'partials/contest_status_acm.html' %}
+      {% endif %}
     </div>
   </div>
 </div>
