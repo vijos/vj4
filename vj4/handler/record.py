@@ -70,27 +70,31 @@ class RecordDetailHandler(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
-    # TODO(iceboy): Check domain permission in place.
+    # TODO(iceboy): Check domain permission, permission for visibility in place.
     if rdoc['domain_id'] != self.domain_id:
       self.redirect(self.reverse_url('record_detail', rid=rid, domain_id=rdoc['domain_id']))
       return
     # check permission for visibility: contest
+    show_status = True
     if rdoc['tid']:
       now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if not contest.RULES[tdoc['rule']].show_func(tdoc, now):
-        self.check_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
+      show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
+                    or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
     # TODO(twd2): futher check permission for visibility.
     if (not self.own(rdoc, field='uid')
         and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
         and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
       del rdoc['code']
+    if not show_status and 'code' not in rdoc:
+      raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
     udoc, dudoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
                                              domain.get_user(self.domain_id, rdoc['uid']),
                                              problem.get(rdoc['domain_id'], rdoc['pid']))
     if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
       pdoc = None
-    self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc)
+    self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc,
+                show_status=show_status)
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')
