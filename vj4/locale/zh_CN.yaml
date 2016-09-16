@@ -369,10 +369,10 @@ Delete Selected Roles: 删除所选角色
 Owner: 所有者
 Permission: 权限
 
-View this domain: 查看此域名
+View this domain: 查看此域
 Edit permissions of a role: 修改角色权限
 Show MOD badge: 展示 MOD 徽章
-Edit description of this domain: 修改此域名描述
+Edit description of this domain: 修改此域描述
 Create problems: 创建题目
 Edit problems: 修改题目
 Edit own problems: 修改自己的题目
@@ -387,14 +387,14 @@ View problem solutions: 查看题解
 Create problem solutions: 创建题解
 Vote problem solutions: 为题解投票
 Edit problem solutions: 修改题解
-Edit own problem solutions: 修改自己题目的题解
+Edit own problem solutions: 修改自己的题解
 Delete problem solutions: 删除题解
-Delete own problem solutions: 删除自己题目的题解
+Delete own problem solutions: 删除自己的题解
 Reply problem solutions: 回复题解
 Edit problem solution replies: 修改题解的回复
-Edit own problem solution replies: 修改自己题目题解的回复
+Edit own problem solution replies: 修改题解中自己的回复
 Delete problem solution replies: 删除题解的回复
-Delete own problem solution replies: 删除自己题目题解的回复
+Delete own problem solution replies: 删除题解中自己的回复
 View discussions: 查看讨论
 Create discussions: 创建讨论
 Highlight discussions: 高亮讨论
