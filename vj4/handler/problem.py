@@ -164,6 +164,64 @@ class ProblemSolutionHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_edit_solution(self, *, pid: document.convert_doc_id,
+                               psid: document.convert_doc_id, content: str):
+    pdoc = await problem.get(self.domain_id, pid)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    if not self.own(psdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION)
+    psdoc = await problem.set_solution(self.domain_id, psdoc['doc_id'],
+                                       content=content)
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete_solution(self, *, pid: document.convert_doc_id,
+                                 psid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    if not self.own(psdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_SELF):
+      self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION)
+    psdoc = await problem.delete_solution(self.domain_id, psdoc['doc_id'])
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_edit_reply(self, *, pid: document.convert_doc_id,
+                            psid: document.convert_doc_id, psrid: document.convert_doc_id,
+                            content: str):
+    pdoc = await problem.get(self.domain_id, pid)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    # TODO(twd2): get psrdoc
+    psrdoc = {}
+    if not self.own(psrdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY)
+    # TODO(twd2): edit psr
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete_reply(self, *, pid: document.convert_doc_id,
+                            psid: document.convert_doc_id, psrid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    # TODO(twd2): get psrdoc
+    psrdoc = {}
+    if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
+      self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
+    # TODO(twd2): delete psr
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VOTE_PROBLEM_SOLUTION)
   @base.route_argument
   @base.require_csrf_token

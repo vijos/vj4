@@ -131,6 +131,12 @@ async def set_solution(domain_id: str, psid: document.convert_doc_id, content: s
 
 
 @argmethod.wrap
+async def delete_solution(domain_id: str, psid: document.convert_doc_id):
+  # TODO(twd2): -num_liked
+  return await document.delete(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+
+
+@argmethod.wrap
 async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
                             fields=None, skip: int = 0, limit: int = 0):
   return await document.get_multi(domain_id=domain_id,

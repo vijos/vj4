@@ -164,8 +164,9 @@ async def get_reply(domain_id: str, drid: document.convert_doc_id, did=None):
 
 
 @argmethod.wrap
-async def edit_reply(domain_id: str, drid: document.convert_doc_id, **kwargs):
-  drdoc = await document.set(domain_id, document.TYPE_DISCUSSION_REPLY, drid, **kwargs)
+async def edit_reply(domain_id: str, drid: document.convert_doc_id, content):
+  validator.check_content(content)
+  drdoc = await document.set(domain_id, document.TYPE_DISCUSSION_REPLY, drid, content=content)
   return drdoc
 
 
