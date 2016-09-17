@@ -218,9 +218,10 @@ class Handler(web.View, HandlerBase):
     self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
     self.response.text = json.encode(obj)
 
-  async def binary(self, data):
+  async def binary(self, data, type='application/octet-stream'):
     self.response = web.StreamResponse()
     self.response.content_length = len(data)
+    self.response.content_type = type
     await self.response.prepare(self.request)
     self.response.write(data)
 

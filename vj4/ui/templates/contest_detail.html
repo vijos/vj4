@@ -113,6 +113,9 @@
         <p><a href="javascript:;" class="expanded button">{{ _('Status is hidden') }}</a></p>
       {% endif %}
       {% endif %}
+      {% if handler.has_perm(vj4.model.builtin.PERM_READ_RECORD_CODE) %}
+        <p><a href="{{ reverse_url('contest_code', tid=tdoc['_id']) }}" class="expanded button">{{ _('Code') }}</a></p>
+      {% endif %}
       </div>
     </div>
   </div>

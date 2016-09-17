@@ -142,4 +142,4 @@ class RecordPretestDataHandler(base.Handler):
       zfile.create_system = 0
     zip_file.close()
 
-    await self.binary(output_buffer.getvalue())
+    await self.binary(output_buffer.getvalue(), 'application/zip')
