@@ -7,7 +7,7 @@
       <div class="clearfix">
         <div class="dczcomments__supplementary">
           {{ user.render_inline(udoc, badge=false) }}
-          <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
+          <span class="v-center">@ {{ datetime_span(rdoc['_id'].generation_time) }}</span>
         </div>
         {{ comment_base.reply_operations(doc, rdoc) }}
       </div>
@@ -75,7 +75,7 @@
       <div class="commentbox-edit-target"></div>
       <ul class="dczcomments__replies commentbox-reply-target">
       {% for rdoc in doc['reply'] %}
-        {{ reply(mode_create, rdoc['udoc'], doc, rdoc) }}
+        {{ reply(mode_create, udict[rdoc['owner_uid']], doc, rdoc) }}
       {% endfor %}
       </ul>
     {% else %}
