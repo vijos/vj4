@@ -346,15 +346,15 @@ Last Submit At: 最后递交于
 Start at: 开始于
 Duration: 持续时间
 hour(s): 小时
-Unattended: 未参加
-Live...: 正在进行...
+Not Attended: 未参加
+Live...: 正在进行…
 Ready (☆▽☆): 马上开始 (☆▽☆)
-View Detail: 查看详情
+View Details: 查看详情
 All Contests: 所有比赛
-No Submission: 没有递交
-Do not discuss solutions otherwise you will be treated as a cheater and lose qualifications.: 请勿讨论解法，否则以作弊论处并且您将失去参赛资格。
-Please attend to see the problems.: 请参加比赛来查看题目。
-This contest is not live.: 比赛不在进行。
+No Submissions: 没有递交
+Do not discuss solutions otherwise you will be regarded as cheating and then lose qualifications.: 请勿讨论解法，否则以作弊论处并且将失去参赛资格。
+Please attend contest to see the problems.: 请参加比赛来查看题目。
+This contest is not live.: 比赛没有开始。
 contest_detail_problem_submit: 递交比赛代码
 Host: 主持人
 Rank: 排名
@@ -446,7 +446,7 @@ Formula blocks: 公式区块
 Links: 链接
 Text: 文本
 Images: 图片
-Desciption: 说明
+Description: 说明 # todo: find where the word is wrongly spelled
 Learn More: 了解更多
 CommonMark Syntax: CommonMark 语法
 LaTeX Expressions: LaTeX 表达式
