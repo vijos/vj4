@@ -1,7 +1,9 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import libTimeago from 'timeago.js';
+import i18n from '../../utils/i18n';
 
 const timeago = libTimeago();
+timeago.setLocale(i18n('timeago_locale'));
 
 function runRelativeTime($container) {
   for (const element of $container.find('span.time[data-timestamp]')) {

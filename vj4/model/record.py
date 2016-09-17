@@ -73,9 +73,9 @@ async def rejudge(record_id: objectid.ObjectId):
 
 
 @argmethod.wrap
-def get_all_multi(end_id: objectid.ObjectId = None, *, fields=None):
+def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fields=None):
   coll = db.Collection('record')
-  query = {'hidden': False}
+  query = {'hidden': False if not get_hidden else {'$gte': False}}
   if end_id:
     query['_id'] = {'$lt': end_id}
   return coll.find(query, fields=fields)

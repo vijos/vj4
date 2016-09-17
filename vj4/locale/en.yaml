@@ -38,3 +38,4 @@ domain_edit: Domain Edit
 domain_role: Domain Role
 domain_user: Domain User
 domain_permission: Domain Permission
+timeago_locale: en

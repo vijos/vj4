@@ -315,7 +315,7 @@ Document {2} not found.: 文件 {2} 不存在。
 Data of Problem {0} not found.: 題目 {0} 的資料缺失。
 You're not logged in.: 您沒有登入。
 You don't have the required privilege.: 您沒有相應的特權。
-You don't have the required permission in this domain.: 您在該域中無相應許可權。
+You don't have the required permission ({0}) in this domain.: 您在該域中無相應許可權 ({0})。
 You've already voted.: 您已經投過票。
 User not found.: 使用者不存在。
 Current password doesn't match.: 當前密碼輸入錯誤。
@@ -416,3 +416,4 @@ Create contests: 創建比賽
 Attend contests: 參加比賽
 View training: 檢視訓練
 Have ALL PERMISSIONS in this domain: 在此域中擁有全部許可權
+timeago_locale: zh_CN

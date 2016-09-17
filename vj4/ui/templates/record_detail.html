@@ -2,6 +2,7 @@
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
+  {% if show_status %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">
@@ -58,6 +59,7 @@
       </div>
     {% endif %}
     </div>
+  {% endif %}
   {% if rdoc['code'] %}
     <div class="section">
       <div class="section__header">
@@ -111,6 +113,7 @@
         {% endif %}
         <p>{{ _('Language') }}: {{ vj4.constant.language.LANG_TEXTS[rdoc['lang']] }}</p>
         <p>{{ _('Submit At') }}: {{ datetime_span(rdoc['_id'].generation_time) }}</p>
+      {% if show_status %}
       {% if rdoc['judge_at'] %}
         <p>{{ _('Judged At') }}: {{ datetime_span(rdoc['judge_at']) }}</p>
       {% endif %}
@@ -119,6 +122,7 @@
       {% endif %}
         <p>{{ _('Total Time') }}: {{ rdoc['time_ms'] }}ms</p>
         <p>{{ _('Peak Memory') }}: {{ rdoc['memory_kb'] / 1000 }}MiB</p>
+      {% endif %}
       </div>
     </div>
     <div class="section side">

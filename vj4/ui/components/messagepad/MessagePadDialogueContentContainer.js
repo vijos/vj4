@@ -7,6 +7,8 @@ import moment from 'moment';
 import 'jquery-scroll-lock';
 import 'jquery.easing';
 
+import i18n from '../../utils/i18n';
+
 const mapStateToProps = (state) => ({
   activeId: state.activeId,
   item: state.activeId !== null
@@ -32,7 +34,7 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
       >
         <div>{reply.content}</div>
         <time data-tooltip={moment(reply.at).format('YYYY-MM-DD HH:mm:ss')}>
-          <TimeAgo date={reply.at} />
+          <TimeAgo date={reply.at} locale={i18n('timeago_locale')} />
         </time>
       </Message>
     ));
