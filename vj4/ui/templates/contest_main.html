@@ -16,7 +16,7 @@
           </li>
           <li>
             <span class="icon icon-calendar"></span>
-            {{ _('Start at') }}: {{ datetime_span(tdoc['begin_at']) }}
+            {{ _('Start at') }}: {{ contest.render_time(tdoc['begin_at']) }}
           </li>
           <li>
             <span class="icon icon-schedule"></span>
@@ -69,13 +69,13 @@
       {% for tdoc in tdocs %}
         <li class="contest__item contest-type--{{ vj4.constant.contest.RULE_ID[tdoc['rule']] }}">
           <div class="media">
-            <div class="media__left">
-              <div class="contest__participants numbox">
+            <div class="media__left medium">
+              <div class="contest__date numbox">
                 <div class="numbox__num large">4</div>
                 <div class="numbox__text">2016.06</div>
               </div>
             </div>
-            <div class="media__body top">
+            <div class="media__body medium">
               <h1 class="contest__title"><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
               <ul class="contest__supplementary">
                 <li>
@@ -96,6 +96,13 @@
                     <span class="icon icon-comment--text"></span> 0
                   </span>
                 </li>
+              {% if True %}
+                <li class="contest__info-attended">
+                  <span class="v-center">
+                    <span class="icon icon-check"></span> Attended
+                  </span>
+                </li>
+              {% endif %}
               </ul>
             </div>
         {#<a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="contest__card">

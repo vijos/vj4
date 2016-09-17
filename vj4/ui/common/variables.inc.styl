@@ -19,6 +19,11 @@ $immersive-primary-color = #FFEF87
 $immersive-text-color = #F8F8F8
 $immersive-header-color = #FFFFFF
 
+$success-color = #25ad40
+$fail-color = #fb5555
+$progress-color = #f39800
+$invalid-color = #9fa0a0
+
 // Fonts
 $primary-font-family = "Open Sans", "PingFang SC", "Seravek", "Segoe UI", "Verdana", "Hiragino Sans GB", "Lantinghei SC", "Microsoft Yahei", "WenQuanYi Micro Hei", "sans"
 $header-font-family = "Open Sans", "PingFang SC", "Seravek", "Segoe UI", "Verdana", "Lantinghei SC", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", "sans-serif"
@@ -56,11 +61,11 @@ $badge-bg-color = {
 
 // Record Status
 $record-status-color = {
-  'pass': #25ad40,
-  'fail': #fb5555,
-  'progress': #f39800,
-  'ignored': #9fa0a0,
-  'pending': #9fa0a0,
+  'pass': $success-color,
+  'fail': $fail-color,
+  'progress': $progress-color,
+  'ignored': $invalid-color,
+  'pending': $invalid-color,
 }
 
 $record-status-icon = {

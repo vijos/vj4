@@ -330,12 +330,13 @@ def _get_datetime_span(tzname):
   tz = pytz.timezone(tzname)
 
   @functools.lru_cache()
-  def _datetime_span(dt):
+  def _datetime_span(dt, relative=True, format='%Y-%m-%d %H:%M:%S'):
     dt = timezone.ensure_tzinfo(dt)
     return markupsafe.Markup(
-      '<span class="time" data-timestamp="{0}">{1}</span>'.format(
+      '<span class="time{0}" data-timestamp="{1}">{2}</span>'.format(
+        ' relative' if relative else '',
         int(dt.astimezone(pytz.utc).timestamp()),
-        dt.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')))
+        dt.astimezone(tz).strftime(format)))
 
   return _datetime_span
 

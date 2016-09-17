@@ -1,16 +1,38 @@
+@import '~misc/section.inc.styl'
+
 $highlight-button-color = #F6DF45
 
 .page--contest_main
+  .contest__item
+    padding: rem($section-gap-v $section-gap-h)
+    border-bottom: 1px solid $table-border-color
 
-  .section--contest.live
-    background: #E98696
-    background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #E98696 0%, #E96B6B 100%)
+    &:last-child
+      border-bottom: 0
 
-  .section--contest.ready
-    background: #469DCF
-    background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #8ACDE6 0%, #469DCF 100%)
+  .contest__title
+    font-size: rem($font-size-title)
+    line-height: 1.2em
+    margin-bottom: rem(10px)
+
+    a, a:hover, a:visited
+      color: $text-color
+
+  .contest__date
+    margin-right: rem(10px)
+
+  .contest__info-attended
+    color: $success-color
 
   .section--contest
+    &.live
+      background: #E98696
+      background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #E98696 0%, #E96B6B 100%)
+
+    &.ready
+      background: #469DCF
+      background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #8ACDE6 0%, #469DCF 100%)
+
     .status_title
       display: inline-block
       font-size: rem($font-size-secondary)
