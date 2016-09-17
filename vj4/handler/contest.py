@@ -1,5 +1,4 @@
 import asyncio
-import collections
 import datetime
 import pytz
 from bson import objectid
