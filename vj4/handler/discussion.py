@@ -98,8 +98,11 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.sanitize
   async def get(self, *, did: document.convert_doc_id):
     ddoc = await discussion.inc_views(self.domain_id, did)
-    dsdoc, vnode, drdocs = await asyncio.gather(
-        discussion.get_status(self.domain_id, ddoc['doc_id'], self.user['_id']),
+    if self.has_priv(builtin.PRIV_USER_PROFILE):
+      dsdoc = await discussion.get_status(self.domain_id, ddoc['doc_id'], self.user['_id'])
+    else:
+      dsdoc = None
+    vnode, drdocs = await asyncio.gather(
         discussion.get_vnode(self.domain_id, ddoc['parent_doc_id']),
         discussion.get_list_reply(self.domain_id, ddoc['doc_id']))
     uids = {ddoc['owner_uid']}
@@ -109,7 +112,6 @@ class DiscussionDetailHandler(base.OperationHandler):
         uids.update(drrdoc['owner_uid'] for drrdoc in drdoc['reply'])
     udict, dudict = await asyncio.gather(user.get_dict(uids),
                                          domain.get_dict_user_by_uid(self.domain_id, uids))
-
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
