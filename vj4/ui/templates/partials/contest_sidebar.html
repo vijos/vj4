@@ -48,9 +48,7 @@
   </div>
   <div class="section__body typo">
     <dl class="large horizontal">
-      {# TODO: fix 'now'
-      <dt>{{ _('Status') }}</dt><dd>{{ _(vj4.handler.contest.STATUS_TEXTS[vj4.handler.contest.status_func(tdoc, now)]) }}</dd>
-      #}
+      <dt>{{ _('Status') }}</dt><dd>{{ handler.status_text(tdoc) }}</dd>
       <dt>{{ _('Rule') }}</dt><dd>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</dd>
       <dt>{{ _('Problem') }}</dt><dd>{{ tdoc['pids']|length }}</dd>
       <dt>{{ _('Start at') }}</dt><dd>{{ contest.render_time(tdoc['begin_at']) }}</dd>
