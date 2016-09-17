@@ -88,20 +88,21 @@ async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, v
 async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                content: str, owner_uid: int, **kwargs):
   coll = db.Collection('document')
+  obj_id = objectid.ObjectId()
   doc = await coll.find_and_modify(query={'domain_id': domain_id,
                                           'doc_type': doc_type,
                                           'doc_id': doc_id},
                                    update={'$push': {key: {**kwargs,
                                                            'content': content,
                                                            'owner_uid': owner_uid,
-                                                           '_id': objectid.ObjectId()}}},
+                                                           '_id': obj_id}}},
                                    new=True)
-  return doc
+  return doc, obj_id
 
 
 @argmethod.wrap
-async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
-               sub_id: objectid.ObjectId):
+async def delete_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
+                     sub_id: objectid.ObjectId):
   coll = db.Collection('document')
   doc = await coll.find_and_modify(query={'domain_id': domain_id,
                                           'doc_type': doc_type,
