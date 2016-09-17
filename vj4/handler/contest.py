@@ -1,5 +1,5 @@
 import asyncio
-import collections
+import calendar
 import datetime
 import io
 import pytz
@@ -16,7 +16,6 @@ from vj4.model import user
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.handler import base
-from vj4.util import timezone
 
 STATUS_NEW = 0
 STATUS_READY = 1
@@ -32,9 +31,8 @@ STATUS_TEXTS = {
 
 
 def status_func(tdoc, now):
-  now = timezone.ensure_tzinfo(now)
-  begin_at = timezone.ensure_tzinfo(tdoc['begin_at'])
-  end_at = timezone.ensure_tzinfo(tdoc['end_at'])
+  begin_at = tdoc['begin_at']
+  end_at = tdoc['end_at']
   if now < begin_at:
     if (begin_at - now).total_seconds() / 3600 <= 24:
       return STATUS_READY
@@ -53,7 +51,7 @@ class ContestMainHandler(base.Handler):
     tdocs = await contest.get_list(self.domain_id)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'], 
                                            [tdoc['doc_id'] for tdoc in tdocs])
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     self.render('contest_main.html', tdocs=tdocs, now=now, tsdict=tsdict)
 
 
@@ -78,7 +76,7 @@ class ContestDetailHandler(base.OperationHandler):
       rdict = await record.get_dict([psdoc['rid'] for psdoc in psdict.values()])
     else:
       attended = False
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], None))
@@ -92,7 +90,7 @@ class ContestDetailHandler(base.OperationHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post_attend(self, *, tid: objectid.ObjectId):
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     tdoc = await contest.get(self.domain_id, tid)
     if status_func(tdoc, now) == STATUS_DONE:
       raise error.ContestNotLiveError(tdoc['doc_id'])
@@ -132,7 +130,7 @@ class ContestDetailProblemHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid, uid))
@@ -159,7 +157,7 @@ class ContestDetailProblemSubmitHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid, uid))
@@ -195,7 +193,7 @@ class ContestDetailProblemSubmitHandler(base.Handler):
   @base.sanitize
   async def post(self, *,
                  tid: objectid.ObjectId, pid: document.convert_doc_id, lang: str, code: str):
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid))
     tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'],
@@ -225,7 +223,7 @@ class ContestStatusHandler(base.Handler):
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     # TODO(iceboy): This does not work on multi-machine environment.
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
@@ -252,13 +250,12 @@ class ContestCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
-    tz = pytz.timezone(self.timezone)
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-    dt = now.astimezone(tz)
-    ts = int(dt.timestamp())
+    now = datetime.datetime.utcnow()
+    dt = now.replace(tzinfo=pytz.utc).astimezone(self.timezone)
+    ts = calendar.timegm(dt.utctimetuple())
     # find next quarter
     ts = ts - ts % (15 * 60) + 15 * 60
-    dt = datetime.datetime.fromtimestamp(ts, tz)
+    dt = datetime.datetime.fromtimestamp(ts, self.timezone)
     self.render('contest_create.html',
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'))
@@ -275,13 +272,12 @@ class ContestCreateHandler(base.Handler):
                  duration: float,
                  pids: str):
     try:
-      tz = pytz.timezone(self.timezone)
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-      begin_at = tz.localize(begin_at)
-      end_at = tz.normalize(begin_at + datetime.timedelta(hours=duration))
+      begin_at = self.timezone.localize(begin_at)
+      end_at = self.timezone.normalize(begin_at + datetime.timedelta(hours=duration))
     except ValueError as e:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     if begin_at <= now:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     if begin_at >= end_at:

@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import hashlib
 from bson import objectid
 
 from vj4 import app
@@ -9,6 +10,7 @@ from vj4.model import builtin
 from vj4.model import user
 from vj4.model import document
 from vj4.model import domain
+from vj4.model import fs
 from vj4.model import record
 from vj4.model.adaptor import problem
 
@@ -261,7 +263,7 @@ class ProblemDataHandler(base.Handler):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     grid_out = await problem.get_data(self.domain_id, pid)
 
-    self.response.content_type = grid_out.content_type or 'application/octet-stream'
+    self.response.content_type = grid_out.content_type or 'application/zip'
     self.response.last_modified = grid_out.upload_date
     self.response.headers['Etag'] = '"{0}"'.format(grid_out.md5)
     # TODO(iceboy): Handle If-Modified-Since & If-None-Match here.
@@ -349,6 +351,42 @@ class ProblemSettingsHandler(base.Handler):
         (self.translate('problem_settings'), None))
     self.render('problem_settings.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
+
+
+@app.route('/p/{pid}/upload', 'problem_upload')
+class ProblemSettingsHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
+        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
+      self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
+    self.render('problem_upload.html', pdoc=pdoc)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, pid: document.convert_doc_id, file: lambda _: _):
+    pdoc = await problem.get(self.domain_id, pid)
+    if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
+        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
+      self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
+    if file:
+      data = file.file.read()
+      md5 = hashlib.md5(data).hexdigest()
+      fid = await fs.link_by_md5(md5)
+      if not fid:
+        fid = await fs.add_data(data)
+      if pdoc.get('data'):
+        await fs.unlink(pdoc['data'])
+      await problem.set_data(self.domain_id, pid, fid)
+    self.json_or_redirect(self.url)
 
 
 @app.route('/p/{pid}/statistics', 'problem_statistics')

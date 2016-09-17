@@ -232,6 +232,7 @@ problem_edit: 编辑题目
 problem_main: 题库
 problem_solution: 题解
 problem_submit: 递交代码
+problem_settings: 题目设置
 record_detail: 记录详情
 record_main: 评测队列
 reply: 回复
@@ -451,3 +452,7 @@ CommonMark Syntax: CommonMark 语法
 LaTeX Expressions: LaTeX 表达式
 Hidden: 隐藏
 We will check code similarity after this contest.: 我们会在赛后检查代码相似度。
+Dataset: 测试数据
+'Current dataset: {0}': '当前测试数据: {0}'
+Upload: 上传
+No dataset present.: 暂无测试数据。

@@ -1,5 +1,5 @@
 {% import "components/user.html" as user with context %}
-{% macro reply(mode_create = false, udoc, doc = {}, rdoc = {}) %}
+{% macro reply(mode_create, udoc, doc = {}, rdoc = {}) %}
 <li class="dczcomments__reply{% if mode_create %} commentbox-container{% endif %}">
   <div class="media">
     <div class="media__body top">
@@ -28,7 +28,7 @@
 </li>
 {% endmacro %}
 
-{% macro comment(mode_create = false, udoc, doc = {}) %}
+{% macro comment(mode_create, udoc, doc = {}) %}
 <li class="dczcomments__item">
   <div class="media">
     <div class="media__left top">
