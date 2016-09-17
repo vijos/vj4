@@ -1,4 +1,5 @@
 {% extends "layout/basic.html" %}
+{% import "components/contest.html" as contest with context %}
 {% macro render_important_contest(view, title, tdoc) %}
 <div class="section immersive--content section--contest {{ view }}">
   <div class="media">
@@ -19,7 +20,7 @@
           </li>
           <li>
             <span class="icon icon-schedule"></span>
-            {{ _('Duration') }}: {{ ((tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600)|round(2) }} {{ _('hour(s)') }}
+            {{ _('Duration') }}: {{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}
           </li>
         </ul>
       </div>
@@ -58,8 +59,8 @@
           {{ _('Show') }}:
           <select class="inline select">
             <option>All</option>
-            <option>OI Contests</option>
-            <option>ACM/ICPC Contests</option>
+            <option>Only OI</option>
+            <option>Only ACM/ICPC</option>
             <!-- TODO: dynamic list -->
           </select>
         </div>
@@ -78,7 +79,22 @@
               <h1 class="contest__title"><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
               <ul class="contest__supplementary">
                 <li>
-                  <a href="#" class="contest-type-tag"></a>
+                  <a href="#" class="contest-type-tag"><span class="icon icon-award"></span>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</a>
+                </li>
+                <li>
+                  <span class="v-center">
+                    <span class="icon icon-user--multiple"></span> {{ tdoc['attend']|default(0) }}
+                  </span>
+                </li>
+                <li>
+                  <span class="v-center">
+                    <span class="icon icon-schedule"></span> {{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}
+                  </span>
+                </li>
+                <li>
+                  <span class="v-center">
+                    <span class="icon icon-comment--text"></span> 0
+                  </span>
                 </li>
               </ul>
             </div>
