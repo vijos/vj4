@@ -5,6 +5,11 @@
     <div class="section">
       <div class="section__body">
         {{ tdoc['content']|markdown }}
+        {% if vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_LIVE %}
+        <blockquote class="warn">
+          <p>{{ _('We will check code similarity after this contest.') }}</p>
+        </blockquote>
+        {% endif %}
       </div>
     </div>
   {% if vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_LIVE or vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_DONE %}
@@ -70,9 +75,11 @@
         <h1 class="section__title">{{ _('{0} comments').format(0) }}</h1>
       </div>
       <div class="section__body">
+        {% if vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_LIVE %}
         <blockquote class="warn">
           <p>{{ _('Do not discuss solutions otherwise you will be treated as a cheater and lose qualifications.') }}</p>
         </blockquote>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -112,6 +119,9 @@
       {% else %}
         <p><a href="javascript:;" class="expanded button">{{ _('Status is hidden') }}</a></p>
       {% endif %}
+      {% endif %}
+      {% if handler.has_perm(vj4.model.builtin.PERM_READ_RECORD_CODE) %}
+        <p><a href="{{ reverse_url('contest_code', tid=tdoc['_id']) }}" class="expanded button">{{ _('Code') }}</a></p>
       {% endif %}
       </div>
     </div>

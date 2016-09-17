@@ -1,7 +1,9 @@
 import asyncio
 import calendar
 import datetime
+import io
 import pytz
+import zipfile
 from bson import objectid
 
 from vj4 import app
@@ -94,6 +96,32 @@ class ContestDetailHandler(base.OperationHandler):
       raise error.ContestNotLiveError(tdoc['doc_id'])
     await contest.attend(self.domain_id, tdoc['doc_id'], self.user['_id'])
     self.json_or_redirect(self.url)
+
+
+@app.route('/tests/{tid:\w{24}}/code', 'contest_code')
+class ContestCodeHandler(base.OperationHandler):
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
+  @base.require_perm(builtin.PERM_READ_RECORD_CODE)
+  @base.limit_rate('contest_code', 3600, 60)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    rnames = {}
+    for tsdoc in tsdocs:
+      for pdetail in tsdoc.get('detail', []):
+        rnames[pdetail['rid']] = 'U{}_P{}_R{}'.format(tsdoc['uid'], pdetail['pid'], pdetail['rid'])
+    output_buffer = io.BytesIO()
+    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
+    rdocs = record.get_multi(_id={'$in': list(rnames.keys())})
+    async for rdoc in rdocs:
+      zip_file.writestr(rnames[rdoc['_id']] + '.' + rdoc['lang'], rdoc['code'])
+    # mark all files as created in Windows :p
+    for zfile in zip_file.filelist:
+      zfile.create_system = 0
+    zip_file.close()
+
+    await self.binary(output_buffer.getvalue(), 'application/zip')
 
 
 @app.route('/tests/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
