@@ -73,12 +73,18 @@ async def rejudge(record_id: objectid.ObjectId):
 
 
 @argmethod.wrap
-def get_all_multi(end_id: objectid.ObjectId = None, *, fields=None):
+def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fields=None):
   coll = db.Collection('record')
-  query = {'hidden': False}
+  query = {'hidden': False if not get_hidden else {'$gte': False}}
   if end_id:
     query['_id'] = {'$lt': end_id}
   return coll.find(query, fields=fields)
+
+
+@argmethod.wrap
+def get_multi(fields=None, **kwargs):
+  coll = db.Collection('record')
+  return coll.find(kwargs, fields=fields)
 
 
 @argmethod.wrap
@@ -101,6 +107,14 @@ def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_do
   if type != None:
     query['type'] = type
   return coll.find(query, fields=fields)
+
+
+async def get_dict(rids, *, fields=None):
+  query = {'_id': {'$in': list(set(rids))}}
+  result = dict()
+  async for rdoc in get_multi(**query, fields=fields):
+    result[rdoc['_id']] = rdoc
+  return result
 
 
 @argmethod.wrap

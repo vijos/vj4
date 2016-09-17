@@ -39,24 +39,6 @@ export const STATUS_TEXTS = {
 };
 attachObjectMeta(STATUS_TEXTS, 'intKey', true);
 
-export const STATUS_ABBRS = {
-  [STATUS_WAITING]: '',
-  [STATUS_ACCEPTED]: 'AC',
-  [STATUS_WRONG_ANSWER]: 'WA',
-  [STATUS_TIME_LIMIT_EXCEEDED]: 'TLE',
-  [STATUS_MEMORY_LIMIT_EXCEEDED]: 'MLE',
-  [STATUS_OUTPUT_LIMIT_EXCEEDED]: 'OLE',
-  [STATUS_RUNTIME_ERROR]: 'RE',
-  [STATUS_COMPILE_ERROR]: 'CE',
-  [STATUS_SYSTEM_ERROR]: 'SE',
-  [STATUS_CANCELED]: 'ETC',
-  [STATUS_ETC]: 'ETC',
-  [STATUS_JUDGING]: 'ETC',
-  [STATUS_COMPILING]: 'ETC',
-  [STATUS_IGNORED]: 'ETC',
-};
-attachObjectMeta(STATUS_ABBRS, 'intKey', true);
-
 export const STATUS_CODES = {
   [STATUS_WAITING]: 'pending',
   [STATUS_ACCEPTED]: 'pass',

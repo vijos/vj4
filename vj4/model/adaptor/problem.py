@@ -15,12 +15,13 @@ from vj4.util import validator
 
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int,
-              pid: document.convert_doc_id = None, data: objectid.ObjectId = None):
+              pid: document.convert_doc_id=None, data: objectid.ObjectId=None,
+              hidden: bool=False):
   validator.check_title(title)
   validator.check_content(content)
   return await document.add(domain_id, content, owner_uid,
                             document.TYPE_PROBLEM, pid, title=title, data=data,
-                            num_submit=0, num_accept=0)
+                            hidden=hidden, num_submit=0, num_accept=0)
 
 
 @argmethod.wrap
@@ -50,8 +51,9 @@ async def edit(domain_id: str, pid: document.convert_doc_id, **kwargs):
 
 
 @argmethod.wrap
-async def count(domain_id: str):
-  return await document.get_multi(domain_id=domain_id, doc_type=document.TYPE_PROBLEM).count()
+async def count(domain_id: str, **kwargs):
+  return await document.get_multi(domain_id=domain_id, doc_type=document.TYPE_PROBLEM,
+                                  **kwargs).count()
 
 
 def get_multi(*, fields=None, **kwargs):
@@ -197,6 +199,14 @@ async def get_data_md5(domain_id: str, pid: document.convert_doc_id):
 @argmethod.wrap
 async def set_data(domain_id: str, pid: document.convert_doc_id, data: objectid.ObjectId):
   pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, data=data)
+  if not pdoc:
+    raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
+  return pdoc
+
+
+@argmethod.wrap
+async def set_hidden(domain_id: str, pid: document.convert_doc_id, hidden: bool):
+  pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, hidden=hidden)
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
   return pdoc

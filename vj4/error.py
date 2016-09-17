@@ -83,7 +83,7 @@ class UserAlreadyExistError(ForbiddenError):
 class LoginError(ForbiddenError):
   @property
   def message(self):
-    return "Inexistent user {0} or wrong password."
+    return "Invalid user {0} or password."
 
 
 class DocumentNotFoundError(NotFoundError):
@@ -110,7 +110,9 @@ class PermissionError(ForbiddenError):
     if any((p | builtin.PERM_VIEW) == builtin.PERM_VIEW for p in self.args):
       return "You cannot visit this domain."
     else:
-      return "You don't have the required permission in this domain."
+      if len(self.args) > 0 and self.args[0] in builtin.PERM_TEXTS:
+        self.args = (builtin.PERM_TEXTS[self.args[0]], self.args[0], *self.args[1:])
+      return "You don't have the required permission ({0}) in this domain."
 
 
 class PrivilegeError(ForbiddenError):
@@ -216,6 +218,12 @@ class ContestStatusHiddenError(ForbiddenError):
   @property
   def message(self):
     return "Contest status is hidden."
+
+
+class ContestNotLiveError(ForbiddenError):
+  @property
+  def message(self):
+    return "This contest is not live."
 
 
 class ProblemNotFoundError(DocumentNotFoundError):
