@@ -7,7 +7,7 @@
       <div class="clearfix">
         <div class="dczcomments__supplementary">
           {{ user.render_inline(udoc, badge=false) }}
-          <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
+          <span class="v-center">@ {{ datetime_span(rdoc['_id'].generation_time) }}</span>
         </div>
         {{ comment_base.reply_operations(doc, rdoc) }}
       </div>
