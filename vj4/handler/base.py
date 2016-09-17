@@ -21,7 +21,6 @@ from vj4.model import token
 from vj4.model import user
 from vj4.model.adaptor import setting
 from vj4.service import mailer
-from vj4.util import timezone
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
@@ -52,7 +51,8 @@ class HandlerBase(setting.SettingMixin):
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
     self.view_lang = self.get_setting('view_lang')
-    self.timezone = self.get_setting('timezone')
+    # TODO(iceboy): UnknownTimeZoneError
+    self.timezone = pytz.timezone(self.get_setting('timezone'))
     self.translate = locale.get_translate(self.view_lang)
     self.datetime_span = _get_datetime_span(self.timezone)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
@@ -326,15 +326,14 @@ def _build_path(*args, domain_id, domain_name):
 
 
 @functools.lru_cache()
-def _get_datetime_span(tzname):
-  tz = pytz.timezone(tzname)
-
+def _get_datetime_span(tz):
   @functools.lru_cache()
   def _datetime_span(dt):
-    dt = timezone.ensure_tzinfo(dt)
+    if not dt.tzinfo:
+      dt = dt.replace(tzinfo=pytz.utc)
     return markupsafe.Markup(
       '<span class="time" data-timestamp="{0}">{1}</span>'.format(
-        int(dt.astimezone(pytz.utc).timestamp()),
+        calendar.timegm(dt.utctimetuple()),
         dt.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')))
 
   return _datetime_span
