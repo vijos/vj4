@@ -63,11 +63,7 @@
         </table>
       </div>
     {% else %}
-      <div class="section__body">
-        <blockquote class="warn">
-          <p>{{ _('Please attend to see the problems.') }}</p>
-          </blockquote>
-      </div>
+      {{ nothing.render('Please attend to see the problems.') }}
     {% endif %}
     </div>
   {% endif %}
@@ -81,6 +77,7 @@
           <p>{{ _('Do not discuss solutions otherwise you will be treated as a cheater and lose qualifications.') }}</p>
         </blockquote>
       {% endif %}
+      <!-- TODO: discussion -->
       </div>
     </div>
   </div>
