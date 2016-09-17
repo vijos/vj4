@@ -217,6 +217,36 @@ class ProblemSolutionHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
+@app.route('/p/{pid}/solution/{psid:\w{24}}/raw', 'problem_solution_raw')
+class ProblemSolutionRawHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id, psid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    self.response.content_type = 'text/markdown'
+    self.response.text = psdoc['content']
+
+
+@app.route('/p/{pid}/solution/{psid:\w{24}}/{psrid:\w{24}}/raw', 'problem_solution_reply_raw')
+class ProblemSolutionReplyRawHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id, psid: document.convert_doc_id,
+                psrid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    # TODO(twd2): psrdoc
+    self.response.content_type = 'text/markdown'
+    self.response.text = ''
+
+
 @app.route('/p/{pid}/data', 'problem_data')
 class ProblemDataHandler(base.Handler):
   @base.route_argument

@@ -156,7 +156,7 @@ class DiscussionDetailHandler(base.OperationHandler):
 
 
 @app.route('/discuss/{did:\w{24}}/raw', 'discussion_detail_raw')
-class DiscussionDetailRawHandler(base.OperationHandler):
+class DiscussionDetailRawHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
   @base.sanitize
@@ -167,7 +167,7 @@ class DiscussionDetailRawHandler(base.OperationHandler):
 
 
 @app.route('/discuss/{did:\w{24}}/{drid:\w{24}}/raw', 'discussion_reply_raw')
-class DiscussionReplyRawHandler(base.OperationHandler):
+class DiscussionReplyRawHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
   @base.sanitize
@@ -179,7 +179,7 @@ class DiscussionReplyRawHandler(base.OperationHandler):
 
 
 @app.route('/discuss/{did:\w{24}}/{drid:\w{24}}/{drrid:\w{24}}/raw', 'discussion_tail_reply_raw')
-class DiscussionTailReplyRawHandler(base.OperationHandler):
+class DiscussionTailReplyRawHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
   @base.sanitize
