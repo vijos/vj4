@@ -1,6 +1,7 @@
 import asyncio
 import calendar
 import datetime
+import functools
 import io
 import pytz
 import zipfile
@@ -17,71 +18,78 @@ from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.handler import base
 
-STATUS_NEW = 0
-STATUS_READY = 1
-STATUS_LIVE = 2
-STATUS_DONE = 3
 
-STATUS_TEXTS = {
-  STATUS_NEW: 'New',
-  STATUS_READY: 'Ready (☆▽☆)',
-  STATUS_LIVE: 'Live...',
-  STATUS_DONE: 'Done'
-}
+class ContestStatusMixin(object):
+  @property
+  @functools.lru_cache()
+  def now(self):
+    # TODO(iceboy): This does not work on multi-machine environment.
+    return datetime.datetime.utcnow()
 
+  def is_new(self, tdoc):
+    ready_at = tdoc['begin_at'] - datetime.timedelta(days=1)
+    return self.now < ready_at
 
-def status_func(tdoc, now):
-  begin_at = tdoc['begin_at']
-  end_at = tdoc['end_at']
-  if now < begin_at:
-    if (begin_at - now).total_seconds() / 3600 <= 24:
-      return STATUS_READY
+  def is_ready(self, tdoc):
+    ready_at = tdoc['begin_at'] - datetime.timedelta(days=1)
+    return ready_at <= self.now < tdoc['begin_at']
+
+  def is_live(self, tdoc):
+    return tdoc['begin_at'] <= self.now < tdoc['end_at']
+
+  def is_done(self, tdoc):
+    return tdoc['end_at'] <= self.now
+
+  def status_text(self, tdoc):
+    if self.is_new(tdoc):
+      return 'New'
+    elif self.is_ready(tdoc):
+      return 'Ready (☆▽☆)'
+    elif self.is_live(tdoc):
+      return 'Live...'
     else:
-      return STATUS_NEW
-  elif now < end_at:
-    return STATUS_LIVE
-  else:
-    return STATUS_DONE
+      return 'Done'
+
+  def can_show(self, tdoc):
+    return contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
 
 
 @app.route('/tests', 'contest_main')
-class ContestMainHandler(base.Handler):
+class ContestMainHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   async def get(self):
     tdocs = await contest.get_list(self.domain_id)
-    tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'], 
-                                           [tdoc['doc_id'] for tdoc in tdocs])
-    now = datetime.datetime.utcnow()
-    self.render('contest_main.html', tdocs=tdocs, now=now, tsdict=tsdict)
+    tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
+                                           (tdoc['doc_id'] for tdoc in tdocs))
+    self.render('contest_main.html', tdocs=tdocs, tsdict=tsdict)
 
 
 @app.route('/tests/{tid:\w{24}}', 'contest_detail')
-class ContestDetailHandler(base.OperationHandler):
+class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc = await contest.get(self.domain_id, tid)
     pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
-    tsdoc, udoc, pdict = await asyncio.gather(contest.get_status(self.domain_id, tdoc['doc_id'],
-                                                                 self.user['_id']),
-                                              user.get_by_uid(tdoc['owner_uid']),
-                                              problem.get_dict(pdom_and_ids))
+    tsdoc, udoc, pdict = await asyncio.gather(
+        contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
+        user.get_by_uid(tdoc['owner_uid']),
+        problem.get_dict(pdom_and_ids))
     psdict = dict()
     rdict = dict()
     if tsdoc:
       attended = tsdoc.get('attend') == 1
       for pdetail in tsdoc.get('detail', []):
         psdict[pdetail['pid']] = pdetail
-      rdict = await record.get_dict([psdoc['rid'] for psdoc in psdict.values()])
+      rdict = await record.get_dict(psdoc['rid'] for psdoc in psdict.values())
     else:
       attended = False
-    now = datetime.datetime.utcnow()
     path_components = self.build_path(
-      (self.translate('contest_main'), self.reverse_url('contest_main')),
-      (tdoc['title'], None))
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
+        (tdoc['title'], None))
     self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udoc=udoc,
-                pdict=pdict, psdict=psdict, rdict=rdict, now=now, page_title=tdoc['title'],
+                pdict=pdict, psdict=psdict, rdict=rdict, page_title=tdoc['title'],
                 path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -90,9 +98,8 @@ class ContestDetailHandler(base.OperationHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post_attend(self, *, tid: objectid.ObjectId):
-    now = datetime.datetime.utcnow()
     tdoc = await contest.get(self.domain_id, tid)
-    if status_func(tdoc, now) == STATUS_DONE:
+    if self.is_done(tdoc):
       raise error.ContestNotLiveError(tdoc['doc_id'])
     await contest.attend(self.domain_id, tdoc['doc_id'], self.user['_id'])
     self.json_or_redirect(self.url)
@@ -125,63 +132,58 @@ class ContestCodeHandler(base.OperationHandler):
 
 
 @app.route('/tests/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
-class ContestDetailProblemHandler(base.Handler):
+class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
-    now = datetime.datetime.utcnow()
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid, uid))
-    if status_func(tdoc, now) != STATUS_DONE:
-      tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'],
-                                       self.user['_id'])
+    if not self.is_done(tdoc):
+      tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])
       if not tsdoc or tsdoc.get('attend') != 1:
         raise error.ContestNotAttendedError(tdoc['doc_id'])
-      if status_func(tdoc, now) != STATUS_LIVE:
+      if not self.is_live(tdoc):
         raise error.ContestNotLiveError(tdoc['doc_id'])
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
     path_components = self.build_path(
-      (self.translate('contest_main'), self.reverse_url('contest_main')),
-      (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
-      (pdoc['title'], None))
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
+        (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
+        (pdoc['title'], None))
     self.render('problem_detail.html', tdoc=tdoc, pdoc=pdoc,
                 page_title=pdoc['title'], path_components=path_components)
 
 
 @app.route('/tests/{tid}/{pid}/submit', 'contest_detail_problem_submit')
-class ContestDetailProblemSubmitHandler(base.Handler):
+class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
-    now = datetime.datetime.utcnow()
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid, uid))
-    tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'],
-                                     self.user['_id'])
+    tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])
     if not tsdoc or tsdoc.get('attend') != 1:
       raise error.ContestNotAttendedError(tdoc['doc_id'])
-    if status_func(tdoc, now) != STATUS_LIVE:
+    if not self.is_live(tdoc):
       raise error.ContestNotLiveError(tdoc['doc_id'])
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
-    if (contest.RULES[tdoc['rule']].show_func(tdoc, now)
+    if (contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
-      rdocs = await record \
-            .get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
-            .sort([('_id', -1)]) \
-            .to_list(10)
+      rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
+                          .sort([('_id', -1)]) \
+                          .to_list(10)
     else:
       rdocs = []
     path_components = self.build_path(
-      (self.translate('contest_main'), self.reverse_url('contest_main')),
-      (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
-      (pdoc['title'], self.reverse_url('contest_detail_problem', tid=tid, pid=pid)),
-      (self.translate('contest_detail_problem_submit'), None))
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
+        (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
+        (pdoc['title'], self.reverse_url('contest_detail_problem', tid=tid, pid=pid)),
+        (self.translate('contest_detail_problem_submit'), None))
     self.json_or_render('problem_submit.html', tdoc=tdoc, pdoc=pdoc, rdocs=rdocs,
                         page_title=pdoc['title'], path_components=path_components)
 
@@ -193,22 +195,20 @@ class ContestDetailProblemSubmitHandler(base.Handler):
   @base.sanitize
   async def post(self, *,
                  tid: objectid.ObjectId, pid: document.convert_doc_id, lang: str, code: str):
-    now = datetime.datetime.utcnow()
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid))
-    tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'],
-                                     self.user['_id'])
+    tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])
     if not tsdoc or tsdoc.get('attend') != 1:
       raise error.ContestNotAttendedError(tdoc['doc_id'])
-    if status_func(tdoc, now) != STATUS_LIVE:
+    if not self.is_live(tdoc):
       raise error.ContestNotLiveError(tdoc['doc_id'])
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
-    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION, self.user['_id'],
-                           lang, code, tid=tdoc['doc_id'], hidden=True)
+    rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
+                           self.user['_id'], lang, code, tid=tdoc['doc_id'], hidden=True)
     await contest.update_status(self.domain_id, tdoc['_id'], self.user['_id'],
                                 rid, pdoc['doc_id'], False, 0)
-    if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
         self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['_id']))
     else:
@@ -222,7 +222,6 @@ class ContestStatusHandler(base.Handler):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
-    # TODO(iceboy): This does not work on multi-machine environment.
     now = datetime.datetime.utcnow()
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
