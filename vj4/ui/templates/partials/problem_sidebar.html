@@ -1,0 +1,6 @@
+{% if tdoc %}
+  {% include "partials/problem_sidebar_contest.html" %}
+  {% include "partials/contest_sidebar.html" %}
+{% else %}
+  {% include "partials/problem_sidebar_normal.html" %}
+{% endif %}

@@ -1,5 +1,4 @@
 {% extends "layout/basic.html" %}
-{% import "components/problem.html" as problem with context %}
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
@@ -20,7 +19,7 @@
           <div class="row"><div class="columns">
             <label>
               {{ _('Content') }}
-              <textarea name="content" class="textbox" data-markdown style="height: 500px">{% if pdoc %}{{ pdoc['content'] }}{% else %}{% include 'components/problem_default.md' %}{% endif %}</textarea>
+              <textarea name="content" class="textbox" data-markdown style="height: 500px">{% if pdoc %}{{ pdoc['content'] }}{% else %}{% include 'partials/problem_default.md' %}{% endif %}</textarea>
             </label>
           </div></div>
           <div class="row"><div class="columns">
@@ -38,7 +37,9 @@
   </div>
   <div class="medium-3 columns">
   {% if page_name == 'problem_edit' %}
-    {{ problem.render_sidebar(pdoc, udoc) }}
+    {% with owner_udoc=udoc %}
+    {% include "partials/problem_sidebar.html" %}
+    {% endwith %}
   {% endif %}
   </div>
 </div>

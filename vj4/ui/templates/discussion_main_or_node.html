@@ -1,5 +1,4 @@
 {% extends "layout/basic.html" %}
-{% import "components/problem.html" as problem with context %}
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
@@ -40,7 +39,9 @@
   </div>
   <div class="medium-3 columns">
   {% if vnode['doc_type'] == vj4.model.document.TYPE_PROBLEM %}
-    {{ problem.render_sidebar(vnode, udoc) }}{# TODO: where is udoc? #}
+    {% with pdoc=vnode, owner_udoc=udoc %}{# TODO: where is udoc? #}
+    {% include "partials/problem_sidebar.html" %}
+    {% endwith %}
   {% else %}
     <div class="section side">
       {% if vnode['pic'] %}<div class="discussion-node__bg {{ vnode['pic'] }}"></div>{% endif %}

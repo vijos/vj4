@@ -2,9 +2,6 @@
 {% block content %}
 <div class="row">
   <div class="section medium-12 columns">
-    <div class="section__header">
-      <h1 class="section__title">{{ _('Status') }}</h1>
-    </div>
     <div class="section__body no-padding">
       {% include 'partials/contest_status_'~vj4.constant.contest.RULE_ID[tdoc['rule']]~'.html' %}
     </div>
