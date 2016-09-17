@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import io
-import pytz
 import zipfile
 from bson import objectid
 
@@ -23,8 +22,8 @@ from vj4.service import bus
 class RecordMainHandler(base.Handler):
   async def get(self):
     # TODO(iceboy): projection, pagination.
-    # TODO(twd2): check permission for visibility. (e.g. test).
-    rdocs = await record.get_all_multi().sort([('_id', -1)]).to_list(50)
+    rdocs = await record.get_all_multi(
+      get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).to_list(50)
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
         user.get_dict(rdoc['uid'] for rdoc in rdocs),
@@ -42,7 +41,7 @@ class RecordMainConnection(base.Connection):
     rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
     # check permission for visibility: contest
     if rdoc['tid']:
-      now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+      now = datetime.datetime.utcnow()
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
       if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
           and (self.domain_id != tdoc['domain_id']
@@ -70,27 +69,31 @@ class RecordDetailHandler(base.Handler):
     rdoc = await record.get(rid)
     if not rdoc:
       raise error.RecordNotFoundError(rid)
-    # TODO(iceboy): Check domain permission in place.
+    # TODO(iceboy): Check domain permission, permission for visibility in place.
     if rdoc['domain_id'] != self.domain_id:
       self.redirect(self.reverse_url('record_detail', rid=rid, domain_id=rdoc['domain_id']))
       return
     # check permission for visibility: contest
+    show_status = True
     if rdoc['tid']:
-      now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+      now = datetime.datetime.utcnow()
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if not contest.RULES[tdoc['rule']].show_func(tdoc, now):
-        self.check_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
+      show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
+                    or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
     # TODO(twd2): futher check permission for visibility.
     if (not self.own(rdoc, field='uid')
         and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
         and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
       del rdoc['code']
+    if not show_status and 'code' not in rdoc:
+      raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
     udoc, dudoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
                                              domain.get_user(self.domain_id, rdoc['uid']),
                                              problem.get(rdoc['domain_id'], rdoc['pid']))
     if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
       pdoc = None
-    self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc)
+    self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc,
+                show_status=show_status)
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')
@@ -138,4 +141,4 @@ class RecordPretestDataHandler(base.Handler):
       zfile.create_system = 0
     zip_file.close()
 
-    await self.binary(output_buffer.getvalue())
+    await self.binary(output_buffer.getvalue(), 'application/zip')

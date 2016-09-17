@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Tabs, { TabPane } from 'rc-tabs';
+import TabContent from 'rc-tabs/lib/TabContent';
+import ScrollableInkTabBar from 'rc-tabs/lib/ScrollableInkTabBar';
 import Icon from '../react/IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
@@ -41,22 +43,25 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
           className="scratchpad__panel-tab flex-col flex-fill"
           activeKey={"all"}
           animation="slide-horizontal"
-          tabBarExtraContent={
-            <span>
-              <PanelButton
-                data-tooltip={i18n('Refresh Records')}
-                data-tooltip-pos="top right"
-                onClick={() => this.props.handleClickRefresh()}
-              >
-                {i18n('Refresh')}
-              </PanelButton>
-              <PanelButton
-                onClick={() => this.props.handleClickClose()}
-              >
-                <Icon name="close" />
-              </PanelButton>
-            </span>
-          }
+          renderTabBar={() => <ScrollableInkTabBar
+            extraContent={
+              <span>
+                <PanelButton
+                  data-tooltip={i18n('Refresh Records')}
+                  data-tooltip-pos="top right"
+                  onClick={() => this.props.handleClickRefresh()}
+                >
+                  {i18n('Refresh')}
+                </PanelButton>
+                <PanelButton
+                  onClick={() => this.props.handleClickClose()}
+                >
+                  <Icon name="close" />
+                </PanelButton>
+              </span>
+            }
+          />}
+          renderTabContent={() => <TabContent />}
         >
           <TabPane tab={<span>All</span>} key="all">
             <ScratchpadRecordsTable />

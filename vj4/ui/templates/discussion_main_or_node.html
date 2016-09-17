@@ -21,7 +21,7 @@
               <h1 class="discussion__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}" data-emoji-enabled>{{ ddoc['title'] }}</a></h1>
               <ul class="discussion__supplementary">
                 <li>
-                  <a class="v-center dcznode-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['parent_doc_id']) }}">{% if ddoc['parent_doc_type'] == vj4.model.document.TYPE_DISCUSSION_NODE %}<span class="icon icon-tag"></span>{% else %}<span class="icon icon-flag"></span>{% endif %}{{ vndict[ddoc['parent_doc_id']]['title'] }}</a>
+                  <a class="v-center discussion-node-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['parent_doc_id']) }}">{% if ddoc['parent_doc_type'] == vj4.model.document.TYPE_DISCUSSION_NODE %}<span class="icon icon-tag"></span>{% else %}<span class="icon icon-flag"></span>{% endif %}{{ vndict[ddoc['parent_doc_id']]['title'] }}</a>
                 </li>
                 <li>
                   {{ user.render_inline(udict[ddoc['owner_uid']], badge=false) }}
@@ -43,7 +43,7 @@
     {{ problem.render_sidebar(vnode, udoc) }}{# TODO: where is udoc? #}
   {% else %}
     <div class="section side">
-      {% if vnode['pic'] %}<div class="dcznode-bg {{ vnode['pic'] }}"></div>{% endif %}
+      {% if vnode['pic'] %}<div class="discussion-node__bg {{ vnode['pic'] }}"></div>{% endif %}
       <div class="section__header">
         <h1 class="section__title">{{ vnode['title'] or _('Create Discussion') }}</h1>
       </div>

@@ -1,7 +1,9 @@
 import asyncio
-import collections
+import calendar
 import datetime
+import io
 import pytz
+import zipfile
 from bson import objectid
 
 from vj4 import app
@@ -14,7 +16,6 @@ from vj4.model import user
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.handler import base
-from vj4.util import timezone
 
 STATUS_NEW = 0
 STATUS_READY = 1
@@ -30,9 +31,8 @@ STATUS_TEXTS = {
 
 
 def status_func(tdoc, now):
-  now = timezone.ensure_tzinfo(now)
-  begin_at = timezone.ensure_tzinfo(tdoc['begin_at'])
-  end_at = timezone.ensure_tzinfo(tdoc['end_at'])
+  begin_at = tdoc['begin_at']
+  end_at = tdoc['end_at']
   if now < begin_at:
     if (begin_at - now).total_seconds() / 3600 <= 24:
       return STATUS_READY
@@ -51,7 +51,7 @@ class ContestMainHandler(base.Handler):
     tdocs = await contest.get_list(self.domain_id)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'], 
                                            [tdoc['doc_id'] for tdoc in tdocs])
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     self.render('contest_main.html', tdocs=tdocs, now=now, tsdict=tsdict)
 
 
@@ -67,22 +67,21 @@ class ContestDetailHandler(base.OperationHandler):
                                                                  self.user['_id']),
                                               user.get_by_uid(tdoc['owner_uid']),
                                               problem.get_dict(pdom_and_ids))
-    jdict = dict()
+    psdict = dict()
     rdict = dict()
     if tsdoc:
       attended = tsdoc.get('attend') == 1
-      if 'journal' in tsdoc:
-        for j in tsdoc['journal']:
-          jdict[j['pid']] = j
-        rdict = await record.get_dict([j['rid'] for j in jdict.values()])
+      for pdetail in tsdoc.get('detail', []):
+        psdict[pdetail['pid']] = pdetail
+      rdict = await record.get_dict([psdoc['rid'] for psdoc in psdict.values()])
     else:
       attended = False
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], None))
     self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udoc=udoc,
-                pdict=pdict, jdict=jdict, rdict=rdict, now=now, page_title=tdoc['title'],
+                pdict=pdict, psdict=psdict, rdict=rdict, now=now, page_title=tdoc['title'],
                 path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -91,12 +90,38 @@ class ContestDetailHandler(base.OperationHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post_attend(self, *, tid: objectid.ObjectId):
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     tdoc = await contest.get(self.domain_id, tid)
     if status_func(tdoc, now) == STATUS_DONE:
       raise error.ContestNotLiveError(tdoc['doc_id'])
     await contest.attend(self.domain_id, tdoc['doc_id'], self.user['_id'])
     self.json_or_redirect(self.url)
+
+
+@app.route('/tests/{tid:\w{24}}/code', 'contest_code')
+class ContestCodeHandler(base.OperationHandler):
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
+  @base.require_perm(builtin.PERM_READ_RECORD_CODE)
+  @base.limit_rate('contest_code', 3600, 60)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    rnames = {}
+    for tsdoc in tsdocs:
+      for pdetail in tsdoc.get('detail', []):
+        rnames[pdetail['rid']] = 'U{}_P{}_R{}'.format(tsdoc['uid'], pdetail['pid'], pdetail['rid'])
+    output_buffer = io.BytesIO()
+    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
+    rdocs = record.get_multi(_id={'$in': list(rnames.keys())})
+    async for rdoc in rdocs:
+      zip_file.writestr(rnames[rdoc['_id']] + '.' + rdoc['lang'], rdoc['code'])
+    # mark all files as created in Windows :p
+    for zfile in zip_file.filelist:
+      zfile.create_system = 0
+    zip_file.close()
+
+    await self.binary(output_buffer.getvalue(), 'application/zip')
 
 
 @app.route('/tests/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
@@ -105,7 +130,7 @@ class ContestDetailProblemHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid, uid))
@@ -132,7 +157,7 @@ class ContestDetailProblemSubmitHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid, uid))
@@ -168,7 +193,7 @@ class ContestDetailProblemSubmitHandler(base.Handler):
   @base.sanitize
   async def post(self, *,
                  tid: objectid.ObjectId, pid: document.convert_doc_id, lang: str, code: str):
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid))
     tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'],
@@ -198,7 +223,7 @@ class ContestStatusHandler(base.Handler):
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     # TODO(iceboy): This does not work on multi-machine environment.
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
@@ -207,10 +232,10 @@ class ContestStatusHandler(base.Handler):
                                         problem.get_dict(pdom_and_ids))
     tspdict = {}
     for tsdoc in tsdocs:
-      pdict = {}
+      psdict = {}
       for pdetail in tsdoc.get('detail', []):
-        pdict[pdetail['pid']] = pdetail
-      tspdict[tsdoc['uid']] = pdict
+        psdict[pdetail['pid']] = pdetail
+      tspdict[tsdoc['uid']] = psdict
     path_components = self.build_path(
       (self.translate('contest_main'), self.reverse_url('contest_main')),
       (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
@@ -225,13 +250,12 @@ class ContestCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
-    tz = pytz.timezone(self.timezone)
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-    dt = now.astimezone(tz)
-    ts = int(dt.timestamp())
+    now = datetime.datetime.utcnow()
+    dt = now.replace(tzinfo=pytz.utc).astimezone(self.timezone)
+    ts = calendar.timegm(dt.utctimetuple())
     # find next quarter
     ts = ts - ts % (15 * 60) + 15 * 60
-    dt = datetime.datetime.fromtimestamp(ts, tz)
+    dt = datetime.datetime.fromtimestamp(ts, self.timezone)
     self.render('contest_create.html',
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'))
@@ -248,13 +272,12 @@ class ContestCreateHandler(base.Handler):
                  duration: float,
                  pids: str):
     try:
-      tz = pytz.timezone(self.timezone)
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-      begin_at = tz.localize(begin_at)
-      end_at = tz.normalize(begin_at + datetime.timedelta(hours=duration))
+      begin_at = self.timezone.localize(begin_at)
+      end_at = self.timezone.normalize(begin_at + datetime.timedelta(hours=duration))
     except ValueError as e:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.datetime.utcnow()
     if begin_at <= now:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     if begin_at >= end_at:
