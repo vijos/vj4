@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import hashlib
 from bson import objectid
 
 from vj4 import app
@@ -347,10 +348,11 @@ class ProblemSettingsHandler(base.Handler):
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     if file:
-      md5 = '' # TODO(twd2): calculate md5
+      data = file.file.read()
+      md5 = hashlib.md5(data).hexdigest()
       fid = await fs.link_by_md5(md5)
       if not fid:
-        fid = await fs.add_readable(file.file)
+        fid = await fs.add_data(data)
       if pdoc.get('data'):
         await fs.unlink(pdoc['data'])
       await problem.set_data(self.domain_id, pid, fid)

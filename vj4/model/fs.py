@@ -22,9 +22,9 @@ async def add_local(pathname: str):
     return grid_in._id
 
 
-async def add_readable(file_object):
+async def add_data(data):
   grid_in = await add()
-  await grid_in.write(file_object)
+  await grid_in.write(data)
   await grid_in.close()
   return grid_in._id
 
