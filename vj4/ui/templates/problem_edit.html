@@ -39,6 +39,8 @@
   <div class="medium-3 columns">
   {% if page_name == 'problem_edit' %}
     {{ problem.render_sidebar(pdoc, udoc) }}
+  {% else %}
+    {% include 'components/md_hint.html' %}
   {% endif %}
   </div>
 </div>
