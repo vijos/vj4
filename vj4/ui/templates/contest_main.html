@@ -11,7 +11,7 @@
         <ul class="info">
           <li>
             <span class="icon icon-award"></span>
-            {{ _('Rule') }}: {{ vj4.model.adaptor.contest.RULE_TEXTS[tdoc['rule']] }}
+            {{ _('Rule') }}: {{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}
           </li>
           <li>
             <span class="icon icon-calendar"></span>
@@ -49,40 +49,61 @@
     {{ render_important_contest('ready', 'Ready (☆▽☆)', tdoc) }}
   {% endfor %}
     <div class="section">
+    {% if not tdocs %}
+      {{ nothing.render('There are no contests...') }}
+    {% else %}
       <div class="section__header">
         <h1 class="section__title">{{ _('All Contests') }}</h1>
-      </div>
-      <div class="section__body"><ol class="contest__list">
-      {% for row in tdocs|batch(3, '') %}
-        <div class="row">
-        {% for tdoc in row %}
-          <div class="medium-4 columns">
-          {% if not tdoc %}
-            &nbsp;
-          {% else %}
-            <li class="contest__item"><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="contest__card">
-              <div class="contest__card__image cci--{{ tdoc['doc_id'].binary[-1] % 16 }}">
-                <div class="contest__card__info">
-                  <h1>{{ tdoc['title'] }}</h1>
-                  <ul>
-                    <li>
-                      <span class="icon icon-award"></span>
-                      {{ vj4.model.adaptor.contest.RULE_TEXTS[tdoc['rule']] }}
-                    </li>
-                    <li>
-                      <span class="icon icon-calendar"></span>
-                      {{ datetime_span(tdoc['begin_at']) }}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </li></a>
-          {% endif %}
-          </div>
-        {% endfor %}
+        <div class="section__tools">
+          {{ _('Show') }}:
+          <select class="inline select">
+            <option>All</option>
+            <option>OI Contests</option>
+            <option>ACM/ICPC Contests</option>
+            <!-- TODO: dynamic list -->
+          </select>
         </div>
+      </div>
+      <ol class="contest__list">
+      {% for tdoc in tdocs %}
+        <li class="contest__item contest-type--{{ vj4.constant.contest.RULE_ID[tdoc['rule']] }}">
+          <div class="media">
+            <div class="media__left">
+              <div class="contest__participants numbox">
+                <div class="numbox__num large">4</div>
+                <div class="numbox__text">2016.06</div>
+              </div>
+            </div>
+            <div class="media__body top">
+              <h1 class="contest__title"><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+              <ul class="contest__supplementary">
+                <li>
+                  <a href="#" class="contest-type-tag"></a>
+                </li>
+              </ul>
+            </div>
+        {#<a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="contest__card">
+          <div class="contest__card__image cci--{{ tdoc['doc_id'].binary[-1] % 16 }}">
+            <div class="contest__card__info">
+              <h1>{{ tdoc['title'] }}</h1>
+              <ul>
+                <li>
+                  <span class="icon icon-award"></span>
+                  {{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}
+                </li>
+                <li>
+                  <span class="icon icon-calendar"></span>
+                  {{ datetime_span(tdoc['begin_at']) }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </a>#}
+
+        </li>
       {% endfor %}
       </ol></div>
+    {% endif %}
     </div>
   </div>
   <div class="medium-3 columns">

@@ -81,7 +81,7 @@
       <div class="section__body typo">
         <dl class="large horizontal">
           <dt>{{ _('Status') }}</dt><dd>{{ _(vj4.handler.contest.STATUS_TEXTS[vj4.handler.contest.status_func(tdoc, now)]) }}</dd>
-          <dt>{{ _('Rule') }}</dt><dd>{{ vj4.model.adaptor.contest.RULE_TEXTS[tdoc['rule']] }}</dd>
+          <dt>{{ _('Rule') }}</dt><dd>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</dd>
           <dt>{{ _('Problem') }}</dt><dd>{{ tdoc['pids']|length }}</dd>
           <dt>{{ _('Start at') }}</dt><dd>{{ datetime_span(tdoc['begin_at']) }}</dd>
           <dt>{{ _('End at') }}</dt><dd>{{ datetime_span(tdoc['end_at']) }}</dd>

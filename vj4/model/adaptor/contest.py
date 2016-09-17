@@ -5,20 +5,13 @@ import itertools
 from bson import objectid
 from pymongo import errors
 
+from vj4 import constant
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
 from vj4.util import timezone
 from vj4.util import validator
 
-
-RULE_OI = 2
-RULE_ACM = 3
-
-RULE_TEXTS = {
-  RULE_OI: 'OI',
-  RULE_ACM: 'ACM/ICPC',
-}
 
 Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
 
@@ -57,8 +50,8 @@ def _acm_show(tdoc, now):
 
 
 RULES = {
-  RULE_OI: Rule(_oi_show, _oi_stat, [('score', -1)]),
-  RULE_ACM: Rule(_acm_show, _acm_stat, [('accept', -1), ('time', 1)]),
+  constant.contest.RULE_OI: Rule(_oi_show, _oi_stat, [('score', -1)]),
+  constant.contest.RULE_ACM: Rule(_acm_show, _acm_stat, [('accept', -1), ('time', 1)]),
 }
 
 

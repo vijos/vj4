@@ -6,12 +6,7 @@
       <h1 class="section__title">{{ _('Status') }}</h1>
     </div>
     <div class="section__body no-padding">
-      {% if tdoc['rule'] == vj4.model.adaptor.contest.RULE_OI %}
-        {% include 'partials/contest_status_oi.html' %}
-      {% endif %}
-      {% if tdoc['rule'] == vj4.model.adaptor.contest.RULE_ACM %}
-        {% include 'partials/contest_status_acm.html' %}
-      {% endif %}
+      {% include 'partials/contest_status_'~vj4.constant.contest.RULE_ID[tdoc['rule']]~'.html' %}
     </div>
   </div>
 </div>
