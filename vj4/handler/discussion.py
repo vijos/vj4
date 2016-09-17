@@ -153,3 +153,40 @@ class DiscussionDetailHandler(base.OperationHandler):
 
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)
+
+
+@app.route('/discuss/{did:\w{24}}/raw', 'discussion_detail_raw')
+class DiscussionDetailRawHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, did: document.convert_doc_id):
+    ddoc = await discussion.get(self.domain_id, did)
+    self.response.content_type = 'text/markdown'
+    self.response.text = ddoc['content']
+
+
+@app.route('/discuss/{did:\w{24}}/{drid:\w{24}}/raw', 'discussion_reply_raw')
+class DiscussionReplyRawHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, did: document.convert_doc_id, drid: document.convert_doc_id):
+    ddoc = await discussion.get(self.domain_id, did)
+    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
+    self.response.content_type = 'text/markdown'
+    self.response.text = drdoc['content']
+
+
+@app.route('/discuss/{did:\w{24}}/{drid:\w{24}}/{drrid:\w{24}}/raw', 'discussion_tail_reply_raw')
+class DiscussionTailReplyRawHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, did: document.convert_doc_id, drid: document.convert_doc_id,
+                drrid: document.convert_doc_id):
+    ddoc = await discussion.get(self.domain_id, did)
+    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
+    # TODO(twd2): drrdoc
+    self.response.content_type = 'text/markdown'
+    self.response.text = ''
