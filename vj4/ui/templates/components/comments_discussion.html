@@ -14,7 +14,7 @@
         </div>
         {{ comment_base.reply_operations(doc, rdoc) }}
       </div>
-      <div class="typo no-heading" data-emoji-enabled>
+      <div class="typo no-heading" data-emoji-enabled data-raw-url="{{ reverse_url('discussion_tail_reply_raw', did=doc['parent_doc_id'], drid=doc['doc_id'], drrid='TODO') }}">
         {{ rdoc['content']|markdown }}
       </div>
       <div class="commentbox-edit-target"></div>
@@ -41,7 +41,7 @@
         </div>
         {{ comment_base.comment_operations(doc) }}
       </div>
-      <div class="typo no-heading" data-emoji-enabled>
+      <div class="typo no-heading" data-emoji-enabled data-raw-url="{{ reverse_url('discussion_reply_raw', did=doc['parent_doc_id'], drid=doc['doc_id']) }}">
         {{ doc['content']|markdown }}
       </div>
       <div class="commentbox-edit-target"></div>

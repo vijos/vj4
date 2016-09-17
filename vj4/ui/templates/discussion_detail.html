@@ -15,7 +15,7 @@
             {{ datetime_span(ddoc['_id'].generation_time) }}
           </li>
         </div>
-        <div class="typo topic__content" data-emoji-enabled>
+        <div class="typo topic__content" data-emoji-enabled data-raw-url="{{ reverse_url('discussion_detail_raw', did=ddoc['_id']) }}">
           {{ ddoc['content']|markdown }}
         </div>
       </div>
