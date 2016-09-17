@@ -267,8 +267,9 @@ class ProblemCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, title: str, content: str):
-    pid = await problem.add(self.domain_id, title, content, self.user['_id'])
+  async def post(self, *, title: str, content: str, hidden: bool=False):
+    pid = await problem.add(self.domain_id, title, content, self.user['_id'],
+                            hidden=hidden)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
@@ -295,9 +296,9 @@ class ProblemEditHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
-    # TODO(twd2): new domain_id
-    await problem.edit(self.domain_id, pid, title=title, content=content)
+  async def post(self, *, pid: document.convert_doc_id, title: str, content: str,
+                 hidden: bool=False):
+    await problem.edit(self.domain_id, pid, title=title, content=content, hidden=hidden)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
