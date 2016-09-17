@@ -42,12 +42,13 @@
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
-  {% for tdoc in tdocs if vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_LIVE %}
+    {% for tdoc in tdocs %}
+    {% if handler.is_live(tdoc) %}
     {{ render_important_contest('live', 'Live...', tdoc) }}
-  {% endfor %}
-  {% for tdoc in tdocs if vj4.handler.contest.status_func(tdoc, now) == vj4.handler.contest.STATUS_READY %}
+    {% elif handler.is_ready(tdoc) %}
     {{ render_important_contest('ready', 'Ready (☆▽☆)', tdoc) }}
-  {% endfor %}
+    {% endif %}
+    {% endfor %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('All Contests') }}</h1>
