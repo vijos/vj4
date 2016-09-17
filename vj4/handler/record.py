@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import io
-import pytz
 import zipfile
 from bson import objectid
 
@@ -42,7 +41,7 @@ class RecordMainConnection(base.Connection):
     rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
     # check permission for visibility: contest
     if rdoc['tid']:
-      now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+      now = datetime.datetime.utcnow()
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
       if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
           and (self.domain_id != tdoc['domain_id']
@@ -77,7 +76,7 @@ class RecordDetailHandler(base.Handler):
     # check permission for visibility: contest
     show_status = True
     if rdoc['tid']:
-      now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+      now = datetime.datetime.utcnow()
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
       show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
                     or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
@@ -142,4 +141,4 @@ class RecordPretestDataHandler(base.Handler):
       zfile.create_system = 0
     zip_file.close()
 
-    await self.binary(output_buffer.getvalue())
+    await self.binary(output_buffer.getvalue(), 'application/zip')

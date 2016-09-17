@@ -30,35 +30,7 @@
     </div>
   </div>
   <div class="medium-3 columns">
-    <div class="section side">
-      <div class="section__body typo">
-        <dl>
-          <dt>行内代码</dt>
-          <dd><pre>`std::cout()`</pre></dd>
-          <dt>代码区块</dt>
-          <dd>
-<pre>```c++
-int main() {
-  return 0;
-}
-```</pre>
-          </dd>
-          <dt>行内公式</dt>
-          <dd><pre>$ E=mc^2 $</pre></dd>
-          <dt>公式区块</dt>
-          <dd><pre>$$ E=mc^2 $$</pre></dd>
-          <dt>链接</dt>
-          <dd><pre>[文字](http://...)</pre></dd>
-          <dt>图片</dt>
-          <dd><pre>![文字描述](http://...)</pre></dd>
-        </dl>
-        <h2 class="section__title">了解更多</h2>
-        <ul>
-          <li><a href="http://commonmark.org/help/" target="_blank"><span class="icon icon-link--external"></span> CommonMark 规范语法</a></li>
-          <li><a href="http://mlworks.cn/posts/introduction-to-mathjax-and-latex-expression/" target="_blank"><span class="icon icon-link--external"></span> LaTeX 公式</a></li>
-        </ul>
-      </div>
-    </div>
+    {% include 'components/md_hint.html' %}
   </div>
 </div>
 {% endblock %}

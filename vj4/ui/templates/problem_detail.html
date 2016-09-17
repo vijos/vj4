@@ -16,6 +16,11 @@
           <h1>{{ pdoc['title'] }}</h1>
         </div>
         <div class="section__body typo">
+          {% if not pdoc['data'] %}
+          <blockquote class="warn">
+            <p>{{ _('No dataset present.') }}</p>
+          </blockquote>
+          {% endif %}
           {{ pdoc['content']|markdown }}
         </div>
       </div>

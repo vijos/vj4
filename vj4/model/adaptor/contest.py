@@ -9,7 +9,6 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
-from vj4.util import timezone
 from vj4.util import validator
 
 
@@ -19,10 +18,6 @@ Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
 def _oi_stat(tdoc, journal):
   detail = list(dict((j['pid'], j) for j in journal if j['pid'] in tdoc['pids']).values())
   return {'score': sum(d['score'] for d in detail), 'detail': detail}
-
-
-def _oi_show(tdoc, now):
-  return timezone.ensure_tzinfo(now) > timezone.ensure_tzinfo(tdoc['end_at'])
 
 
 def _acm_stat(tdoc, journal):
@@ -45,13 +40,10 @@ def _acm_stat(tdoc, journal):
           'detail': detail}
 
 
-def _acm_show(tdoc, now):
-  return timezone.ensure_tzinfo(now) >= timezone.ensure_tzinfo(tdoc['begin_at'])
-
-
 RULES = {
-  constant.contest.RULE_OI: Rule(_oi_show, _oi_stat, [('score', -1)]),
-  constant.contest.RULE_ACM: Rule(_acm_show, _acm_stat, [('accept', -1), ('time', 1)]),
+  constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)]),
+  constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
+                 _acm_stat, [('accept', -1), ('time', 1)]),
 }
 
 

@@ -5,15 +5,18 @@
     <div class="section">
       <div class="section__body">
         <form method="post">
-          <div class="row"><div class="medium-4 columns">
-            <label>
-              {{ _('Belongs to') }}
-              <input value="{{ _('current domain') }} ({{ handler.domain_id }})" class="textbox" disabled>
-            </label>
-          </div><div class="medium-8 columns">
+          <div class="row"><div class="medium-8 columns">
             <label>
               {{ _('Title') }}
               <input name="title" placeholder="{{ _('title') }}" value="{{ pdoc and pdoc['title'] }}" class="textbox" autofocus>
+            </label>
+          </div><div class="medium-4 columns">
+            <label>
+              {{ _('Settings') }}
+              <br>
+              <label class="checkbox">
+                <input type="checkbox" name="hidden" value="on"{% if pdoc['hidden'] %} checked{% endif %}>{{ _('Hidden') }}
+              </label>
             </label>
           </div></div>
           <div class="row"><div class="columns">
@@ -40,6 +43,8 @@
     {% with owner_udoc=udoc %}
     {% include "partials/problem_sidebar.html" %}
     {% endwith %}
+  {% else %}
+    {% include 'components/md_hint.html' %}
   {% endif %}
   </div>
 </div>
