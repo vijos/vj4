@@ -250,7 +250,6 @@ class DiscussionTailReplyRawHandler(base.Handler):
   async def get(self, *, did: document.convert_doc_id, drid: document.convert_doc_id,
                 drrid: document.convert_doc_id):
     ddoc = await discussion.get(self.domain_id, did)
-    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
-    # TODO(twd2): drrdoc
+    drdoc, drrdoc = await discussion.get_tail_reply(self.domain_id, drid, drrid)
     self.response.content_type = 'text/markdown'
-    self.response.text = ''
+    self.response.text = drrdoc['content']

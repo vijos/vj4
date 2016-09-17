@@ -163,6 +163,8 @@ async def get_dict_solution_status(dom_and_ids, uid, *, fields=None):
     'uid': uid,
     '$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in set(dom_and_ids)],
   }
+  if not query['$or']:
+    return {}
   result = dict()
   async for pssdoc in document.get_multi_status(**query, fields=fields):
     result[(pssdoc['domain_id'], pssdoc['doc_id'])] = pssdoc

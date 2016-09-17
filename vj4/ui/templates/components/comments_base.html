@@ -39,7 +39,7 @@
   <a href="javascript:;" data-tooltip="{{ _('Reply') }}" name="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a>
 {% endif %}
 {% if handler.own(rdoc, reply_edit_self_perm) or handler.has_perm(reply_edit_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-reply" data-form="{{ {'operation': reply_edit_op, comment_ref: doc['doc_id'], reply_ref: 'TODO'}|json }}"><span class="icon icon-edit"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-reply" data-form="{{ {'operation': reply_edit_op, comment_ref: doc['doc_id'], reply_ref: rdoc['_id']}|json }}"><span class="icon icon-edit"></span></a>
 {% endif %}
 {% if handler.own(rdoc, reply_delete_self_perm) or handler.has_perm(reply_delete_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete"><span class="icon icon-delete"></span></a>

@@ -1,6 +1,7 @@
 import asyncio
 import collections
 
+from bson import objectid
 from pymongo import errors
 
 from vj4 import error
@@ -192,6 +193,11 @@ async def add_tail_reply(domain_id: str, drid: document.convert_doc_id,
   validator.check_content(content)
   return await document.push(domain_id, document.TYPE_DISCUSSION_REPLY, drid,
                              'reply', content, owner_uid)
+
+
+@argmethod.wrap
+def get_tail_reply(domain_id: str, drid: document.convert_doc_id, drrid: objectid.ObjectId):
+  return document.get_sub(domain_id, document.TYPE_DISCUSSION_REPLY, drid, 'reply', drrid)
 
 
 async def get_dict_vnodes(domain_id, node_or_pids):
