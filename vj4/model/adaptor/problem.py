@@ -189,6 +189,23 @@ async def reply_solution(domain_id: str, psid: document.convert_doc_id, uid: int
                              'reply', content, uid)
 
 
+@argmethod.wrap
+def get_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: objectid.ObjectId):
+  return document.get_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid)
+
+
+@argmethod.wrap
+def edit_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: objectid.ObjectId,
+                        content: str):
+  return document.set_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid,
+                          content=content)
+
+
+@argmethod.wrap
+def delete_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: objectid.ObjectId):
+  return document.delete_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid)
+
+
 async def get_data(domain_id, pid):
   pdoc = await get(domain_id, pid)
   if not pdoc.get('data', None):
