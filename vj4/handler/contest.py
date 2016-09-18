@@ -216,41 +216,32 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
 
 
 @app.route('/tests/{tid}/status', 'contest_status')
-class ContestStatusHandler(base.Handler):
+class ContestStatusHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
-    now = datetime.datetime.utcnow()
-    if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
     pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
                                         problem.get_dict(pdom_and_ids))
-    tspdict = {}
-    for tsdoc in tsdocs:
-      psdict = {}
-      for pdetail in tsdoc.get('detail', []):
-        psdict[pdetail['pid']] = pdetail
-      tspdict[tsdoc['uid']] = psdict
     path_components = self.build_path(
-      (self.translate('contest_main'), self.reverse_url('contest_main')),
-      (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
-      (self.translate('contest_status'), None))
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
+        (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
+        (self.translate('contest_status'), None))
     self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs,
-                pdict=pdict, udict=udict, tspdict=tspdict,
-                path_components=path_components)
+                udict=udict, pdict=pdict, path_components=path_components)
 
 
 @app.route('/tests/create', 'contest_create')
-class ContestCreateHandler(base.Handler):
+class ContestCreateHandler(base.Handler, ContestStatusMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
-    now = datetime.datetime.utcnow()
-    dt = now.replace(tzinfo=pytz.utc).astimezone(self.timezone)
+    dt = self.now.replace(tzinfo=pytz.utc).astimezone(self.timezone)
     ts = calendar.timegm(dt.utctimetuple())
     # find next quarter
     ts = ts - ts % (15 * 60) + 15 * 60
@@ -276,8 +267,7 @@ class ContestCreateHandler(base.Handler):
       end_at = self.timezone.normalize(begin_at + datetime.timedelta(hours=duration))
     except ValueError as e:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
-    now = datetime.datetime.utcnow()
-    if begin_at <= now:
+    if begin_at <= self.now:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     if begin_at >= end_at:
       raise error.ValidationError('duration')
