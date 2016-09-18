@@ -26,12 +26,12 @@
     </div>
     <div class="media__right middle">
       <div class="section__body">
-        <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="detail-button">{{ _('View Detail') }}</a>
+        <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="detail-button">{{ _('View Details') }}</a>
         <div class="typo text-center">
         {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
           <p><span class="icon icon-check"></span> {{ _('Attended') }}</p>
         {% else %}
-          <p><span class="icon icon-schedule"></span> {{ _('Unattended') }}</p>
+          <p><span class="icon icon-schedule"></span> {{ _('Not Attended') }}</p>
         {% endif %}
         </div>
       </div>

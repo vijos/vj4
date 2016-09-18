@@ -1,7 +1,6 @@
 import asyncio
 import functools
 import hashlib
-from bson import objectid
 
 from vj4 import app
 from vj4 import constant
