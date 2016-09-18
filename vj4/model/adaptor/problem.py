@@ -132,6 +132,15 @@ async def set_solution(domain_id: str, psid: document.convert_doc_id, content: s
   return psdoc
 
 
+def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None):
+  return document.get_multi(domain_id=domain_id,
+                            doc_type=document.TYPE_PROBLEM_SOLUTION,
+                            parent_doc_type=document.TYPE_PROBLEM,
+                            parent_doc_id=pid,
+                            fields=fields) \
+                 .sort([('vote', -1), ('doc_id', -1)])
+
+
 @argmethod.wrap
 async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
                             fields=None, skip: int = 0, limit: int = 0):

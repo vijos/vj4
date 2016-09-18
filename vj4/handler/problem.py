@@ -12,6 +12,7 @@ from vj4.model import domain
 from vj4.model import fs
 from vj4.model import record
 from vj4.model.adaptor import problem
+from vj4.util import pagination
 
 
 @app.route('/p', 'problem_main')
@@ -27,10 +28,10 @@ class ProblemMainHandler(base.OperationHandler):
       f = {'hidden': False}
     else:
       f = {}
-    pcount, pdocs = await asyncio.gather(problem.count(self.domain_id, **f),
-                                         problem.get_list(self.domain_id, **f,
-                                                          skip=(page - 1) * self.PROBLEMS_PER_PAGE,
-                                                          limit=self.PROBLEMS_PER_PAGE))
+    pdocs, ppcount, _ = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
+                                                                    **f) \
+                                                         .sort([('doc_id', 1)]),
+                                                  page, self.PROBLEMS_PER_PAGE)
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       # TODO(iceboy): projection.
       psdict = await problem.get_dict_status(self.domain_id,
@@ -38,7 +39,7 @@ class ProblemMainHandler(base.OperationHandler):
                                              (pdoc['doc_id'] for pdoc in pdocs))
     else:
       psdict = None
-    self.render('problem_main.html', page=page, pcount=pcount, pdocs=pdocs, psdict=psdict)
+    self.render('problem_main.html', page=page, ppcount=ppcount, pdocs=pdocs, psdict=psdict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
