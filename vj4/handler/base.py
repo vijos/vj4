@@ -80,8 +80,7 @@ class HandlerBase(setting.SettingMixin):
       raise error.PrivilegeError(priv)
 
   def udoc_has_perm(self, udoc, perm):
-    if not udoc:
-      return False
+    # TODO(iceboy): Fix caller when udoc=None is passed in.
     role = udoc.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
@@ -89,7 +88,8 @@ class HandlerBase(setting.SettingMixin):
             or self.udoc_has_priv(udoc, builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def udoc_has_priv(self, udoc, priv):
-    return udoc and (priv & udoc['priv']) == priv
+    # TODO(iceboy): Fix caller when udoc=None is passed in.
+    return (priv & udoc['priv']) == priv
 
   def own(self, doc, perm=builtin.PERM_NONE, field='owner_uid', priv=builtin.PRIV_NONE):
     return (doc[field] == self.user['_id']) and self.has_perm(perm) and self.has_priv(priv)
