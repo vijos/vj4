@@ -133,18 +133,6 @@ async def count(domain_id: str, **kwargs):
 
 
 @argmethod.wrap
-async def get_list(domain_id: str, *, fields=None, skip: int=0, limit: int=0, **kwargs):
-  return await document.get_multi(domain_id=domain_id,
-                                  doc_type=document.TYPE_DISCUSSION,
-                                  fields=fields,
-                                  **kwargs) \
-                       .sort([('doc_id', -1)]) \
-                       .skip(skip) \
-                       .limit(limit) \
-                       .to_list(None)
-
-
-@argmethod.wrap
 def get_multi(domain_id: str, *, fields=None, **kwargs):
   return document.get_multi(domain_id=domain_id,
                                   doc_type=document.TYPE_DISCUSSION,

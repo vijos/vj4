@@ -71,20 +71,6 @@ async def get_dict(pdom_and_ids, *, fields=None):
 
 
 @argmethod.wrap
-async def get_list(domain_id: str, fields=None, skip: int=0, limit: int=0, **kwargs):
-  # TODO(iceboy): projection.
-  pdocs = await document.get_multi(domain_id=domain_id,
-                                   doc_type=document.TYPE_PROBLEM,
-                                   fields=fields,
-                                   **kwargs) \
-                        .sort([('doc_id', 1)]) \
-                        .skip(skip) \
-                        .limit(limit) \
-                        .to_list(None)
-  return pdocs
-
-
-@argmethod.wrap
 async def get_status(domain_id: str, pid: document.convert_doc_id, uid: int, fields=None):
   return await document.get_status(domain_id, document.TYPE_PROBLEM, pid, uid, fields=fields)
 
