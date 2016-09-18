@@ -1,15 +1,14 @@
+import accept
 import asyncio
 import calendar
 import functools
 import hmac
 import logging
-from email import utils
-
-import accept
 import markupsafe
 import pytz
 import sockjs
 from aiohttp import web
+from email import utils
 
 from vj4 import app
 from vj4 import error
@@ -54,7 +53,7 @@ class HandlerBase(setting.SettingMixin):
     # TODO(iceboy): UnknownTimeZoneError
     self.timezone = pytz.timezone(self.get_setting('timezone'))
     self.translate = locale.get_translate(self.view_lang)
-    self.datetime_span = _get_datetime_span(self.timezone)
+    self.datetime_span = functools.partial(_datetime_span, timezone=self.timezone)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                         domain_name=self.domain['name'])
@@ -329,17 +328,13 @@ def _build_path(*args, domain_id, domain_name):
 
 
 @functools.lru_cache()
-def _get_datetime_span(tz):
-  @functools.lru_cache()
-  def _datetime_span(dt):
-    if not dt.tzinfo:
-      dt = dt.replace(tzinfo=pytz.utc)
-    return markupsafe.Markup(
+def _datetime_span(dt, timezone):
+  if not dt.tzinfo:
+    dt = dt.replace(tzinfo=pytz.utc)
+  return markupsafe.Markup(
       '<span class="time" data-timestamp="{0}">{1}</span>'.format(
-        calendar.timegm(dt.utctimetuple()),
-        dt.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')))
-
-  return _datetime_span
+          calendar.timegm(dt.utctimetuple()),
+          dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M:%S')))
 
 
 # Decorators
