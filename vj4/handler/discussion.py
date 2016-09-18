@@ -1,5 +1,6 @@
 import asyncio
 import functools
+from bson import objectid
 
 from vj4 import app
 from vj4.model import builtin
@@ -180,13 +181,13 @@ class DiscussionDetailHandler(base.OperationHandler):
                                  drid: document.convert_doc_id, drrid: document.convert_doc_id,
                                  content: str):
     ddoc = await discussion.get(self.domain_id, did)
-    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
-    # TODO(twd2): get drrdoc
-    drrdoc = {}
+    drdoc, drrdoc = await discussion.get_tail_reply(self.domain_id, drid, drrid)
+    if not drdoc or drdoc['parent_doc_id'] != ddoc['doc_id']:
+      raise error.DocumentNotFoundError(domain_id, document.TYPE_DISCUSSION_REPLY, drid)
     if (not self.own(ddoc, builtin.PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION)
         and not self.own(drrdoc, builtin.PERM_EDIT_DISCUSSION_REPLY_SELF)):
       self.check_perm(builtin.PERM_EDIT_DISCUSSION_REPLY)
-    # TODO(twd2): edit
+    await discussion.edit_tail_reply(self.domain_id, drid, drrid, content)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -194,15 +195,15 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post_delete_tail_reply(self, *, did: document.convert_doc_id,
-                                   drid: document.convert_doc_id, drrid: document.convert_doc_id):
+                                   drid: document.convert_doc_id, drrid: objectid.ObjectId):
     ddoc = await discussion.get(self.domain_id, did)
-    drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
-    # TODO(twd2): get drrdoc
-    drrdoc = {}
+    drdoc, drrdoc = await discussion.get_tail_reply(self.domain_id, drid, drrid)
+    if not drdoc or drdoc['parent_doc_id'] != ddoc['doc_id']:
+      raise error.DocumentNotFoundError(domain_id, document.TYPE_DISCUSSION_REPLY, drid)
     if (not self.own(ddoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION)
         and not self.own(drrdoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF)):
       self.check_perm(builtin.PERM_DELETE_DISCUSSION_REPLY)
-    # TODO(twd2): delete
+    await discussion.delete_tail_reply(self.domain_id, drid, drrid)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -248,7 +249,7 @@ class DiscussionTailReplyRawHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, did: document.convert_doc_id, drid: document.convert_doc_id,
-                drrid: document.convert_doc_id):
+                drrid: objectid.ObjectId):
     ddoc = await discussion.get(self.domain_id, did)
     drdoc, drrdoc = await discussion.get_tail_reply(self.domain_id, drid, drrid)
     self.response.content_type = 'text/markdown'
