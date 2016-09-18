@@ -1,6 +1,7 @@
 import asyncio
 import functools
 import hashlib
+from bson import objectid
 
 from vj4 import app
 from vj4 import constant
@@ -183,6 +184,72 @@ class ProblemSolutionHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_edit_solution(self, *, pid: document.convert_doc_id,
+                               psid: document.convert_doc_id, content: str):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    if not self.own(psdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION)
+    psdoc = await problem.set_solution(self.domain_id, psdoc['doc_id'],
+                                       content=content)
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete_solution(self, *, pid: document.convert_doc_id,
+                                 psid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    if not self.own(psdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_SELF):
+      self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION)
+    psdoc = await problem.delete_solution(self.domain_id, psdoc['doc_id'])
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_edit_reply(self, *, pid: document.convert_doc_id,
+                            psid: document.convert_doc_id, psrid: document.convert_doc_id,
+                            content: str):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
+    if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
+      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+    if not self.own(psrdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY)
+    await problem.edit_solution_reply(self.domain_id, psid, psrid, content)
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete_reply(self, *, pid: document.convert_doc_id,
+                            psid: document.convert_doc_id, psrid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
+    if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
+      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+    if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
+      self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
+    await problem.delete_solution_reply(self.domain_id, psid, psrid, content)
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VOTE_PROBLEM_SOLUTION)
   @base.route_argument
   @base.require_csrf_token
@@ -239,14 +306,15 @@ class ProblemSolutionReplyRawHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id, psid: document.convert_doc_id,
-                psrid: document.convert_doc_id):
+                psrid: objectid.ObjectId):
     pdoc = await problem.get(self.domain_id, pid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
-    # TODO(twd2): psrdoc
+    psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
+    if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
+      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     self.response.content_type = 'text/markdown'
-    self.response.text = ''
+    self.response.text = psrdoc['content']
 
 
 @app.route('/p/{pid}/data', 'problem_data')

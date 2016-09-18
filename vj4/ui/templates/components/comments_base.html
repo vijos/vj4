@@ -24,10 +24,10 @@
 {% if handler.has_perm(reply_post_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Reply') }}" name="dczcomments__op-reply-comment" data-form="{{ {'operation': reply_post_op, comment_ref: doc['doc_id']}|json }}"><span class="icon icon-reply"></span></a>
 {% endif %}
-{% if handler.has_perm(comment_edit_perm) %}
+{% if handler.own(doc, comment_edit_self_perm) or handler.has_perm(comment_edit_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-comment" data-form="{{ {'operation': comment_edit_op, comment_ref: doc['doc_id']}|json }}"><span class="icon icon-edit"></span></a>
 {% endif %}
-{% if handler.has_perm(comment_delete_perm) %}
+{% if handler.own(doc, comment_delete_self_perm) or handler.has_perm(comment_delete_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
 {% endif %}
 </div>
@@ -38,10 +38,10 @@
 {% if handler.has_perm(reply_post_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Reply') }}" name="dczcomments__op-reply-reply"><span class="icon icon-reply"></span></a>
 {% endif %}
-{% if handler.has_perm(reply_edit_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-reply" data-form="{{ {'operation': reply_edit_op, comment_ref: doc['doc_id'], reply_ref: 'TODO'}|json }}"><span class="icon icon-edit"></span></a>
+{% if handler.own(rdoc, reply_edit_self_perm) or handler.has_perm(reply_edit_perm) %}
+  <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-reply" data-form="{{ {'operation': reply_edit_op, comment_ref: doc['doc_id'], reply_ref: rdoc['_id']}|json }}"><span class="icon icon-edit"></span></a>
 {% endif %}
-{% if handler.has_perm(reply_delete_perm) %}
+{% if handler.own(rdoc, reply_delete_self_perm) or handler.has_perm(reply_delete_perm) %}
   <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
 {% endif %}
 </div>
