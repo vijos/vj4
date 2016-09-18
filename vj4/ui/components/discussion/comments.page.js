@@ -3,6 +3,8 @@ import CommentBox from '../discussion/CommentBox';
 import delay from '../../utils/delay';
 import { slideDown } from '../../utils/slide';
 
+import * as util from '../../misc/Util';
+
 const $replyTemplate = $('.commentbox-container').eq(0).clone();
 
 function createReplyContainer($parent) {
@@ -112,13 +114,14 @@ async function onCommentClickEdit(mode, ev) {
 
   const $mediaBody = $evTarget.closest('.media__body');
 
-  const opt = {
-    // TODO: retrive original markdown
-    initialText: $mediaBody
+  const raw = await util
+    .get($mediaBody
       .find('.typo')
       .eq(0)
-      .text()
-      .trim(),
+      .attr('data-raw-url'));
+
+  const opt = {
+    initialText: raw,
     form: JSON.parse($evTarget.attr('data-form')),
     mode,
     onCancel: () => {
