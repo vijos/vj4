@@ -148,11 +148,16 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
         raise error.ContestNotLiveError(tdoc['doc_id'])
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
+    tsdoc, udoc = await asyncio.gather(
+        contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
+        user.get_by_uid(tdoc['owner_uid']))
+    attended = tsdoc and tsdoc.get('attend') == 1
     path_components = self.build_path(
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
         (pdoc['title'], None))
-    self.render('problem_detail.html', tdoc=tdoc, pdoc=pdoc,
+    self.render('problem_detail.html', tdoc=tdoc, pdoc=pdoc, tsdoc=tsdoc, udoc=udoc,
+                attended=attended,
                 page_title=pdoc['title'], path_components=path_components)
 
 
@@ -172,6 +177,10 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
       raise error.ContestNotLiveError(tdoc['doc_id'])
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
+    tsdoc, udoc = await asyncio.gather(
+        contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
+        user.get_by_uid(tdoc['owner_uid']))
+    attended = tsdoc and tsdoc.get('attend') == 1
     if (contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
@@ -185,6 +194,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
         (pdoc['title'], self.reverse_url('contest_detail_problem', tid=tid, pid=pid)),
         (self.translate('contest_detail_problem_submit'), None))
     self.json_or_render('problem_submit.html', tdoc=tdoc, pdoc=pdoc, rdocs=rdocs,
+                        tsdoc=tsdoc, udoc=udoc, attended=attended,
                         page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -216,41 +226,32 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
 
 
 @app.route('/tests/{tid}/status', 'contest_status')
-class ContestStatusHandler(base.Handler):
+class ContestStatusHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
-    now = datetime.datetime.utcnow()
-    if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
     pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
                                         problem.get_dict(pdom_and_ids))
-    tspdict = {}
-    for tsdoc in tsdocs:
-      psdict = {}
-      for pdetail in tsdoc.get('detail', []):
-        psdict[pdetail['pid']] = pdetail
-      tspdict[tsdoc['uid']] = psdict
     path_components = self.build_path(
-      (self.translate('contest_main'), self.reverse_url('contest_main')),
-      (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
-      (self.translate('contest_status'), None))
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
+        (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
+        (self.translate('contest_status'), None))
     self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs,
-                pdict=pdict, udict=udict, tspdict=tspdict,
-                path_components=path_components)
+                udict=udict, pdict=pdict, path_components=path_components)
 
 
 @app.route('/tests/create', 'contest_create')
-class ContestCreateHandler(base.Handler):
+class ContestCreateHandler(base.Handler, ContestStatusMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
-    now = datetime.datetime.utcnow()
-    dt = now.replace(tzinfo=pytz.utc).astimezone(self.timezone)
+    dt = self.now.replace(tzinfo=pytz.utc).astimezone(self.timezone)
     ts = calendar.timegm(dt.utctimetuple())
     # find next quarter
     ts = ts - ts % (15 * 60) + 15 * 60
@@ -272,12 +273,11 @@ class ContestCreateHandler(base.Handler):
                  pids: str):
     try:
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-      begin_at = self.timezone.localize(begin_at)
-      end_at = self.timezone.normalize(begin_at + datetime.timedelta(hours=duration))
+      begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
+      end_at = begin_at + datetime.timedelta(hours=duration)
     except ValueError as e:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
-    now = datetime.datetime.utcnow()
-    if begin_at <= now:
+    if begin_at <= self.now:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     if begin_at >= end_at:
       raise error.ValidationError('duration')

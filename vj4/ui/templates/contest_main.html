@@ -27,12 +27,12 @@
     </div>
     <div class="media__right middle">
       <div class="section__body">
-        <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="detail-button">{{ _('View Detail') }}</a>
+        <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="detail-button">{{ _('View Details') }}</a>
         <div class="typo text-center">
         {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
           <p><span class="icon icon-check"></span> {{ _('Attended') }}</p>
         {% else %}
-          <p><span class="icon icon-schedule"></span> {{ _('Unattended') }}</p>
+          <p><span class="icon icon-schedule"></span> {{ _('Not Attended') }}</p>
         {% endif %}
         </div>
       </div>
@@ -59,10 +59,10 @@
         <div class="section__tools">
           {{ _('Show') }}:
           <select class="inline select">
-            <option>All</option>
-            <option>Only OI</option>
-            <option>Only ACM/ICPC</option>
-            <!-- TODO: dynamic list -->
+            <option value="">{{ _('All') }}</option>
+            {% for k, v in vj4.constant.contest.RULE_TEXTS.items() %}
+            <option value="{{ k }}">{{ _('Only {0}').format(_(v)) }}</option>
+            {% endfor %}
           </select>
         </div>
       </div>
@@ -72,8 +72,8 @@
           <div class="media">
             <div class="media__left medium">
               <div class="contest__date numbox">
-                <div class="numbox__num large">4</div>
-                <div class="numbox__text">2016.06</div>
+                <div class="numbox__num large">{{ datetime_span(tdoc['begin_at'], false, '%d') }}</div>
+                <div class="numbox__text">{{ datetime_span(tdoc['begin_at'], false, '%Y-%m') }}</div>
               </div>
             </div>
             <div class="media__body medium">
@@ -97,10 +97,10 @@
                     <span class="icon icon-comment--text"></span> 0
                   </span>
                 </li>
-              {% if True %}
+              {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
                 <li class="contest__info-attended">
                   <span class="v-center">
-                    <span class="icon icon-check"></span> Attended
+                    <span class="icon icon-check"></span> {{ _('Attended') }}
                   </span>
                 </li>
               {% endif %}

@@ -7,11 +7,10 @@
       <h1>{{ tdoc['title'] }}</h1>
     </div>
     <div class="section__body">
-      <!-- TODO -->
-      {% if False %}
-      <span class="icon icon-check"></span> Attended
-      {% elif True %}
-      <span class="icon icon-schedule"></span> Not Attended
+      {% if attended %}{# where's attended? #}
+      <span class="icon icon-check"></span> {{ _('Attended') }}
+      {% else %}
+      <span class="icon icon-schedule"></span> {{ _('Not Attended') }}
       {% endif %}
     </div>
   </a>
@@ -19,15 +18,14 @@
   <div>
     <ol class="menu">
     {% if page_name != 'contest_detail' %}
-      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_detail', tid=tdoc['_id']) }}">
+      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">
         <span class="icon icon-award"></span> {{ _('View Contest') }}
       </a></li>
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_ATTEND_CONTEST) %}
     {% if not attended %}
       <li class="menu__item">
-        <form method="POST">
-          <!-- TODO -->
+        <form action="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" method="POST">
           <input type="hidden" name="operation" value="attend">
           <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
           <button class="menu__link" type="submit">
