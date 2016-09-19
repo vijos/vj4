@@ -9,6 +9,7 @@ from vj4.model import domain
 from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.handler import base
+from vj4.util import pagination
 
 
 @app.route('/discuss', 'discussion_main')
@@ -20,17 +21,14 @@ class DiscussionMainHandler(base.Handler):
   @base.sanitize
   async def get(self, *, page: int=1):
     # TODO(iceboy): continuation based pagination.
-    skip = (page - 1) * self.DISCUSSIONS_PER_PAGE
-    limit = self.DISCUSSIONS_PER_PAGE
-    nodes, ddocs, dcount = await asyncio.gather(
+    nodes, (ddocs, dpcount, _) = await asyncio.gather(
         discussion.get_nodes(self.domain_id),
-        discussion.get_list(self.domain_id, skip=skip, limit=limit),
-        discussion.count(self.domain_id))
+        pagination.paginate(discussion.get_multi(self.domain_id), page, self.DISCUSSIONS_PER_PAGE))
     udict, vndict = await asyncio.gather(
         user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
         discussion.get_dict_vnodes(self.domain_id, (ddoc['parent_doc_id'] for ddoc in ddocs)))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
-                udict=udict, vndict=vndict, page=page, dcount=dcount)
+                udict=udict, vndict=vndict, page=page, dpcount=dpcount)
 
 
 @app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
@@ -44,13 +42,8 @@ class DiscussionNodeHandler(base.Handler):
   async def get(self, *, node_or_pid: document.convert_doc_id, page: int=1):
     nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_pid)
     # TODO(iceboy): continuation based pagination.
-    skip = (page - 1) * self.DISCUSSIONS_PER_PAGE
-    limit = self.DISCUSSIONS_PER_PAGE
-    ddocs, dcount = await asyncio.gather(
-        discussion.get_list(self.domain_id, skip=skip, limit=limit,
-                            parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id']),
-        discussion.count(self.domain_id,
-                         parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id']))
+    ddocs, dpcount, _ = await pagination.paginate(discussion.get_multi(self.domain_id),
+                                                  page, self.DISCUSSIONS_PER_PAGE)
     udict, vndict = await asyncio.gather(
         user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
         discussion.get_dict_vnodes(self.domain_id, (ddoc['parent_doc_id'] for ddoc in ddocs)))
@@ -58,7 +51,8 @@ class DiscussionNodeHandler(base.Handler):
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], None))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode, ddocs=ddocs,
-                udict=udict, vndict=vndict, page=page, dcount=dcount, path_components=path_components)
+                udict=udict, vndict=vndict, page=page, dpcount=dpcount,
+                path_components=path_components)
 
 
 @app.route('/discuss/{node_or_pid}/create', 'discussion_create')
