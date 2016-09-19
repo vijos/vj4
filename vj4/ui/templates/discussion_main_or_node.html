@@ -33,7 +33,7 @@
         </li>
       {% endfor %}
       </ol>
-      {{ paginator.render(page, (dcount + handler.DISCUSSIONS_PER_PAGE - 1) // handler.DISCUSSIONS_PER_PAGE) }}
+      {{ paginator.render(page, dpcount) }}
     {% endif %}
     </div>
   </div>
