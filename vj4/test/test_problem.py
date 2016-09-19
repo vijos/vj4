@@ -91,7 +91,7 @@ class ProblemSolutionTest(base.DatabaseTestCase):
     psid = await problem.add_solution(DOMAIN_ID, PID, UID2, CONTENT2)
     psdoc = await problem.get_solution(DOMAIN_ID, psid)
     self.assertEqual(psdoc['reply'], [])
-    psdoc = await problem.reply_solution(DOMAIN_ID, psid, UID, CONTENT)
+    psdoc, psrid = await problem.reply_solution(DOMAIN_ID, psid, UID, CONTENT)
     self.assertEqual(len(psdoc['reply']), 1)
     self.assertEqual(psdoc['reply'][0]['content'], CONTENT)
     self.assertEqual(psdoc['reply'][0]['owner_uid'], UID)

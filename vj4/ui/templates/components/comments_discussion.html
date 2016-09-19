@@ -1,5 +1,5 @@
 {% import "components/user.html" as user with context %}
-{% macro reply(mode_create = false, udoc, doc = {}, rdoc = {}) %}
+{% macro reply(mode_create, udoc, doc = {}, rdoc = {}) %}
 <li class="dczcomments__reply{% if mode_create %} commentbox-container{% endif %}">
   <div class="media">
     <div class="media__left top">
@@ -10,11 +10,11 @@
       <div class="clearfix">
         <div class="dczcomments__supplementary">
           {{ user.render_inline(udoc, dudict[udoc['_id']], avatar=false) }}
-          <span class="v-center">@ {{ datetime_span(rdoc['at']) }}</span>
+          <span class="v-center">@ {{ datetime_span(rdoc['_id'].generation_time) }}</span>
         </div>
         {{ comment_base.reply_operations(doc, rdoc) }}
       </div>
-      <div class="typo no-heading" data-emoji-enabled>
+      <div class="typo no-heading" data-emoji-enabled data-raw-url="{{ reverse_url('discussion_tail_reply_raw', did=doc['parent_doc_id'], drid=doc['doc_id'], drrid=rdoc['_id']) }}">
         {{ rdoc['content']|markdown }}
       </div>
       <div class="commentbox-edit-target"></div>
@@ -26,7 +26,7 @@
 </li>
 {% endmacro %}
 
-{% macro comment(mode_create = false, udoc, doc = {}) %}
+{% macro comment(mode_create, udoc, doc = {}) %}
 <li class="dczcomments__item">
   <div class="media">
     <div class="media__left top">
@@ -41,7 +41,7 @@
         </div>
         {{ comment_base.comment_operations(doc) }}
       </div>
-      <div class="typo no-heading" data-emoji-enabled>
+      <div class="typo no-heading" data-emoji-enabled data-raw-url="{{ reverse_url('discussion_reply_raw', did=doc['parent_doc_id'], drid=doc['doc_id']) }}">
         {{ doc['content']|markdown }}
       </div>
       <div class="commentbox-edit-target"></div>

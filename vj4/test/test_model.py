@@ -16,6 +16,7 @@ from vj4.model import user
 from vj4.test import base
 
 CONTENT = 'dummy_content'
+CONTENT2 = 'dummy_dummy'
 DUP_UID = 0
 DUP_UNAME = 'GuESt'
 UID = 22
@@ -24,6 +25,7 @@ OWNER_UID = 22
 DOMAIN_ID = 'dummy_domain'
 DOMAIN_NAME = 'Dummy Domain'
 DOC_TYPE = document.TYPE_PROBLEM
+SUB_DOC_KEY = 'subsub'
 STATUS_KEY = 'dummy_key'
 ROLES = {'dummy': 777}
 OWNER_UID2 = 222
@@ -89,6 +91,27 @@ class DocumentTest(base.DatabaseTestCase):
     self.assertFalse('content' in doc)
     with self.assertRaises(StopAsyncIteration):
       await docs.__anext__()
+
+  @base.wrap_coro
+  async def test_sub_doc(self):
+    doc_id = await document.add(DOMAIN_ID, CONTENT, OWNER_UID, DOC_TYPE, **{SUB_DOC_KEY: []})
+    doc, sid = await document.push(DOMAIN_ID, DOC_TYPE, doc_id, SUB_DOC_KEY, CONTENT, OWNER_UID)
+    self.assertEqual(doc[SUB_DOC_KEY][0]['_id'], sid)
+    self.assertEqual(doc[SUB_DOC_KEY][0]['content'], CONTENT)
+    self.assertEqual(doc[SUB_DOC_KEY][0]['owner_uid'], OWNER_UID)
+    doc, sdoc = await document.get_sub(DOMAIN_ID, DOC_TYPE, doc_id, SUB_DOC_KEY, sid)
+    self.assertEqual(sdoc['_id'], sid)
+    self.assertEqual(sdoc['content'], CONTENT)
+    self.assertEqual(sdoc['owner_uid'], OWNER_UID)
+    doc = await document.set_sub(DOMAIN_ID, DOC_TYPE, doc_id, SUB_DOC_KEY, sid,
+                                 content=CONTENT2)
+    self.assertEqual(doc[SUB_DOC_KEY][0]['content'], CONTENT2)
+    doc, sdoc = await document.get_sub(DOMAIN_ID, DOC_TYPE, doc_id, SUB_DOC_KEY, sid)
+    self.assertEqual(sdoc['content'], CONTENT2)
+    doc, sid2 = await document.push(DOMAIN_ID, DOC_TYPE, doc_id, SUB_DOC_KEY, CONTENT, OWNER_UID)
+    self.assertEqual(len(doc[SUB_DOC_KEY]), 2)
+    doc = await document.delete_sub(DOMAIN_ID, DOC_TYPE, doc_id, SUB_DOC_KEY, sid)
+    self.assertEqual(len(doc[SUB_DOC_KEY]), 1)
 
   @base.wrap_coro
   async def test_capped_inc_status(self):

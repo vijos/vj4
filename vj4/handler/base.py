@@ -1,15 +1,14 @@
+import accept
 import asyncio
 import calendar
 import functools
 import hmac
 import logging
-from email import utils
-
-import accept
 import markupsafe
 import pytz
 import sockjs
 from aiohttp import web
+from email import utils
 
 from vj4 import app
 from vj4 import error
@@ -21,7 +20,6 @@ from vj4.model import token
 from vj4.model import user
 from vj4.model.adaptor import setting
 from vj4.service import mailer
-from vj4.util import timezone
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
@@ -52,9 +50,10 @@ class HandlerBase(setting.SettingMixin):
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
     self.view_lang = self.get_setting('view_lang')
-    self.timezone = self.get_setting('timezone')
+    # TODO(iceboy): UnknownTimeZoneError
+    self.timezone = pytz.timezone(self.get_setting('timezone'))
     self.translate = locale.get_translate(self.view_lang)
-    self.datetime_span = _get_datetime_span(self.timezone)
+    self.datetime_span = functools.partial(_datetime_span, timezone=self.timezone)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                         domain_name=self.domain['name'])
@@ -80,6 +79,7 @@ class HandlerBase(setting.SettingMixin):
       raise error.PrivilegeError(priv)
 
   def udoc_has_perm(self, udoc, perm):
+    # TODO(iceboy): Fix caller when udoc=None is passed in.
     role = udoc.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
@@ -87,6 +87,7 @@ class HandlerBase(setting.SettingMixin):
             or self.udoc_has_priv(udoc, builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def udoc_has_priv(self, udoc, priv):
+    # TODO(iceboy): Fix caller when udoc=None is passed in.
     return (priv & udoc['priv']) == priv
 
   def own(self, doc, perm=builtin.PERM_NONE, field='owner_uid', priv=builtin.PRIV_NONE):
@@ -218,9 +219,10 @@ class Handler(web.View, HandlerBase):
     self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
     self.response.text = json.encode(obj)
 
-  async def binary(self, data):
+  async def binary(self, data, type='application/octet-stream'):
     self.response = web.StreamResponse()
     self.response.content_length = len(data)
+    self.response.content_type = type
     await self.response.prepare(self.request)
     self.response.write(data)
 
@@ -326,18 +328,13 @@ def _build_path(*args, domain_id, domain_name):
 
 
 @functools.lru_cache()
-def _get_datetime_span(tzname):
-  tz = pytz.timezone(tzname)
-
-  @functools.lru_cache()
-  def _datetime_span(dt):
-    dt = timezone.ensure_tzinfo(dt)
-    return markupsafe.Markup(
+def _datetime_span(dt, timezone):
+  if not dt.tzinfo:
+    dt = dt.replace(tzinfo=pytz.utc)
+  return markupsafe.Markup(
       '<span class="time" data-timestamp="{0}">{1}</span>'.format(
-        int(dt.astimezone(pytz.utc).timestamp()),
-        dt.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')))
-
-  return _datetime_span
+          calendar.timegm(dt.utctimetuple()),
+          dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M:%S')))
 
 
 # Decorators

@@ -1,6 +1,7 @@
 import asyncio
 import collections
 
+from bson import objectid
 from pymongo import errors
 
 from vj4 import error
@@ -164,6 +165,18 @@ async def get_reply(domain_id: str, drid: document.convert_doc_id, did=None):
 
 
 @argmethod.wrap
+async def edit_reply(domain_id: str, drid: document.convert_doc_id, content: str):
+  validator.check_content(content)
+  drdoc = await document.set(domain_id, document.TYPE_DISCUSSION_REPLY, drid, content=content)
+  return drdoc
+
+
+@argmethod.wrap
+async def delete_reply(domain_id: str, drid: document.convert_doc_id):
+  return await document.delete(domain_id, document.TYPE_DISCUSSION_REPLY, drid)
+
+
+@argmethod.wrap
 async def get_list_reply(domain_id: str, did: document.convert_doc_id, *, fields=None):
   return await document.get_multi(domain_id=domain_id,
                                   doc_type=document.TYPE_DISCUSSION_REPLY,
@@ -180,6 +193,23 @@ async def add_tail_reply(domain_id: str, drid: document.convert_doc_id,
   validator.check_content(content)
   return await document.push(domain_id, document.TYPE_DISCUSSION_REPLY, drid,
                              'reply', content, owner_uid)
+
+
+@argmethod.wrap
+def get_tail_reply(domain_id: str, drid: document.convert_doc_id, drrid: objectid.ObjectId):
+  return document.get_sub(domain_id, document.TYPE_DISCUSSION_REPLY, drid, 'reply', drrid)
+
+
+@argmethod.wrap
+def edit_tail_reply(domain_id: str, drid: document.convert_doc_id, drrid: objectid.ObjectId,
+                    content: str):
+  return document.set_sub(domain_id, document.TYPE_DISCUSSION_REPLY, drid, 'reply', drrid,
+                          content=content)
+
+
+@argmethod.wrap
+def delete_tail_reply(domain_id: str, drid: document.convert_doc_id, drrid: objectid.ObjectId):
+  return document.delete_sub(domain_id, document.TYPE_DISCUSSION_REPLY, drid, 'reply', drrid)
 
 
 async def get_dict_vnodes(domain_id, node_or_pids):

@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import hashlib
 from bson import objectid
 
 from vj4 import app
@@ -9,6 +10,7 @@ from vj4.model import builtin
 from vj4.model import user
 from vj4.model import document
 from vj4.model import domain
+from vj4.model import fs
 from vj4.model import record
 from vj4.model.adaptor import problem
 
@@ -181,6 +183,72 @@ class ProblemSolutionHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_edit_solution(self, *, pid: document.convert_doc_id,
+                               psid: document.convert_doc_id, content: str):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    if not self.own(psdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION)
+    psdoc = await problem.set_solution(self.domain_id, psdoc['doc_id'],
+                                       content=content)
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete_solution(self, *, pid: document.convert_doc_id,
+                                 psid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    if not self.own(psdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_SELF):
+      self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION)
+    psdoc = await problem.delete_solution(self.domain_id, psdoc['doc_id'])
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_edit_reply(self, *, pid: document.convert_doc_id,
+                            psid: document.convert_doc_id, psrid: document.convert_doc_id,
+                            content: str):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
+    if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
+      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+    if not self.own(psrdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY)
+    await problem.edit_solution_reply(self.domain_id, psid, psrid, content)
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete_reply(self, *, pid: document.convert_doc_id,
+                            psid: document.convert_doc_id, psrid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
+    if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
+      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+    if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
+      self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
+    await problem.delete_solution_reply(self.domain_id, psid, psrid, content)
+    self.json_or_redirect(self.url)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VOTE_PROBLEM_SOLUTION)
   @base.route_argument
   @base.require_csrf_token
@@ -217,6 +285,37 @@ class ProblemSolutionHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
+@app.route('/p/{pid}/solution/{psid:\w{24}}/raw', 'problem_solution_raw')
+class ProblemSolutionRawHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id, psid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
+    self.response.content_type = 'text/markdown'
+    self.response.text = psdoc['content']
+
+
+@app.route('/p/{pid}/solution/{psid:\w{24}}/{psrid:\w{24}}/raw', 'problem_solution_reply_raw')
+class ProblemSolutionReplyRawHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id, psid: document.convert_doc_id,
+                psrid: objectid.ObjectId):
+    pdoc = await problem.get(self.domain_id, pid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
+    if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
+      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+    self.response.content_type = 'text/markdown'
+    self.response.text = psrdoc['content']
+
+
 @app.route('/p/{pid}/data', 'problem_data')
 class ProblemDataHandler(base.Handler):
   @base.route_argument
@@ -231,7 +330,7 @@ class ProblemDataHandler(base.Handler):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     grid_out = await problem.get_data(self.domain_id, pid)
 
-    self.response.content_type = grid_out.content_type or 'application/octet-stream'
+    self.response.content_type = grid_out.content_type or 'application/zip'
     self.response.last_modified = grid_out.upload_date
     self.response.headers['Etag'] = '"{0}"'.format(grid_out.md5)
     # TODO(iceboy): Handle If-Modified-Since & If-None-Match here.
@@ -267,8 +366,9 @@ class ProblemCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, title: str, content: str):
-    pid = await problem.add(self.domain_id, title, content, self.user['_id'])
+  async def post(self, *, title: str, content: str, hidden: bool=False):
+    pid = await problem.add(self.domain_id, title, content, self.user['_id'],
+                            hidden=hidden)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
@@ -295,9 +395,9 @@ class ProblemEditHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
-    # TODO(twd2): new domain_id
-    await problem.edit(self.domain_id, pid, title=title, content=content)
+  async def post(self, *, pid: document.convert_doc_id, title: str, content: str,
+                 hidden: bool=False):
+    await problem.edit(self.domain_id, pid, title=title, content=content, hidden=hidden)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
@@ -318,6 +418,42 @@ class ProblemSettingsHandler(base.Handler):
         (self.translate('problem_settings'), None))
     self.render('problem_settings.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
+
+
+@app.route('/p/{pid}/upload', 'problem_upload')
+class ProblemSettingsHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, pid: document.convert_doc_id):
+    pdoc = await problem.get(self.domain_id, pid)
+    if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
+        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
+      self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
+    self.render('problem_upload.html', pdoc=pdoc)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, pid: document.convert_doc_id, file: lambda _: _):
+    pdoc = await problem.get(self.domain_id, pid)
+    if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
+        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
+      self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
+    if file:
+      data = file.file.read()
+      md5 = hashlib.md5(data).hexdigest()
+      fid = await fs.link_by_md5(md5)
+      if not fid:
+        fid = await fs.add_data(data)
+      if pdoc.get('data'):
+        await fs.unlink(pdoc['data'])
+      await problem.set_data(self.domain_id, pid, fid)
+    self.json_or_redirect(self.url)
 
 
 @app.route('/p/{pid}/statistics', 'problem_statistics')
