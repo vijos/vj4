@@ -15,7 +15,7 @@
             {{ datetime_span(ddoc['_id'].generation_time) }}
           </li>
         </div>
-        <div class="typo topic__content" data-emoji-enabled>
+        <div class="typo topic__content" data-emoji-enabled data-raw-url="{{ reverse_url('discussion_detail_raw', did=ddoc['_id']) }}">
           {{ ddoc['content']|markdown }}
         </div>
       </div>
@@ -47,11 +47,15 @@
           comment_ref = 'drid',
           reply_ref = 'drrid',
           comment_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
-          comment_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
-          comment_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
+          comment_edit_perm = vj4.model.builtin.PERM_NONE if handler.own(ddoc, vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION) else vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+          comment_edit_self_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY_SELF,
+          comment_delete_perm = vj4.model.builtin.PERM_NONE if handler.own(ddoc, vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION) else vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
+          comment_delete_self_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF,
           reply_post_perm = vj4.model.builtin.PERM_REPLY_DISCUSSION,
-          reply_edit_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
-          reply_delete_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY
+          reply_edit_perm = vj4.model.builtin.PERM_NONE if handler.own(ddoc, vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION) else vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY,
+          reply_edit_self_perm = vj4.model.builtin.PERM_EDIT_DISCUSSION_REPLY_SELF,
+          reply_delete_perm = vj4.model.builtin.PERM_NONE if handler.own(ddoc, vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION) else vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
+          reply_delete_self_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF
         ) }}
       </div>
     </div>

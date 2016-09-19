@@ -133,6 +133,12 @@ async def set_solution(domain_id: str, psid: document.convert_doc_id, content: s
 
 
 @argmethod.wrap
+async def delete_solution(domain_id: str, psid: document.convert_doc_id):
+  # TODO(twd2): -num_liked
+  return await document.delete(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+
+
+@argmethod.wrap
 async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
                             fields=None, skip: int = 0, limit: int = 0):
   return await document.get_multi(domain_id=domain_id,
@@ -157,6 +163,8 @@ async def get_dict_solution_status(dom_and_ids, uid, *, fields=None):
     'uid': uid,
     '$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in set(dom_and_ids)],
   }
+  if not query['$or']:
+    return {}
   result = dict()
   async for pssdoc in document.get_multi_status(**query, fields=fields):
     result[(pssdoc['domain_id'], pssdoc['doc_id'])] = pssdoc
@@ -179,6 +187,23 @@ async def reply_solution(domain_id: str, psid: document.convert_doc_id, uid: int
   validator.check_content(content)
   return await document.push(domain_id, document.TYPE_PROBLEM_SOLUTION, psid,
                              'reply', content, uid)
+
+
+@argmethod.wrap
+def get_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: objectid.ObjectId):
+  return document.get_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid)
+
+
+@argmethod.wrap
+def edit_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: objectid.ObjectId,
+                        content: str):
+  return document.set_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid,
+                          content=content)
+
+
+@argmethod.wrap
+def delete_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: objectid.ObjectId):
+  return document.delete_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid)
 
 
 async def get_data(domain_id, pid):

@@ -42,7 +42,7 @@ export function post(url, dataOrForm = {}) {
 }
 
 export function get(url, qs = {}) {
-  return ajax({
+  return $.ajax({
     url,
     data: qs,
     method: 'get',
