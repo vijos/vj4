@@ -2,8 +2,13 @@ import tpl from '../../utils/tpl';
 import zIndexManager from '../../utils/zIndexManager';
 
 let lastNotification = null;
+let autoHideTimer = null;
 
 export default class Notification {
+
+  static success(message, duration) {
+    Notification.show({ type: 'success', message, duration });
+  }
 
   static info(message, duration) {
     Notification.show({ type: 'info', message, duration });
@@ -17,7 +22,7 @@ export default class Notification {
     Notification.show({ type: 'error', message, duration });
   }
 
-  static show({ message, type, duration }) {
+  static show({ message, type = 'info', duration = 3000 }) {
     if (lastNotification) {
       Notification.hide();
     }
@@ -27,11 +32,16 @@ export default class Notification {
     $n.width(); // force reflow
     $n.removeClass('hide');
     lastNotification = $n;
+    autoHideTimer = setTimeout(Notification.hide, duration);
   }
 
   static hide() {
     if (!lastNotification) {
       return;
+    }
+    if (autoHideTimer) {
+      clearTimeout(autoHideTimer);
+      autoHideTimer = null;
     }
     const $n = lastNotification;
     $n.addClass('hide');

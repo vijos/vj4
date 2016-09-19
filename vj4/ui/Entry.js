@@ -21,9 +21,6 @@ import './misc/nothing.styl';
 import { PageLoader } from './misc/PageLoader';
 import delay from './utils/delay';
 
-import Notification from './components/notification';
-window.Notification = Notification;
-
 const pageLoader = new PageLoader();
 
 const currentPage = pageLoader.getNamedPage(document.documentElement.getAttribute('data-page'));
