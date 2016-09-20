@@ -1,14 +1,7 @@
 .contest__supplementary
-  font-size: rem($font-size-secondary)
-  line-height: 1
-  color: lighten($text-color, 50%)
-
   li
     display: inline-block
     margin-right: rem(10px)
-
-  a, a:visited, a:hover
-    color: lighten($text-color, 60%)
 
 .contest-type-tag
 .contest-tag
@@ -24,13 +17,16 @@
     color: #FFF !important
 
 .contest-type-tag
+  &, &:visited
+    &, .supplementary &
+      color: #FFF
+
   .icon
     margin-right: rem(5px)
 
 for key, value in $contest-color
   .contest-type--{key} .contest-type-tag
     background: value
-    color: #FFF
 
     &:hover
       background: lighten(value, 20%)
