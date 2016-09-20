@@ -35,17 +35,17 @@ dd
     overflow: hidden
     dt
       float: left
-      width: 40%
+      width: 37%
       overflow: hidden
       clear: left
-      text-align: right
+      text-align: left
       text-overflow: ellipsis
       white-space: nowrap
       box-sizing: border-box
       padding-right: rem(10px)
     dd
       float: left
-      width: 60%
+      width: 62%
 
     dt, dd
       line-height: 1.2rem
@@ -144,7 +144,8 @@ sub
   bottom: -0.25em
 
 a, .link
-  color: $primary-color
+  &, &:visited, &:hover, &:active
+    color: $text-color
 
   &:hover
     text-decoration: underline
@@ -154,6 +155,15 @@ ins, a, .link
 
 u, .typo-u
   text-decoration: underline
+
+.supplementary
+  font-size: rem($font-size-secondary)
+  line-height: 1
+  color: $supplementary-color
+
+  a
+    &, &:visited, &:hover
+      color: $supplementary-link-color
 
 mark
   background: #fffdd1
@@ -188,6 +198,10 @@ small, figcaption
 
 .typo
   word-wrap()
+
+.typo a, .typo .link, .typo-a
+  &, &:visited, &:active, &:hover
+    color: $primary-color
 
 .typo p, .typo dl, .typo form, .typo hr, .typo table
   padding-top: 0.3em
