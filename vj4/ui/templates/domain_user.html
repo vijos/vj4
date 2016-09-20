@@ -67,7 +67,7 @@
             {{ user.render_inline(udict[handler.domain['owner_uid']], badge=false) }}
           </td>
           <td class="col--role">
-            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', '({0})'.format(_('owner')))], 'role', value='', disabled=true, class='compact') }}
+            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', '({0})'.format(_('owner')))], 'role', value='', disabled=true, extra_class='compact') }}
           </td>
         </tr>
         {% for role in roles %}
@@ -86,7 +86,7 @@
             {{ user.render_inline(udict[rudoc['uid']], badge=false) }}
           </td>
           <td class="col--role">
-            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', '({0})'.format(_('delete')))] + roles_with_text, 'role', value=rudoc['role'], class='compact') }}
+            <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select([('', '({0})'.format(_('delete')))] + roles_with_text, 'role', value=rudoc['role'], extra_class='compact') }}
           </td>
         </tr>
         {% endif %}
