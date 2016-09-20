@@ -1,0 +1,4 @@
+{% macro render_problem_title(pdoc, show_invisible_flag=True) %}
+<a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">{{ pdoc['title'] }}</a>
+{% if pdoc['hidden'] and show_invisible_flag %} <span class="text-orange">({{ _('Hidden') }})</span>{% endif %}
+{% endmacro %}

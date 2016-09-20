@@ -1,3 +1,5 @@
+{% import "components/record.html" as record with context %}
+{% import "components/problem.html" as problem with context %}
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
@@ -34,10 +36,7 @@
             <tr>
             {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
             {% if psdoc['rid'] %}
-              <td class="col--status record-status--border {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}">
-                <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}"></span>
-                <a href="{{ reverse_url('record_detail', rid=psdoc['rid']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[psdoc['status']] }}">{{ vj4.constant.record.STATUS_TEXTS[psdoc['status']] }}</a>
-              </td>
+              {{ record.render_status_td(psdoc) }}
             {% else %}
               <td class="col--status record-status--border">
               </td>
@@ -55,10 +54,7 @@
                   </button>
                 </form>
               {% endif %}
-                <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
-                  {{ pdoc['title'] }}
-                </a>
-                {% if pdoc['hidden'] %} <span class="text-orange">({{ _('Hidden') }})</span>{% endif %}
+                {{ problem.render_problem_title(pdoc) }}
               </td>
               <td class="col--submit_n">{{ pdoc['num_submit'] }}</td>
               <td class="col--ac_rate">{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int if pdoc['num_submit'] > 0 else _('?') }}</td>
