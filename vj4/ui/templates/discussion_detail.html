@@ -5,7 +5,7 @@
   <div class="medium-9 columns">
     <div class="section">
       <div class="section__body">
-        <div class="discussion__supplementary">
+        <div class="supplementary discussion__supplementary">
           <li>
             <a class="v-center discussion-node-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
           </li>
@@ -19,7 +19,7 @@
           {{ ddoc['content']|markdown }}
         </div>
       </div>
-      <div class="section__footer topic__footer">
+      <div class="section__footer supplementary">
         {{ _('{0} views').format(ddoc['views']) }} ·
       {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
         <form class="form--inline" method="post">

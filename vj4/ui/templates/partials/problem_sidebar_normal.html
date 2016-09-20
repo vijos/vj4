@@ -65,29 +65,36 @@
     <h1 class="section__title">{{ _('Information') }}</h1>
   </div>
   <div class="section__body typo">
-    <p>
-      {{ _('Status') }}:
-    {# TODO(twd2): check contest #}
-    {% if pdoc['psdoc']['status'] %}
-      <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}"></span>
-      <a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid'], domain_id=pdoc['psdoc']['domain_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">
-        {{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}
-      </a>
-    {% else %}
-      {{ _('(None)') }}
+    <dl class="large horizontal">
+      <dt>{{ _('Status') }}</dt>
+      <dd>
+        {# TODO(twd2): check contest #}
+      {% if pdoc['psdoc']['status'] %}
+        <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}"></span>
+        <a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid'], domain_id=pdoc['psdoc']['domain_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">
+          {{ vj4.constant.record.STATUS_TEXTS[pdoc['psdoc']['status']] }}
+        </a>
+      {% else %}
+        {{ _('(None)') }}
+      {% endif %}
+      </dd>
+      <dt>{{ _('Difficulty') }}</dt>
+      <dd>{{ pdoc['difficulty']|default(_('(None)')) }}</dd>
+      <dt>{{ _('Vote') }}</dt>
+      <dd><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</dd>
+      <dt>{{ _('Category') }}</dt>
+      <dd>动态规划 | 树形动规、高精度</dd>
+      <dt>{{ _('Submit') }}</dt>
+      <dd>{{ pdoc['num_submit'] }}</dd>
+      <dt>{{ _('Accepted') }}</dt>
+      <dd>{{ pdoc['num_accept'] }}</dd>
+      <dt>{{ _('Accepted Rate') }}</dt>
+      <dd>{% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</dd>
+    {% if pdoc['owner_uid'] != 0 %}
+      <dt>{{ _('Uploaded By') }}</dt>
+      <dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
     {% endif %}
-    </p>
-    <p>{{ _('Difficulty') }}: {{ pdoc['difficulty']|default(_('(None)')) }}</p>
-    <p>{{ _('Vote') }}: <span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</p>
-    <p>{{ _('Category') }}: 动态规划 | 树形动规、高精度</p>
-    <p>{{ _('Submit') }}: {{ pdoc['num_submit'] }}</p>
-    <p>{{ _('Accepted') }}: {{ pdoc['num_accept'] }}</p>
-    <p>{{ _('Accepted Rate') }}: {% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</p>
-  {% if pdoc['owner_uid'] != 0 %}
-    <p><span class="v-center">{{ _('Uploaded By') }}:</span>
-    {{ user.render_inline(owner_udoc, badge=false) }}
-    </p>
-  {% endif %}
+    </dl>
   </div>
 </div>
 <div class="section side">

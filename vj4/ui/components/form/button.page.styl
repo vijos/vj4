@@ -10,10 +10,13 @@
   display: inline-block
   outline: 0
   margin: 0 0 1rem
-  color: $text-color
   transition: background-color .2s, box-shadow .5s
   transition-timing-function: ease-out-sine
   cursor: pointer
+
+  &, &:visited, &:hover
+    &, .typo &
+      color: $text-color
 
   &:hover, &:focus
     background-color: darken($default-color, 5%)
@@ -33,7 +36,10 @@
   &.primary
     border-color: $primary-color
     background-color: $primary-color
-    color: #FFF
+
+    &, &:visited, &:hover
+      &, .typo &
+        color: #FFF
 
     &:hover
       background-color: lighten(saturate($primary-color, 30%), 10%)
@@ -44,10 +50,14 @@
   line-height: rem($form-control-height - 4)
   border: 2px solid #FFF
   background: none
-  color: #FFF
+
+  &, &:visited
+    &, .typo &
+      color: #FFF
 
   &:hover, &:focus
     border-color: $immersive-primary-color
-    color: $immersive-primary-color
     background: none
     box-shadow: none
+    &, .typo &
+      color: $immersive-primary-color
