@@ -5,7 +5,7 @@
     <div class="media__body top">
     {% if not mode_create %}
       <div class="clearfix">
-        <div class="dczcomments__supplementary">
+        <div class="supplementary dczcomments__supplementary">
           {{ user.render_inline(udoc, badge=false) }}
           <span class="v-center">@ {{ datetime_span(rdoc['_id'].generation_time) }}</span>
         </div>
@@ -17,7 +17,7 @@
       <div class="commentbox-edit-target"></div>
     {% else %}
       <div class="clearfix">
-        <div class="dczcomments__supplementary">
+        <div class="supplementary dczcomments__supplementary">
           {{ user.render_inline(udoc, badge=false) }}
         </div>
       </div>
@@ -63,7 +63,7 @@
     <div class="media__body top">
     {% if not mode_create %}
       <div class="clearfix">
-        <div class="dczcomments__supplementary">
+        <div class="supplementary dczcomments__supplementary">
           {{ user.render_inline(udoc, dudict[udoc['_id']]) }}
           <span class="v-center">@ {{ datetime_span(doc['_id'].generation_time) }}</span>
         </div>
@@ -80,7 +80,7 @@
       </ul>
     {% else %}
       <div class="clearfix">
-        <div class="dczcomments__supplementary">
+        <div class="supplementary dczcomments__supplementary">
           {{ user.render_inline(udoc, dudict[udoc['_id']]) }}
         </div>
       </div>
