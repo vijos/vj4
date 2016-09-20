@@ -8,7 +8,7 @@
       <h2 class="section__title">{{ category }}</h2>
       <ol>
       {% for node in nodes %}
-        <li><a href="{{ reverse_url('discussion_node', node_or_pid=node['name']) }}">{{ node['name'] }}</a></li>
+        <li><a class="typo-a" href="{{ reverse_url('discussion_node', node_or_pid=node['name']) }}">{{ node['name'] }}</a></li>
       {% endfor %}
       </ol>
     </div>
