@@ -2,6 +2,7 @@ import { AutoloadPage } from '../../misc/PageLoader';
 import CommentBox from '../discussion/CommentBox';
 import delay from '../../utils/delay';
 import { slideDown } from '../../utils/slide';
+import 'jquery.easing';
 
 import * as util from '../../misc/Util';
 
@@ -18,6 +19,15 @@ function createReplyContainer($parent) {
 
 async function showReplyContainer($parent) {
   const $container = $parent.find('.commentbox-container');
+  // TODO: fix ugly hack. cannot get $container rect because it is invisible
+  const rect = $container.parent()[0].getBoundingClientRect();
+  const rectBody = document.body.getBoundingClientRect();
+  if (rect.top < 100 || rect.top + 100 > window.innerHeight) {
+    const targetScrollTop = rect.top - rectBody.top - window.innerHeight * 0.382;
+    $('html, body').stop().animate({ scrollTop: targetScrollTop }, 400, 'easeOutCubic');
+    await delay(300);
+    // delay duration is set smaller than animation duration intentionally
+  }
   $container.css('opacity', 0);
   await slideDown($container, 300);
   $container.transition({

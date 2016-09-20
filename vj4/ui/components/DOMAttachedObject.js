@@ -33,14 +33,15 @@ export default class DOMAttachedObject {
   }
 
   static getOrConstruct($obj, ...args) {
+    const $singleObj = $obj.eq(0);
     const key = this.DOMAttachKey;
     const Protoclass = this;
-    const instance = this.get($obj);
+    const instance = this.get($singleObj);
     if (instance !== undefined) {
       return instance;
     }
-    const newInstance = new Protoclass($obj, ...args);
-    $obj.data(key, newInstance);
+    const newInstance = new Protoclass($singleObj, ...args);
+    $singleObj.data(key, newInstance);
     return newInstance;
   }
 
