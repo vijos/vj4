@@ -42,8 +42,11 @@ class DiscussionNodeHandler(base.Handler):
   async def get(self, *, node_or_pid: document.convert_doc_id, page: int=1):
     nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_pid)
     # TODO(iceboy): continuation based pagination.
-    ddocs, dpcount, _ = await pagination.paginate(discussion.get_multi(self.domain_id),
-                                                  page, self.DISCUSSIONS_PER_PAGE)
+    ddocs, dpcount, _ = await pagination.paginate(
+        discussion.get_multi(self.domain_id,
+                             parent_doc_type=vnode['doc_type'],
+                             parent_doc_id=vnode['doc_id']),
+        page, self.DISCUSSIONS_PER_PAGE)
     udict, vndict = await asyncio.gather(
         user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
         discussion.get_dict_vnodes(self.domain_id, (ddoc['parent_doc_id'] for ddoc in ddocs)))

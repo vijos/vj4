@@ -30,9 +30,6 @@ $downvote-color = red
 
 .dczcomments__supplementary
   float: left
-  font-size: rem($font-size-secondary)
-  line-height: 1
-  color: lighten($text-color, 50%)
   margin-bottom: rem(5px)
 
 .dczcomments__operations
@@ -53,7 +50,7 @@ $downvote-color = red
 
 .dczcomments__item
   .vote-number
-    width: rem(60px)
+    width: rem(82px)
     text-align: center
     font-size: rem(25px)
     font-weight: 300
@@ -61,11 +58,19 @@ $downvote-color = red
 
   .vote-op
     position: relative
+    border: 1px solid transparent
+    border-radius: rem(14px)
+    transition: border-color .2s linear, opacity .2s linear
+    opacity: 0.5
 
     &>form
-      width: 50%
+      width: rem(40px)
       float: left
       position: relative
+
+  &:hover .vote-op
+    opacity: 1
+    border-color: $supplementary-border-color
 
   .vote-button
     appearance: none
@@ -73,30 +78,41 @@ $downvote-color = red
     background: none
     width: 100%
     outline: 0
-    font-size: rem(12px)
-    line-height: 1
-    padding: rem(3px 0)
+    font-size: rem($font-size-icon)
+    line-height: rem(26px)
     color: #AAA
-    border: 1px solid transparent
-    transition: color .1s linear, background-color .1s linear
+    transition: color .2s linear, background-color .2s linear, box-shadow .2s linear
 
     &.upvote
+      border-radius: rem(13px 0 0 13px)
+      padding-left: rem(7px)
+
       &:hover
-        background: transparent
+        background: $upvote-color
+        color: #FFF
+        box-shadow: 0 2px 10px rgba($upvote-color, 0.4)
+
+      &.active
         color: $upvote-color
 
-      &.active
-        background: lighten($upvote-color, 50%)
-        color: #FFF
 
     &.downvote
+      border-radius: rem(0 13px 13px 0)
+      padding-right: rem(7px)
+
       &:hover
-        background: transparent
-        color: $downvote-color
+        background: $downvote-color
+        color: #FFF
+        box-shadow: 0 2px 10px rgba($downvote-color, 0.4)
 
       &.active
-        background: lighten($downvote-color, 50%)
-        color: #FFF
+        color: $downvote-color
+
+    &.active
+      background: transparent !important
+      box-shadow: none !important
+      cursor: default
+
 
 +mobile()
   .dczcomments__item
