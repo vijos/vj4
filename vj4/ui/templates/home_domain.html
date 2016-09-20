@@ -40,8 +40,8 @@
           </td>
           <td class="col--action">
             <!-- TODO (swx): Manage should be visible to those who have privilege -->
-            <a href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Visit') }}</a>
-            · <a href="{{ reverse_url('domain_manage', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
+            <a class="typo-a" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Visit') }}</a>
+            · <a class="typo-a" href="{{ reverse_url('domain_manage', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
           </td>
         </tr>
       {% endfor %}
@@ -62,8 +62,8 @@
           </td>
           <td class="col--action">
             <!-- TODO (swx): Manage should be visible to those who have privilege -->
-            <a href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Visit') }}</a>
-            · <a href="{{ reverse_url('domain_manage', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
+            <a class="typo-a" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Visit') }}</a>
+            · <a class="typo-a" href="{{ reverse_url('domain_manage', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
           </td>
         </tr>
       {% endfor %}
