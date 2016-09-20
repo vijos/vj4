@@ -56,8 +56,9 @@
                 </form>
               {% endif %}
                 <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
-                  {{ pdoc['title'] }}{% if pdoc['hidden'] %} ({{ _('Hidden') }}){% endif %}
+                  {{ pdoc['title'] }}
                 </a>
+                {% if pdoc['hidden'] %} <span class="text-orange">({{ _('Hidden') }})</span>{% endif %}
               </td>
               <td class="col--submit_n">{{ pdoc['num_submit'] }}</td>
               <td class="col--ac_rate">{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int if pdoc['num_submit'] > 0 else _('?') }}</td>
