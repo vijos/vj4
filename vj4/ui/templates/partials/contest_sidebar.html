@@ -53,7 +53,7 @@
       <dt>{{ _('End at') }}</dt><dd>{{ contest.render_time(tdoc['end_at']) }}</dd>
       <dt>{{ _('Duration') }}</dt><dd>{{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}</dd>
       <dt>{{ _('Host') }}</dt><dd>{{ user.render_inline(udoc, badge=false) }}</dd>
-      <dt>{{ _('Attended') }}</dt>
+      <dt>{{ _('Partic.') }}</dt>
       <dd>
         {{ tdoc['attend']|default(0) }}
       {% if attended %}
