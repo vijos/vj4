@@ -5,3 +5,8 @@
     &.{key}:before
       content: value
       color: $training-status-color[key]
+
+.training-status--text
+  for key, value in $training-status-icon
+    &.{key}
+      color: $training-status-color[key]

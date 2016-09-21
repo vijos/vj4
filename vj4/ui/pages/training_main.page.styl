@@ -1,6 +1,17 @@
+@import '~misc/section.inc.styl'
+
 .page--training_main
   .training__title
-    line-height: 1.5
+    line-height: 1.2
+    margin-bottom: 0.4em
+    font-size: rem($font-size-title)
+
+  .training__intro
+    font-size: rem($font-size-secondary)
+    margin: 1em 0
+
+  .training__participants
+    width: rem(60px)
 
   .training__progress
     line-height: rem(17px)
@@ -24,10 +35,25 @@
     width: 0%
     background-color: green
 
-  .my.training__list
+  .training__supplementary
+    li
+      display: inline-block
+      margin-right: rem(15px)
+
+  .primary.training__list
+    .training__item
+      padding: rem($section-gap-v $section-gap-h)
+      border-bottom: 1px solid $table-border-color
+
+      &:last-child
+        border-bottom: 0
+
+  .secondary.training__list
     .training__item
       margin-bottom: rem(15px)
-    .record-status--icon
-      font-size: rem(18px)
     .training__title
       font-size: rem($font-size)
+
+    &.my
+      .record-status--icon
+        font-size: rem($font-size-icon)
