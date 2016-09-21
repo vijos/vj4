@@ -17,18 +17,22 @@
   padding: rem(10px)
   text-decoration: none
   border: 0
-  color: #a7a7a7
   border-top: 2px solid #EEE
+  color: #a7a7a7
 
-  &.link:hover
-    border-color: #CCC
-    text-decoration: none
-    color: #666
+  &.link
+    &, .typo &
+      color: #a7a7a7
+
+    &:hover
+      border-color: $primary-color
+      text-decoration: none
+      &, .typo &
+        color: #666
 
   &.current
-    color: $primary-color
-    border-color: $primary-color
-
+    color: $secondary-color
+    border-color: $secondary-color
 
 +mobile()
   .pager__item
