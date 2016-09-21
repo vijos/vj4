@@ -7,11 +7,15 @@
     font-size: rem($font-size-title)
 
   .training__intro
+    color: lighten($text-color, 20%)
     font-size: rem($font-size-secondary)
     margin: 1em 0
 
+  .training__item
+    padding-left: rem(5px)
+
   .training__participants
-    width: rem(60px)
+    width: rem(80px)
 
   .training__progress
     line-height: rem(17px)
@@ -35,19 +39,6 @@
     width: 0%
     background-color: green
 
-  .training__supplementary
-    li
-      display: inline-block
-      margin-right: rem(15px)
-
-  .primary.training__list
-    .training__item
-      padding: rem($section-gap-v $section-gap-h)
-      border-bottom: 1px solid $table-border-color
-
-      &:last-child
-        border-bottom: 0
-
   .secondary.training__list
     .training__item
       margin-bottom: rem(15px)
@@ -55,5 +46,5 @@
       font-size: rem($font-size)
 
     &.my
-      .record-status--icon
-        font-size: rem($font-size-icon)
+      .training-status--icon
+        font-size: rem($font-size-icon * 1.2)
