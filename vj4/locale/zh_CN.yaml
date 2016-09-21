@@ -54,7 +54,9 @@ Disabled: 关闭
 Discussion Nodes: 讨论节点
 Discussions: 讨论
 Don't have an account?: 还没有账户？
-Download Dataset: 下载测试数据
+Pretest Data: 对拍数据
+Problem Data: 题目数据
+Download: 下载
 Duration (hours): 持续时间 (小时)
 Edit: 编辑
 Edit Problem: 编辑题目
@@ -105,7 +107,7 @@ Open Source: 开源
 Operating System: 操作系统
 Password: 密码
 Password reset mail has been sent to your email.: 密码重置邮件已发送到您的电子邮箱。
-Peak Memory: 内存使用峰值
+Peak Memory: 峰值内存
 Pretest?: 对拍?
 Privacy: 隐私
 Problem: 题目
