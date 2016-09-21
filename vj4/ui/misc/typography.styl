@@ -165,6 +165,23 @@ u, .typo-u
     &, &:visited, &:hover
       color: $supplementary-link-color
 
+  &.list
+    li
+      display: inline-block
+      margin-right: rem(15px)
+
+  &.dot.list
+    li
+      margin-right: 0
+
+    li:after
+      display: inline-block
+      content: '·'
+      margin: 0 rem(5px)
+
+    li:last-child:after
+      display: none
+
 mark
   background: #fffdd1
   border-bottom: 1px solid #ffedce

@@ -3,16 +3,11 @@
 .page--discussion_main,
 .page--discussion_node
   .discussion__item
-    padding: rem($section-gap-v $section-gap-h)
+    border-left: rem(5px) solid transparent
     padding-left: rem(5px)
-    border-bottom: 1px solid $table-border-color
-    border-left: 5px solid transparent
 
     &.highlight
-      border-left: 5px solid $highlight-color
-
-    &:last-child
-      border-bottom: 0
+      border-color: $highlight-color
 
   .discussion__title
     font-size: rem($font-size-title)
