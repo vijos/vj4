@@ -7,9 +7,9 @@
     {% if not ddocs %}
       {{ nothing.render('no discussion yet...') }}
     {% else %}
-      <ol class="discussion__list">
+      <ol class="section__list discussion__list">
       {% for ddoc in ddocs %}
-        <li class="discussion__item{% if ddoc['highlight'] %} highlight{% endif %}">
+        <li class="section__list__item discussion__item{% if ddoc['highlight'] %} highlight{% endif %}">
           <div class="media">
             <div class="media__left">
               <div class="discussion__replies numbox">
@@ -19,7 +19,7 @@
             </div>
             <div class="media__body top">
               <h1 class="discussion__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}" data-emoji-enabled>{{ ddoc['title'] }}</a></h1>
-              <ul class="supplementary discussion__supplementary">
+              <ul class="supplementary list">
                 <li>
                   <a class="v-center discussion-node-tag" href="{{ reverse_url('discussion_node', node_or_pid=ddoc['parent_doc_id']) }}">{% if ddoc['parent_doc_type'] == vj4.model.document.TYPE_DISCUSSION_NODE %}<span class="icon icon-tag"></span>{% else %}<span class="icon icon-flag"></span>{% endif %}{{ vndict[ddoc['parent_doc_id']]['title'] }}</a>
                 </li>
