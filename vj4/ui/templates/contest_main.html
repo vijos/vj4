@@ -55,13 +55,10 @@
   {% endif %}
   {% endfor %}
     <div class="section">
-    {% if not tdocs %}
-      {{ nothing.render('There are no contests...') }}
-    {% else %}
       <div class="section__header">
         <h1 class="section__title">{{ _('All Contests') }}</h1>
         <div class="section__tools">
-          <form method="get">
+          <form method="get" name="filter-form">
             {{ _('Show') }}:
             <select class="inline select" name="rule">
               <option value=""{% if not handler.request.GET.get('rule') %} selected{% endif %}>{{ _('All') }}</option>
@@ -69,10 +66,13 @@
               <option value="{{ k }}"{% if handler.request.GET.get('rule')|int == k %} selected{% endif %}>{{ _('Only {0}').format(_(v)) }}</option>
             {% endfor %}
             </select>
-            <input type="submit" value="{{ _('Go') }}" class="rounded primary button">
+            <input type="submit" value="{{ _('Go') }}" class="button hasjs--hide">
           </form>
         </div>
       </div>
+    {% if not tdocs %}
+      {{ nothing.render('There are no contests...') }}
+    {% else %}
       <ol class="section__list contest__list">
       {% for tdoc in tdocs %}
         <li class="section__list__item contest__item contest-type--{{ vj4.constant.contest.RULE_ID[tdoc['rule']] }}">
