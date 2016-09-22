@@ -22,6 +22,10 @@
             <span class="icon icon-schedule--fill"></span>
             {{ _('Duration') }}: {{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}
           </li>
+          <li>
+            <span class="icon icon-user--multiple"></span>
+            {{ _('Partic.') }}: {{ tdoc['attend']|default(0) }}
+          </li>
         </ul>
       </div>
     </div>
@@ -57,13 +61,16 @@
       <div class="section__header">
         <h1 class="section__title">{{ _('All Contests') }}</h1>
         <div class="section__tools">
-          {{ _('Show') }}:
-          <select class="inline select">
-            <option value="">{{ _('All') }}</option>
-          {% for k, v in vj4.constant.contest.RULE_TEXTS.items() %}
-            <option value="{{ k }}">{{ _('Only {0}').format(_(v)) }}</option>
-          {% endfor %}
-          </select>
+          <form method="get">
+            {{ _('Show') }}:
+            <select class="inline select" name="rule">
+              <option value=""{% if not handler.request.GET.get('rule') %} selected{% endif %}>{{ _('All') }}</option>
+            {% for k, v in vj4.constant.contest.RULE_TEXTS.items() %}
+              <option value="{{ k }}"{% if handler.request.GET.get('rule')|int == k %} selected{% endif %}>{{ _('Only {0}').format(_(v)) }}</option>
+            {% endfor %}
+            </select>
+            <input type="submit" value="{{ _('Go') }}" class="rounded primary button">
+          </form>
         </div>
       </div>
       <ol class="section__list contest__list">

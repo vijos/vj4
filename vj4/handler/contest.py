@@ -57,8 +57,13 @@ class ContestStatusMixin(object):
 @app.route('/tests', 'contest_main')
 class ContestMainHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
-  async def get(self):
-    tdocs = await contest.get_list(self.domain_id)
+  @base.get_argument
+  @base.sanitize
+  async def get(self, rule: str=None):
+    if not rule:
+      tdocs = await contest.get_list(self.domain_id)
+    else:
+      tdocs = await contest.get_list(self.domain_id, rule=int(rule))
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                            (tdoc['doc_id'] for tdoc in tdocs))
     self.render('contest_main.html', tdocs=tdocs, tsdict=tsdict)

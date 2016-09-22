@@ -73,11 +73,12 @@ async def get(domain_id: str, tid: objectid.ObjectId):
 
 
 @argmethod.wrap
-async def get_list(domain_id: str, fields=None):
+async def get_list(domain_id: str, fields=None, **kwargs):
   # TODO(iceboy): projection, pagination.
   tdocs = await document.get_multi(domain_id=domain_id,
                                    doc_type=document.TYPE_CONTEST,
-                                   fields=fields) \
+                                   fields=fields,
+                                   **kwargs) \
                         .sort([('doc_id', -1)]) \
                         .to_list(None)
   return tdocs
