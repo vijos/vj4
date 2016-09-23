@@ -46,7 +46,7 @@ class HandlerBase(setting.SettingMixin):
     else:
       self.user = builtin.USER_GUEST
       self.domain = await domain.get(self.domain_id)
-      self.domain_user = {}
+      self.domain_user = builtin.DOMAIN_USER_GUEST
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
     self.view_lang = self.get_setting('view_lang')

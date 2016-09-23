@@ -247,7 +247,7 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
         (self.translate('contest_status'), None))
-    self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs,
+    self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs, dict=dict,
                 udict=udict, pdict=pdict, path_components=path_components)
 
 

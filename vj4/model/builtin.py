@@ -209,14 +209,7 @@ USER_SYSTEM = {
     'priv': PRIV_NONE,
     'loginat': datetime.datetime.utcnow(),
     'loginip': '',
-    'gravatar': '',
-    # in every domains:
-    'rp': 0.0,
-    'rank': 0,
-    'role': ROLE_GUEST,
-    'level': 0,
-    'num_submit': 0,
-    'num_accept': 0
+    'gravatar': ''
 }
 UID_GUEST = 1
 UNAME_GUEST = 'Guest'
@@ -234,8 +227,10 @@ USER_GUEST = {
     'priv': PRIV_REGISTER_USER,
     'loginat': datetime.datetime.utcnow(),
     'loginip': '',
-    'gravatar': '',
-    # in every domains:
+    'gravatar': ''
+}
+DOMAIN_USER_GUEST = {
+    # in every domain:
     'rp': 0.0,
     'rank': 0,
     'role': ROLE_GUEST,

@@ -461,3 +461,10 @@ Dataset: 测试数据
 'Current dataset: {0}': '当前测试数据: {0}'
 Upload: 上传
 No dataset present.: 暂无测试数据。
+All: 全部
+All {0} Contests: 所有 {0} 比赛
+Show: 显示
+There are no contests...: 没有比赛。
+Login to Attend Contest: 请登录后参加比赛
+No Permission to Attend Contest: 您没有权限参加比赛
+View Contest: 查看比赛
