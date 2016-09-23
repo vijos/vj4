@@ -8,12 +8,12 @@
         <div class="section__tools">
           {{ _('Sort by') }}:
           <select class="inline select">
-            <option>↓ Participants</option>
-            <option>↓ Likes</option>
-            <option>↓ Stars</option>
+            <option>↓ # Enrollees</option>
+            <option>↓ # Likes</option>
+            <option>↓ # Stars</option>
+            <option>↓ # Comments</option>
             <option>↓ Create Time</option>
             <option>↓ Update Time</option>
-            <option>↓ Comments</option>
           </select>
         </div>
       </div>
@@ -23,7 +23,7 @@
             <div class="media__left middle">
               <div class="training__participants numbox">
                 <div class="numbox__num large">40</div>
-                <div class="numbox__text">{{ _('Partic.') }}</div>
+                <div class="numbox__text">{{ _('Enrolled') }}</div>
               </div>
             </div>
             <div class="media__body middle">
@@ -55,7 +55,7 @@
             <div class="media__left middle">
               <div class="training__participants numbox">
                 <div class="numbox__num large">56</div>
-                <div class="numbox__text">{{ _('Partic.') }}</div>
+                <div class="numbox__text">{{ _('Enrolled') }}</div>
               </div>
             </div>
             <div class="media__body middle">
@@ -83,7 +83,7 @@
             <div class="media__left middle">
               <div class="training__participants numbox">
                 <div class="numbox__num large">29</div>
-                <div class="numbox__text">{{ _('Partic.') }}</div>
+                <div class="numbox__text">{{ _('Enrolled') }}</div>
               </div>
             </div>
             <div class="media__body middle">
@@ -123,7 +123,7 @@
   <div class="large-3 columns">
     <div class="section side">
       <div class="section__header">
-        <h1 class="section__title">{{ _('My Training Plans') }}</h1>
+        <h1 class="section__title">{{ _('Enrolled') }}</h1>
       </div>
       <div class="section__body">
         <ol class="my secondary training__list">
@@ -220,6 +220,24 @@
             </ul>
           </li>
         </ol>
+      </div>
+    </div>
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Create Training Plan') }}</h1>
+      </div>
+      <ol class="menu">
+        <li class="menu__item">
+          <a href="#" class="menu__link"><span class="icon icon-add"></span> New Training Plan</a>
+        </li>
+        <li class="menu__item">
+          <a href="#" class="menu__link"><span class="icon icon-crown"></span> View Owned Training Plans</a>
+        </li>
+      </ol>
+      <div class="section__body">
+        <div class="typo supplementary">
+          <p>You can create your own training plans and share with others.</p>
+        </div>
       </div>
     </div>
   </div>
