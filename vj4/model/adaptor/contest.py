@@ -1,5 +1,6 @@
 import collections
 import datetime
+import functools
 import itertools
 
 from bson import objectid
@@ -10,9 +11,10 @@ from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
 from vj4.util import validator
+from vj4.util import rank
 
 
-Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
+Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort', 'rank_func'])
 
 
 def _oi_stat(tdoc, journal):
@@ -41,9 +43,12 @@ def _acm_stat(tdoc, journal):
 
 
 RULES = {
-  constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)]),
-  constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
-                 _acm_stat, [('accept', -1), ('time', 1)]),
+  constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)],
+                                 functools.partial(rank.ranked,
+                                                   equ_func=lambda a, b: a['score'] == b['score'])),
+  constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'], _acm_stat,
+                                  [('accept', -1), ('time', 1)], functools.partial(enumerate,
+                                                                                   start=1)),
 }
 
 

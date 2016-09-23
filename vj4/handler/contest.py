@@ -243,11 +243,12 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
     pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
                                         problem.get_dict(pdom_and_ids))
+    ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
     path_components = self.build_path(
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
         (self.translate('contest_status'), None))
-    self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs, dict=dict,
+    self.render('contest_status.html', tdoc=tdoc, ranked_tsdocs=ranked_tsdocs, dict=dict,
                 udict=udict, pdict=pdict, path_components=path_components)
 
 

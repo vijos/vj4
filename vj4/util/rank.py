@@ -1,4 +1,4 @@
-def rank(diter, equ_func=lambda a, b: a == b):
+def ranked(diter, equ_func=lambda a, b: a == b):
   last_doc = None
   r = 0
   count = 0
@@ -11,5 +11,5 @@ def rank(diter, equ_func=lambda a, b: a == b):
 
 
 if __name__ == '__main__':
-  for r, v in rank(sorted([1, 2, 2, 2, 2, 3, 3, 3, 4, 5, 6])):
+  for r, v in ranked(sorted([1, 2, 2, 2, 2, 3, 3, 3, 4, 5, 6])):
     print(r, v)

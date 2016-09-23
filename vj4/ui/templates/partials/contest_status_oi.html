@@ -18,11 +18,10 @@
     </tr>
   </thead>
   <tbody>
-    {# TODO(twd2): correct rank #}
-    {% for tsdoc in tsdocs %}
-    <tr data-uid="-3">
+    {% for rank, tsdoc in ranked_tsdocs %}
+    <tr data-uid="{{ tsdoc['uid'] }}" id="{{ tsdoc['uid'] }}">
       <td class="col--rank">
-        {{ loop.index }}
+        {{ rank }}
       </td>
       <td class="col--user">
         {{ user.render_inline(udict[tsdoc['uid']], badge=false) }}
