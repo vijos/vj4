@@ -57,6 +57,7 @@ class DiscussionNodeHandler(base.Handler):
     else:
       node_or_dtuple = (doc_type, document.convert_doc_id(doc_id))
     nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_dtuple)
+    # TODO(twd2): check visibility eg. hidden problem
     if not vnode:
       raise error.DiscussionNodeNotFoundError(self.domain_id, node_or_dtuple)
     # TODO(iceboy): continuation based pagination.
