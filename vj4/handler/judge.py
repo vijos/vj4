@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+from bson import objectid
 
 from vj4 import app
 from vj4 import constant
@@ -14,11 +15,12 @@ from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.handler import base
 
+
 _logger = logging.getLogger(__name__)
 
 
 async def _post_judge(rdoc):
-  accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
+  accept = rdoc['status'] == constant.record.STATUS_ACCEPTED
   post_coros = [bus.publish('record_change', rdoc['_id'])]
   # TODO(twd2): ignore no effect statuses like system error, ...
   if rdoc['type'] == constant.record.TYPE_SUBMISSION:
@@ -40,7 +42,8 @@ async def _post_judge(rdoc):
 
 @app.route('/judge/playground', 'judge_playground')
 class JudgePlaygroundHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
+  @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD
+                     | builtin.PRIV_READ_PROBLEM_DATA | builtin.PRIV_READ_PRETEST_DATA)
   async def get(self):
     self.render('judge_playground.html')
 
@@ -66,6 +69,38 @@ class JudgeDataListHandler(base.Handler):
     for did, pid in pids:
       datalist.append({'domain_id': did, 'pid': pid})
     self.json({'list': datalist, 'time': int(time.time())})
+
+
+@app.route('/judge/{rid}/score', 'judge_score')
+class RecordRejudgeHandler(base.Handler):
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, rid: objectid.ObjectId, score: int):
+    rdoc = await record.get(rid)
+    if rdoc['domain_id'] == self.domain_id:
+      self.check_perm(builtin.PERM_REJUDGE)
+    else:
+      self.check_priv(builtin.PRIV_REJUDGE)
+    await record.rejudge(rdoc['_id'], False)
+    await record.begin_judge(rid, self.user['_id'], self.user['_id'],
+                             constant.record.STATUS_FETCHED)
+    update = {'$set': {}, '$push': {}}
+    update['$set']['status'] = constant.record.STATUS_ACCEPTED if score == 100 \
+                               else constant.record.STATUS_WRONG_ANSWER
+    update['$push']['cases'] = {
+      'status': update['$set']['status'],
+      'score': score,
+      'time_ms': 0,
+      'memory_kb': 0,
+      'judge_text': '',
+    }
+    await record.next_judge(rid, self.user['_id'], self.user['_id'], **update)
+    rdoc = await record.end_judge(rid, self.user['_id'], self.user['_id'],
+                                  update['$set']['status'], score, 0, 0)
+    await _post_judge(rdoc)
+    self.json_or_redirect(self.referer_or_main)
 
 
 @app.connection_route('/judge/consume-conn', 'judge_consume-conn')
