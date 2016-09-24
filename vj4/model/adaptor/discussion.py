@@ -12,6 +12,17 @@ from vj4.util import argmethod
 from vj4.util import validator
 
 
+ALLOWED_DOC_TYPES = [document.TYPE_PROBLEM, document.TYPE_PROBLEM_LIST,
+                     document.TYPE_CONTEST, document.TYPE_TRAINING]
+
+
+def node_id(ddoc):
+  if ddoc['parent_doc_type'] == document.TYPE_DISCUSSION_NODE:
+    return ddoc['parent_doc_id']
+  else:
+    return (ddoc['parent_doc_type'], ddoc['parent_doc_id'])
+
+
 @argmethod.wrap
 async def get_nodes(domain_id: str):
   items = smallcache.get_direct(smallcache.PREFIX_DISCUSSION_NODES + domain_id)
@@ -84,31 +95,36 @@ async def check_node(domain_id, node_name):
     raise error.DiscussionNodeNotFoundError(domain_id, node_name)
 
 
-async def get_nodes_and_vnode(domain_id, node_or_pid):
+async def get_nodes_and_vnode(domain_id, node_or_dtuple):
   nodes = await get_nodes(domain_id)
-  node = _get_exist_node(nodes, node_or_pid)
+  node = _get_exist_node(nodes, node_or_dtuple)
   if node:
     vnode = {'doc_id': node['name'],
             'doc_type': document.TYPE_DISCUSSION_NODE,
             'title': node['name'],
             'pic': node['pic']}
+  elif isinstance(node_or_dtuple, tuple) and node_or_dtuple[0] in ALLOWED_DOC_TYPES:
+    # TODO(twd2): projection.
+    vnode = await document.get(domain_id, node_or_dtuple[0], node_or_dtuple[1])
   else:
-    vnode = await problem.get(domain_id, node_or_pid)
+    vnode = None
   return nodes, vnode
 
 
 @argmethod.wrap
-async def get_vnode(domain_id: str, node_or_pid: document.convert_doc_id):
-  _, vnode = await get_nodes_and_vnode(domain_id, node_or_pid)
+async def get_vnode(domain_id: str, node_or_dtuple: str):
+  _, vnode = await get_nodes_and_vnode(domain_id, node_or_dtuple)
   return vnode
 
 
 @argmethod.wrap
-async def add(domain_id: str, node_or_pid: str, owner_uid: int, title: str, content: str,
+async def add(domain_id: str, node_or_dtuple: str, owner_uid: int, title: str, content: str,
               **flags):
   validator.check_title(title)
   validator.check_content(content)
-  vnode = await get_vnode(domain_id, node_or_pid)
+  vnode = await get_vnode(domain_id, node_or_dtuple)
+  if not vnode:
+      raise error.DiscussionNodeNotFoundError(domain_id, node_or_dtuple)
   return await document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION,
                             title=title, num_replies=0, views=0, **flags,
                             parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id'])
@@ -208,19 +224,20 @@ def delete_tail_reply(domain_id: str, drid: document.convert_doc_id, drrid: obje
   return document.delete_sub(domain_id, document.TYPE_DISCUSSION_REPLY, drid, 'reply', drrid)
 
 
-async def get_dict_vnodes(domain_id, node_or_pids):
+async def get_dict_vnodes(domain_id, node_or_dtuples):
   nodes = await get_nodes(domain_id)
   result = dict()
-  pids = set()
-  for node_or_pid in node_or_pids:
-    if _get_exist_node(nodes, node_or_pid):
-      result[node_or_pid] = {'doc_id': node_or_pid,
-                             'doc_type': document.TYPE_DISCUSSION_NODE,
-                             'title': node_or_pid}
-    else:
-      pids.add(node_or_pid)
-  async for pdoc in problem.get_multi(domain_id=domain_id, doc_id={'$in': list(pids)}):
-    result[pdoc['doc_id']] = pdoc
+  dtuples = set()
+  for node_or_dtuple in node_or_dtuples:
+    if _get_exist_node(nodes, node_or_dtuple):
+      result[node_or_dtuple] = {'doc_id': node_or_dtuple,
+                                'doc_type': document.TYPE_DISCUSSION_NODE,
+                                'title': node_or_dtuple}
+    elif node_or_dtuple[0] in ALLOWED_DOC_TYPES:
+      dtuples.add(node_or_dtuple)
+  for k, v in (await document.get_dict(domain_id=domain_id, dtuples=dtuples,
+                                       fields=document.PROJECTION_PUBLIC)).items():
+    result[k] = v
   return result
 
 

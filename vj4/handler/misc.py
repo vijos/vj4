@@ -8,4 +8,5 @@ class PreviewHandler(base.Handler):
   @base.post_argument
   @base.sanitize
   async def post(self, *, text: str):
-    self.json({'html': template.markdown(text)})
+    self.response.content_type = 'text/html'
+    self.response.text = template.markdown(text)

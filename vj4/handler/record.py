@@ -54,9 +54,7 @@ class RecordMainConnection(base.Connection):
     if pdoc.get('hidden', False) and (pdoc['domain_id'] != self.domain_id
                                       or not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)):
       pdoc = None
-    # TODO(iceboy): remove the rdoc sent.
-    self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc),
-              rdoc=rdoc)
+    self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc))
 
   async def on_close(self):
     bus.unsubscribe(self.on_record_change)
