@@ -10,18 +10,37 @@ from vj4.handler import base
 class TrainingMainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
+  # TODO: permission need to be changed
   async def get(self):
     tdocs = await training.get_list_by_user(self.domain_id, self.user['_id'])
     self.render('training_main.html', tdocs=tdocs)
 
 
-@app.route('/training/my', 'training_my')
-class TrainingMainHandler(base.Handler):
+@app.route('/training/enrolled', 'training_enrolled')
+class TrainingEnrolledHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   async def get(self):
     # TODO: twd2
-    self.render('training_my.html')
+    self.render('training_enrolled.html')
+
+
+@app.route('/training/create', 'training_create')
+class TrainingCreateHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_TRAINING)
+  async def get(self):
+    # TODO: twd2
+    self.render('training_create.html')
+
+
+@app.route('/training/owned', 'training_owned')
+class TrainingOwnedHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_TRAINING)
+  async def get(self):
+    # TODO: twd2
+    self.render('training_owned.html')
 
 
 @app.route('/training/{tid}', 'training_detail')
