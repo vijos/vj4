@@ -13,6 +13,7 @@ from vj4.model import domain
 from vj4.model import fs
 from vj4.model import record
 from vj4.model.adaptor import problem
+from vj4.service import bus
 from vj4.util import pagination
 
 
@@ -137,6 +138,33 @@ class ProblemPretestHandler(base.Handler):
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST,
                            self.user['_id'], lang, code, did)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
+
+
+@app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
+class ProblemPretestConnection(base.Connection):
+  async def on_open(self):
+    await super(ProblemPretestConnection, self).on_open()
+    self.pid = document.convert_doc_id(self.request.match_info['pid'])
+    bus.subscribe(self.on_record_change, ['record_change'])
+
+  async def on_record_change(self, e):
+    rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
+    if rdoc['uid'] != self.user['_id'] or \
+       rdoc['domain_id'] != self.domain_id or rdoc['pid'] != self.pid:
+      return
+    # check permission for visibility: contest
+    if rdoc['tid']:
+      now = datetime.datetime.utcnow()
+      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+          and (self.domain_id != tdoc['domain_id']
+               or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+        return
+    # TODO(iceboy): join from event to improve performance?
+    self.send(rdoc=rdoc)
+
+  async def on_close(self):
+    bus.unsubscribe(self.on_record_change)
 
 
 @app.route('/p/{pid}/solution', 'problem_solution')
