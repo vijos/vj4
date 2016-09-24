@@ -36,7 +36,7 @@
             <tr>
             {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
             {% if psdoc['rid'] %}
-              {{ record.render_status_td(psdoc) }}
+              {{ record.render_status_td(psdoc, rid_key='rid') }}
             {% else %}
               <td class="col--status record-status--border">
               </td>
