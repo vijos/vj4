@@ -3,6 +3,7 @@ import functools
 from bson import objectid
 
 from vj4 import app
+from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
@@ -10,6 +11,15 @@ from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.handler import base
 from vj4.util import pagination
+
+
+def node_url(handler, name, node_or_dtuple):
+  if isinstance(node_or_dtuple, tuple):
+    name += '_document_as_node'
+    kwargs = {'doc_type': node_or_dtuple[0], 'doc_id': node_or_dtuple[1]}
+  else:
+    kwargs = {'doc_id': node_or_dtuple}
+  return handler.reverse_url(name, **kwargs)
 
 
 @app.route('/discuss', 'discussion_main')
@@ -23,15 +33,17 @@ class DiscussionMainHandler(base.Handler):
     # TODO(iceboy): continuation based pagination.
     nodes, (ddocs, dpcount, _) = await asyncio.gather(
         discussion.get_nodes(self.domain_id),
+        # TODO(twd2): exclude problem/contest discussions?
         pagination.paginate(discussion.get_multi(self.domain_id), page, self.DISCUSSIONS_PER_PAGE))
     udict, vndict = await asyncio.gather(
         user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
-        discussion.get_dict_vnodes(self.domain_id, (ddoc['parent_doc_id'] for ddoc in ddocs)))
+        discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs)))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
                 udict=udict, vndict=vndict, page=page, dpcount=dpcount)
 
 
-@app.route('/discuss/{node_or_pid:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
+@app.route('/discuss/{doc_type:-?\d+}/{doc_id}', 'discussion_node_document_as_node')
+@app.route('/discuss/{doc_id:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
 class DiscussionNodeHandler(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
@@ -39,36 +51,53 @@ class DiscussionNodeHandler(base.Handler):
   @base.get_argument
   @base.route_argument
   @base.sanitize
-  async def get(self, *, node_or_pid: document.convert_doc_id, page: int=1):
-    nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_pid)
+  async def get(self, *, doc_type: int=None, doc_id: str, page: int=1):
+    if doc_type is None:
+      node_or_dtuple = doc_id
+    else:
+      node_or_dtuple = (doc_type, document.convert_doc_id(doc_id))
+    nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_dtuple)
+    if not vnode:
+      raise error.DiscussionNodeNotFoundError(self.domain_id, node_or_dtuple)
     # TODO(iceboy): continuation based pagination.
     ddocs, dpcount, _ = await pagination.paginate(
         discussion.get_multi(self.domain_id,
                              parent_doc_type=vnode['doc_type'],
                              parent_doc_id=vnode['doc_id']),
         page, self.DISCUSSIONS_PER_PAGE)
+    uids = set(ddoc['owner_uid'] for ddoc in ddocs)
+    if 'owner_uid' in vnode:
+      uids.add(vnode['owner_uid'])
     udict, vndict = await asyncio.gather(
-        user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
-        discussion.get_dict_vnodes(self.domain_id, (ddoc['parent_doc_id'] for ddoc in ddocs)))
+        user.get_dict(uids),
+        discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs)))
+    vncontext = {} # TODO(twd2): eg. psdoc, tsdoc, ...
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], None))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode, ddocs=ddocs,
-                udict=udict, vndict=vndict, page=page, dpcount=dpcount,
+                udict=udict, vndict=vndict, page=page, dpcount=dpcount, **vncontext,
                 path_components=path_components)
 
 
-@app.route('/discuss/{node_or_pid}/create', 'discussion_create')
+@app.route('/discuss/{doc_type:-?\d+}/{doc_id}/create', 'discussion_create_document_as_node')
+@app.route('/discuss/{doc_id}/create', 'discussion_create')
 class DiscussionCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_DISCUSSION)
   @base.route_argument
   @base.sanitize
-  async def get(self, *, node_or_pid: document.convert_doc_id):
-    vnode = await discussion.get_vnode(self.domain_id, node_or_pid)
+  async def get(self, *, doc_type: int=None, doc_id: str):
+    if doc_type is None:
+      node_or_dtuple = doc_id
+    else:
+      node_or_dtuple = (doc_type, document.convert_doc_id(doc_id))
+    nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_dtuple)
+    if not vnode:
+      raise error.DiscussionNodeNotFoundError(self.domain_id, node_or_dtuple)
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
-        (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
+        (vnode['title'], node_url(self, 'discussion_node', node_or_dtuple)),
         (self.translate('discussion_create'), None))
     self.render('discussion_create.html', vnode=vnode, path_components=path_components)
 
@@ -78,13 +107,17 @@ class DiscussionCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, node_or_pid: document.convert_doc_id, title: str, content: str,
+  async def post(self, *, doc_type: int=None, doc_id: str, title: str, content: str,
                  highlight: str=None):
+    if doc_type is None:
+      node_or_dtuple = doc_id
+    else:
+      node_or_dtuple = (doc_type, document.convert_doc_id(doc_id))
     flags = {}
     if highlight:
       self.check_perm(builtin.PERM_HIGHLIGHT_DISCUSSION)
       flags['highlight'] = True
-    did = await discussion.add(self.domain_id, node_or_pid, self.user['_id'], title, content,
+    did = await discussion.add(self.domain_id, node_or_dtuple, self.user['_id'], title, content,
                                **flags)
     self.json_or_redirect(self.reverse_url('discussion_detail', did=did), did=did)
 
@@ -101,7 +134,7 @@ class DiscussionDetailHandler(base.OperationHandler):
     else:
       dsdoc = None
     vnode, drdocs = await asyncio.gather(
-        discussion.get_vnode(self.domain_id, ddoc['parent_doc_id']),
+        discussion.get_vnode(self.domain_id, discussion.node_id(ddoc)),
         discussion.get_list_reply(self.domain_id, ddoc['doc_id']))
     uids = {ddoc['owner_uid']}
     uids.update(drdoc['owner_uid'] for drdoc in drdocs)
@@ -112,7 +145,7 @@ class DiscussionDetailHandler(base.OperationHandler):
                                          domain.get_dict_user_by_uid(self.domain_id, uids))
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
-        (vnode['title'], self.reverse_url('discussion_node', node_or_pid=vnode['doc_id'])),
+        (vnode['title'], node_url(self, 'discussion_node', discussion.node_id(ddoc))),
         (ddoc['title'], None))
     self.render('discussion_detail.html', page_title=ddoc['title'], path_components=path_components,
                 ddoc=ddoc, dsdoc=dsdoc, drdocs=drdocs, vnode=vnode, udict=udict, dudict=dudict)

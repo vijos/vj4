@@ -7,7 +7,7 @@
       <div class="section__body">
         <ul class="supplementary list">
           <li>
-            <a class="v-center discussion-node-tag" href="{{ reverse_url('discussion_node', node_or_pid=vnode['doc_id']) }}"><span class="icon icon-tag"></span>{{ vnode['title'] }}</a>
+            <a class="v-center discussion-node-tag" href="{{ vj4.handler.discussion.node_url(handler, 'discussion_node', vj4.model.adaptor.discussion.node_id(ddoc)) }}">{% if ddoc['parent_doc_type'] == vj4.model.document.TYPE_DISCUSSION_NODE %}<span class="icon icon-tag"></span>{% elif ddoc['parent_doc_type'] == vj4.model.document.TYPE_CONTEST %}<span class="icon icon-award"></span>{% else %}<span class="icon icon-flag"></span>{% endif %}{{ vnode['title'] }}</a>
           </li>
           <li>
             {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']]) }}
