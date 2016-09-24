@@ -17,6 +17,27 @@ from vj4.handler import base
 _logger = logging.getLogger(__name__)
 
 
+async def _post_judge(rdoc):
+  accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
+  post_coros = [bus.publish('record_change', rdoc['_id'])]
+  # TODO(twd2): ignore no effect statuses like system error, ...
+  if rdoc['type'] == constant.record.TYPE_SUBMISSION:
+    # TODO(twd2): rejudge
+    if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
+                                   rdoc['_id'], rdoc['status']):
+      post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))
+      post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'], num_accept=1))
+      # TODO(twd2): enqueue rdoc['pid'] to recalculate rp.
+      # TODO(twd2): send ac mail
+    if rdoc['tid']:
+      post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
+                                              rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
+    if accept:
+      post_coros.append(training.update_status_by_pid(rdoc['domain_id'],
+                                                      rdoc['uid'], rdoc['pid']))
+  await asyncio.gather(*post_coros)
+
+
 @app.route('/judge/playground', 'judge_playground')
 class JudgePlaygroundHandler(base.Handler):
   @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
@@ -101,24 +122,7 @@ class JudgeNotifyConnection(base.Connection):
                                                       int(kwargs['time_ms']),
                                                       int(kwargs['memory_kb'])),
                                      self.channel.basic_client_ack(tag))
-      accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
-      post_coros = [bus.publish('record_change', rid)]
-      # TODO(twd2): ignore no effect statuses like system error, ...
-      if rdoc['type'] == constant.record.TYPE_SUBMISSION:
-        # TODO(twd2): rejudge
-        if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
-                                       rdoc['_id'], rdoc['status']):
-          post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))
-          post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'], num_accept=1))
-          # TODO(twd2): enqueue rdoc['pid'] to recalculate rp.
-          # TODO(twd2): send ac mail
-        if rdoc['tid']:
-          post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
-                                                  rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
-        if accept:
-          post_coros.append(training.update_status_by_pid(rdoc['domain_id'],
-                                                          rdoc['uid'], rdoc['pid']))
-      await asyncio.gather(*post_coros)
+      await _post_judge(rdoc)
     elif key == 'nack':
       await self.channel.basic_client_nack(tag)
 
