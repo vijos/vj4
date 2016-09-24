@@ -56,7 +56,7 @@
   {% endfor %}
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{{ _('All Contests') }}</h1>
+        <h1 class="section__title">{% if not handler.request.GET.get('rule') %}{{ _('All Contests') }}{% else %}{{ _('All {0} Contests').format(_(vj4.constant.contest.RULE_TEXTS[handler.request.GET.get('rule')|int])) }}{% endif %}</h1>
         <div class="section__tools">
           <form method="get" name="filter-form">
             {{ _('Show') }}:
