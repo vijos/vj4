@@ -15,7 +15,7 @@
   {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST %}
     ({{ _('Pretest') }})
   {% endif %}
-  {% if not pdoc['hidden'] or (pdoc['domain_id'] == handler.domain_id and handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM_HIDDEN)) %}
+  {% if pdoc and (not pdoc['hidden'] or (pdoc['domain_id'] == handler.domain_id and handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM_HIDDEN))) %}
     {{ problem.render_problem_title(pdoc) }}
   {% else %}
     *
