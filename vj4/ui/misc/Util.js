@@ -1,7 +1,7 @@
-export async function ajax(options) {
+export async function ajax(options, dataType = 'json') {
   try {
     const data = await $.ajax({
-      dataType: 'json',
+      dataType,
       ...options,
     });
     return data;
@@ -16,7 +16,7 @@ export async function ajax(options) {
   }
 }
 
-export function post(url, dataOrForm = {}) {
+export function post(url, dataOrForm = {}, dataType = 'json') {
   let postData;
   if (dataOrForm instanceof jQuery && dataOrForm.is('form')) {
     // $form
@@ -38,13 +38,13 @@ export function post(url, dataOrForm = {}) {
     url,
     method: 'post',
     data: postData,
-  });
+  }, dataType);
 }
 
-export function get(url, qs = {}) {
-  return $.ajax({
+export function get(url, qs = {}, dataType = 'json') {
+  return ajax({
     url,
     data: qs,
     method: 'get',
-  });
+  }, dataType);
 }
