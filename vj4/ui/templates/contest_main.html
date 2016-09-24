@@ -117,6 +117,7 @@
         </li>
       {% endfor %}
       </ol>
+      {{ paginator.render(page, tpcount, add_qs=qs) }}
     {% endif %}
     </div>
   </div>

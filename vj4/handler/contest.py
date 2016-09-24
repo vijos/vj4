@@ -17,6 +17,7 @@ from vj4.model import user
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.handler import base
+from vj4.util import pagination
 
 
 class ContestStatusMixin(object):
@@ -56,17 +57,23 @@ class ContestStatusMixin(object):
 
 @app.route('/tests', 'contest_main')
 class ContestMainHandler(base.Handler, ContestStatusMixin):
+  CONTESTS_PER_PAGE = 20
+
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.get_argument
   @base.sanitize
-  async def get(self, rule: str=None):
+  async def get(self, *, rule: str=None, page: int=1):
     if not rule:
-      tdocs = await contest.get_list(self.domain_id)
+      tdocs = contest.get_multi(self.domain_id)
+      qs = ''
     else:
-      tdocs = await contest.get_list(self.domain_id, rule=int(rule))
+      tdocs = contest.get_multi(self.domain_id, rule=int(rule))
+      qs = 'rule={0}'.format(int(rule))
+    tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                            (tdoc['doc_id'] for tdoc in tdocs))
-    self.render('contest_main.html', tdocs=tdocs, tsdict=tsdict)
+    self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs,
+                tdocs=tdocs, tsdict=tsdict)
 
 
 @app.route('/tests/{tid:\w{24}}', 'contest_detail')

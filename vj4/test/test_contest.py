@@ -111,7 +111,7 @@ class OuterTest(base.DatabaseTestCase):
     self.assertEqual(tdoc['owner_uid'], OWNER_UID)
     self.assertEqual(tdoc['title'], TITLE)
     self.assertEqual(tdoc['content'], CONTENT)
-    tdocs = await contest.get_list(DOMAIN_ID_DUMMY, fields=['title'])
+    tdocs = await contest.get_multi(DOMAIN_ID_DUMMY, fields=['title']).to_list(None)
     self.assertEqual(len(tdocs), 1)
     self.assertEqual(tdocs[0]['title'], TITLE)
     self.assertFalse('content' in tdocs[0])
