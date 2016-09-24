@@ -398,7 +398,7 @@ class ProblemCreateHandler(base.Handler):
   async def post(self, *, title: str, content: str, hidden: bool=False):
     pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                             hidden=hidden)
-    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
+    self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
