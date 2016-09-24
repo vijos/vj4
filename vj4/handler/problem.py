@@ -424,9 +424,8 @@ class ProblemEditHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, title: str, content: str,
-                 hidden: bool=False):
-    await problem.edit(self.domain_id, pid, title=title, content=content, hidden=hidden)
+  async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
+    await problem.edit(self.domain_id, pid, title=title, content=content)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
@@ -437,7 +436,6 @@ class ProblemSettingsHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
-    # TODO(twd2)
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
@@ -447,6 +445,16 @@ class ProblemSettingsHandler(base.Handler):
         (self.translate('problem_settings'), None))
     self.render('problem_settings.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, pid: document.convert_doc_id, hidden: bool=False):
+    await problem.edit(self.domain_id, pid, hidden=hidden)
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
 @app.route('/p/{pid}/upload', 'problem_upload')
