@@ -31,13 +31,16 @@ const page = new NamedPage('home_messages', () => {
         return true;
       },
     });
+    userSelectDialog.clear = function () {
+      userSelector.clear();
+      return this;
+    };
 
     render(
       <Provider store={store}>
         <MessagePadApp
           onAdd={() => {
-            userSelector.clear();
-            userSelectDialog.open().then(action => {
+            userSelectDialog.clear().open().then(action => {
               if (action !== 'ok') {
                 return;
               }
