@@ -22,6 +22,14 @@ def node_url(handler, name, node_or_dtuple):
   return handler.reverse_url(name, **kwargs)
 
 
+@app.route('/discuss/edit/', 'discussion_edit')
+class DiscussionEditDemoHandler(base.Handler):
+  @base.sanitize
+  async def get(self):
+    # TODO: for demo purpose only. remove this handler.
+    self.render('discussion_edit.html')
+
+
 @app.route('/discuss', 'discussion_main')
 class DiscussionMainHandler(base.Handler):
   DISCUSSIONS_PER_PAGE = 15

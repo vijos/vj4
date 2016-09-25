@@ -20,6 +20,11 @@
         </div>
       </div>
       <ul class="section__footer supplementary dot list">
+      <!-- TODO (twd2): test permission / privilege -->
+        <li>
+          <a href="{{ reverse_url('discussion_edit') }}"><span class="icon icon-edit"></span> {{ _('Edit') }}</a>
+        </li>
+      <!-- TODO END -->
         <li>
           {{ _('{0} views').format(ddoc['views']) }}
         </li>
