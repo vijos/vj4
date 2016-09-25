@@ -1,42 +1,80 @@
-import { NamedPage } from '../misc/PageLoader';
+import _ from 'lodash';
 
-import { ActionDialog } from '../components/dialog';
+import { NamedPage } from '../misc/PageLoader';
+import Notification from '../components/notification';
+import { ConfirmDialog, ActionDialog } from '../components/dialog';
 
 import * as util from '../misc/Util';
+import tpl from '../utils/tpl';
+import delay from '../utils/delay';
 
 const page = new NamedPage('domain_role', () => {
   const createRoleDialog = new ActionDialog({
     $body: $('.dialog__body--create-role > div'),
-    onAction: async action => {
-      if (action !== 'ok') {
-        return true;
-      }
-      const role = createRoleDialog.$dom.find('[name="role"]').val();
-      if (role === '') {
+    onDispatch(action) {
+      const $role = createRoleDialog.$dom.find('[name="role"]');
+      if (action === 'ok' && $role.val() === '') {
+        $role.focus();
         return false;
       }
-      await util.post('', {
-        operation: 'set',
-        role,
-      });
-      window.location.reload();
       return true;
     },
   });
+  createRoleDialog.clear = function () {
+    this.$dom.find('[name="role"]').val('');
+    return this;
+  };
 
-  function openCreateRoleDialog() {
+  function ensureAndGetSelectedRoles() {
+    const roles = _.map(
+      $('.domain-roles tbody [type="checkbox"]:checked'),
+      ch => $(ch).closest('tr').attr('data-role')
+    );
+    if (roles.length === 0) {
+      Notification.error('Please select at least one role to perform this operation.');
+      return null;
+    }
+    return roles;
+  }
+
+  async function handleClickCreateRole() {
     createRoleDialog.$dom.find('[name="role"]').val('');
-    createRoleDialog.open();
-  }
-
-  function handleDeleteSelected() {
-    $('.domain-roles tbody input[type="checkbox"]:checked').closest('tr').each((i, e) => {
-      alert($(e).attr('data-role'));
+    const action = await createRoleDialog.clear().open();
+    if (action !== 'ok') {
+      return;
+    }
+    const role = createRoleDialog.$dom.find('[name="role"]').val();
+    await util.post('', {
+      operation: 'set',
+      role,
     });
+    window.location.reload();
   }
 
-  $('[name="create_role"]').click(() => openCreateRoleDialog());
-  $('[name="delete_selected"]').click(() => handleDeleteSelected());
+  async function handleClickDeleteSelected() {
+    const selectedRoles = ensureAndGetSelectedRoles();
+    if (selectedRoles === null) {
+      return;
+    }
+    const action = await new ConfirmDialog({
+      $body: tpl`
+        <div class="typo">
+          <p>Are you sure want to delete the selected roles?</p>
+          <p>Users in those roles will be removed from the domain.</p>
+        </div>`,
+    }).open();
+    if (action !== 'yes') {
+      return;
+    }
+    // TODO
+    alert(selectedRoles.join(', '));
+    Notification.success('Selected roles are deleted');
+    await delay(2000);
+    window.location.reload();
+  }
+
+  $('[name="create_role"]').click(() => handleClickCreateRole());
+  $('[name="delete_selected"]').click(() => handleClickDeleteSelected());
 });
 
 export default page;

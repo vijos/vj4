@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 import { NamedPage } from '../misc/PageLoader';
-
 import Notification from '../components/notification';
 import { ConfirmDialog, ActionDialog } from '../components/dialog';
 import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
