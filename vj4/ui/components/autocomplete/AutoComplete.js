@@ -191,6 +191,10 @@ export default class AutoComplete extends DOMAttachedObject {
     return this._value;
   }
 
+  focus() {
+    this.$dom.focus();
+  }
+
 }
 
 _.assign(AutoComplete, DOMAttachedObject);

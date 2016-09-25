@@ -26,6 +26,7 @@ const page = new NamedPage('home_messages', () => {
       $body: $('.dialog__body--user-select > div'),
       onDispatch: action => {
         if (action === 'ok' && userSelector.value() === null) {
+          userSelector.focus();
           return false;
         }
         return true;
