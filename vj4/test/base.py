@@ -18,11 +18,11 @@ wait = asyncio.get_event_loop().run_until_complete
 class DatabaseTestCase(unittest.TestCase):
   def setUp(self):
     db.Database._instance, db.Collection._instances, db.GridFS._instances = None, {}, {}
-    options.options.db_name = 'unittest_' + str(os.getpid())
+    options.db_name = 'unittest_' + str(os.getpid())
     wait(tools.ensure_all_indexes())
 
   def tearDown(self):
-    pymongo.MongoClient(options.options.db_host).drop_database(options.options.db_name)
+    pymongo.MongoClient(options.db_host).drop_database(options.db_name)
 
 
 class BusTestCase(DatabaseTestCase):

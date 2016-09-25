@@ -24,14 +24,14 @@ class Environment(jinja2.Environment):
     super(Environment, self).__init__(
         loader=jinja2.FileSystemLoader(path.join(path.dirname(__file__), 'ui/templates')),
         extensions=[jinja2.ext.with_],
-        auto_reload=options.options.debug,
+        auto_reload=options.debug,
         autoescape=True,
         trim_blocks=True,
         undefined=Undefined)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     self.globals['vj4'] = vj4
-    self.globals['static_url'] = lambda s: options.options.cdn_prefix + s
+    self.globals['static_url'] = lambda s: options.cdn_prefix + s
     self.globals['paginate'] = paginate
 
     self.filters['markdown'] = markdown

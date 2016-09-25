@@ -11,8 +11,8 @@ class Database(object):
 
   def __new__(cls):
     if not cls._instance:
-      client = motor_asyncio.AsyncIOMotorClient(options.options.db_host)
-      cls._instance = motor_asyncio.AsyncIOMotorDatabase(client, options.options.db_name)
+      client = motor_asyncio.AsyncIOMotorClient(options.db_host)
+      cls._instance = motor_asyncio.AsyncIOMotorDatabase(client, options.db_name)
     return cls._instance
 
 
