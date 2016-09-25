@@ -69,9 +69,8 @@ class DiscussionNodeHandler(base.Handler):
     uids = set(ddoc['owner_uid'] for ddoc in ddocs)
     if 'owner_uid' in vnode:
       uids.add(vnode['owner_uid'])
-    udict, vndict = await asyncio.gather(
-        user.get_dict(uids),
-        discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs)))
+    udict = await user.get_dict(uids)
+    vndict = {node_or_dtuple: vnode}
     vncontext = {} # TODO(twd2): eg. psdoc, tsdoc, ...
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
