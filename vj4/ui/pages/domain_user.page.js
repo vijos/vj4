@@ -38,10 +38,6 @@ const page = new NamedPage('domain_user', () => {
     addUserDialog.open();
   }
 
-  function handleSelectAllChange(ev) {
-    $('.domain-users tbody input[type="checkbox"]:enabled').prop('checked', $(ev.currentTarget).prop('checked'));
-  }
-
   function handleDeleteSelected() {
     $('.domain-users tbody input[type="checkbox"]:checked').closest('tr').each((i, e) => {
       alert($(e).attr('data-uid'));
@@ -72,7 +68,6 @@ const page = new NamedPage('domain_user', () => {
   $('[name="delete_selected"]').click(() => handleDeleteSelected());
   $('[name="set_roles"]').click(() => handleSetSelected());
   $('.domain-users [name="role"]').change(ev => handleUserRoleChange(ev));
-  $('.domain-users [name="select_all"]').change(ev => handleSelectAllChange(ev));
 });
 
 export default page;

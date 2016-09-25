@@ -40,7 +40,7 @@
         <tr>
           <th class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox" name="select_all">
+              <input type="checkbox" data-checkbox-toggle="role">
             </label>
           </th>
           <th class="col--id">{{ _('Role') }}</th>
@@ -52,7 +52,7 @@
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox" disabled>
+              <input type="checkbox" data-checkbox-group="role" disabled>
             </label>
           </td>
           <td class="col--id">
@@ -68,7 +68,7 @@
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox" disabled>
+              <input type="checkbox" data-checkbox-group="role" disabled>
             </label>
           </td>
           <td class="col--id">
@@ -86,7 +86,7 @@
         <tr data-role="{{ role }}">
           <td class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox">
+              <input type="checkbox" data-checkbox-group="role" data-checkbox-range>
             </label>
           </td>
           <td class="col--id">

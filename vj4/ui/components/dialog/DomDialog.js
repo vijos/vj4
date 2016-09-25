@@ -46,6 +46,7 @@ export default class DomDialog extends DOMAttachedObject {
       opacity: 1,
     }, {
       duration: 100,
+      easing: 'easeOutCubic',
     });
 
     const $dgContent = this.$dom.find('.dialog__content');
@@ -96,7 +97,6 @@ export default class DomDialog extends DOMAttachedObject {
       scale: 0.8,
     }, {
       duration: 200,
-      easing: 'easeOutCubic',
       complete: () => this.$dom.css('display', 'none'),
     });
     await delay(200);

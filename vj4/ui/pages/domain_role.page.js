@@ -15,11 +15,10 @@ const page = new NamedPage('domain_role', () => {
       if (role === '') {
         return false;
       }
-      await util
-        .post('', {
-          operation: 'set',
-          role,
-        });
+      await util.post('', {
+        operation: 'set',
+        role,
+      });
       window.location.reload();
       return true;
     },
@@ -36,13 +35,8 @@ const page = new NamedPage('domain_role', () => {
     });
   }
 
-  function handleSelectAllChange(ev) {
-    $('.domain-roles tbody input[type="checkbox"]:enabled').prop('checked', $(ev.currentTarget).prop('checked'));
-  }
-
   $('[name="create_role"]').click(() => openCreateRoleDialog());
   $('[name="delete_selected"]').click(() => handleDeleteSelected());
-  $('.domain-roles [name="select_all"]').change(ev => handleSelectAllChange(ev));
 });
 
 export default page;
