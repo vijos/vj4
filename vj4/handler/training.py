@@ -43,6 +43,15 @@ class TrainingOwnedHandler(base.Handler):
     self.render('training_owned.html')
 
 
+@app.route('/training/detail', 'training_detail_demo')
+class TrainingDetailDemoHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_TRAINING)
+  async def get(self):
+    # TODO: for demo purpose only. remove this handler!
+    self.render('training_detail.html')
+
+
 @app.route('/training/{tid}', 'training_detail')
 class TrainingDetailHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
