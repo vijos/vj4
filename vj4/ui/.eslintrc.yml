@@ -28,6 +28,7 @@ rules:
   no-console: off
   no-underscore-dangle: off
   func-names: off
+  consistent-return: warn
   indent:
     - error
     - 2

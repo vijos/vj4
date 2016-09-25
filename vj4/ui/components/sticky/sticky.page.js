@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 function updateStickies($stickies) {
   const ww = window.innerWidth;
-  $stickies.each((i, element) => {
+  for (const element of $stickies) {
     const $sticky = $(element);
     const shouldEnableSticky = (ww >= $sticky.data('sticky-cutoff-min'));
     const stickyEnabled = $sticky.data('sticky-enabled');
@@ -24,7 +24,7 @@ function updateStickies($stickies) {
       $sticky.trigger('sticky_kit:detach');
       $sticky.data('sticky-enabled', false);
     }
-  });
+  }
 }
 
 function getCutoff(str) {
@@ -43,7 +43,7 @@ function stickyRelayout() {
 const stickyPage = new AutoloadPage(() => {
   let shouldListenResize = false;
   const $stickies = $('[data-sticky]');
-  $stickies.each((i, element) => {
+  for (const element of $stickies) {
     const $sticky = $(element);
     const minEnabledSize = $sticky.attr('data-sticky');
     if (minEnabledSize === 'medium' || minEnabledSize === 'large') {
@@ -51,7 +51,7 @@ const stickyPage = new AutoloadPage(() => {
     }
     $sticky.data('sticky-cutoff-min', getCutoff(minEnabledSize));
     $sticky.data('sticky-enabled', false);
-  });
+  }
   updateStickies($stickies);
   if (shouldListenResize) {
     $(window).on('resize', _.throttle(() => updateStickies($stickies), 300));
