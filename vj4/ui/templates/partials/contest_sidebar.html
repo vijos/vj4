@@ -17,6 +17,19 @@
 {% endif %}
   <div>
     <ol class="menu">
+    {% if page_name == 'discussion_node' %}
+    {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
+      <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type=tdoc['doc_type'], doc_id=tdoc['doc_id']) }}">
+        <span class="icon icon-add"></span> {{ _('Create a discussion') }}
+      </a></li>
+      <li class="menu__seperator"></li>
+    {% else %}
+      <li class="menu__item"><a class="menu__link highlight" href="javascript:;">
+        <span class="icon icon-add"></span> {{ _('Login to Create a discussion' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Create a discussion') }}
+      </a></li>
+      <li class="menu__seperator"></li>
+    {% endif %}
+    {% endif %}
     {% if page_name != 'contest_detail' %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">
         <span class="icon icon-award"></span> {{ _('View Contest') }}
@@ -66,7 +79,7 @@
       <dt>{{ _('Start at') }}</dt><dd>{{ contest.render_time(tdoc['begin_at']) }}</dd>
       <dt>{{ _('End at') }}</dt><dd>{{ contest.render_time(tdoc['end_at']) }}</dd>
       <dt>{{ _('Duration') }}</dt><dd>{{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}</dd>
-      <dt>{{ _('Host') }}</dt><dd>{{ user.render_inline(udoc, badge=false) }}</dd>
+      <dt>{{ _('Host') }}</dt><dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
       <dt>{{ _('Partic.') }}</dt>
       <dd>
         {{ tdoc['attend']|default(0) }}

@@ -14,6 +14,7 @@ from vj4.model import builtin
 from vj4.model import document
 from vj4.model import record
 from vj4.model import user
+from vj4.model.adaptor import discussion
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.handler import base
@@ -78,15 +79,18 @@ class ContestMainHandler(base.Handler, ContestStatusMixin):
 
 @app.route('/contests/{tid:\w{24}}', 'contest_detail')
 class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
+  DISCUSSIONS_PER_PAGE = 15
+
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
+  @base.get_argument
   @base.route_argument
   @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId):
+  async def get(self, *, tid: objectid.ObjectId, page: int=1):
+    # contest
     tdoc = await contest.get(self.domain_id, tid)
     pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
-    tsdoc, udoc, pdict = await asyncio.gather(
+    tsdoc, pdict = await asyncio.gather(
         contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
-        user.get_by_uid(tdoc['owner_uid']),
         problem.get_dict(pdom_and_ids))
     psdict = dict()
     rdict = dict()
@@ -97,12 +101,22 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
       rdict = await record.get_dict(psdoc['rid'] for psdoc in psdict.values())
     else:
       attended = False
+    # discussion
+    ddocs, dpcount, dcount = await pagination.paginate(
+        discussion.get_multi(self.domain_id,
+                             parent_doc_type=tdoc['doc_type'],
+                             parent_doc_id=tdoc['doc_id']),
+        page, self.DISCUSSIONS_PER_PAGE)
+    uids = set(ddoc['owner_uid'] for ddoc in ddocs)
+    uids.add(tdoc['owner_uid'])
+    udict = await user.get_dict(uids)
     path_components = self.build_path(
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], None))
-    self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udoc=udoc,
-                pdict=pdict, psdict=psdict, rdict=rdict, page_title=tdoc['title'],
-                path_components=path_components)
+    self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udict=udict,
+                pdict=pdict, psdict=psdict, rdict=rdict,
+                ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount,
+                page_title=tdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_ATTEND_CONTEST)

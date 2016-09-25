@@ -53,7 +53,7 @@
             {% endif %}
               <td class="col--problem">
                 #{{ loop.index }}:
-                <a href="{{ reverse_url('contest_detail_problem', pid=pdict[(tdoc['domain_id'], pid)]['doc_id'], tid=tdoc['doc_id']) }}">{{ pdict[(tdoc['domain_id'], pid)]['title'] }}</a>
+                <a href="{{ reverse_url('contest_detail_problem', pid=pdict[(tdoc['domain_id'], pid)]['doc_id'], tid=tdoc['doc_id']) }}" target="_blank">{{ pdict[(tdoc['domain_id'], pid)]['title'] }}</a>
               </td>
             </tr>
           {% endfor %}
@@ -67,7 +67,7 @@
   {% endif %}
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{{ _('{0} comments').format(0) }}</h1>
+        <h1 class="section__title">{{ _('{0} discussions').format(dcount) }}</h1>
       </div>
       <div class="section__body">
       {% if handler.is_live(tdoc) %}
@@ -75,12 +75,16 @@
           <p>{{ _('Do not discuss solutions otherwise you will be regarded as cheating and then lose qualifications.') }}</p>
         </blockquote>
       {% endif %}
-      <!-- TODO: discussion -->
+      {% with vndict={(tdoc['doc_type'], tdoc['doc_id']): tdoc} %}
+        {% include "partials/discussion_list.html" %}
+      {% endwith %}
       </div>
     </div>
   </div>
   <div class="medium-3 columns">
+  {% with owner_udoc=udict[tdoc['owner_uid']] %}
     {% include "partials/contest_sidebar.html" %}
+  {% endwith %}
   </div>
 </div>
 {% endblock %}
