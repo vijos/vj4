@@ -24,26 +24,10 @@ const page = new NamedPage('home_messages', () => {
     const userSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--user-select [name="user"]'));
     const userSelectDialog = new ActionDialog({
       $body: $('.dialog__body--user-select > div'),
-      onAction: action => {
-        if (action !== 'ok') {
-          return true;
-        }
-        const user = userSelector.value();
-        if (user === null) {
+      onDispatch: action => {
+        if (action === 'ok' && userSelector.value() === null) {
           return false;
         }
-        const id = _.uniqueId('PLACEHOLDER_');
-        store.dispatch({
-          type: 'DIALOGUES_CREATE',
-          payload: {
-            id,
-            user,
-          },
-        });
-        store.dispatch({
-          type: 'DIALOGUES_SWITCH_TO',
-          payload: id,
-        });
         return true;
       },
     });
@@ -52,8 +36,25 @@ const page = new NamedPage('home_messages', () => {
       <Provider store={store}>
         <MessagePadApp
           onAdd={() => {
-            userSelector.$dom.val('');
-            userSelectDialog.open();
+            userSelector.clear();
+            userSelectDialog.open().then(action => {
+              if (action !== 'ok') {
+                return;
+              }
+              const user = userSelector.value();
+              const id = _.uniqueId('PLACEHOLDER_');
+              store.dispatch({
+                type: 'DIALOGUES_CREATE',
+                payload: {
+                  id,
+                  user,
+                },
+              });
+              store.dispatch({
+                type: 'DIALOGUES_SWITCH_TO',
+                payload: id,
+              });
+            });
           }}
         />
       </Provider>,
