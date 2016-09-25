@@ -13,10 +13,9 @@ export default class AutoComplete extends DOMAttachedObject {
 
   constructor($dom, options = {}) {
     super($dom);
+    this.clear();
     this.menuShown = false;
     this.cache = {};
-    this._value = null;
-    this.lastText = null;
     this.options = {
       items: async () => [],
       render: () => '',
@@ -43,6 +42,12 @@ export default class AutoComplete extends DOMAttachedObject {
     });
     this.dropInstance.on('open', this.onDropOpen.bind(this));
     this.attach();
+  }
+
+  clear() {
+    this.$dom.val('');
+    this._value = null;
+    this.lastText = null;
   }
 
   attach() {

@@ -50,6 +50,10 @@ export default class UserSelectAutoComplete extends DOMAttachedObject {
     return this.autocompleteInstance.value();
   }
 
+  clear() {
+    this.autocompleteInstance.clear();
+  }
+
 }
 
 _.assign(UserSelectAutoComplete, DOMAttachedObject);
