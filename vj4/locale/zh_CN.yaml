@@ -378,7 +378,7 @@ Role: 角色
 Select a role: 选择一个角色
 Add User: 添加用户
 Add User to Domain: 添加用户到域
-Delete Selected User: 删除所选用户
+Remove Selected User from Domain: 将所选用户移出域
 Set Roles for Selected User: 设置所选用户的角色
 Create Role: 创建角色
 Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
