@@ -32,6 +32,6 @@ def load_translations(translation_path):
 @functools.lru_cache()
 def get_translate(locale_code):
   if locale_code not in _locales:
-    locale_code = options.options.default_locale
+    locale_code = options.default_locale
   locale = _locales[locale_code]
   return lambda text: locale[text] if text in locale else text

@@ -7,7 +7,7 @@ from vj4.util import options
 
 class OfflineTest(unittest.TestCase):
   def setUp(self):
-    options.options.smallcache_max_entries = 4
+    options.smallcache_max_entries = 4
 
   def tearDown(self):
     smallcache._cache.clear()
