@@ -18,6 +18,9 @@ class Undefined(jinja2.runtime.Undefined):
   def __getitem__(self, _):
     return self
 
+  if options.debug:
+    __str__ = jinja2.runtime.Undefined.__call__
+
 
 class Environment(jinja2.Environment):
   def __init__(self):
