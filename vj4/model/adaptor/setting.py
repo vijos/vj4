@@ -17,7 +17,7 @@ Setting = functools.partial(
 # Setting keys should not duplicate with user keys or session keys.
 PREFERENCE_SETTINGS = [
     Setting('setting_display', 'view_lang', str, range=locale.VIEW_LANGS,
-            default=options.options.default_locale, ui='select', name='UI Language'),
+            default=options.default_locale, ui='select', name='UI Language'),
     Setting('setting_display', 'timezone', str,
             range=collections.OrderedDict(zip(pytz.common_timezones, pytz.common_timezones)),
             default='Asia/Shanghai', ui='select', name='Timezone'),

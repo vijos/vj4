@@ -76,12 +76,21 @@
   {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_PROBLEM) %}
     <div class="section side">
       <div class="section__header">
-        <h1 class="section__title">
-          {{ _('Create Problem') }}
-        </h1>
+        <h1 class="section__title">{{ _('Create Problem') }}</h1>
       </div>
+      <ol class="menu">
+        <li class="menu__item">
+          <a href="{{ reverse_url('problem_create') }}" class="menu__link"><span class="icon icon-add"></span> {{ _('Create Problem') }}</a>
+        </li>
+        <!-- TODO(swx): twd2 -->
+        <li class="menu__item">
+          <a href="#" class="menu__link"><span class="icon icon-flag"></span> {{ _('View Owned Problems') }}</a>
+        </li>
+      </ol>
       <div class="section__body">
-        <p><a href="{{ reverse_url('problem_create') }}" class="expanded primary button">{{ _('Create a problem') }}</a></p>
+        <div class="typo supplementary">
+          <p>{{ _('You have permissions to create problems for this domain.') }}</p>
+        </div>
       </div>
     </div>
   {% endif %}

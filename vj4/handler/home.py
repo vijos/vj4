@@ -68,7 +68,7 @@ class HomeSecurityHandler(base.OperationHandler):
     if mail_holder_udoc:
       raise error.UserAlreadyExistError(mail)
     rid, _ = await token.add(token.TYPE_CHANGEMAIL,
-                             options.options.changemail_token_expire_seconds,
+                             options.changemail_token_expire_seconds,
                              uid=udoc['_id'], mail=mail)
     await self.send_mail(mail, 'Change Email', 'user_changemail_mail.html',
                          url=self.reverse_url('user_changemail_with_code', code=rid),

@@ -50,7 +50,7 @@ async def get(record_id: objectid.ObjectId, fields=PROJECTION_ALL):
 
 
 @argmethod.wrap
-async def rejudge(record_id: objectid.ObjectId):
+async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
   coll = db.Collection('record')
   doc = await coll.find_and_modify(query={'_id': record_id},
                                    update={'$unset': {'judge_uid': '',
@@ -64,9 +64,12 @@ async def rejudge(record_id: objectid.ObjectId):
                                                     'time_ms': 0,
                                                     'memory_kb': 0}},
                                    new=False)
-  post_coros = [queue.publish('judge', rid=doc['_id']),
-                bus.publish('record_change', doc['_id'])]
+  post_coros = [bus.publish('record_change', doc['_id'])]
+  if enqueue:
+    post_coros.append(queue.publish('judge', rid=doc['_id']))
   if doc['status'] == constant.record.STATUS_ACCEPTED:
+    # FIXME(twd2): user may be accepted before or later,
+    # in this situation we shouldn't decrease num_accept
     post_coros.append(problem.inc(doc['domain_id'], doc['pid'], 'num_accept', -1))
     post_coros.append(domain.inc_user(doc['domain_id'], doc['uid'], num_accept=-1))
   await asyncio.gather(*post_coros)

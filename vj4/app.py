@@ -39,7 +39,7 @@ class Application(web.Application):
   def __init__(self):
     super(Application, self).__init__(
       handler_factory=functools.partial(web.RequestHandlerFactory, access_log=None),
-      debug=options.options.debug)
+      debug=options.debug)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     # Initialize components.
@@ -60,7 +60,7 @@ class Application(web.Application):
     from vj4.handler import training
     from vj4.handler import user
     from vj4.handler import i18n
-    if options.options.static:
+    if options.static:
       self.router.add_static('/', path.join(path.dirname(__file__), '.uibuild'), name='static')
 
 

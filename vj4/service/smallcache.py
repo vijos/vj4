@@ -36,7 +36,7 @@ def set_local_direct(key, value):
   if key in _cache:
     del _cache[key]
   _cache[key] = value
-  if len(_cache) > options.options.smallcache_max_entries:
+  if len(_cache) > options.smallcache_max_entries:
     _cache.popitem(False)
 
 

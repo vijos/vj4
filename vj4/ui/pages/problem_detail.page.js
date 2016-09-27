@@ -177,7 +177,7 @@ const page = new NamedPage('problem_detail', () => {
     const { default: ScratchpadReducer } = await System.import('../components/scratchpad/reducers');
     const { React, render, Provider, store } = await loadReactRedux(ScratchpadReducer);
 
-    const sock = new SockJs('/records-conn');
+    const sock = new SockJs(`/p/${Context.problemId}/pretest-conn`);
     sock.onmessage = (message) => {
       const msg = JSON.parse(message.data);
       store.dispatch({

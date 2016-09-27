@@ -53,7 +53,7 @@ def invoke_by_args():
       result = _methods[name](**vars(args))
       if inspect.iscoroutine(result):
         result = loop.run_until_complete(result)
-      if options.options.pretty:
+      if options.pretty:
         print_func = pprint.pprint
       else:
         print_func = lambda x: print(x) if x is not None else None

@@ -13,6 +13,7 @@ from vj4.model import domain
 from vj4.model import fs
 from vj4.model import record
 from vj4.model.adaptor import problem
+from vj4.service import bus
 from vj4.util import pagination
 
 
@@ -137,6 +138,33 @@ class ProblemPretestHandler(base.Handler):
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST,
                            self.user['_id'], lang, code, did)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
+
+
+@app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
+class ProblemPretestConnection(base.Connection):
+  async def on_open(self):
+    await super(ProblemPretestConnection, self).on_open()
+    self.pid = document.convert_doc_id(self.request.match_info['pid'])
+    bus.subscribe(self.on_record_change, ['record_change'])
+
+  async def on_record_change(self, e):
+    rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
+    if rdoc['uid'] != self.user['_id'] or \
+       rdoc['domain_id'] != self.domain_id or rdoc['pid'] != self.pid:
+      return
+    # check permission for visibility: contest
+    if rdoc['tid']:
+      now = datetime.datetime.utcnow()
+      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+          and (self.domain_id != tdoc['domain_id']
+               or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+        return
+    # TODO(iceboy): join from event to improve performance?
+    self.send(rdoc=rdoc)
+
+  async def on_close(self):
+    bus.unsubscribe(self.on_record_change)
 
 
 @app.route('/p/{pid}/solution', 'problem_solution')
@@ -370,7 +398,7 @@ class ProblemCreateHandler(base.Handler):
   async def post(self, *, title: str, content: str, hidden: bool=False):
     pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                             hidden=hidden)
-    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
+    self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
@@ -396,9 +424,8 @@ class ProblemEditHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, title: str, content: str,
-                 hidden: bool=False):
-    await problem.edit(self.domain_id, pid, title=title, content=content, hidden=hidden)
+  async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
+    await problem.edit(self.domain_id, pid, title=title, content=content)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
@@ -409,7 +436,6 @@ class ProblemSettingsHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
-    # TODO(twd2)
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
@@ -419,6 +445,16 @@ class ProblemSettingsHandler(base.Handler):
         (self.translate('problem_settings'), None))
     self.render('problem_settings.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, pid: document.convert_doc_id, hidden: bool=False):
+    await problem.edit(self.domain_id, pid, hidden=hidden)
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
 @app.route('/p/{pid}/upload', 'problem_upload')

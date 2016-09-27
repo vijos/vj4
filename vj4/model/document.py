@@ -1,5 +1,6 @@
+import builtins
 import datetime
-
+import itertools
 from bson import objectid
 
 from vj4 import db
@@ -16,6 +17,16 @@ TYPE_TRAINING = 40
 TYPE_PRETEST_DATA = 50
 
 DOC_ID_DISCUSSION_NODES = 1
+
+
+PROJECTION_PUBLIC = {
+    'doc_type': 1,
+    'doc_id': 1,
+    'parent_doc_type': 1,
+    'parent_doc_id': 1,
+    'title': 1,
+    'hidden': 1
+}
 
 
 def convert_doc_id(doc_id):
@@ -51,11 +62,11 @@ async def add(domain_id: str, content: str, owner_uid: int,
 
 
 @argmethod.wrap
-async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id):
+async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id, fields=None):
   coll = db.Collection('document')
   return await coll.find_one({'domain_id': domain_id,
                               'doc_type': doc_type,
-                              'doc_id': doc_id})
+                              'doc_id': doc_id}, fields=fields)
 
 
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
@@ -78,6 +89,21 @@ async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
 def get_multi(*, fields=None, **kwargs):
   coll = db.Collection('document')
   return coll.find(kwargs, fields=fields)
+
+
+async def get_dict(domain_id: str, dtuples, *, fields=None):
+  query = {'$or': []}
+  for doc_type, doc_tuples in itertools.groupby(sorted(dtuples), key=lambda e: e[0]):
+    query['$or'].append({'domain_id': domain_id, 'doc_type': doc_type,
+                         'doc_id': {'$in': [e[1] for e in doc_tuples]}})
+  result = dict()
+  if not query['$or']:
+    return result
+  async for doc in get_multi(**query, fields=fields).hint([('domain_id', 1),
+                                                           ('doc_type', 1),
+                                                           ('doc_id', 1)]):
+    result[(doc['doc_type'], doc['doc_id'])] = doc
+  return result
 
 
 @argmethod.wrap
@@ -292,7 +318,6 @@ async def ensure_indexes():
                                   ('status', 1),
                                   ('rid', 1),
                                   ('rp', 1)], sparse=True)
-
   # contest rule OI
   await status_coll.ensure_index([('domain_id', 1),
                                   ('doc_type', 1),

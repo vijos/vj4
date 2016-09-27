@@ -20,7 +20,7 @@
     <ol class="menu">
     {% if page_name == 'discussion_node' %}
     {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
-      <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create', node_or_pid=pdoc['doc_id']) }}">
+      <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type=pdoc['doc_type'], doc_id=pdoc['doc_id']) }}">
         <span class="icon icon-add"></span> {{ _('Create a discussion') }}
       </a></li>
     {% else %}
@@ -69,7 +69,7 @@
       <li class="menu__seperator"></li>
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) %}
-      <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node', node_or_pid=pdoc['doc_id']) }}">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node_document_as_node', doc_type=pdoc['doc_type'], doc_id=pdoc['doc_id']) }}">
         <span class="icon icon-comment--text"></span> {{ _('Discussions') }}
       </a></li>
     {% endif %}

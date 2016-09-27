@@ -458,3 +458,5 @@ Dataset: 测试数据
 'Current dataset: {0}': '当前测试数据: {0}'
 Upload: 上传
 No dataset present.: 暂无测试数据。
+Cancel Score: 取消成绩
+score canceled: 成绩取消

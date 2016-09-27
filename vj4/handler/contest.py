@@ -54,7 +54,7 @@ class ContestStatusMixin(object):
     return contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
 
 
-@app.route('/tests', 'contest_main')
+@app.route('/contest', 'contest_main')
 class ContestMainHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   async def get(self):
@@ -64,7 +64,7 @@ class ContestMainHandler(base.Handler, ContestStatusMixin):
     self.render('contest_main.html', tdocs=tdocs, tsdict=tsdict)
 
 
-@app.route('/tests/{tid:\w{24}}', 'contest_detail')
+@app.route('/contest/{tid:\w{24}}', 'contest_detail')
 class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.route_argument
@@ -105,7 +105,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
     self.json_or_redirect(self.url)
 
 
-@app.route('/tests/{tid:\w{24}}/code', 'contest_code')
+@app.route('/contest/{tid:\w{24}}/code', 'contest_code')
 class ContestCodeHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_READ_RECORD_CODE)
@@ -131,7 +131,7 @@ class ContestCodeHandler(base.OperationHandler):
     await self.binary(output_buffer.getvalue(), 'application/zip')
 
 
-@app.route('/tests/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
+@app.route('/contest/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
 class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
@@ -156,7 +156,7 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
                 page_title=pdoc['title'], path_components=path_components)
 
 
-@app.route('/tests/{tid}/{pid}/submit', 'contest_detail_problem_submit')
+@app.route('/contest/{tid}/{pid}/submit', 'contest_detail_problem_submit')
 class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
@@ -215,7 +215,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.route('/tests/{tid}/status', 'contest_status')
+@app.route('/contest/{tid}/status', 'contest_status')
 class ContestStatusHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
@@ -236,7 +236,7 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
                 udict=udict, pdict=pdict, path_components=path_components)
 
 
-@app.route('/tests/create', 'contest_create')
+@app.route('/contest/create', 'contest_create')
 class ContestCreateHandler(base.Handler, ContestStatusMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)

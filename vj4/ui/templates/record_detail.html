@@ -89,6 +89,20 @@
           </li>
         </ol>
       </div>
+      <div class="section__body no-padding">
+        <ol class="menu">
+          <li class="menu__item">
+            <form method="post" action="{{ reverse_url('judge_score', rid=rdoc['_id']) }}">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <input type="hidden" name="score" value="0">
+              <input type="hidden" name="message" value="{{ _('score canceled') }}">
+              <button type="submit" class="menu__link">
+                <span class="icon icon-close"></span> {{ _('Cancel Score') }}
+              </button>
+            </form>
+          </li>
+        </ol>
+      </div>
     {% endif %}
       <div class="section__body typo">
         <dl class="large horizontal">
@@ -122,7 +136,7 @@
           <dt>{{ _('Judged At') }}</dt>
           <dd>{{ datetime_span(rdoc['judge_at']) }}</dd>
         {% endif %}
-        {% if rdoc['score'] %}
+        {% if rdoc['score'] is defined %}
           <dt>{{ _('Score') }}</dt>
           <dd>{{ rdoc['score'] }}</dd>
         {% endif %}
