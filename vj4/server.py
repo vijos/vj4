@@ -33,18 +33,18 @@ def main():
     'formatters': {
       'colored': {
         '()': 'colorlog.ColoredFormatter',
-        'format': options.options.log_format,
+        'format': options.log_format,
         'datefmt': '%y%m%d %H:%M:%S'
       }
     },
     'root': {
-      'level': 'DEBUG' if options.options.debug else 'INFO',
+      'level': 'DEBUG' if options.debug else 'INFO',
       'handlers': ['console'],
     },
     'disable_existing_loggers': False,
   })
-  _logger.info('Server listening on %s', options.options.listen)
-  url = urllib.parse.urlparse(options.options.listen)
+  _logger.info('Server listening on %s', options.listen)
+  url = urllib.parse.urlparse(options.listen)
   if url.scheme == 'http':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
@@ -60,7 +60,7 @@ def main():
   else:
     _logger.error('Invalid listening scheme %s', url.scheme)
     return 1
-  for i in range(1, options.options.prefork):
+  for i in range(1, options.prefork):
     pid = os.fork()
     if not pid:
       break
@@ -69,7 +69,6 @@ def main():
   loop = asyncio.get_event_loop()
   loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
   loop.run_forever()
-
 
 if __name__ == '__main__':
   sys.exit(main())

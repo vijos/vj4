@@ -11,7 +11,7 @@
 {% endif %}
   <a class="v-center user-profile-name" href="{{ reverse_url('user_detail', uid=udoc['_id']) }}">{{ udoc['uname'] }}</a>
 {% if badge %}
-  <a class="v-center user-profile-badge badge--lv{{ dudoc['level']|default(0) }}" href="{{ reverse_url('user_detail', uid=udoc['_id']) }}" title="LV {{ dudoc['level']|default(0) }}: Top {{ vj4.model.builtin.LEVELS[dudoc['level']|default(0)] }}%">LV {{ dudoc['level']|default(0) }}</a>
+  <a class="v-center user-profile-badge badge--lv{{ dudoc['level']|default(0) }}" href="{{ reverse_url('user_detail', uid=udoc['_id']) }}" title="LV {{ dudoc['level']|default(0) }}: Top {{ vj4.model.builtin.LEVELS[dudoc['level']|default(0)]|default('N/A') }}%">LV {{ dudoc['level']|default(0) }}</a>
 {% if modbadge and handler.udoc_has_perm(udoc, vj4.model.builtin.PERM_MOD_BADGE) %}
   <span class="v-center user-profile-badge badge--mod" title="Moderator">MOD</span>
 {% endif %}

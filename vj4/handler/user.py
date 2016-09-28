@@ -29,7 +29,7 @@ class UserRegisterHandler(base.Handler):
     if await user.get_by_mail(mail):
       raise error.UserAlreadyExistError(mail)
     rid, _ = await token.add(token.TYPE_REGISTRATION,
-                             options.options.registration_token_expire_seconds,
+                             options.registration_token_expire_seconds,
                              mail=mail)
     await self.send_mail(mail, 'Sign Up', 'user_register_mail.html',
                          url=self.reverse_url('user_register_with_code', code=rid))
@@ -82,7 +82,7 @@ class UserLostpassHandler(base.Handler):
     if not udoc:
       raise error.UserNotFoundError(mail)
     rid, _ = await token.add(token.TYPE_LOSTPASS,
-                             options.options.lostpass_token_expire_seconds,
+                             options.lostpass_token_expire_seconds,
                              uid=udoc['_id'])
     await self.send_mail(mail, 'Lost Password', 'user_lostpass_mail.html',
                          url=self.reverse_url('user_lostpass_with_code', code=rid),

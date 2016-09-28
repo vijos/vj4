@@ -21,7 +21,7 @@ export default class Dialog {
         </div>
       </div>
     `);
-    this.$dom.on('click', '[data-action]', this.onAction.bind(this));
+    this.$dom.on('click', '[data-action]', this.handleActionButton.bind(this));
     this.$dom.on('vjDomDialogShow', this.beforeShow.bind(this));
     this.$dom.on('vjDomDialogHidden', this.afterHide.bind(this));
     this.$dom.find('.dialog__body').append(this.options.$body);
@@ -45,8 +45,8 @@ export default class Dialog {
     return this.domDialogInstance.hide();
   }
 
-  onAction(ev) {
-    this.domDialogInstance.action($(ev.currentTarget).attr('data-action'));
+  handleActionButton(ev) {
+    this.domDialogInstance.dispatchAction($(ev.currentTarget).attr('data-action'));
   }
 }
 

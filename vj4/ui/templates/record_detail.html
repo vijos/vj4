@@ -95,6 +95,7 @@
             <form method="post" action="{{ reverse_url('judge_score', rid=rdoc['_id']) }}">
               <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
               <input type="hidden" name="score" value="0">
+              <input type="hidden" name="message" value="{{ _('score canceled') }}">
               <button type="submit" class="menu__link">
                 <span class="icon icon-close"></span> {{ _('Cancel Score') }}
               </button>
