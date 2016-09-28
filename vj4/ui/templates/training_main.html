@@ -18,107 +18,44 @@
         </div>
       </div>
       <ol class="section__list all primary training__list">
+        {% for tdoc in tdocs %}
         <li class="section__list__item training__item">
           <div class="media">
             <div class="media__left middle">
               <div class="training__participants numbox">
-                <div class="numbox__num large">40</div>
+                <div class="numbox__num large">???</div>
                 <div class="numbox__text">{{ _('Enrolled') }}</div>
               </div>
             </div>
             <div class="media__body middle">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 基础算法与数据结构</a></h1>
-              <p class="training__intro">(Vijos 官方) Vijos 训练系统现已上线，设有一些关卡供您来探索、发现。</p>
+              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+              <p class="training__intro">{{ tdoc['content'] }}</p>
               <ul class="supplementary list training__progress">
                 <li>
-                  <span class="icon icon-flag text-blue"></span> 8 Problems
+                  <span class="icon icon-flag text-blue"></span> {{ tdoc['pids']|length }} Problems
                 </li>
                 <li>
-                  <span class="icon icon-heart text-red"></span> 30
+                  <span class="icon icon-heart text-red"></span> ???
                 </li>
                 <li>
-                  <span class="icon icon-star text-yellow"></span> 42
+                  <span class="icon icon-star text-yellow"></span> ???
                 </li>
                 <li>
-                  <span class="icon icon-comment--text"></span> 41
+                  <span class="icon icon-comment--text"></span> ???
                 </li>
                 <li>
                   <span class="icon training-status--icon progress"></span>
-                  <span class="training-status--text progress">已完成 23%</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li>
-        <li class="section__list__item training__item">
-          <div class="media">
-            <div class="media__left middle">
-              <div class="training__participants numbox">
-                <div class="numbox__num large">56</div>
-                <div class="numbox__text">{{ _('Enrolled') }}</div>
-              </div>
-            </div>
-            <div class="media__body middle">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 基础算法与数据结构 2</a></h1>
-              <p class="training__intro">(Vijos 官方) Vijos 训练系统现已上线，设有一些关卡供您来探索、发现。</p>
-              <ul class="supplementary list training__progress">
-                <li>
-                  <span class="icon icon-flag text-blue"></span> 10 Problems
-                </li>
-                <li>
-                  <span class="icon icon-heart text-red"></span> 30
-                </li>
-                <li>
-                  <span class="icon icon-star text-yellow"></span> 42
-                </li>
-                <li>
-                  <span class="icon icon-comment--text"></span> 41
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li>
-        <li class="section__list__item training__item">
-          <div class="media">
-            <div class="media__left middle">
-              <div class="training__participants numbox">
-                <div class="numbox__num large">29</div>
-                <div class="numbox__text">{{ _('Enrolled') }}</div>
-              </div>
-            </div>
-            <div class="media__body middle">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 基础算法与数据结构 3</a></h1>
-              <p class="training__intro">(Vijos 官方) Vijos 训练系统现已上线，设有一些关卡供您来探索、发现。</p>
-              <ul class="supplementary list training__progress">
-                <li>
-                  <span class="icon icon-flag text-blue"></span> 5 Problems
-                </li>
-                <li>
-                  <span class="icon icon-heart text-red"></span> 30
-                </li>
-                <li>
-                  <span class="icon icon-star text-yellow"></span> 42
-                </li>
-                <li>
-                  <span class="icon icon-comment--text"></span> 41
-                </li>
-                <li>
                   <span class="icon training-status--icon done"></span>
+                  <span class="training-status--text progress">已完成 ???%</span>
                   <span class="training-status--text done">已完成 100%</span>
                 </li>
               </ul>
             </div>
           </div>
         </li>
+        {% endfor %}
       </ol>
     </div>
-    {#
-    <ol>
-    {% for tdoc in tdocs %}
-      <a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}">{{ tdoc }}</a>
-    {% endfor %}
-    </ol>
-    #}
   </div>
   <div class="large-3 columns">
     <div class="section side">
