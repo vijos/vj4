@@ -17,8 +17,7 @@ async def _connect():
     return await _protocol_future
   _protocol_future = future = asyncio.Future()
   try:
-    _, protocol = await aioamqp.connect(host=options.options.mq_host,
-                                        virtualhost=options.options.mq_vhost)
+    _, protocol = await aioamqp.connect(host=options.mq_host, virtualhost=options.mq_vhost)
     future.set_result(protocol)
     asyncio.get_event_loop().create_task(_wait_protocol(protocol))
     return protocol

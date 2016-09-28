@@ -1,6 +1,6 @@
-aiohttp>=1.0.1
+aiohttp>=1.0.2
 jinja2==2.7.3  # there is performance bug in 2.8
-git+https://github.com/iceb0y/sockjs  # custom branch
+sockjs>=0.5.0
 motor
 hoedown
 accept

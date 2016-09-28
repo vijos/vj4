@@ -18,20 +18,23 @@ class Undefined(jinja2.runtime.Undefined):
   def __getitem__(self, _):
     return self
 
+  if options.debug:
+    __str__ = jinja2.runtime.Undefined.__call__
+
 
 class Environment(jinja2.Environment):
   def __init__(self):
     super(Environment, self).__init__(
         loader=jinja2.FileSystemLoader(path.join(path.dirname(__file__), 'ui/templates')),
         extensions=[jinja2.ext.with_],
-        auto_reload=options.options.debug,
+        auto_reload=options.debug,
         autoescape=True,
         trim_blocks=True,
         undefined=Undefined)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     self.globals['vj4'] = vj4
-    self.globals['static_url'] = lambda s: options.options.cdn_prefix + s
+    self.globals['static_url'] = lambda s: options.cdn_prefix + s
     self.globals['paginate'] = paginate
 
     self.filters['markdown'] = markdown

@@ -15,25 +15,22 @@ export default class DomDialog extends DOMAttachedObject {
     this.options = {
       cancelByClickingBack: false,
       cancelByEsc: false,
-      onAction: () => null,
+      onDispatch: () => {},
       ...options,
     };
+    this._defer = null;
   }
 
-  async show() {
-    if (this.isShown || this.isAnimating) {
-      return false;
-    }
-
+  async _show() {
     this.$dom.css('z-index', zIndexManager.getNext());
     this.$dom.trigger('vjDomDialogShow');
     this.isAnimating = true;
 
     if (this.options.cancelByClickingBack) {
-      this.$dom.on(`click.${this.eventNS}`, this.onClick.bind(this));
+      this.$dom.on(`click.${this.eventNS}`, this.handleClick.bind(this));
     }
     if (this.options.cancelByEsc) {
-      $(document).on(`keyup.${this.eventNS}`, this.onKeyUp.bind(this));
+      $(document).on(`keyup.${this.eventNS}`, this.handleKeyUp.bind(this));
     }
 
     const $wrap = this.$dom;
@@ -64,15 +61,9 @@ export default class DomDialog extends DOMAttachedObject {
     this.isShown = true;
     this.isAnimating = false;
     this.$dom.trigger('vjDomDialogShown');
-
-    return true;
   }
 
-  async hide() {
-    if (!this.isShown || this.isAnimating) {
-      return false;
-    }
-
+  async _hide() {
     this.$dom.trigger('vjDomDialogHide');
     this.isAnimating = true;
 
@@ -104,26 +95,46 @@ export default class DomDialog extends DOMAttachedObject {
     this.isShown = false;
     this.isAnimating = false;
     this.$dom.trigger('vjDomDialogHidden');
+  }
 
+  show() {
+    if (this.isShown || this.isAnimating) {
+      return Promise.reject();
+    }
+    this._defer = new $.Deferred();
+    this._show();
+    return this._defer.promise();
+  }
+
+  hide() {
+    if (!this.isShown || this.isAnimating) {
+      return false;
+    }
+    if (this._defer.state() === 'pending') {
+      this._defer.resolve('cancel');
+    }
+    this._defer = null;
+    this._hide();
     return true;
   }
 
-  action(data) {
-    const r = this.options.onAction(data);
-    if (r !== false) {
-      this.hide();
+  dispatchAction(data) {
+    if (this.options.onDispatch(data) === false) {
+      return;
     }
+    this._defer.resolve(data);
+    this.hide();
   }
 
-  onClick(e) {
+  handleClick(e) {
     if (e.target === this.$dom.get(0)) {
-      this.action('cancel');
+      this.dispatchAction('cancel');
     }
   }
 
-  onKeyUp(e) {
+  handleKeyUp(e) {
     if (e.keyCode === 27) {
-      this.action('cancel');
+      this.dispatchAction('cancel');
     }
   }
 

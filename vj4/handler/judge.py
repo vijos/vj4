@@ -77,7 +77,7 @@ class RecordRejudgeHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, rid: objectid.ObjectId, score: int):
+  async def post(self, *, rid: objectid.ObjectId, score: int, message: str=''):
     rdoc = await record.get(rid)
     if rdoc['domain_id'] == self.domain_id:
       self.check_perm(builtin.PERM_REJUDGE)
@@ -94,7 +94,7 @@ class RecordRejudgeHandler(base.Handler):
       'score': score,
       'time_ms': 0,
       'memory_kb': 0,
-      'judge_text': '',
+      'judge_text': message,
     }
     await record.next_judge(rid, self.user['_id'], self.user['_id'], **update)
     rdoc = await record.end_judge(rid, self.user['_id'], self.user['_id'],

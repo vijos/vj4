@@ -111,10 +111,10 @@ class HandlerBase(setting.SettingMixin):
       save = new_saved
     if save:
       token_type = token.TYPE_SAVED_SESSION
-      session_expire_seconds = options.options.saved_session_expire_seconds
+      session_expire_seconds = options.saved_session_expire_seconds
     else:
       token_type = token.TYPE_UNSAVED_SESSION
-      session_expire_seconds = options.options.unsaved_session_expire_seconds
+      session_expire_seconds = options.unsaved_session_expire_seconds
     if sid:
       session = await token.update(sid, token_type, session_expire_seconds,
                                    **{**kwargs,
@@ -126,8 +126,8 @@ class HandlerBase(setting.SettingMixin):
                                         'create_ip': self.remote_ip,
                                         'create_ua': self.request.headers.get('User-Agent')})
     if session:
-      cookie_kwargs = {'domain': options.options.cookie_domain,
-                       'secure': options.options.cookie_secure,
+      cookie_kwargs = {'domain': options.cookie_domain,
+                       'secure': options.cookie_secure,
                        'httponly': True}
       if save:
         timestamp = calendar.timegm(session['expire_at'].utctimetuple())
@@ -154,14 +154,14 @@ class HandlerBase(setting.SettingMixin):
       if name in self.request.cookies:
         self.response.set_cookie(name, '',
                                  expires=utils.formatdate(0, usegmt=True),
-                                 domain=options.options.cookie_domain,
-                                 secure=options.options.cookie_secure,
+                                 domain=options.cookie_domain,
+                                 secure=options.cookie_secure,
                                  httponly=True)
 
   @property
   def remote_ip(self):
-    if options.options.ip_header:
-      return self.request.headers.get(options.options.ip_header)
+    if options.ip_header:
+      return self.request.headers.get(options.ip_header)
     else:
       return self.request.transport.get_extra_info('peername')[0]
 
@@ -227,7 +227,7 @@ class Handler(web.View, HandlerBase):
     self.response.write(data)
 
   async def send_mail(self, mail, title, template_name, **kwargs):
-    content = self.render_html(template_name, url_prefix=options.options.url_prefix,
+    content = self.render_html(template_name, url_prefix=options.url_prefix,
                                **kwargs)
     await mailer.send_mail(mail, '{0} - Vijos'.format(self.translate(title)), content)
 
@@ -267,8 +267,8 @@ class Handler(web.View, HandlerBase):
   @property
   def ui_context(self):
     return {'csrf_token': self.csrf_token,
-            'cdn_prefix': options.options.cdn_prefix,
-            'url_prefix': options.options.url_prefix}
+            'cdn_prefix': options.cdn_prefix,
+            'url_prefix': options.url_prefix}
 
   @property
   def user_context(self):
