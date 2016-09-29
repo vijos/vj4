@@ -4,7 +4,7 @@
   height: $nav-item-height
 
 .nav, .nav--slideout-trigger
-  position: fixed
+  position: relative
   left: 0
   top: 0
   width: 100%
@@ -13,6 +13,13 @@
   transition: background .2s
   transition-timing-function: ease-out-cubic
   z-index: 500
+
+  .hasjs &
+    position: fixed
+
+  .nojs &
+    box-shadow: 0 0 10px rgba(#000, 0.4)
+    margin-bottom: rem(-($nav-item-height))
 
 .nav > .row
   transition: max-width .5s ease-out-cubic
@@ -40,6 +47,9 @@
   z-index: 300
   transition: box-shadow .2s
   transition-timing-function: ease-out-cubic
+
+  .nojs &
+    display: none
 
 .nav__list, .nav__list-item
   list-style: none
@@ -119,7 +129,7 @@
     width: rem($nav-logo-width + 10)
     opacity: 1
 
-.nav.floating
+.nav.floating, .nojs .nav
   background: rgba(#FFF, 0.98)
 
   .nav__item
