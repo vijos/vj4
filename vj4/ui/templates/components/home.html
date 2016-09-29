@@ -2,7 +2,7 @@
 {% macro render_sidebar() %}
 <div class="section side">
   <ol class="menu">
-    {{ sidemenu.render_item('user', 'user_detail', label='My Profile', uid=handler.user['_id']) }}
+    {{ sidemenu.render_item('account--circle', 'user_detail', label='My Profile', uid=handler.user['_id']) }}
     {{ sidemenu.render_item('comment--multiple', 'home_messages') }}
     <li class="menu__seperator"></li>
     {{ sidemenu.render_item('wrench', 'home_account') }}
