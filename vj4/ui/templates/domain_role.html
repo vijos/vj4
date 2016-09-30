@@ -23,11 +23,7 @@
       <button class="primary rounded button" name="create_role">{{ _('Create Role') }}</button>
     </div>
   </div>
-  <noscript><div class="section__body">
-    <blockquote class="note">
-      <p>{{ _('This page needs JavaScript to work.') }}</p>
-    </blockquote>
-  </div></noscript>
+  {{ noscript_note.render() }}
   <div class="section__body no-padding domain-roles">
     <table class="data-table">
       <colgroup>
