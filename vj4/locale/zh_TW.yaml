@@ -54,7 +54,9 @@ Disabled: 關閉
 Discussion Nodes: 討論節點
 Discussions: 討論
 Don't have an account?: 還沒有賬戶？
-Download Dataset: 下載測試資料
+Pretest Data: 對拍資料
+Problem Data: 題目資料
+Download: 下載
 Duration (hours): 持續時間 (小時)
 Edit: 編輯
 Edit Problem: 編輯題目
@@ -71,7 +73,7 @@ Gravatar Email: Gravatar Email 地址
   Vijos 賬戶的密碼：
 'Hello, {0}! You can click following link to active your new email of your Vijos account:': 您好，{0}！您可以點選以下連結來啟用您
   Vijos 賬戶的新電子郵件地址：
-Confirmation mail has been sent to your new email.: 確認郵件已經發送到您的新電子郵箱。
+Confirmation mail has been sent to your new email.: 確認郵件已經傳送到您的新電子郵箱。
 Help: 幫助
 Hide all tags: 隱藏所有標籤
 Hide categorical tags: 隱藏分類標籤
@@ -105,7 +107,7 @@ Open Source: 開源
 Operating System: 作業系統
 Password: 密碼
 Password reset mail has been sent to your email.: 密碼重置郵件已傳送到您的電子郵箱。
-Peak Memory: 記憶體使用峰值
+Peak Memory: 峰值記憶體
 Pretest?: 對拍?
 Privacy: 隱私
 Problem: 題目
@@ -147,7 +149,7 @@ Show all tags: 顯示所有標籤
 Sign In: 登入
 Sign Up: 註冊
 Sign Up Now: 現在註冊
-Sign up mail has been sent to your email.: 註冊郵件已經發送到您的電子郵箱。
+Sign up mail has been sent to your email.: 註冊郵件已經傳送到您的電子郵箱。
 Solutions: 題解
 'Solved {0} problems, RP: {1} (No. {2})': '解決了 {0} 道題目，RP: {1} (No. {2})'
 Sorry: 對不起
@@ -232,6 +234,7 @@ problem_edit: 編輯題目
 problem_main: 題庫
 problem_solution: 題解
 problem_submit: 遞交程式碼
+problem_settings: 題目設定
 record_detail: 記錄詳情
 record_main: 評測佇列
 reply: 回覆
@@ -300,7 +303,6 @@ Roles: 角色
 Your role: 您的角色
 Your permission: 您的許可權
 Edit Domain: 編輯域
-Description: 說明
 You don't own any domain and don't have privilege to create domain.: 您不擁有任何域也沒有創建域的特權。
 
 An error has occurred.: 發生了一個錯誤。
@@ -341,6 +343,24 @@ Not wrapped with space: 兩側不含空格
 Not started with a number: 不以數字開頭
 Without slashes or backslashes: 不含斜槓和反斜槓
 Username / UID: 使用者名或 UID
+Last Submit At: 最後遞交於
+Start at: 開始於
+Duration: 持續時間
+hour(s): 小時
+Not Attended: 未參加
+Live...: 正在進行…
+Ready (☆▽☆): 馬上開始 (☆▽☆)
+View Details: 檢視詳情
+All Contests: 所有比賽
+No Submissions: 沒有遞交
+Do not discuss solutions otherwise you will be regarded as cheating and then lose qualifications.: 請勿討論解法，否則以作弊論處並且將失去參賽資格。
+Please attend contest to see the problems.: 請參加比賽來檢視題目。
+This contest is not live.: 比賽沒有開始。
+contest_detail_problem_submit: 遞交比賽程式碼
+Host: 主持人
+Rank: 排名
+Solve: 解決
+Time: 時間
 required: 必填
 Name: 名稱
 Will be used as the domain icon.: 將被用作域圖示。
@@ -361,29 +381,29 @@ Delete Selected User: 刪除所選使用者
 Set Roles for Selected User: 設定所選使用者的角色
 Create Role: 創建角色
 Role name can only contains numbers, letters and underscores.: 角色名稱只能包含數字、字母和下劃線。
-'Built-in: Effective for visitors that not logged in': '內建: 對未登入的遊客有效'
-'Built-in: Effective for registered users that not a member of the domain': '內建: 對域外註冊使用者有效'
+'Built-in: For visitors that are not logged in': '內建: 對未登入的遊客有效'
+'Built-in: For registered users who are not members of the domain': '內建: 對域外註冊使用者有效'
 User defined role: 使用者定義的角色
 Users: 使用者
 Delete Selected Roles: 刪除所選角色
 Owner: 所有者
 Permission: 許可權
 
-View this domain: 檢視此域
-Edit permissions of a role: 修改角色許可權
+View this domain: 查看此域
+Edit permissions of a role: 修改角色權限
 Show MOD badge: 展示 MOD 徽章
 Edit description of this domain: 修改此域描述
 Create problems: 創建題目
 Edit problems: 修改題目
 Edit own problems: 修改自己的題目
-View problems: 檢視題目
+View problems: 查看題目
 Submit problem: 遞交題目
-Read data of problem: 讀取題目資料
-Read data of own problems: 讀取自己題目的資料
-Read record codes: 讀取記錄的程式碼
+Read data of problem: 讀取題目數據
+Read data of own problems: 讀取自己題目的數據
+Read record codes: 讀取記錄的代碼
 Rejudge problems: 重測題目
 Rejudge records: 重測記錄
-View problem solutions: 檢視題解
+View problem solutions: 查看題解
 Create problem solutions: 創建題解
 Vote problem solutions: 為題解投票
 Edit problem solutions: 修改題解
@@ -395,7 +415,7 @@ Edit problem solution replies: 修改題解的回覆
 Edit own problem solution replies: 修改題解中自己的回覆
 Delete problem solution replies: 刪除題解的回覆
 Delete own problem solution replies: 刪除題解中自己的回覆
-View discussions: 檢視討論
+View discussions: 查看討論
 Create discussions: 創建討論
 Highlight discussions: 高亮討論
 Edit discussions: 修改討論
@@ -409,11 +429,46 @@ Edit discussion replies of own discussion: 修改自己討論中的回覆
 Delete discussion replies: 刪除討論回覆
 Delete own discussion replies: 刪除討論中自己的回覆
 Delete discussion replies of own discussion: 刪除自己討論中的回覆
-View contests: 檢視比賽
-View contest status: 檢視比賽狀態
-View hidden contest status: 檢視隱藏的比賽狀態
+View contests: 查看比賽
+View contest status: 查看比賽狀態
+View hidden contest status: 查看隱藏的比賽狀態
 Create contests: 創建比賽
 Attend contests: 參加比賽
-View training: 檢視訓練
-Have ALL PERMISSIONS in this domain: 在此域中擁有全部許可權
+View training: 查看訓練
+Have ALL PERMISSIONS in this domain: 在此域中擁有全部權限
+Select User: 選擇用戶
+Submitted: 已遞交
 timeago_locale: zh_CN
+About Markdown: 關於 Markdown
+Inline codes: 行內代碼
+Code blocks: 代碼區塊
+Inline formulas: 行內公式
+Formula blocks: 公式區塊
+Links: 鏈接
+Text: 文本
+Images: 圖片
+Description: 說明
+Learn More: 瞭解更多
+CommonMark Syntax: CommonMark 語法
+LaTeX Expressions: LaTeX 表達式
+Hidden: 隱藏
+We will check code similarity after this contest.: 我們會在賽後檢查代碼相似度。
+Dataset: 測試數據
+'Current dataset: {0}': '當前測試數據: {0}'
+Upload: 上傳
+No dataset present.: 暫無測試數據。
+Cancel Score: 取消成績
+score canceled: 成績取消
+You have permissions to create problems for this domain.: 您有權限為此域創建題目。
+Sort by: 排序
+'↓ # Enrollees': '↓ 參與人數'
+'↓ # Likes': '↓ 贊數'
+'↓ # Stars': '↓ 收藏數'
+'↓ # Comments': '↓ 評論數'
+'↓ Create Time': '↓ 創建時間'
+'↓ Update Time': '↓ 更新時間'
+Enrolled: 已參加
+Create Training Plan: 創建訓練計劃
+New Training Plan: 新訓練計劃
+View Owned Training Plans: 查看自己的訓練計劃
+You can create your own training plans and share with others.: 您可以創建您自己的訓練計劃並且與他人分享。
