@@ -49,14 +49,16 @@ export default class DomDialog extends DOMAttachedObject {
     $dgContent.css({
       scale: 0.8,
     });
-    $dgContent.transition({
-      scale: 1,
-    }, {
-      duration: 200,
-      easing: 'easeOutCubic',
-      complete: () => this.$dom.find('[data-autofocus]').focus(),
-    });
-    await delay(200);
+    await $dgContent
+      .transition({
+        scale: 1,
+      }, {
+        duration: 200,
+        easing: 'easeOutCubic',
+      })
+      .promise();
+
+    this.$dom.find('[data-autofocus]').focus();
 
     this.isShown = true;
     this.isAnimating = false;
@@ -83,14 +85,16 @@ export default class DomDialog extends DOMAttachedObject {
     $dgContent.css({
       scale: 1,
     });
-    $dgContent.transition({
-      scale: 0.8,
-    }, {
-      duration: 200,
-      easing: 'easeOutCubic',
-      complete: () => this.$dom.css('display', 'none'),
-    });
-    await delay(200);
+    await $dgContent
+      .transition({
+        scale: 0.8,
+      }, {
+        duration: 200,
+        easing: 'easeOutCubic',
+      })
+      .promise();
+
+    this.$dom.css('display', 'none');
 
     this.isShown = false;
     this.isAnimating = false;

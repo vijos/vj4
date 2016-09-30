@@ -17,14 +17,15 @@ export async function slideDown($element, duration, fromCss = {}, toCss = {}) {
     ...fromCss,
   });
   $element.height();
-  $element.transition({
-    height,
-    ...toCss,
-  }, {
-    duration,
-    easing: 'easeOutCubic',
-  });
-  await delay(duration);
+  await $element
+    .transition({
+      height,
+      ...toCss,
+    }, {
+      duration,
+      easing: 'easeOutCubic',
+    })
+    .promise();
   $element.attr('style', originalStyl);
   $element.css({
     display: 'block',
@@ -41,14 +42,15 @@ export async function slideUp($element, duration, fromCss = {}, toCss = {}) {
     ...fromCss,
   });
   $element.height();
-  $element.transition({
-    height: 0,
-    ...toCss,
-  }, {
-    duration,
-    easing: 'easeOutCubic',
-  });
-  await delay(duration);
+  await $element
+    .transition({
+      height: 0,
+      ...toCss,
+    }, {
+      duration,
+      easing: 'easeOutCubic',
+    })
+    .promise();
   $element.attr('style', originalStyl);
   $element.css({
     display: 'none',
