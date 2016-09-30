@@ -1,4 +1,5 @@
 import delay from './delay';
+import 'jquery.easing';
 
 export async function slideDown($element, duration, fromCss = {}, toCss = {}) {
   const originalStyl = $element.attr('style') || '';
@@ -27,5 +28,29 @@ export async function slideDown($element, duration, fromCss = {}, toCss = {}) {
   $element.attr('style', originalStyl);
   $element.css({
     display: 'block',
+  });
+}
+
+export async function slideUp($element, duration, fromCss = {}, toCss = {}) {
+  const originalStyl = $element.attr('style') || '';
+  const height = $element.outerHeight();
+  $element.css({
+    height,
+    overflow: 'hidden',
+    display: 'block',
+    ...fromCss,
+  });
+  $element.height();
+  $element.transition({
+    height: 0,
+    ...toCss,
+  }, {
+    duration,
+    easing: 'easeOutCubic',
+  });
+  await delay(duration);
+  $element.attr('style', originalStyl);
+  $element.css({
+    display: 'none',
   });
 }

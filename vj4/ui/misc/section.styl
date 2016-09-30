@@ -32,14 +32,15 @@
 .section__body
   padding: 0.7em rem($section-gap-h)
 
+  &.no-padding
+    padding: 0 !important
+
+.section > .section__body
   &:first-child
     padding-top: rem($section-gap-v)
 
   &:last-child
     padding-bottom: rem($section-gap-v)
-
-  &.no-padding
-    padding: 0
 
 .section__footer
   border-top: 1px solid $table-border-color
