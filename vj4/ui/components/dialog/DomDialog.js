@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 
-import delay from '../../utils/delay';
 import zIndexManager from '../../utils/zIndexManager';
 
 export default class DomDialog extends DOMAttachedObject {
