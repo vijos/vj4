@@ -2,10 +2,296 @@
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
-    {{ tdoc }}
+    <!-- DEMO: A completed training section -->
+    <div class="section">
+
+      <div class="training__section done collapsed">
+        <div class="section__header clearfix">
+          <div class="float-left">
+            <h1 class="section__title">Section 1. 基础能力</h1>
+          </div>
+          <div class="float-right">
+            <h1 class="section__title training-section-status--text done"><span class="icon training-section-status--icon done"></span> 已完成</h1>
+          </div>
+        </div>
+        <div class="section__body">
+          <ul class="supplementary dot list">
+            <li>
+              <a href="javascript:;" name="training__section__expand" class="expanded--hidden"><span class="icon icon-expand_more"></span> 展开详情</a>
+              <a href="javascript:;" name="training__section__collapse" class="collapsed--hidden"><span class="icon icon-expand_less"></span> 收起详情</a>
+            </li>
+            <li>
+              递交了 4 次完成该章节 (TOP 1%)
+            </li>
+            <li>
+              第 5 个完成该章节 (总计 305 用户完成)
+            </li>
+          </ul>
+        </div>
+        <div class="training__section__detail">
+          <div class="section__body">
+            <p>基础能力基础能力基础能力。基础能力基础能力，基础能力。基础能力基础能力。</p>
+          </div>
+          <div class="section__body no-padding training__problems">
+            <table class="data-table">
+              <colgroup>
+                <col class="col--status">
+                <col class="col--problem">
+                <col class="col--submit_n">
+                <col class="col--ac_rate">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="col--status record-status--border">状态</th>
+                  <th class="col--problem">题目</th>
+                  <th class="col--submit_n">递交次数</th>
+                  <th class="col--ac_rate">AC 率</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for i in [1,2,3] %}
+                <tr>
+                  <td class="col--status record-status--border pass">
+                    <span class="icon record-status--icon pass"></span>
+                    <a href="#" class="record-status--text pass">Accepted</a>
+                  </td>
+                  <td class="col--problem">
+                    <a href="#">A + B Problem</a>
+                  </td>
+                  <td class="col--submit_n">12</td>
+                  <td class="col--ac_rate">34</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEMO: An open section -->
+      <div class="training__section open expanded">
+        <div class="section__header clearfix">
+          <div class="float-left">
+            <h1 class="section__title">Section 2. 基础能力</h1>
+          </div>
+          <div class="float-right">
+            <h1 class="section__title training-section-status--text open"><span class="icon training-section-status--icon open"></span> 可挑战</h1>
+          </div>
+        </div>
+        <div class="section__body">
+          <ul class="supplementary dot list">
+            <li>
+              有 310 用户完成该章节
+            </li>
+          </ul>
+        </div>
+        <div class="training__section__detail">
+          <div class="section__body">
+            <p>基础能力基础能力基础能力。基础能力基础能力，基础能力。基础能力基础能力。</p>
+          </div>
+          <div class="section__body no-padding training__problems">
+            <table class="data-table">
+              <colgroup>
+                <col class="col--status">
+                <col class="col--problem">
+                <col class="col--submit_n">
+                <col class="col--ac_rate">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="col--status record-status--border">状态</th>
+                  <th class="col--problem">题目</th>
+                  <th class="col--submit_n">递交次数</th>
+                  <th class="col--ac_rate">AC 率</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for i in [1,2,3] %}
+                <tr>
+                  <td class="col--status record-status--border">
+                  </td>
+                  <td class="col--problem">
+                    <a href="#">A + B Problem</a>
+                  </td>
+                  <td class="col--submit_n">12</td>
+                  <td class="col--ac_rate">34</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEMO: A progress section -->
+      <div class="training__section progress expanded">
+        <div class="section__header clearfix">
+          <div class="float-left">
+            <h1 class="section__title">Section 3. 基础能力</h1>
+          </div>
+          <div class="float-right">
+            <h1 class="section__title training-section-status--text progress"><span class="icon training-section-status--icon progress"></span> 正在进行</h1>
+          </div>
+        </div>
+        <div class="section__body">
+          <ul class="supplementary dot list">
+            <li>
+              有 314 用户完成该章节
+            </li>
+          </ul>
+        </div>
+        <div class="training__section__detail">
+          <div class="section__body">
+            <p>基础能力基础能力基础能力。基础能力基础能力，基础能力。基础能力基础能力。</p>
+          </div>
+          <div class="section__body no-padding training__problems">
+            <table class="data-table">
+              <colgroup>
+                <col class="col--status">
+                <col class="col--problem">
+                <col class="col--submit_n">
+                <col class="col--ac_rate">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="col--status record-status--border">状态</th>
+                  <th class="col--problem">题目</th>
+                  <th class="col--submit_n">递交次数</th>
+                  <th class="col--ac_rate">AC 率</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="col--status record-status--border fail">
+                    <span class="icon record-status--icon fail"></span>
+                    <a href="#" class="record-status--text fail">Wrong Answer</a>
+                  </td>
+                  <td class="col--problem">
+                    <a href="#">A + B Problem</a>
+                  </td>
+                  <td class="col--submit_n">12</td>
+                  <td class="col--ac_rate">34</td>
+                </tr>
+              {% for i in [1,2,3] %}
+                <tr>
+                  <td class="col--status record-status--border">
+                  </td>
+                  <td class="col--problem">
+                    <a href="#">A + B Problem</a>
+                  </td>
+                  <td class="col--submit_n">12</td>
+                  <td class="col--ac_rate">34</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEMO: An invalid section -->
+    {% for si in [1,2] %}
+      <div class="training__section invalid collapsed">
+        <div class="section__header clearfix">
+          <div class="float-left">
+            <h1 class="section__title">Section 4. 基础能力</h1>
+          </div>
+          <div class="float-right">
+            <h1 class="section__title training-section-status--text invalid"><span class="icon training-section-status--icon invalid"></span> 不可挑战</h1>
+          </div>
+        </div>
+        <div class="section__body">
+          <ul class="supplementary dot list">
+            <li>
+              <a href="javascript:;" name="training__section__expand" class="expanded--hidden"><span class="icon icon-expand_more"></span> 展开详情</a>
+              <a href="javascript:;" name="training__section__collapse" class="collapsed--hidden"><span class="icon icon-expand_less"></span> 收起详情</a>
+            </li>
+            <li>
+              有 310 用户完成该章节
+            </li>
+          </ul>
+        </div>
+        <div class="training__section__detail">
+          <div class="section__body">
+            <blockquote class="typo note">
+              <p>刚章节目前不可挑战，请先完成以下章节：</p>
+              <ul>
+                <li>Section 1. 基础能力 (完成度 0%)</li>
+                <li>Section 2. 基础能力 (完成度 40%)</li>
+                <li>Section 3. 基础能力 (完成度 80%)</li>
+              </ul>
+            </blockquote>
+            <p>基础能力基础能力基础能力。基础能力基础能力，基础能力。基础能力基础能力。</p>
+          </div>
+          <div class="section__body no-padding training__problems">
+            <table class="data-table">
+              <colgroup>
+                <col class="col--status">
+                <col class="col--problem">
+                <col class="col--submit_n">
+                <col class="col--ac_rate">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="col--status record-status--border">状态</th>
+                  <th class="col--problem">题目</th>
+                  <th class="col--submit_n">递交次数</th>
+                  <th class="col--ac_rate">AC 率</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="col--status record-status--border fail">
+                    <span class="icon record-status--icon fail"></span>
+                    <a href="#" class="record-status--text fail">Wrong Answer</a>
+                  </td>
+                  <td class="col--problem">
+                    <a href="#">A + B Problem</a>
+                  </td>
+                  <td class="col--submit_n">12</td>
+                  <td class="col--ac_rate">34</td>
+                </tr>
+              {% for i in [1,2,3] %}
+                <tr>
+                  <td class="col--status record-status--border">
+                  </td>
+                  <td class="col--problem">
+                    <a href="#">A + B Problem</a>
+                  </td>
+                  <td class="col--submit_n">12</td>
+                  <td class="col--ac_rate">34</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+      <div class="section__body">&nbsp;<!-- space placeholder --></div>
+
+    </div>
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">0 条回复</h1>
+      </div>
+      <div class="section__body">
+        <p>foo</p>
+      </div>
+    </div>
   </div>
   <div class="medium-3 columns">
-    <h1>{{ _('Swx Template!') }}</h1>
+    <div class="section side">
+      <div class="section__body typo">
+        <dl class="large horizontal">
+          <dt>状态</dt><dd>正在进行</dd>
+          <dt>进度</dt><dd>已完成 30%</dd>
+          <dt>参加人数</dt><dd>1532</dd>
+          <dt>完成人数</dt><dd>124</dd>
+        </dl>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
