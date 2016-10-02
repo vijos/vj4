@@ -70,6 +70,15 @@ async def get_dict(pdom_and_ids, *, fields=None):
   return result
 
 
+async def get_dict_same_domain(domain_id, pids, *, fields=None):
+  result = dict()
+  async for pdoc in get_multi(domain_id=domain_id,
+                               doc_id={'$in': list(set(pids))},
+                               fields=fields):
+    result[pdoc['doc_id']] = pdoc
+  return result
+
+
 @argmethod.wrap
 async def get_status(domain_id: str, pid: document.convert_doc_id, uid: int, fields=None):
   return await document.get_status(domain_id, document.TYPE_PROBLEM, pid, uid, fields=fields)

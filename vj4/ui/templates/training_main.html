@@ -8,12 +8,12 @@
         <div class="section__tools">
           {{ _('Sort by') }}:
           <select class="inline select">
-            <option>↓ # Enrollees</option>
-            <option>↓ # Likes</option>
-            <option>↓ # Stars</option>
-            <option>↓ # Comments</option>
-            <option>↓ Create Time</option>
-            <option>↓ Update Time</option>
+            <option>{{ _('↓ # Enrollees') }}</option>
+            <option>{{ _('↓ # Likes') }}</option>
+            <option>{{ _('↓ # Stars') }}</option>
+            <option>{{ _('↓ # Comments') }}</option>
+            <option>{{ _('↓ Create Time') }}</option>
+            <option>{{ _('↓ Update Time') }}</option>
           </select>
         </div>
       </div>
@@ -32,7 +32,7 @@
               <p class="training__intro">{{ tdoc['content'] }}</p>
               <ul class="supplementary list training__progress">
                 <li>
-                  <span class="icon icon-flag text-blue"></span> {{ tdoc['pids']|length }} Problems
+                  <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}
                 </li>
                 <li>
                   <span class="icon icon-heart text-red"></span> ???
@@ -45,9 +45,9 @@
                 </li>
                 <li>
                   <span class="icon training-status--icon progress"></span>
+                  <span class="training-status--text progress">{{ _('Complete') }} ??%</span>
                   <span class="icon training-status--icon done"></span>
-                  <span class="training-status--text progress">已完成 ???%</span>
-                  <span class="training-status--text done">已完成 100%</span>
+                  <span class="training-status--text done">{{ _('Complete') }} 100%</span>
                 </li>
               </ul>
             </div>
@@ -69,7 +69,7 @@
               <span class="icon training-status--icon progress"></span>
             </div>
             <div class="media__body">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 基础算法与数据结构</a></h1>
+              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构</a></h1>
               <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:23%;"></div></div> 已完成 23%</div>
             </div>
           </div></li>
@@ -78,7 +78,7 @@
               <span class="icon training-status--icon progress"></span>
             </div>
             <div class="media__body">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 高级算法与数据结构</a></h1>
+              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 高级算法与数据结构</a></h1>
               <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:76%;"></div></div> 已完成 76%</div>
             </div>
           </div></li>
@@ -87,7 +87,7 @@
               <span class="icon training-status--icon done"></span>
             </div>
             <div class="media__body">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 编程入门</a></h1>
+              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 编程入门</a></h1>
               <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:100%;"></div></div> 已完成 100%</div>
             </div>
           </div></li>
@@ -102,7 +102,7 @@
       <div class="section__body">
         <ol class="popular secondary training__list">
           <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos :)</a></h1>
+            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos :)</a></h1>
             <ul class="supplementary list">
               <li>
                 <span class="icon icon-user--multiple"></span> 30
@@ -113,7 +113,7 @@
             </ul>
           </li>
           <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 基础算法与数据结构8</a></h1>
+            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构8</a></h1>
             <ul class="supplementary list">
               <li>
                 <span class="icon icon-user--multiple"></span> 25
@@ -124,7 +124,7 @@
             </ul>
           </li>
           <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 基础算法与数据结构4</a></h1>
+            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构4</a></h1>
             <ul class="supplementary list">
               <li>
                 <span class="icon icon-user--multiple"></span> 22
@@ -135,7 +135,7 @@
             </ul>
           </li>
           <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 基础算法与数据结构1</a></h1>
+            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构1</a></h1>
             <ul class="supplementary list">
               <li>
                 <span class="icon icon-user--multiple"></span> 17
@@ -146,7 +146,7 @@
             </ul>
           </li>
           <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail_demo') }}" data-emoji-enabled>Vijos 基础算法与数据结构5</a></h1>
+            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构5</a></h1>
             <ul class="supplementary list">
               <li>
                 <span class="icon icon-user--multiple"></span> 7

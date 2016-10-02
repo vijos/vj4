@@ -9,11 +9,11 @@ from vj4.util import validator
 
 
 @argmethod.wrap
-async def add(domain_id: str, title: str, content: str, owner_uid: int, pids=(), require_tids=()):
+async def add(domain_id: str, title: str, content: str, owner_uid: int, dag=[]):
   validator.check_title(title)
   validator.check_content(content)
   return await document.add(domain_id, content, owner_uid, document.TYPE_TRAINING,
-                            title=title, pids=pids, require_tids=require_tids)
+                            title=title, dag=dag, pids=list(pids))
 
 
 @argmethod.wrap
@@ -22,6 +22,15 @@ async def get(domain_id: str, tid: objectid.ObjectId):
   if not tdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_TRAINING, tid)
   return tdoc
+
+
+async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
+  return await document.set(domain_id, document.TYPE_TRAINING, tid, **kwargs)
+
+
+@argmethod.wrap
+async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=None):
+  return await document.get_status(domain_id, document.TYPE_TRAINING, tid, uid, fields=fields)
 
 
 @argmethod.wrap
@@ -53,6 +62,11 @@ async def get_list_by_user(domain_id: str, uid: int, *, fields=None):
                  .sort([('doc_id', 1)])
                  .to_list(None))
   return tdocs
+
+
+def get_multi(domain_id: str, *, fields=None, **kwargs):
+  return document.get_multi(domain_id=domain_id, doc_type=document.TYPE_TRAINING,
+                            fields=fields, **kwargs)
 
 
 async def _update_status(domain_id, tdoc, uid, key, value):
