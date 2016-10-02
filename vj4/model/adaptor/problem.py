@@ -130,6 +130,13 @@ def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None
                  .sort([('vote', -1), ('doc_id', -1)])
 
 
+def get_multi_solution_by_uid(domain_id: str, uid: int, fields=None):
+  return document.get_multi(domain_id=domain_id,
+                            doc_type=document.TYPE_PROBLEM_SOLUTION,
+                            owner_uid=uid,
+                            fields=fields)
+
+
 @argmethod.wrap
 async def delete_solution(domain_id: str, psid: document.convert_doc_id):
   # TODO(twd2): -num_liked

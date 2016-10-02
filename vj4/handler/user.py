@@ -8,9 +8,12 @@ from vj4 import error
 from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import record
 from vj4.model import system
 from vj4.model import token
 from vj4.model import user
+from vj4.model.adaptor import discussion
+from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
 from vj4.util import options
 from vj4.util import validator
@@ -189,8 +192,22 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     if email:
       email = email.replace('@', random.choice([' [at] ', '#']))
     bg = random.randint(1, 21)
+    rdocs = record.get_multi(get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD),
+                             uid=uid).sort([('_id', -1)])
+    rdocs = await rdocs.to_list(10)
+    pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid).sort([('_id', -1)])
+    pcount = await pdocs.count()
+    pdocs = await pdocs.to_list(10)
+    psdocs = problem.get_multi_solution_by_uid(self.domain_id, uid)
+    pscount = await psdocs.count()
+    psdocs = await psdocs.to_list(10)
+    ddocs = discussion.get_multi(self.domain_id, owner_uid=uid)
+    dcount = await ddocs.count()
+    ddocs = await ddocs.to_list(10)
     self.render('user_detail.html', is_self_profile=is_self_profile,
-                udoc=udoc, dudoc=dudoc, sdoc=sdoc, email=email, bg=bg)
+                udoc=udoc, dudoc=dudoc, sdoc=sdoc, email=email, bg=bg,
+                rdocs=rdocs, pdocs=pdocs, pcount=pcount, psdocs=psdocs, pscount=pscount,
+                ddocs=ddocs, dcount=dcount)
 
 
 @app.route('/user/search', 'user_search')
