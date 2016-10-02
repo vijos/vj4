@@ -183,13 +183,14 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)
-    dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_user, udoc),
+    dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_id, udoc['_id']),
                                        token.get_most_recent_session_by_uid(udoc['_id']))
     email = self.get_udoc_setting(udoc, 'mail')
     if email:
       email = email.replace('@', random.choice([' [at] ', '#']))
+    bg = random.randint(1, 21)
     self.render('user_detail.html', is_self_profile=is_self_profile,
-                udoc=udoc, dudoc=dudoc, sdoc=sdoc, email=email)
+                udoc=udoc, dudoc=dudoc, sdoc=sdoc, email=email, bg=bg)
 
 
 @app.route('/user/search', 'user_search')

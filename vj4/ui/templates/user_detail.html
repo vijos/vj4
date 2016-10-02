@@ -4,7 +4,7 @@
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
-      <div class="profile-header user-profile-bg--12">
+      <div class="profile-header user-profile-bg--{{ bg }}">
         <div class="profile-header__content clearfix">
           <div class="media">
             <div class="media__left">
@@ -68,6 +68,30 @@
   {% if is_self_profile %}
     {{ home.render_sidebar() }}
   {% endif %}
+    <div class="section side">
+      <div class="section__body">
+        <div class="balancer sidebar-user-stat">
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudoc['num_accept'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Accepted') }}</div>
+            </div>
+          </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudoc['num_liked'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Solutions Liked') }}</div>
+            </div>
+          </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudoc['num_problems'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Upload Problem') }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   {% if handler.can_view(udoc, 'bio') %}
     <div class="section side">
       <div class="section__header">

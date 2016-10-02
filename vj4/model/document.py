@@ -305,6 +305,9 @@ async def ensure_indexes():
                            ('doc_id', 1)], unique=True)
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
+                           ('owner_uid', 1)])
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
                            ('parent_doc_type', 1),
                            ('parent_doc_id', 1),
                            ('vote', -1),
