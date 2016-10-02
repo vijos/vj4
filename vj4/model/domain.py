@@ -86,7 +86,7 @@ async def set_role(domain_id: str, role: str, perm: int):
 
 @argmethod.wrap
 async def delete_role(domain_id: str, role: str):
-  await delete_roles(domain_id, [role])
+  return await delete_roles(domain_id, [role])
 
 
 async def delete_roles(domain_id: str, roles):
@@ -140,6 +140,22 @@ async def unset_user(domain_id, uid, fields):
                                     new=True)
 
 
+async def set_users(domain_id, uids, **kwargs):
+  coll = db.Collection('domain.user')
+  await coll.update({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                    {'$set': kwargs},
+                    upsert=False,
+                    multi=True)
+
+
+async def unset_users(domain_id, uids, fields):
+  coll = db.Collection('domain.user')
+  await coll.update({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                    {'$unset': dict((f, '') for f in set(fields))},
+                    upsert=True,
+                    multi=True)
+
+
 @argmethod.wrap
 async def set_user_role(domain_id: str, uid: int, role: str):
   validator.check_role(role)
@@ -149,6 +165,15 @@ async def set_user_role(domain_id: str, uid: int, role: str):
 @argmethod.wrap
 async def unset_user_role(domain_id: str, uid: int):
   return await unset_user(domain_id, uid, ['role'])
+
+
+async def set_users_role(domain_id: str, uids, role: str):
+  validator.check_role(role)
+  await set_users(domain_id, uids, role=role)
+
+
+async def unset_users_role(domain_id: str, uids):
+  await unset_users(domain_id, uids, ['role'])
 
 
 async def inc_user(domain_id, uid, **kwargs):

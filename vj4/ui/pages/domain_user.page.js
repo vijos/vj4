@@ -92,9 +92,12 @@ const page = new NamedPage('domain_user', () => {
     if (action !== 'yes') {
       return;
     }
-    // TODO
-    alert(selectedUsers.join(', '));
-    Notification.success('Selected users are removed from the domain');
+    await util.post('', {
+      operation: 'set_users',
+      uid: selectedUsers,
+      role: '',
+    });
+    Notification.success('Selected users are removed from the domain.');
     await delay(2000);
     window.location.reload();
   }
@@ -109,9 +112,14 @@ const page = new NamedPage('domain_user', () => {
       return;
     }
     const role = setRolesDialog.$dom.find('[name="role"]').val();
-    // TODO
-    alert(`set role = ${role} for users = ${selectedUsers.join(', ')}`);
-    Notification.success(`Role updated to ${role} for selected users`);
+    await util.post('', {
+      operation: 'set_users',
+      uid: selectedUsers,
+      role,
+    });
+    Notification.success(`Role updated to ${role} for selected users.`);
+    await delay(2000);
+    window.location.reload();
   }
 
   async function handleChangeUserRole(ev) {
@@ -122,7 +130,7 @@ const page = new NamedPage('domain_user', () => {
       uid: row.attr('data-uid'),
       role,
     });
-    Notification.success(`Role updated to ${role}`);
+    Notification.success(`Role updated to ${role}.`);
   }
 
   $('[name="add_user"]').click(() => handleClickAddUser());
