@@ -1,3 +1,4 @@
+{% import "components/home.html" as home with context %}
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row" data-sticky-parent>
@@ -5,17 +6,7 @@
     {% block home_content %}{% endblock %}
   </div>
   <div class="medium-3 columns"><div data-sticky="large">
-    <div class="section side">
-      <ol class="menu">
-        {{ sidemenu.render_item('comment--multiple', 'home_messages') }}
-        <li class="menu__seperator"></li>
-        {{ sidemenu.render_item('user', 'home_account') }}
-        {{ sidemenu.render_item('sliders', 'home_preference') }}
-        {{ sidemenu.render_item('security', 'home_security') }}
-        <li class="menu__seperator"></li>
-        {{ sidemenu.render_item('web', 'home_domain') }}
-      </ol>
-    </div>
+    {{ home.render_sidebar() }}
     {% block home_sidebar %}{% endblock %}
   </div></div>
 </div>

@@ -79,10 +79,14 @@ class Navigation {
     if (this.$nav.length === 0) {
       return 0;
     }
-    if (window.innerWidth < responsiveCutoff.mobile) {
-      return 0;
+    if (window.innerWidth > responsiveCutoff.mobile) {
+      return this.$nav.height();
     }
-    return this.$nav.height();
+    const $slideoutNav = $('.nav--slideout-trigger');
+    if ($slideoutNav.length > 0) {
+      return $slideoutNav.height();
+    }
+    return 0;
   }
 }
 
