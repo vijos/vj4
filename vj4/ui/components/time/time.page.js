@@ -6,7 +6,7 @@ const timeago = libTimeago();
 timeago.setLocale(i18n('timeago_locale'));
 
 function runRelativeTime($container) {
-  for (const element of $container.find('span.time[data-timestamp]')) {
+  for (const element of $container.find('.relative.time[data-timestamp]')) {
     const $element = $(element);
     if ($element.attr('data-timeago') !== undefined) {
       continue;

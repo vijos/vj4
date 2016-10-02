@@ -51,7 +51,8 @@ class RecordMainConnection(base.Connection):
     # TODO(iceboy): projection.
     udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
                                       problem.get(rdoc['domain_id'], rdoc['pid']))
-    if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+    if pdoc.get('hidden', False) and (pdoc['domain_id'] != self.domain_id
+                                      or not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)):
       pdoc = None
     self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc))
 

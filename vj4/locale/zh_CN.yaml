@@ -443,6 +443,9 @@ Have ALL PERMISSIONS in this domain: 在此域中拥有全部权限
 Select User: 选择用户
 Submitted: 已递交
 timeago_locale: zh_CN
+Live: 正在进行
+Ready: 即将开始
+Done: 已结束
 About Markdown: 关于 Markdown
 Inline codes: 行内代码
 Code blocks: 代码区块
@@ -461,6 +464,11 @@ Dataset: 测试数据
 'Current dataset: {0}': '当前测试数据: {0}'
 Upload: 上传
 No dataset present.: 暂无测试数据。
+All: 全部
+All {0} Contests: 所有 {0} 比赛
+Show: 显示
+There are no contests...: 没有比赛。
+View Contest: 查看比赛
 Cancel Score: 取消成绩
 score canceled: 成绩取消
 Set Role: 设置角色

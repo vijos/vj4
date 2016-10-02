@@ -1,25 +1,20 @@
 import collections
 import datetime
+import functools
 import itertools
 
 from bson import objectid
 from pymongo import errors
 
+from vj4 import constant
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
 from vj4.util import validator
+from vj4.util import rank
 
 
-RULE_OI = 2
-RULE_ACM = 3
-
-RULE_TEXTS = {
-  RULE_OI: 'OI',
-  RULE_ACM: 'ACM/ICPC',
-}
-
-Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort'])
+Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort', 'rank_func'])
 
 
 def _oi_stat(tdoc, journal):
@@ -48,9 +43,12 @@ def _acm_stat(tdoc, journal):
 
 
 RULES = {
-  RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)]),
-  RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
-                 _acm_stat, [('accept', -1), ('time', 1)]),
+  constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)],
+                                 functools.partial(rank.ranked,
+                                                   equ_func=lambda a, b: a['score'] == b['score'])),
+  constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'], _acm_stat,
+                                  [('accept', -1), ('time', 1)], functools.partial(enumerate,
+                                                                                   start=1)),
 }
 
 
@@ -79,15 +77,13 @@ async def get(domain_id: str, tid: objectid.ObjectId):
   return tdoc
 
 
-@argmethod.wrap
-async def get_list(domain_id: str, fields=None):
-  # TODO(iceboy): projection, pagination.
-  tdocs = await document.get_multi(domain_id=domain_id,
-                                   doc_type=document.TYPE_CONTEST,
-                                   fields=fields) \
-                        .sort([('doc_id', -1)]) \
-                        .to_list(None)
-  return tdocs
+def get_multi(domain_id: str, fields=None, **kwargs):
+  # TODO(twd2): projection.
+  return document.get_multi(domain_id=domain_id,
+                            doc_type=document.TYPE_CONTEST,
+                            fields=fields,
+                            **kwargs) \
+                 .sort([('doc_id', -1)])
 
 
 @argmethod.wrap
