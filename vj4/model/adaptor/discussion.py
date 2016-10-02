@@ -135,6 +135,18 @@ async def get(domain_id: str, did: document.convert_doc_id):
   return await document.get(domain_id, document.TYPE_DISCUSSION, did)
 
 
+async def edit(domain_id: str, did: document.convert_doc_id, **kwargs):
+  return await document.set(domain_id, document.TYPE_DISCUSSION, did, **kwargs)
+
+
+@argmethod.wrap
+async def delete(domain_id: str, did: document.convert_doc_id):
+  await document.delete(domain_id, document.TYPE_DISCUSSION, did)
+  await document.delete_multi(domain_id, document.TYPE_DISCUSSION_REPLY,
+                              parent_doc_type=document.TYPE_DISCUSSION,
+                              parent_doc_id=did)
+
+
 @argmethod.wrap
 async def inc_views(domain_id: str, did: document.convert_doc_id):
   doc = await document.inc(domain_id, document.TYPE_DISCUSSION, did, 'views', 1)
