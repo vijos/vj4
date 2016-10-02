@@ -23,11 +23,7 @@
       <button class="primary rounded button" name="create_role">{{ _('Create Role') }}</button>
     </div>
   </div>
-  <noscript><div class="section__body">
-    <blockquote class="note">
-      <p>{{ _('This page needs JavaScript to work.') }}</p>
-    </blockquote>
-  </div></noscript>
+  {{ noscript_note.render() }}
   <div class="section__body no-padding domain-roles">
     <table class="data-table">
       <colgroup>
@@ -40,7 +36,7 @@
         <tr>
           <th class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox" name="select_all">
+              <input type="checkbox" data-checkbox-toggle="role">
             </label>
           </th>
           <th class="col--id">{{ _('Role') }}</th>
@@ -52,7 +48,7 @@
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox" disabled>
+              <input type="checkbox" data-checkbox-group="role" disabled>
             </label>
           </td>
           <td class="col--id">
@@ -68,7 +64,7 @@
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox" disabled>
+              <input type="checkbox" data-checkbox-group="role" disabled>
             </label>
           </td>
           <td class="col--id">
@@ -86,7 +82,7 @@
         <tr data-role="{{ role }}">
           <td class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox">
+              <input type="checkbox" data-checkbox-group="role" data-checkbox-range>
             </label>
           </td>
           <td class="col--id">
@@ -108,96 +104,4 @@
     <button class="rounded button" name="delete_selected">{{ _('Delete Selected Roles') }}</button>
   </div>
 </div>
-<!--
-<div data-heading-extract-to="#menu-item-domain_role">
-<div class="section">
-  <div class="section__header">
-    <h1 class="section__title" id="help" data-heading>{{ _('Help') }}</h1>
-  </div>
-  <div class="section__body typo">
-    <p>角色标识符只能包含 0-9, A-Z, a-z 。</p>
-  </div>
-</div>
-<div class="section">
-  <div class="section__header">
-    <h1 class="section__title" id="roles" data-heading>{{ _('All Roles') }}</h1>
-  </div>
-  <div class="section__body">
-    <p>{{ _('Your role') }}: {{ handler.user['role']|default(vj4.model.builtin.ROLE_DEFAULT) }}{% if handler.user['_id'] == handler.domain['owner_uid'] %}, {{ _('owner') }}{% endif %}{% if handler.has_perm(vj4.model.builtin.PERM_ALL) %}, {{ _('root') }}{% endif %}{% if handler.has_priv(vj4.model.builtin.PRIV_ALL) %}, {{ _('vj4 root') }}{% endif %}</p>
-    <p>{{ _('Your permission') }}: {{ handler.domain['roles'][handler.user['role']|default(vj4.model.builtin.ROLE_DEFAULT)]|default(vj4.model.builtin.PERM_NONE) }}</p>
-    <p>{{ _('Roles') }}: {{ handler.domain['roles'] }}</p>
-    <form method="post">
-      <div class="row"><div class="medium-6 columns">
-        <label>
-          {{ _('Role ID') }}
-          <input name="role" placeholder="{{ _('Role ID') }}" class="textbox">
-        </label>
-      </div><div class="medium-6 columns">
-        <label>
-          {{ _('Permission') }}
-          <input name="perm" placeholder="{{ _('Permission') }}" class="textbox">
-        </label>
-      </div></div>
-      <div class="row"><div class="columns">
-        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-        <button type="submit" class="rounded primary button" name="operation" value="set">
-          {{ _('Add') }}
-        </button>
-      </div></div>
-    </form>
-  </div>
-</div>
-{% for role, perm in handler.domain['roles'].items() %}
-<div class="section">
-  <div class="section__header">
-    <h1 class="section__title" id="role-{{ role }}" data-heading>
-      {{ _('Role') }} - {{ role }}
-      {% if role == vj4.model.builtin.ROLE_GUEST %}
-      <span class="v-center user-profile-badge badge--mod" title="Moderator">{{ _('Guest') }}</span>
-      {% endif %}
-      {% if role == vj4.model.builtin.ROLE_DEFAULT %}
-      <span class="v-center user-profile-badge badge--mod" title="Moderator">{{ _('Default') }}</span>
-      {% endif %}
-    </h1>
-  </div>
-  <div class="section__body">
-    <form method="post">
-      <div class="row"><div class="columns">
-        <label>
-          {{ _('Permission') }}
-          <input name="perm" placeholder="{{ _('Permission') }}" value="{{ perm }}" class="textbox">
-        </label>
-      </div></div>
-      <div class="row"><div class="columns">
-        <input type="hidden" name="role" value="{{ role }}">
-        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-        <button type="submit" class="rounded primary button" name="operation" value="set">
-          {{ _('Update') }}
-        </button>
-        <button type="submit" class="rounded primary button" name="operation" value="delete">
-          {{ _('Delete') }}
-        </button>
-      </div></div>
-    </form>
-    <p>{{ _('Users') }}: {{ rudocs[role] }}</p>
-    <form method="post">
-      <div class="row"><div class="columns">
-        <label>
-          {{ _('UID') }}
-          <input name="uid" placeholder="{{ _('UID') }}" class="textbox">
-        </label>
-      </div></div>
-      <div class="row"><div class="columns">
-        <input type="hidden" name="role" value="{{ role }}">
-        <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-        <button type="submit" class="rounded primary button" name="operation" value="set_user">
-          {{ _('Add') }}
-        </button>
-      </div></div>
-    </form>
-  </div>
-</div>
-{% endfor %}
-</div>
--->
 {% endblock %}

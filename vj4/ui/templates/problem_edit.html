@@ -9,7 +9,7 @@
             <div class="medium-8 columns">
               <label>
                 {{ _('Title') }}
-                <input name="title" placeholder="{{ _('title') }}" value="{{ pdoc and pdoc['title'] }}" class="textbox" autofocus>
+                <input name="title" placeholder="{{ _('title') }}" value="{{ pdoc['title']|default('') }}" class="textbox" autofocus>
               </label>
             </div>
             {% if page_name == 'problem_create' %}

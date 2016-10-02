@@ -1,3 +1,4 @@
+{% import "components/home.html" as home with context %}
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
@@ -10,7 +11,7 @@
               <img src="{{ udoc['gravatar']|gravatar_url }}" width="120" height="120" class="large user-profile-avatar">
             </div>
             <div class="media__body profile-header__main">
-              <h1>{{ udoc['uname'] }} <small>({{ _('UID') }}: {{ udoc['_id'] }})</small></h1>
+              <h1>{{ udoc['uname'] }} <small>({{ _('UID') }}: {{ udoc['_id'] }}) {% if handler.get_udoc_setting(udoc, 'gender') != None %}{{ vj4.constant.model.USER_GENDER_RANGE[handler.get_udoc_setting(udoc, 'gender')] }}{% endif %}</small></h1>
               <p>
                 {{ _('Registered at') }} {{ datetime_span(udoc['regat']) }},
                 {{ _('last login at') }} {{ datetime_span(udoc['loginat']) }},
@@ -64,6 +65,10 @@
     </div>
   </div>
   <div class="medium-3 columns">
+  {% if is_self_profile %}
+    {{ home.render_sidebar() }}
+  {% endif %}
+  {% if handler.can_view(udoc, 'bio') %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Bio') }}</h1>
@@ -72,12 +77,32 @@
         {{ udoc['bio']|default('')|markdown }}
       </div>
     </div>
+  {% endif %}
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Contact') }}</h1>
+      </div>
+      <div class="section__body typo">
+        <dl class="large horizontal">
+        {% if email != None %}
+          <dt>{{ _('Email') }}</dt><dd>{{ email }}</dd>
+        {% endif %}
+        {% if handler.can_view(udoc, 'qq') %}
+          <dt>{{ _('QQ') }}</dt><dd><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={{ udoc['qq'] }}&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:{{ udoc['qq'] }}:52" alt="{{ _('Click here to chat with me') }}" title="{{ _('Click here to chat with me') }}"/></a> {{ handler.get_udoc_setting(udoc, 'qq') }}</dd>
+        {% endif %}
+        {% if handler.can_view(udoc, 'wechat') %}
+          <dt>{{ _('WeChat') }}</dt><dd>{{ handler.get_udoc_setting(udoc, 'wechat') }}</dd>
+        {% endif %}
+        </dl>
+      </div>
+    </div>
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Recent Activities') }}</h1>
       </div>
       <div class="section__body">
-        <p>foo bar</p>
+        <p>AC 了题目 Xxxx。</p>
+        <p>发表讨论：vj4 已上线。</p>
       </div>
     </div>
   </div>

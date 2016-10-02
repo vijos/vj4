@@ -1,7 +1,7 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import CommentBox from '../discussion/CommentBox';
 import delay from '../../utils/delay';
-import { slideDown } from '../../utils/slide';
+import { slideDown, slideUp } from '../../utils/slide';
 import 'jquery.easing';
 
 import * as util from '../../misc/Util';
@@ -30,38 +30,15 @@ async function showReplyContainer($parent) {
   }
   $container.css('opacity', 0);
   await slideDown($container, 300);
-  $container.transition({
-    opacity: 1,
-  }, {
-    duration: 200,
-  });
-  await delay(200);
+  await $container.transition({ opacity: 1 }, { duration: 200 }).promise();
   $container.removeAttr('style');
 }
 
 async function destroyReplyContainer($parent) {
   const $container = $parent.find('.commentbox-container');
-  $container.css({
-    height: $container.outerHeight(),
-    overflow: 'hidden',
-    opacity: 1,
-  });
-
-  $container.transition({
-    opacity: 0,
-  }, {
-    duration: 200,
-  });
-  await delay(200);
-
-  $container.transition({
-    height: 0,
-  }, {
-    duration: 300,
-    easing: 'easeOutCubic',
-  });
-  await delay(300);
-
+  $container.css('opacity', 1);
+  await $container.transition({ opacity: 0 }, { duration: 200 }).promise();
+  await slideUp($container, 300);
   $container.remove();
 }
 

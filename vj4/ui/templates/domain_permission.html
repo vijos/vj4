@@ -9,34 +9,41 @@
     <table class="data-table">
       <colgroup>
         <col class="col--description">
-        {% for role in roles %}
+      {% for role in roles %}
         <col class="col--p">
-        {% endfor %}
+      {% endfor %}
       </colgroup>
       <thead>
         <tr>
-          <th class="col--uid">{{ _('Permission') }}</th>
-          {% for role in roles %}
+          <th class="col--description">{{ _('Permission') }}</th>
+        {% for role in roles %}
           <th class="col--p"><span data-tooltip="{{ role }}">{{ role }}</span></th>
-          {% endfor %}
+        {% endfor %}
         </tr>
       </thead>
+    {% for family, perms in vj4.model.builtin.PERMS_BY_FAMILY.items() %}
       <tbody>
-        {% for perm, desc in vj4.model.builtin.PERM_TEXTS.items() %}
         <tr>
-          <td class="col--uid">
-            {{ _(desc) }}
+          <td class="col--family" colspan="{{ (roles|length)+1 }}">
+            {{ _(family) }}
           </td>
-          {% for role in roles %}
+        </tr>
+      {% for perm in perms %}
+        <tr>
+          <td class="col--description">
+            {{ _(perm.desc) }}
+          </td>
+        {% for role in roles %}
           <td class="col--p">
             <label class="compact checkbox">
-              <input name="{{ role }}" value="{{ perm }}" type="checkbox"{% if bitand(handler.domain['roles'][role], perm) == perm %} checked{% endif %}>
+              <input name="{{ role }}" data-checkbox-group="{{ role }}" data-checkbox-range value="{{ perm.key }}" type="checkbox"{% if bitand(handler.domain['roles'][role], perm.key) == perm.key %} checked{% endif %}>
             </label>
           </td>
-          {% endfor %}
-        </tr>
         {% endfor %}
+        </tr>
+      {% endfor %}
       </tbody>
+    {% endfor %}
     </table>
   </div>
   <div class="section__body">

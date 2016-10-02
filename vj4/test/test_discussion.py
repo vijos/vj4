@@ -1,4 +1,5 @@
 import unittest
+from bson import objectid
 
 from vj4 import error
 from vj4.model import document
@@ -9,7 +10,7 @@ DOMAIN_ID_DUMMY = 'dummy'
 OWNER_UID = 22
 TITLE = 'dummy_title'
 CONTENT = 'dummy_content'
-
+REPLY_CONTENT = 'dummy_reply'
 
 class NodesTest(base.SmallcacheTestCase):
   @base.wrap_coro
@@ -115,6 +116,36 @@ class DiscussionTest(base.SmallcacheTestCase):
     self.assertEqual(len(ddocs), 1)
     self.assertEqual(ddocs[0]['title'], TITLE)
     self.assertFalse('content' in ddocs[0])
+
+  @base.wrap_coro
+  async def test_reply_add_get_del(self):
+    await discussion.add_category(DOMAIN_ID_DUMMY, 'cat')
+    await discussion.add_node(DOMAIN_ID_DUMMY, 'cat', 'meow')
+    vnode = await discussion.get_vnode(DOMAIN_ID_DUMMY, 'meow')
+    ddocs = await discussion.get_multi(DOMAIN_ID_DUMMY,
+                                       parent_doc_type=vnode['doc_type'],
+                                       parent_doc_id=vnode['doc_id']).to_list(None)
+    self.assertEqual(len(ddocs), 0)
+    did = await discussion.add(DOMAIN_ID_DUMMY, 'meow', OWNER_UID, TITLE, CONTENT)
+    drid = await discussion.add_reply(DOMAIN_ID_DUMMY, did, OWNER_UID, REPLY_CONTENT)
+    ddoc = await discussion.get(DOMAIN_ID_DUMMY, did)
+    self.assertEqual(ddoc['num_replies'], 1)
+    drdoc = await discussion.get_reply(DOMAIN_ID_DUMMY, drid, did)
+    self.assertEqual(drdoc['doc_id'], drid)
+    self.assertEqual(drdoc['domain_id'], DOMAIN_ID_DUMMY)
+    self.assertEqual(drdoc['parent_doc_type'], document.TYPE_DISCUSSION)
+    self.assertEqual(drdoc['parent_doc_id'], did)
+    self.assertEqual(drdoc['owner_uid'], OWNER_UID)
+    self.assertEqual(drdoc['content'], REPLY_CONTENT)
+    with self.assertRaises(error.DocumentNotFoundError):
+      await discussion.delete_reply(DOMAIN_ID_DUMMY, objectid.ObjectId('0' * 24))
+    ddoc = await discussion.get(DOMAIN_ID_DUMMY, did)
+    self.assertEqual(ddoc['num_replies'], 1)
+    self.assertTrue(await discussion.delete_reply(DOMAIN_ID_DUMMY, drid))
+    with self.assertRaises(error.DocumentNotFoundError):
+      await discussion.get_reply(DOMAIN_ID_DUMMY, drid, did)
+    ddoc = await discussion.get(DOMAIN_ID_DUMMY, did)
+    self.assertEqual(ddoc['num_replies'], 0)
 
 
 if __name__ == '__main__':

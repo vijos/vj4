@@ -277,9 +277,11 @@ class Handler(web.View, HandlerBase):
 
 
 class OperationHandler(Handler):
+  DEFAULT_OPERATION = 'default'
+
   async def post(self):
     arguments = (await self.request.post()).copy()
-    operation = arguments.pop('operation')
+    operation = arguments.pop('operation', self.DEFAULT_OPERATION)
     try:
       method = getattr(self, 'post_' + operation)
     except AttributeError:
