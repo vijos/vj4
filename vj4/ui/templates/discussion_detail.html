@@ -93,13 +93,13 @@
           </div>
           <div class="balancer__body">
             <div class="numbox">
-              <div class="numbox__num medium">14</div>
+              <div class="numbox__num medium">{{ dudict[ddoc['owner_uid']]['num_liked'] or 0 }}</div>
               <div class="numbox__text">{{ _('Solutions Liked') }}</div>
             </div>
           </div>
           <div class="balancer__body">
             <div class="numbox">
-              <div class="numbox__num medium">5</div>
+              <div class="numbox__num medium">{{ dudict[ddoc['owner_uid']]['num_problems'] or 0 }}</div>
               <div class="numbox__text">{{ _('Upload Problem') }}</div>
             </div>
           </div>

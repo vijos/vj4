@@ -8,6 +8,7 @@ from vj4 import constant
 from vj4 import db
 from vj4 import error
 from vj4.model import document
+from vj4.model import domain
 from vj4.model import fs
 from vj4.util import argmethod
 from vj4.util import validator
@@ -19,9 +20,11 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
               hidden: bool=False):
   validator.check_title(title)
   validator.check_content(content)
-  return await document.add(domain_id, content, owner_uid,
-                            document.TYPE_PROBLEM, pid, title=title, data=data,
-                            hidden=hidden, num_submit=0, num_accept=0)
+  pid = await document.add(domain_id, content, owner_uid,
+                           document.TYPE_PROBLEM, pid, title=title, data=data,
+                           hidden=hidden, num_submit=0, num_accept=0)
+  await domain.inc_user(domain_id, owner_uid, num_problems=1)
+  return pid
 
 
 @argmethod.wrap
@@ -174,6 +177,7 @@ async def vote_solution(domain_id: str, psid: document.convert_doc_id, uid: int,
   except errors.DuplicateKeyError:
     raise error.AlreadyVotedError(domain_id, psid, uid) from None
   psdoc = await document.inc(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'vote', value)
+  await domain.inc_user(domain_id, psdoc['owner_uid'], num_liked=value)
   return psdoc, pssdoc
 
 
