@@ -473,3 +473,10 @@ Users in those roles will be removed from the domain.: 角色的用户将从此�
 Selected roles are deleted.: 所选角色已删除。
 Please select at least one role to perform this operation.: 请选择至少一个角色来进行操作。
 Domain {0} is bulit-in and it cannot be modified.: 域 {0} 为内置，不可修改。
+perm_general: 一般
+perm_problem: 题库
+perm_record: 记录
+perm_problem_solution: 题解
+perm_discussion: 讨论
+perm_contest: 比赛
+perm_training: 训练

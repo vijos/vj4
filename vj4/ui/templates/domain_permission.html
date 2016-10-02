@@ -22,19 +22,33 @@
         </tr>
       </thead>
       <tbody>
-        {% for perm, desc in vj4.model.builtin.PERM_TEXTS.items() %}
+        {% for family, perms in vj4.model.builtin.PERMS_BY_FAMILY.items() %}
         <tr>
           <td class="col--uid">
-            {{ _(desc) }}
+            <strong><big>{{ _(family) }}</big></strong>
           </td>
           {% for role in roles %}
           <td class="col--p">
             <label class="compact checkbox">
-              <input name="{{ role }}" data-checkbox-group="{{ role }}" data-checkbox-range value="{{ perm }}" type="checkbox"{% if bitand(handler.domain['roles'][role], perm) == perm %} checked{% endif %}>
+              <input name="select_all_{{ role }}_{{ family }}" data-checkbox-toggle="{{ role }}_{{ family }}" type="checkbox">
             </label>
           </td>
           {% endfor %}
         </tr>
+        {% for perm in perms %}
+        <tr>
+          <td class="col--uid">
+            {{ _(perm.desc) }}
+          </td>
+          {% for role in roles %}
+          <td class="col--p">
+            <label class="compact checkbox">
+              <input name="{{ role }}" data-checkbox-group="{{ role }}_{{ family }}" data-checkbox-range value="{{ perm.key }}" type="checkbox"{% if bitand(handler.domain['roles'][role], perm.key) == perm.key %} checked{% endif %}>
+            </label>
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
         {% endfor %}
       </tbody>
     </table>

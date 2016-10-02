@@ -99,7 +99,7 @@ class DomainPermissionHandler(base.Handler):
       perms = 0
       for perm in self.request.POST.getall(role, []):
        perm = int(perm)
-       if perm in builtin.PERM_TEXTS:
+       if perm in builtin.PERMS_BY_KEY:
           perms |= perm
       new_roles[role] = perms
     await domain.edit(self.domain_id, roles=new_roles)

@@ -116,8 +116,8 @@ class PermissionError(ForbiddenError):
     if any((p | builtin.PERM_VIEW) == builtin.PERM_VIEW for p in self.args):
       return 'You cannot visit this domain.'
     else:
-      if len(self.args) > 0 and self.args[0] in builtin.PERM_TEXTS:
-        self.args = (builtin.PERM_TEXTS[self.args[0]], self.args[0], *self.args[1:])
+      if len(self.args) > 0 and self.args[0] in builtin.PERMS_BY_KEY:
+        self.args = (builtin.PERMS_BY_KEY[self.args[0]].desc, self.args[0], *self.args[1:])
       return "You don't have the required permission ({0}) in this domain."
 
 
