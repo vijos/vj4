@@ -44,6 +44,7 @@ const page = new NamedPage('domain_role', () => {
       return;
     }
     const role = createRoleDialog.$dom.find('[name="role"]').val();
+    alert(role);
     await util.post('', {
       operation: 'set',
       role,
