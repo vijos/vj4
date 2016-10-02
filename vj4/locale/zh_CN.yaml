@@ -123,6 +123,8 @@ Public: 公开
 Published at: 发表于
 QQ Group: QQ 群
 QQ Visibility: QQ 可见性
+WeChat: 微信
+WeChat Visibility: 微信可见性
 Quit Scratchpad: 退出在线编程模式
 Recent Activities: 最近活动
 Registered at: 注册于
@@ -137,7 +139,7 @@ SIGN IN: 登录
 Save All Changes: 保存所有修改
 Saved session: 已保存的会话
 Score: 分数
-Secret: 保密
+Secret (visible to admins): 保密（对管理员可见）
 Security: 安全
 Select a node to create discussion.: 选择一个节点来发表讨论。
 Send: 发送
