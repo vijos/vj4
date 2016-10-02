@@ -1,7 +1,6 @@
 #简体中文
 ---
 (None): (无)
-Partic.: 参加人数
 API: API
 About: 关于
 Accepted: 已通过
@@ -385,8 +384,8 @@ Remove Selected User from Domain: 将所选用户移出域
 Set Roles for Selected User: 设置所选用户的角色
 Create Role: 创建角色
 Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
-'Built-in: Effective for visitors that not logged in': '内置: 对未登录的游客有效'
-'Built-in: Effective for registered users that not a member of the domain': '内置: 对域外注册用户有效'
+'Built-in: Effective for visitors that are not logged in': '内置: 对未登录的游客有效'
+'Built-in: Effective for registered users who are not members of the domain': '内置: 对域外注册用户有效'
 User defined role: 用户定义的角色
 Users: 用户
 Delete Selected Roles: 删除所选角色
@@ -471,6 +470,19 @@ There are no contests...: 没有比赛。
 View Contest: 查看比赛
 Cancel Score: 取消成绩
 score canceled: 成绩取消
+You have permissions to create problems for this domain.: 您有权限为此域创建题目。
+Sort by: 排序
+'↓ # Enrollees': '↓ 参与人数'
+'↓ # Likes': '↓ 赞数'
+'↓ # Stars': '↓ 收藏数'
+'↓ # Comments': '↓ 评论数'
+'↓ Create Time': '↓ 创建时间'
+'↓ Update Time': '↓ 更新时间'
+Enrolled: 已参加
+Create Training Plan: 创建训练计划
+New Training Plan: 新训练计划
+View Owned Training Plans: 查看自己的训练计划
+You can create your own training plans and share with others.: 您可以创建您自己的训练计划并且与他人分享。
 Set Role: 设置角色
 Role for selected users: 为所选用户设置角色
 Please select at least one user to perform this operation.: 请选择至少一个用户来进行操作。
