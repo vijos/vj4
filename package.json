@@ -89,7 +89,7 @@
     "generate:constant": "gulp constant",
     "generate:locale": "gulp locale",
     "generate": "gulp",
-    "build": "webpack --progress --color --display-error-details",
+    "build": "webpack --progress --color --display-error-details --bail",
     "build:production": "npm run build -- --env.production -p --optimize-dedupe",
     "watch": "npm run build -- --env.watch -d --watch"
   },

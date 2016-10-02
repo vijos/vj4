@@ -36,6 +36,7 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
   width: rem($header-logo-width)
   height: rem($header-logo-height + $header-gap-mini + $nav-item-height)
   background: url(header-logo.png) no-repeat
+  background-size: rem($header-logo-width) rem($header-logo-height)
   background-position: 0 rem($header-gap-mini + $nav-item-height)
   transition: transform .5s, opacity .5s
   transition-timing-function: ease-out-cubic
@@ -43,7 +44,6 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
   opacity: 1
   +retina()
     background-image: url(./header-logo@2x.png)
-    background-size: rem($header-logo-width $header-logo-height)
   +mobile()
     display: inline-block
 

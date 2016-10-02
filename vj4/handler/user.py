@@ -159,12 +159,14 @@ class UserDetailHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, uid: int):
+    is_self_profile = self.has_priv(builtin.PRIV_USER_PROFILE) and self.user['_id'] == uid
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)
     dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_user, udoc),
                                        token.get_most_recent_session_by_uid(udoc['_id']))
-    self.render('user_detail.html', udoc=udoc, dudoc=dudoc, sdoc=sdoc)
+    self.render('user_detail.html', is_self_profile=is_self_profile,
+                udoc=udoc, dudoc=dudoc, sdoc=sdoc)
 
 
 @app.route('/user/search', 'user_search')
