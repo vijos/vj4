@@ -185,7 +185,13 @@ async def edit_reply(domain_id: str, drid: document.convert_doc_id, content: str
 
 @argmethod.wrap
 async def delete_reply(domain_id: str, drid: document.convert_doc_id):
-  return await document.delete(domain_id, document.TYPE_DISCUSSION_REPLY, drid)
+  drdoc = await get_reply(domain_id, drid)
+  if not drdoc:
+    return None
+  await document.delete(domain_id, document.TYPE_DISCUSSION_REPLY, drid)
+  await document.inc(domain_id, drdoc['parent_doc_type'], drdoc['parent_doc_id'],
+                     'num_replies', -1)
+  return drdoc
 
 
 @argmethod.wrap
