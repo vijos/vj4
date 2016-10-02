@@ -117,6 +117,6 @@ class DomainRoleHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
   @base.sanitize
-  async def post_delete(self, *, role: str, perm: int=None):
-    await domain.delete_role(self.domain_id, role)
+  async def post_delete(self, *, role: str):
+    await domain.delete_roles(self.domain_id, self.request.POST.getall('role'))
     self.json_or_redirect(self.url)

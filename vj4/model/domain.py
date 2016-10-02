@@ -86,16 +86,24 @@ async def set_role(domain_id: str, role: str, perm: int):
 
 @argmethod.wrap
 async def delete_role(domain_id: str, role: str):
-  validator.check_role(role)
+  await delete_roles(domain_id, [role])
+
+
+async def delete_roles(domain_id: str, roles):
+  roles = list(set(roles))
+  for role in roles:
+    validator.check_role(role)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
+      # TODO(twd2): raise error
       return domain
   user_coll = db.Collection('domain.user')
-  await user_coll.update({'domain_id': domain_id, 'role': role},
+  await user_coll.update({'domain_id': domain_id, 'role': {'$in': list(roles)}},
                          {'$unset': {'role': ''}}, multi=True)
   coll = db.Collection('domain')
   return await coll.find_and_modify(query={'_id': domain_id},
-                                    update={'$unset': {'roles.{0}'.format(role): ''}},
+                                    update={'$unset': dict(('roles.{0}'.format(role), '')
+                                                           for role in roles)},
                                     new=True)
 
 

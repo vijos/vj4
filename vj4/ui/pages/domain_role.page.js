@@ -44,7 +44,6 @@ const page = new NamedPage('domain_role', () => {
       return;
     }
     const role = createRoleDialog.$dom.find('[name="role"]').val();
-    alert(role);
     await util.post('', {
       operation: 'set',
       role,
@@ -67,9 +66,11 @@ const page = new NamedPage('domain_role', () => {
     if (action !== 'yes') {
       return;
     }
-    // TODO
-    alert(selectedRoles.join(', '));
-    Notification.success('Selected roles are deleted');
+    await util.post('', {
+      operation: 'delete',
+      role: selectedRoles,
+    });
+    Notification.success('Selected roles are deleted.');
     await delay(2000);
     window.location.reload();
   }
