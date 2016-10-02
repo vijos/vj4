@@ -22,14 +22,6 @@ def node_url(handler, name, node_or_dtuple):
   return handler.reverse_url(name, **kwargs)
 
 
-@app.route('/discuss/edit/', 'discussion_edit')
-class DiscussionEditDemoHandler(base.Handler):
-  @base.sanitize
-  async def get(self):
-    # TODO: for demo purpose only. remove this handler.
-    self.render('discussion_edit.html')
-
-
 @app.route('/discuss', 'discussion_main')
 class DiscussionMainHandler(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
@@ -292,3 +284,48 @@ class DiscussionTailReplyRawHandler(base.Handler):
     drdoc, drrdoc = await discussion.get_tail_reply(self.domain_id, drid, drrid)
     self.response.content_type = 'text/markdown'
     self.response.text = drrdoc['content']
+
+
+@app.route('/discuss/{did:\w{24}}/edit', 'discussion_edit')
+class DiscussionEditHandler(base.OperationHandler):
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, did: document.convert_doc_id):
+    ddoc = await discussion.get(self.domain_id, did)
+    if not ddoc:
+      raise error.DiscussionNotFoundError(self.domain_id, did)
+    if not self.own(ddoc, builtin.PERM_EDIT_DISCUSSION_SELF):
+      self.check_perm(builtin.PERM_EDIT_DISCUSSION)
+    self.render('discussion_edit.html', ddoc=ddoc)
+
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_update(self, *, did: document.convert_doc_id, title: str, content: str,
+                        highlight: str=None):
+    ddoc = await discussion.get(self.domain_id, did)
+    if not ddoc:
+      raise error.DiscussionNotFoundError(self.domain_id, did)
+    if not self.own(ddoc, builtin.PERM_EDIT_DISCUSSION_SELF):
+      self.check_perm(builtin.PERM_EDIT_DISCUSSION)
+    flags = {}
+    if highlight:
+      if not ddoc.get('highlight'):
+        self.check_perm(builtin.PERM_HIGHLIGHT_DISCUSSION)
+      flags['highlight'] = True
+    else:
+      flags['highlight'] = False
+    ddoc = await discussion.edit(self.domain_id, did, title=title, content=content, **flags)
+    self.json_or_redirect(self.reverse_url('discussion_detail', did=ddoc['doc_id']))
+
+  @base.route_argument
+  @base.require_csrf_token
+  async def post_delete(self, *, did: document.convert_doc_id, **kwargs):
+    did = document.convert_doc_id(did)
+    ddoc = await discussion.get(self.domain_id, did)
+    if not ddoc:
+      raise error.DiscussionNotFoundError(self.domain_id, did)
+    if not self.own(ddoc, builtin.PERM_DELETE_DISCUSSION_SELF):
+      self.check_perm(builtin.PERM_DELETE_DISCUSSION)
+    await discussion.delete(self.domain_id, did)
+    self.json_or_redirect(node_url(self, 'discussion_node', discussion.node_id(ddoc)))
