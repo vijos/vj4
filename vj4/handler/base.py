@@ -46,7 +46,7 @@ class HandlerBase(setting.SettingMixin):
     else:
       self.user = builtin.USER_GUEST
       self.domain = await domain.get(self.domain_id)
-      self.domain_user = {}
+      self.domain_user = builtin.DOMAIN_USER_GUEST
     if not self.domain:
       raise error.DomainNotFoundError(self.domain_id)
     self.view_lang = self.get_setting('view_lang')
@@ -277,9 +277,11 @@ class Handler(web.View, HandlerBase):
 
 
 class OperationHandler(Handler):
+  DEFAULT_OPERATION = 'default'
+
   async def post(self):
     arguments = (await self.request.post()).copy()
-    operation = arguments.pop('operation')
+    operation = arguments.pop('operation', self.DEFAULT_OPERATION)
     try:
       method = getattr(self, 'post_' + operation)
     except AttributeError:
@@ -328,13 +330,14 @@ def _build_path(*args, domain_id, domain_name):
 
 
 @functools.lru_cache()
-def _datetime_span(dt, timezone):
+def _datetime_span(dt, relative=True, format='%Y-%m-%d %H:%M:%S', timezone=pytz.utc):
   if not dt.tzinfo:
     dt = dt.replace(tzinfo=pytz.utc)
   return markupsafe.Markup(
-      '<span class="time" data-timestamp="{0}">{1}</span>'.format(
+      '<span class="time{0}" data-timestamp="{1}">{2}</span>'.format(
+          ' relative' if relative else '',
           calendar.timegm(dt.utctimetuple()),
-          dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M:%S')))
+          dt.astimezone(timezone).strftime(format)))
 
 
 # Decorators

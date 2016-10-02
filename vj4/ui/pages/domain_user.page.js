@@ -1,78 +1,143 @@
-import { NamedPage } from '../misc/PageLoader';
+import _ from 'lodash';
 
-import { ActionDialog } from '../components/dialog';
+import { NamedPage } from '../misc/PageLoader';
+import Notification from '../components/notification';
+import { ConfirmDialog, ActionDialog } from '../components/dialog';
 import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
 
 import * as util from '../misc/Util';
+import tpl from '../utils/tpl';
+import delay from '../utils/delay';
+import i18n from '../utils/i18n';
 
 const page = new NamedPage('domain_user', () => {
-  const userSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--add-user [name="user"]'));
+  const addUserSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--add-user [name="user"]'));
   const addUserDialog = new ActionDialog({
     $body: $('.dialog__body--add-user > div'),
-    onAction: async action => {
-      if (action !== 'ok') {
-        return true;
+    onDispatch(action) {
+      const $role = addUserDialog.$dom.find('[name="role"]');
+      if (action === 'ok') {
+        if (addUserSelector.value() === null) {
+          addUserSelector.focus();
+          return false;
+        }
+        if ($role.val() === '') {
+          $role.focus();
+          return false;
+        }
       }
-      const user = userSelector.value();
-      if (user === null) {
-        return false;
-      }
-      const role = addUserDialog.$dom.find('[name="role"]').val();
-      if (role === '') {
-        return false;
-      }
-      await util
-        .post('', {
-          operation: 'set_user',
-          uid: user._id,
-          role,
-        });
-      window.location.reload();
       return true;
     },
   });
+  addUserDialog.clear = function () {
+    addUserSelector.clear();
+    this.$dom.find('[name="role"]').val('');
+    return this;
+  };
 
-  function openAddUserDialog() {
-    userSelector.$dom.val('');
-    addUserDialog.$dom.find('[name="role"]').val('');
-    addUserDialog.open();
-  }
+  const setRolesDialog = new ActionDialog({
+    $body: $('.dialog__body--set-role > div'),
+    onDispatch(action) {
+      const $role = setRolesDialog.$dom.find('[name="role"]');
+      if (action === 'ok' && $role.val() === '') {
+        $role.focus();
+        return false;
+      }
+      return true;
+    },
+  });
+  setRolesDialog.clear = function () {
+    this.$dom.find('[name="role"]').val('');
+    return this;
+  };
 
-  function handleSelectAllChange(ev) {
-    $('.domain-users tbody input[type="checkbox"]:enabled').prop('checked', $(ev.currentTarget).prop('checked'));
-  }
-
-  function handleDeleteSelected() {
-    $('.domain-users tbody input[type="checkbox"]:checked').closest('tr').each((i, e) => {
-      alert($(e).attr('data-uid'));
+  async function handleClickAddUser() {
+    const action = await addUserDialog.clear().open();
+    if (action !== 'ok') {
+      return;
+    }
+    const user = addUserSelector.value();
+    const role = addUserDialog.$dom.find('[name="role"]').val();
+    await util.post('', {
+      operation: 'set_user',
+      uid: user._id,
+      role,
     });
+    window.location.reload();
   }
 
-  function handleSetSelected() {
-    $('.domain-users tbody input[type="checkbox"]:checked').closest('tr').each((i, e) => {
-      alert($(e).attr('data-uid'));
+  function ensureAndGetSelectedUsers() {
+    const users = _.map(
+      $('.domain-users tbody [type="checkbox"]:checked'),
+      ch => $(ch).closest('tr').attr('data-uid')
+    );
+    if (users.length === 0) {
+      Notification.error(i18n('Please select at least one user to perform this operation.'));
+      return null;
+    }
+    return users;
+  }
+
+  async function handleClickRemoveSelected() {
+    const selectedUsers = ensureAndGetSelectedUsers();
+    if (selectedUsers === null) {
+      return;
+    }
+    const action = await new ConfirmDialog({
+      $body: tpl`
+        <div class="typo">
+          <p>${i18n('Are you sure want to remove the selected users from this domain?')}</p>
+          <p>${i18n('Their account will not be deleted and they will have default role when visiting this domain.')}</p>
+        </div>`,
+    }).open();
+    if (action !== 'yes') {
+      return;
+    }
+    await util.post('', {
+      operation: 'set_users',
+      uid: selectedUsers,
+      role: '',
     });
+    Notification.success(i18n('Selected users are removed from the domain.'));
+    await delay(2000);
+    window.location.reload();
   }
 
-  async function handleUserRoleChange(ev) {
+  async function handleClickSetSelected() {
+    const selectedUsers = ensureAndGetSelectedUsers();
+    if (selectedUsers === null) {
+      return;
+    }
+    const action = await setRolesDialog.clear().open();
+    if (action !== 'ok') {
+      return;
+    }
+    const role = setRolesDialog.$dom.find('[name="role"]').val();
+    await util.post('', {
+      operation: 'set_users',
+      uid: selectedUsers,
+      role,
+    });
+    Notification.success(i18n('Role updated to {0} for selected users.', role));
+    await delay(2000);
+    window.location.reload();
+  }
+
+  async function handleChangeUserRole(ev) {
     const row = $(ev.currentTarget).closest('tr');
     const role = $(ev.currentTarget).val();
-    await util
-      .post('', {
-        operation: 'set_user',
-        uid: row.attr('data-uid'),
-        role,
-      });
-    if (role === '') {
-      window.location.reload();
-    }
+    await util.post('', {
+      operation: 'set_user',
+      uid: row.attr('data-uid'),
+      role,
+    });
+    Notification.success(i18n('Role updated to {0}.', role));
   }
 
-  $('[name="add_user"]').click(() => openAddUserDialog());
-  $('[name="delete_selected"]').click(() => handleDeleteSelected());
-  $('[name="set_roles"]').click(() => handleSetSelected());
-  $('.domain-users [name="role"]').change(ev => handleUserRoleChange(ev));
-  $('.domain-users [name="select_all"]').change(ev => handleSelectAllChange(ev));
+  $('[name="add_user"]').click(() => handleClickAddUser());
+  $('[name="remove_selected"]').click(() => handleClickRemoveSelected());
+  $('[name="set_roles"]').click(() => handleClickSetSelected());
+  $('.domain-users [name="role"]').change(ev => handleChangeUserRole(ev));
 });
 
 export default page;

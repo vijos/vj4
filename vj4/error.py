@@ -45,7 +45,13 @@ class NotFoundError(UserFacingError):
 
   @property
   def message(self):
-    return "Path {0} not found."
+    return 'Path {0} not found.'
+
+
+class BuiltinDomainError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Domain {0} is bulit-in and it cannot be modified.'
 
 
 class ValidationError(ForbiddenError):
@@ -77,41 +83,41 @@ class VerifyPasswordError(ForbiddenError):
 class UserAlreadyExistError(ForbiddenError):
   @property
   def message(self):
-    return "User {0} already exists."
+    return 'User {0} already exists.'
 
 
 class LoginError(ForbiddenError):
   @property
   def message(self):
-    return "Invalid user {0} or password."
+    return 'Invalid user {0} or password.'
 
 
 class DocumentNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Document {2} not found."
+    return 'Document {2} not found.'
 
 
 class ProblemDataNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Data of problem {1} not found."
+    return 'Data of problem {1} not found.'
 
 
 class RecordDataNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Data of record {1} not found."
+    return 'Data of record {1} not found.'
 
 
 class PermissionError(ForbiddenError):
   @property
   def message(self):
     if any((p | builtin.PERM_VIEW) == builtin.PERM_VIEW for p in self.args):
-      return "You cannot visit this domain."
+      return 'You cannot visit this domain.'
     else:
-      if len(self.args) > 0 and self.args[0] in builtin.PERM_TEXTS:
-        self.args = (builtin.PERM_TEXTS[self.args[0]], self.args[0], *self.args[1:])
+      if len(self.args) > 0 and self.args[0] in builtin.PERMS_BY_KEY:
+        self.args = (builtin.PERMS_BY_KEY[self.args[0]].desc, self.args[0], *self.args[1:])
       return "You don't have the required permission ({0}) in this domain."
 
 
@@ -141,7 +147,7 @@ class AlreadyVotedError(ForbiddenError):
 class UserNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "User not found."
+    return 'User not found.'
 
 
 class InvalidTokenDigestError(ForbiddenError):
@@ -157,49 +163,49 @@ class CurrentPasswordError(ForbiddenError):
 class DiscussionCategoryAlreadyExistError(ForbiddenError):
   @property
   def message(self):
-    return "Discussion category {1} already exists."
+    return 'Discussion category {1} already exists.'
 
 
 class DiscussionCategoryNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Discussion category {1} not found."
+    return 'Discussion category {1} not found.'
 
 
 class DiscussionNodeAlreadyExistError(ForbiddenError):
   @property
   def message(self):
-    return "Discussion node {1} already exists."
+    return 'Discussion node {1} already exists.'
 
 
 class DiscussionNodeNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Discussion node {1} not found."
+    return 'Discussion node {1} not found.'
 
 
 class DiscussionNotFoundError(DocumentNotFoundError):
   @property
   def message(self):
-    return "Discussion {1} not found."
+    return 'Discussion {1} not found.'
 
 
 class MessageNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Message {0} not found."
+    return 'Message {0} not found.'
 
 
 class DomainNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Domain {0} not found."
+    return 'Domain {0} not found.'
 
 
 class DomainAlreadyExistError(ForbiddenError):
   @property
   def message(self):
-    return "Domain {0} already exists."
+    return 'Domain {0} already exists.'
 
 
 class ContestAlreadyAttendedError(ForbiddenError):
@@ -217,34 +223,34 @@ class ContestNotAttendedError(ForbiddenError):
 class ContestStatusHiddenError(ForbiddenError):
   @property
   def message(self):
-    return "Contest status is hidden."
+    return 'Contest status is hidden.'
 
 
 class ContestNotLiveError(ForbiddenError):
   @property
   def message(self):
-    return "This contest is not live."
+    return 'This contest is not live.'
 
 
 class ProblemNotFoundError(DocumentNotFoundError):
   @property
   def message(self):
-    return "Problem {1} not found."
+    return 'Problem {1} not found.'
 
 
 class TrainingRequirementNotSatisfiedError(ForbiddenError):
   @property
   def message(self):
-    return "Training requirement is not satisfied."
+    return 'Training requirement is not satisfied.'
 
 
 class RecordNotFoundError(NotFoundError):
   @property
   def message(self):
-    return "Record {0} not found."
+    return 'Record {0} not found.'
 
 
 class OpcountExceededError(ForbiddenError):
   @property
   def message(self):
-    return "Too frequent operations of {0} (limit: {2} operations in {1} seconds)."
+    return 'Too frequent operations of {0} (limit: {2} operations in {1} seconds).'

@@ -24,7 +24,7 @@ const page = new NamedPage('home_messages', () => {
     const userSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--user-select [name="user"]'));
     const userSelectDialog = new ActionDialog({
       $body: $('.dialog__body--user-select > div'),
-      onDispatch: action => {
+      onDispatch(action) {
         if (action === 'ok' && userSelector.value() === null) {
           userSelector.focus();
           return false;
@@ -40,24 +40,23 @@ const page = new NamedPage('home_messages', () => {
     render(
       <Provider store={store}>
         <MessagePadApp
-          onAdd={() => {
-            userSelectDialog.clear().open().then(action => {
-              if (action !== 'ok') {
-                return;
-              }
-              const user = userSelector.value();
-              const id = _.uniqueId('PLACEHOLDER_');
-              store.dispatch({
-                type: 'DIALOGUES_CREATE',
-                payload: {
-                  id,
-                  user,
-                },
-              });
-              store.dispatch({
-                type: 'DIALOGUES_SWITCH_TO',
-                payload: id,
-              });
+          onAdd={async () => {
+            const action = await userSelectDialog.clear().open();
+            if (action !== 'ok') {
+              return;
+            }
+            const user = userSelector.value();
+            const id = _.uniqueId('PLACEHOLDER_');
+            store.dispatch({
+              type: 'DIALOGUES_CREATE',
+              payload: {
+                id,
+                user,
+              },
+            });
+            store.dispatch({
+              type: 'DIALOGUES_SWITCH_TO',
+              payload: id,
             });
           }}
         />

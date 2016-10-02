@@ -86,6 +86,13 @@ async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
                             'doc_id': doc_id}, just_one=True)
 
 
+async def delete_multi(domain_id: str, doc_type: int, **kwargs):
+  coll = db.Collection('document')
+  return await coll.remove({'domain_id': domain_id,
+                            'doc_type': doc_type,
+                            **kwargs}, just_one=False)
+
+
 def get_multi(*, fields=None, **kwargs):
   coll = db.Collection('document')
   return coll.find(kwargs, fields=fields)
@@ -302,9 +309,15 @@ async def ensure_indexes():
                            ('parent_doc_id', 1),
                            ('vote', -1),
                            ('doc_id', -1)], sparse=True)
+  # hidden doc
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('hidden', 1),
+                           ('doc_id', -1)], sparse=True)
+  # for contest
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('rule', 1),
                            ('doc_id', -1)], sparse=True)
   status_coll = db.Collection('document.status')
   await status_coll.ensure_index([('domain_id', 1),

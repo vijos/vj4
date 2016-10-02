@@ -1,0 +1,8 @@
+{% if tdoc %}
+  {% include "partials/problem_sidebar_contest.html" %}
+  {% with owner_udoc=udoc %}
+    {% include "partials/contest_sidebar.html" %}
+  {% endwith %}
+{% else %}
+  {% include "partials/problem_sidebar_normal.html" %}
+{% endif %}

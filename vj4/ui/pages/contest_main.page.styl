@@ -1,18 +1,29 @@
+@import '~misc/section.inc.styl'
+
 $highlight-button-color = #F6DF45
 
-$contest_colors = (#F3A7AE #ECB0CE #9CC2DD #83CDD7 #96CEA3 #DEE78A #F1CD80 #D6D6D6 #E7818B #E089B5 #70A9D1 #48B3C1 #6EBE7E #C3D053 #F6C356 #ABABAB)
-
 .page--contest_main
+  .contest__title
+    font-size: rem($font-size-title)
+    line-height: 1.2em
+    margin-bottom: rem(10px)
 
-  .section--contest.live
-    background: #E98696
-    background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #E98696 0%, #E96B6B 100%)
+  .contest__date
+    margin-right: rem(10px)
+    white-space: nowrap
 
-  .section--contest.ready
-    background: #469DCF
-    background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #8ACDE6 0%, #469DCF 100%)
+  .contest__info-attended
+    color: $success-color
 
   .section--contest
+    &.live
+      background: #E98696
+      background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #E98696 0%, #E96B6B 100%)
+
+    &.ready
+      background: #469DCF
+      background-image: -webkit-radial-gradient(left top, ellipse farthest-corner, #8ACDE6 0%, #469DCF 100%)
+
     .status_title
       display: inline-block
       font-size: rem($font-size-secondary)
@@ -88,52 +99,3 @@ $contest_colors = (#F3A7AE #ECB0CE #9CC2DD #83CDD7 #96CEA3 #DEE78A #F1CD80 #D6D6
 
       .detail-button
         width: auto
-
-  .contest__card
-    display: block
-    position: relative
-    padding-bottom: 75%
-    margin-bottom: rem(20px)
-    overflow: hidden
-    transition: box-shadow .2s ease-out-cubic
-
-    &:hover
-      box-shadow: 0 8px 25px rgba(#000, 0.3)
-
-  .contest__card__image
-    position: absolute
-    left: 0
-    top: 0
-    width: 100%
-    height: 100%
-    background-color: $contest_colors[0]
-
-  for num in range(0, (length($contest_colors) - 1))
-    .cci--{num}
-      background-color: $contest_colors[num]
-
-  .contest__card__info
-    z-index: 1
-    position: absolute
-    left: 0
-    bottom: 0
-    width: 100%
-    padding: rem(15px)
-    background: rgba(#000, 0.5)
-    color: #FFF
-    font-size: rem($font-size-small)
-
-    h1
-      color: #FFF
-      font-size: rem($font-size)
-      margin-bottom: 0.5em
-
-      +mobile()
-        font-size: rem($font-size-title)
-
-    li
-      display: inline-block
-      margin-right: rem(10px)
-
-    .icon
-      color: #FFEB81

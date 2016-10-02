@@ -6,8 +6,11 @@ contest_status: Contest Status
 discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
+home_account: Account Settings
+home_preference: Preference
 home_messages: Messages
 home_security: Security
+home_domain: My Domains
 judge_playground: Judge Playground
 main: Home
 pager_first: « First
@@ -40,3 +43,11 @@ domain_role: Domain Role
 domain_user: Domain User
 domain_permission: Domain Permission
 timeago_locale: en
+perm_general: General
+perm_problem: Problems
+perm_record: Records
+perm_problem_solution: Problem Solutions
+perm_discussion: Discussions
+perm_contest: Contests
+perm_training: Trainings
+discussion_edit: Discussion Edit

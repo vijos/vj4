@@ -52,7 +52,7 @@ async def get_list(*, fields=None, limit: int=None, **kwargs):
 async def edit(domain_id: str, **kwargs):
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
-      return None
+      raise error.BuiltinDomainError(domain_id)
   coll = db.Collection('domain')
   if 'owner_uid' in kwargs:
     del kwargs['owner_uid']
@@ -77,7 +77,7 @@ async def set_role(domain_id: str, role: str, perm: int):
   validator.check_role(role)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
-      return domain
+      raise error.BuiltinDomainError(domain_id)
   coll = db.Collection('domain')
   return await coll.find_and_modify(query={'_id': domain_id},
                                     update={'$set': {'roles.{0}'.format(role): perm}},
@@ -86,16 +86,23 @@ async def set_role(domain_id: str, role: str, perm: int):
 
 @argmethod.wrap
 async def delete_role(domain_id: str, role: str):
-  validator.check_role(role)
+  return await delete_roles(domain_id, [role])
+
+
+async def delete_roles(domain_id: str, roles):
+  roles = list(set(roles))
+  for role in roles:
+    validator.check_role(role)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
-      return domain
+      raise error.BuiltinDomainError(domain_id)
   user_coll = db.Collection('domain.user')
-  await user_coll.update({'domain_id': domain_id, 'role': role},
+  await user_coll.update({'domain_id': domain_id, 'role': {'$in': list(roles)}},
                          {'$unset': {'role': ''}}, multi=True)
   coll = db.Collection('domain')
   return await coll.find_and_modify(query={'_id': domain_id},
-                                    update={'$unset': {'roles.{0}'.format(role): ''}},
+                                    update={'$unset': dict(('roles.{0}'.format(role), '')
+                                                           for role in roles)},
                                     new=True)
 
 
@@ -103,7 +110,7 @@ async def delete_role(domain_id: str, role: str):
 async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
-      return None
+      raise error.BuiltinDomainError(domain_id)
   coll = db.Collection('domain')
   return await coll.find_and_modify(query={'_id': domain_id, 'owner_uid': old_owner_uid},
                                     update={'$set': {'owner_uid': new_owner_uid}},
@@ -132,6 +139,22 @@ async def unset_user(domain_id, uid, fields):
                                     new=True)
 
 
+async def set_users(domain_id, uids, **kwargs):
+  coll = db.Collection('domain.user')
+  await coll.update({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                    {'$set': kwargs},
+                    upsert=False,
+                    multi=True)
+
+
+async def unset_users(domain_id, uids, fields):
+  coll = db.Collection('domain.user')
+  await coll.update({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                    {'$unset': dict((f, '') for f in set(fields))},
+                    upsert=True,
+                    multi=True)
+
+
 @argmethod.wrap
 async def set_user_role(domain_id: str, uid: int, role: str):
   validator.check_role(role)
@@ -141,6 +164,15 @@ async def set_user_role(domain_id: str, uid: int, role: str):
 @argmethod.wrap
 async def unset_user_role(domain_id: str, uid: int):
   return await unset_user(domain_id, uid, ['role'])
+
+
+async def set_users_role(domain_id: str, uids, role: str):
+  validator.check_role(role)
+  await set_users(domain_id, uids, role=role)
+
+
+async def unset_users_role(domain_id: str, uids):
+  await unset_users(domain_id, uids, ['role'])
 
 
 async def inc_user(domain_id, uid, **kwargs):
