@@ -20,6 +20,11 @@
         </div>
       </div>
       <ul class="section__footer supplementary dot list">
+      {% if handler.own(ddoc, vj4.model.builtin.PERM_EDIT_DISCUSSION_SELF) or handler.has_perm(vj4.model.builtin.PERM_EDIT_DISCUSSION) %}
+        <li>
+          <a href="{{ reverse_url('discussion_edit', did=ddoc['doc_id']) }}"><span class="icon icon-edit"></span> {{ _('Edit') }}</a>
+        </li>
+      {% endif %}
         <li>
           {{ _('{0} views').format(ddoc['views']) }}
         </li>

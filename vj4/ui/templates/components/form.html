@@ -2,21 +2,27 @@
 {% set label = kwargs.pop('label') %}
 {% set columns = kwargs.pop('columns') %}
 {% set required = kwargs.pop('required', false) %}
-<div class="row"><div class="medium-{{ columns }} columns">
-  <label>
-    {{ _(label) }}
-  {% if required %}
-    ({{ _('required') }})
-  {% endif %}
+{% set hotkeys = kwargs.pop('hotkeys', None) %}
+<div class="row">
+  <div
+    class="medium-{{ columns }} columns"
+    {% if hotkeys %}data-hotkey="{{ hotkeys }}"{% endif %}
+  >
+    <label>
+      {{ _(label) }}
+    {% if required %}
+      ({{ _('required') }})
+    {% endif %}
 {% endmacro %}
 
 {% macro form_end() %}
 {% set help_text = kwargs.pop('help_text', None) %}
-  </label>
-{% if help_text %}
-  <p class="help-text">{{ _(help_text) }}</p>
-{% endif %}
-</div></div>
+    </label>
+  {% if help_text %}
+    <p class="help-text">{{ _(help_text) }}</p>
+  {% endif %}
+  </div>
+</div>
 {% endmacro %}
 
 {% macro form_attr(form_class) %}
@@ -66,9 +72,11 @@
 {% endmacro %}
 
 {% macro textarea(name='', value='', placeholder='') %}
+{% set markdown = kwargs.pop('markdown', false) %}
 <textarea
   name="{{ name }}"
   placeholder="{{ placeholder }}"
+  {% if markdown %}data-markdown{% endif %}
   {{ form_attr('textbox', **kwargs) }}
 >{{ value }}</textarea>
 {% endmacro %}
@@ -77,4 +85,16 @@
 {{ form_begin(columns=columns, **kwargs) }}
 {{ textarea(columns=columns, **kwargs) }}
 {{ form_end(columns=columns, **kwargs) }}
+{% endmacro %}
+
+{% macro checkbox(label, name='', value=False) %}
+<label class="checkbox">
+  <input type="checkbox" name="{{ name }}"{% if value %} checked{% endif %}>{{ _(label) }}
+</label>
+{% endmacro %}
+
+{% macro form_checkbox(columns=5) %}
+<div class="row"><div class="medium-{{ columns }} columns">
+  {{ checkbox(**kwargs) }}
+</div></div>
 {% endmacro %}

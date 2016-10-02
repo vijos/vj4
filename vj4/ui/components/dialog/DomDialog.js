@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 
-import delay from '../../utils/delay';
 import zIndexManager from '../../utils/zIndexManager';
 
 export default class DomDialog extends DOMAttachedObject {
@@ -43,6 +42,7 @@ export default class DomDialog extends DOMAttachedObject {
       opacity: 1,
     }, {
       duration: 100,
+      easing: 'easeOutCubic',
     });
 
     const $dgContent = this.$dom.find('.dialog__content');

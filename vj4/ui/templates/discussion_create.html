@@ -8,22 +8,15 @@
       </div>
       <div class="section__body">
         <form method="post">
-          <div class="row"><div class="medium-8 columns">
-            <input name="title" placeholder="{{ _('title') }}" class="textbox" autofocus required>
-          </div><div class="medium-4 columns">
-          {% if handler.has_perm(vj4.model.builtin.PERM_HIGHLIGHT_DISCUSSION) %}
-            <label class="checkbox">
-              <input type="checkbox" name="highlight" value="on">{{ _('Highlight') }}
-            </label>
-          {% endif %}
-          </div></div>
-          <div class="row"><div class="columns" data-hotkey="ctrl+enter:submit">
-            <textarea name="content" class="textbox" data-markdown required></textarea>
-          </div></div>
+          {% include "partials/discussion_edit_form.html" %}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <input type="submit" class="rounded primary button" value="{{ _('Create') }} (Ctrl+Enter)">
-            <input type="button" class="rounded button" value="{{ _('Cancel') }}" onclick="window.history.go(-1)">
+            <button type="submit" class="rounded primary button">
+              {{ _('Create') }} (Ctrl+Enter)
+            </button>
+            <button class="rounded button" onclick="window.history.go(-1)">
+              {{ _('Cancel') }}
+            </button>
           </div></div>
         </form>
       </div>

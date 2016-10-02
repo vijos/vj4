@@ -1,4 +1,3 @@
-import delay from './delay';
 import 'jquery.easing';
 
 export async function slideDown($element, duration, fromCss = {}, toCss = {}) {
