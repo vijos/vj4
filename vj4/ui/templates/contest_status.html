@@ -1,11 +1,10 @@
 {% extends "layout/basic.html" %}
 {% block content %}
-<div class="row">
-  <div class="section medium-12 columns">
+<div class="row"><div class="medium-12 columns">
+  <div class="section">
     <div class="section__body no-padding">
-      <a href="#{{ handler.user['_id'] }}" class="button rounded primary">{{ _('My Rank') }}</a>
       {% include 'partials/contest_status_'~vj4.constant.contest.RULE_ID[tdoc['rule']]~'.html' %}
     </div>
   </div>
-</div>
+</div></div>
 {% endblock %}
