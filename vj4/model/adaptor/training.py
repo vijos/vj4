@@ -1,9 +1,10 @@
 import asyncio
-
 from bson import objectid
 
+from vj4 import constant
 from vj4 import error
 from vj4.model import document
+from vj4.model.adaptor import problem
 from vj4.util import argmethod
 from vj4.util import validator
 
@@ -12,6 +13,10 @@ from vj4.util import validator
 async def add(domain_id: str, title: str, content: str, owner_uid: int, dag=[]):
   validator.check_title(title)
   validator.check_content(content)
+  for node in dag:
+    for nid in node['require_nids']:
+      if nid >= node['_id']:
+        raise error.ValidationError('dag')
   return await document.add(domain_id, content, owner_uid, document.TYPE_TRAINING,
                             title=title, dag=dag, pids=list(pids))
 
@@ -25,6 +30,15 @@ async def get(domain_id: str, tid: objectid.ObjectId):
 
 
 async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
+  if 'title' in kwargs:
+      validator.check_title(kwargs['title'])
+  if 'content' in kwargs:
+      validator.check_content(kwargs['content'])
+  if 'dag' in kwargs:
+    for node in kwargs['dag']:
+      for nid in node['require_nids']:
+        if nid >= node['_id']:
+          raise error.ValidationError('dag')
   return await document.set(domain_id, document.TYPE_TRAINING, tid, **kwargs)
 
 
@@ -69,40 +83,58 @@ def get_multi(domain_id: str, *, fields=None, **kwargs):
                             fields=fields, **kwargs)
 
 
+# TODO(twd2): move to jobs
+@argmethod.wrap
+async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, done_pids=None):
+  tdoc = await get(domain_id, tid)
+  tsdoc = await get_status(domain_id, tdoc['doc_id'], uid)
+  pids = set()
+  for node in tdoc['dag']:
+    for pid in node['pids']:
+      pids.add(pid)
+  if done_pids is None:
+    psdict = await problem.get_dict_status(domain_id, uid, pids)
+    done_pids = set()
+     for pid, psdoc in psdict.items():
+      if 'status' in psdoc:
+        if psdoc['status'] == constant.record.STATUS_ACCEPTED:
+          done_pids.add(pid)
+  done_pids = set(done_pids)
+  done_nids = set()
+  sorted_dag = sorted(tdoc['dag'], key=lambda n: n['_id'])
+  for node in sorted_dag:
+    if done_nids >= set(node['require_nids']) and done_pids >= set(node['pids']):
+      done_nids.add(node['_id'])
+  done = len(done_nids) == len(tdoc['dag'])
+  await document.rev_set_status(domain_id, document.TYPE_TRAINING, tdoc['doc_id'],
+                                uid, tsdoc['rev'],
+                                done_nids=list(done_nids), done=done)
+
+
 async def _update_status(domain_id, tdoc, uid, key, value):
   tsdoc = await document.rev_push_status(domain_id, document.TYPE_TRAINING, tdoc['doc_id'],
                                          uid, key, value)
   done_pids = set(tsdoc.get('done_pids', []))
-  done_tids = set(tsdoc.get('done_tids', []))
-  done = done_pids.issuperset(tdoc['pids']) and done_tids.issuperset(tdoc['require_tids'])
+  done_nids = set()
+  sorted_dag = sorted(tdoc['dag'], key=lambda n: n['_id'])
+  for node in sorted_dag:
+    if done_nids >= set(node['require_nids']) and done_pids >= set(node['pids']):
+      done_nids.add(node['_id'])
+  done = len(done_nids) == len(tdoc['dag'])
   await document.rev_set_status(domain_id, document.TYPE_TRAINING, tdoc['doc_id'],
                                 uid, tsdoc['rev'],
-                                done_pids=list(done_pids), done_tids=list(done_tids), done=done)
-  if done:
-    await update_status_by_tid(domain_id, uid, tdoc['doc_id'])
+                                done_nids=list(done_nids), done=done)
 
 
 @argmethod.wrap
 async def update_status_by_pid(domain_id: str, uid: int, pid: document.convert_doc_id):
   tdocs = document.get_multi(domain_id=domain_id,
                              doc_type=document.TYPE_TRAINING,
-                             pids=pid,
-                             fields=['doc_id', 'pids', 'require_tids'])
+                             **{'dag.pids': pid},
+                             fields=['doc_id', 'dag'])
   futs = []
   async for tdoc in tdocs:
     futs.append(_update_status(domain_id, tdoc, uid, 'done_pids', pid))
-  await asyncio.gather(*futs)
-
-
-@argmethod.wrap
-async def update_status_by_tid(domain_id: str, uid: int, tid: objectid.ObjectId):
-  tdocs = document.get_multi(domain_id=domain_id,
-                             doc_type=document.TYPE_TRAINING,
-                             require_tids=tid,
-                             fields=['doc_id', 'pids', 'require_tids'])
-  futs = []
-  async for tdoc in tdocs:
-    futs.append(_update_status(domain_id, tdoc, uid, 'done_tids', tid))
   await asyncio.gather(*futs)
 
 
