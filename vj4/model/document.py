@@ -319,6 +319,13 @@ async def ensure_indexes():
                            ('doc_type', 1),
                            ('rule', 1),
                            ('doc_id', -1)], sparse=True)
+  # for training
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('pids', 1)], sparse=True)
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('require_tids', 1)], sparse=True)
   status_coll = db.Collection('document.status')
   await status_coll.ensure_index([('domain_id', 1),
                                   ('doc_type', 1),
