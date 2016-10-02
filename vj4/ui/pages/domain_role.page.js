@@ -7,6 +7,7 @@ import { ConfirmDialog, ActionDialog } from '../components/dialog';
 import * as util from '../misc/Util';
 import tpl from '../utils/tpl';
 import delay from '../utils/delay';
+import i18n from '../utils/i18n';
 
 const page = new NamedPage('domain_role', () => {
   const createRoleDialog = new ActionDialog({
@@ -31,7 +32,7 @@ const page = new NamedPage('domain_role', () => {
       ch => $(ch).closest('tr').attr('data-role')
     );
     if (roles.length === 0) {
-      Notification.error('Please select at least one role to perform this operation.');
+      Notification.error(i18n('Please select at least one role to perform this operation.'));
       return null;
     }
     return roles;
@@ -59,8 +60,8 @@ const page = new NamedPage('domain_role', () => {
     const action = await new ConfirmDialog({
       $body: tpl`
         <div class="typo">
-          <p>Are you sure want to delete the selected roles?</p>
-          <p>Users in those roles will be removed from the domain.</p>
+          <p>${i18n('Are you sure want to delete the selected roles?')}</p>
+          <p>${i18n('Users in those roles will be removed from the domain.')}</p>
         </div>`,
     }).open();
     if (action !== 'yes') {
@@ -70,7 +71,7 @@ const page = new NamedPage('domain_role', () => {
       operation: 'delete',
       role: selectedRoles,
     });
-    Notification.success('Selected roles are deleted.');
+    Notification.success(i18n('Selected roles are deleted.'));
     await delay(2000);
     window.location.reload();
   }

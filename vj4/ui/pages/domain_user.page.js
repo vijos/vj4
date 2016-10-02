@@ -8,6 +8,7 @@ import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoCom
 import * as util from '../misc/Util';
 import tpl from '../utils/tpl';
 import delay from '../utils/delay';
+import i18n from '../utils/i18n';
 
 const page = new NamedPage('domain_user', () => {
   const addUserSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--add-user [name="user"]'));
@@ -71,7 +72,7 @@ const page = new NamedPage('domain_user', () => {
       ch => $(ch).closest('tr').attr('data-uid')
     );
     if (users.length === 0) {
-      Notification.error('Please select at least one user to perform this operation.');
+      Notification.error(i18n('Please select at least one user to perform this operation.'));
       return null;
     }
     return users;
@@ -85,8 +86,8 @@ const page = new NamedPage('domain_user', () => {
     const action = await new ConfirmDialog({
       $body: tpl`
         <div class="typo">
-          <p>Are you sure want to remove the selected users from this domain?</p>
-          <p>Their account will not be deleted and they will have default role when visiting this domain.</p>
+          <p>${i18n('Are you sure want to remove the selected users from this domain?')}</p>
+          <p>${i18n('Their account will not be deleted and they will have default role when visiting this domain.')}</p>
         </div>`,
     }).open();
     if (action !== 'yes') {
@@ -97,7 +98,7 @@ const page = new NamedPage('domain_user', () => {
       uid: selectedUsers,
       role: '',
     });
-    Notification.success('Selected users are removed from the domain.');
+    Notification.success(i18n('Selected users are removed from the domain.'));
     await delay(2000);
     window.location.reload();
   }
@@ -117,7 +118,7 @@ const page = new NamedPage('domain_user', () => {
       uid: selectedUsers,
       role,
     });
-    Notification.success(`Role updated to ${role} for selected users.`);
+    Notification.success(i18n('Role updated to {0} for selected users.', role));
     await delay(2000);
     window.location.reload();
   }
@@ -130,7 +131,7 @@ const page = new NamedPage('domain_user', () => {
       uid: row.attr('data-uid'),
       role,
     });
-    Notification.success(`Role updated to ${role}.`);
+    Notification.success(i18n('Role updated to {0}.', role));
   }
 
   $('[name="add_user"]').click(() => handleClickAddUser());

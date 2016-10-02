@@ -460,3 +460,15 @@ Upload: 上传
 No dataset present.: 暂无测试数据。
 Cancel Score: 取消成绩
 score canceled: 成绩取消
+Set Role: 设置角色
+Role for selected users: 为所选用户设置角色
+Please select at least one user to perform this operation.: 请选择至少一个用户来进行操作。
+Are you sure want to remove the selected users from this domain?: 您确定将所选用户从此域中移除吗？
+Their account will not be deleted and they will have default role when visiting this domain.: 他们的账号不会被删除，他们之后将以 default 角色访问此域。
+Selected users are removed from the domain.: 所选用户已从此域中移除。
+Role updated to {0} for selected users.: 所选用户角色已更新为 {0}。
+Role updated to {0}.: 角色已更新为 {0}。
+Are you sure want to delete the selected roles?: 您确定删除所选角色吗？
+Users in those roles will be removed from the domain.: 角色的用户将从此域中移除。
+Selected roles are deleted.: 所选角色已删除。
+Please select at least one role to perform this operation.: 请选择至少一个角色来进行操作。
