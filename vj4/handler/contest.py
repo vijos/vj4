@@ -14,9 +14,11 @@ from vj4.model import builtin
 from vj4.model import document
 from vj4.model import record
 from vj4.model import user
+from vj4.model.adaptor import discussion
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.handler import base
+from vj4.util import pagination
 
 
 class ContestStatusMixin(object):
@@ -56,25 +58,39 @@ class ContestStatusMixin(object):
 
 @app.route('/contest', 'contest_main')
 class ContestMainHandler(base.Handler, ContestStatusMixin):
+  CONTESTS_PER_PAGE = 20
+
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
-  async def get(self):
-    tdocs = await contest.get_list(self.domain_id)
+  @base.get_argument
+  @base.sanitize
+  async def get(self, *, rule: str=None, page: int=1):
+    if not rule:
+      tdocs = contest.get_multi(self.domain_id)
+      qs = ''
+    else:
+      tdocs = contest.get_multi(self.domain_id, rule=int(rule))
+      qs = 'rule={0}'.format(int(rule))
+    tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                            (tdoc['doc_id'] for tdoc in tdocs))
-    self.render('contest_main.html', tdocs=tdocs, tsdict=tsdict)
+    self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs,
+                tdocs=tdocs, tsdict=tsdict)
 
 
 @app.route('/contest/{tid:\w{24}}', 'contest_detail')
 class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
+  DISCUSSIONS_PER_PAGE = 15
+
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
+  @base.get_argument
   @base.route_argument
   @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId):
+  async def get(self, *, tid: objectid.ObjectId, page: int=1):
+    # contest
     tdoc = await contest.get(self.domain_id, tid)
     pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
-    tsdoc, udoc, pdict = await asyncio.gather(
+    tsdoc, pdict = await asyncio.gather(
         contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
-        user.get_by_uid(tdoc['owner_uid']),
         problem.get_dict(pdom_and_ids))
     psdict = dict()
     rdict = dict()
@@ -85,12 +101,22 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
       rdict = await record.get_dict(psdoc['rid'] for psdoc in psdict.values())
     else:
       attended = False
+    # discussion
+    ddocs, dpcount, dcount = await pagination.paginate(
+        discussion.get_multi(self.domain_id,
+                             parent_doc_type=tdoc['doc_type'],
+                             parent_doc_id=tdoc['doc_id']),
+        page, self.DISCUSSIONS_PER_PAGE)
+    uids = set(ddoc['owner_uid'] for ddoc in ddocs)
+    uids.add(tdoc['owner_uid'])
+    udict = await user.get_dict(uids)
     path_components = self.build_path(
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], None))
-    self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udoc=udoc,
-                pdict=pdict, psdict=psdict, rdict=rdict, page_title=tdoc['title'],
-                path_components=path_components)
+    self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udict=udict,
+                pdict=pdict, psdict=psdict, rdict=rdict,
+                ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount,
+                page_title=tdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_ATTEND_CONTEST)
@@ -148,11 +174,16 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
         raise error.ContestNotLiveError(tdoc['doc_id'])
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
+    tsdoc, udoc = await asyncio.gather(
+        contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
+        user.get_by_uid(tdoc['owner_uid']))
+    attended = tsdoc and tsdoc.get('attend') == 1
     path_components = self.build_path(
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
         (pdoc['title'], None))
-    self.render('problem_detail.html', tdoc=tdoc, pdoc=pdoc,
+    self.render('problem_detail.html', tdoc=tdoc, pdoc=pdoc, tsdoc=tsdoc, udoc=udoc,
+                attended=attended,
                 page_title=pdoc['title'], path_components=path_components)
 
 
@@ -172,6 +203,10 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
       raise error.ContestNotLiveError(tdoc['doc_id'])
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
+    tsdoc, udoc = await asyncio.gather(
+        contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
+        user.get_by_uid(tdoc['owner_uid']))
+    attended = tsdoc and tsdoc.get('attend') == 1
     if (contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
@@ -185,6 +220,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
         (pdoc['title'], self.reverse_url('contest_detail_problem', tid=tid, pid=pid)),
         (self.translate('contest_detail_problem_submit'), None))
     self.json_or_render('problem_submit.html', tdoc=tdoc, pdoc=pdoc, rdocs=rdocs,
+                        tsdoc=tsdoc, udoc=udoc, attended=attended,
                         page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -228,11 +264,12 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
     pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
                                         problem.get_dict(pdom_and_ids))
+    ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
     path_components = self.build_path(
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
         (self.translate('contest_status'), None))
-    self.render('contest_status.html', tdoc=tdoc, tsdocs=tsdocs,
+    self.render('contest_status.html', tdoc=tdoc, ranked_tsdocs=ranked_tsdocs, dict=dict,
                 udict=udict, pdict=pdict, path_components=path_components)
 
 
@@ -263,8 +300,8 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
                  pids: str):
     try:
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-      begin_at = self.timezone.localize(begin_at)
-      end_at = self.timezone.normalize(begin_at + datetime.timedelta(hours=duration))
+      begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
+      end_at = begin_at + datetime.timedelta(hours=duration)
     except ValueError as e:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     if begin_at <= self.now:
