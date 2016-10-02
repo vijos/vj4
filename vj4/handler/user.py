@@ -1,7 +1,9 @@
 import asyncio
 import datetime
+import random
 
 from vj4 import app
+from vj4 import constant
 from vj4 import error
 from vj4 import template
 from vj4.model import builtin
@@ -9,9 +11,27 @@ from vj4.model import domain
 from vj4.model import system
 from vj4.model import token
 from vj4.model import user
+from vj4.model.adaptor import setting
 from vj4.util import options
 from vj4.util import validator
 from vj4.handler import base
+
+
+class UserSettingsMixin(object):
+  def can_view(self, udoc, key):
+    privacy = udoc.get('show_' + key, next(iter(setting.SETTINGS_BY_KEY['show_' + key].range)))
+    return (privacy == constant.setting.PRIVACY_PUBLIC and True) \
+           or (privacy == constant.setting.PRIVACY_REGISTERED_ONLY
+               and self.has_priv(builtin.PRIV_USER_PROFILE)) \
+           or (privacy == constant.setting.PRIVACY_SECRET
+               and self.has_priv(builtin.PRIV_VIEW_USER_SECRET))
+
+  def get_udoc_setting(self, udoc, key):
+    privacy = udoc.get('show_' + key, next(iter(setting.SETTINGS_BY_KEY['show_' + key].range)))
+    if self.can_view(udoc, key):
+      return udoc.get(key, None)
+    else:
+      return None
 
 
 @app.route('/register', 'user_register')
@@ -155,7 +175,7 @@ class UserLogoutHandler(base.Handler):
 
 
 @app.route('/user/{uid:-?\d+}', 'user_detail')
-class UserDetailHandler(base.Handler):
+class UserDetailHandler(base.Handler, UserSettingsMixin):
   @base.route_argument
   @base.sanitize
   async def get(self, *, uid: int):
@@ -165,8 +185,11 @@ class UserDetailHandler(base.Handler):
       raise error.UserNotFoundError(uid)
     dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_user, udoc),
                                        token.get_most_recent_session_by_uid(udoc['_id']))
+    email = self.get_udoc_setting(udoc, 'mail')
+    if email:
+      email = email.replace('@', random.choice([' [at] ', '#']))
     self.render('user_detail.html', is_self_profile=is_self_profile,
-                udoc=udoc, dudoc=dudoc, sdoc=sdoc)
+                udoc=udoc, dudoc=dudoc, sdoc=sdoc, email=email)
 
 
 @app.route('/user/search', 'user_search')

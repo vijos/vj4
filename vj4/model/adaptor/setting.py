@@ -51,7 +51,9 @@ ACCOUNT_SETTINGS = [
     Setting('setting_privacy', 'show_wechat', int, range=constant.setting.PRIVACY_RANGE,
             ui='select', name='WeChat Visibility'),
     Setting('setting_privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE,
-            ui='select', name='Gender Visibility')]
+            ui='select', name='Gender Visibility'),
+    Setting('setting_privacy', 'show_bio', int, range=constant.setting.PRIVACY_RANGE,
+            ui='select', name='Bio Visibility')]
 
 SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))

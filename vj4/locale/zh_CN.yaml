@@ -16,6 +16,7 @@ Begin Date: 开始日期
 Begin Time: 开始时间
 Belongs to: 属于
 Bio: 个人简介
+Bio Visibility: 个人简介可见性
 Blog: 博客
 Boom!: 炸了！
 Browser: 浏览器
@@ -484,3 +485,5 @@ perm_contest: 比赛
 perm_training: 训练
 discussion_edit: 编辑讨论
 At least 4 characters: 至少 4 个字符
+Contact: 联系
+Click here to chat with me: 点击这里给我发消息
