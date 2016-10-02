@@ -25,12 +25,12 @@ class TrainingMixin(object):
   def is_progress(self, node, done_nids, done_pids, prog_pids):
     return set(done_nids) >= set(node['require_nids']) \
            and not set(done_pids) >= set(node['pids']) \
-           and (set(prog_pids) & set(node['pids']))
+           and ((set(done_pids) | set(prog_pids)) & set(node['pids']))
 
   def is_open(self, node, done_nids, done_pids, prog_pids):
     return set(done_nids) >= set(node['require_nids']) \
            and not set(done_pids) >= set(node['pids']) \
-           and not (set(prog_pids) & set(node['pids']))
+           and not ((set(done_pids) | set(prog_pids)) & set(node['pids']))
 
   def is_invalid(self, node, done_nids):
     return not set(done_nids) >= set(node['require_nids'])
@@ -41,7 +41,23 @@ class TrainingMainHandler(base.Handler, TrainingMixin):
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   async def get(self):
     tdocs = await training.get_multi(self.domain_id).to_list(None)
-    self.render('training_main.html', tdocs=tdocs)
+    tids = set(tdoc['doc_id'] for tdoc in tdocs)
+    tsdict = dict()
+    tdict = dict()
+    if self.has_priv(builtin.PRIV_USER_PROFILE):
+      enrolled_tids = set()
+      async for tsdoc in training.get_multi_status(domain_id=self.domain_id,
+                                                   uid=self.user['_id'],
+                                                   **{'$or': [{'doc_id': {'$in': list(tids)}},
+                                                              {'enroll': 1}]}):
+        tsdict[tsdoc['doc_id']] = tsdoc
+        enrolled_tids.add(tsdoc['doc_id'])
+      enrolled_tids -= tids
+      if enrolled_tids:
+        tdict = await training.get_dict(self.domain_id, enrolled_tids)
+    for tdoc in tdocs:
+      tdict[tdoc['doc_id']] = tdoc
+    self.render('training_main.html', tdocs=tdocs, tsdict=tsdict, tdict=tdict)
 
 
 @app.route('/training/enrolled', 'training_enrolled')
@@ -72,8 +88,7 @@ class TrainingOwnedHandler(base.Handler):
 
 
 @app.route('/training/{tid}', 'training_detail')
-class TrainingDetailHandler(base.Handler, TrainingMixin):
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
+class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.route_argument
   @base.sanitize
@@ -96,10 +111,9 @@ class TrainingDetailHandler(base.Handler, TrainingMixin):
     ndict = {}
     for node in tdoc['dag']:
       ndict[node['_id']] = node
-      total_count = len(node['require_nids']) + len(node['pids'])
+      total_count = len(node['pids'])
       if tsdoc:
-        done_count = len(set(node['require_nids']) & set(tsdoc.get('done_nids', []))) \
-                     + len(set(node['pids']) & set(done_pids))
+        done_count = len(set(node['pids']) & set(done_pids))
       else:
         done_count = 0
       nsdoc = {'progress': int(100 * done_count / total_count) if total_count else 100}
@@ -110,4 +124,14 @@ class TrainingDetailHandler(base.Handler, TrainingMixin):
     self.render('training_detail.html', tdoc=tdoc, tsdoc=tsdoc, pids=pids, pdict=pdict,
                 psdict=psdict, done_pids=list(done_pids), prog_pids=list(prog_pids),
                 ndict=ndict, nsdict=nsdict,
-                path_components=path_components)
+                page_title=tdoc['title'], path_components=path_components)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_TRAINING)
+  @base.route_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_enroll(self, *, tid: objectid.ObjectId):
+    tdoc = await training.get(self.domain_id, tid)
+    await training.enroll(self.domain_id, tdoc['doc_id'], self.user['_id'])
+    self.json_or_redirect(self.url)

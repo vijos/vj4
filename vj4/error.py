@@ -244,6 +244,12 @@ class TrainingRequirementNotSatisfiedError(ForbiddenError):
     return 'Training requirement is not satisfied.'
 
 
+class TrainingAlreadyEnrollError(ForbiddenError):
+  @property
+  def message(self):
+    return "You've already enrolled this training."
+
+
 class RecordNotFoundError(NotFoundError):
   @property
   def message(self):

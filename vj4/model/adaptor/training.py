@@ -1,5 +1,6 @@
 import asyncio
 from bson import objectid
+from pymongo import errors
 
 from vj4 import constant
 from vj4 import error
@@ -47,40 +48,33 @@ async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=No
   return await document.get_status(domain_id, document.TYPE_TRAINING, tid, uid, fields=fields)
 
 
-@argmethod.wrap
-async def check(domain_id: str, tid: objectid.ObjectId, uid: int):
-  tdoc = await get(domain_id, tid)
-  done_count = await document.get_multi_status(domain_id=domain_id,
-                                               doc_type=document.TYPE_TRAINING,
-                                               uid=uid,
-                                               done=True,
-                                               doc_id={'$in': tdoc['require_tids']}).count()
-  if done_count < len(tdoc['require_tids']):
-    raise error.TrainingRequirementNotSatisfiedError(domain_id, document.TYPE_TRAINING, tid)
-  return tdoc
+def get_multi_status(*, fields=None, **kwargs):
+  return document.get_multi_status(doc_type=document.TYPE_TRAINING, fields=fields, **kwargs)
 
 
-@argmethod.wrap
-async def get_list_by_user(domain_id: str, uid: int, *, fields=None):
-  tsdocs = document.get_multi_status(domain_id=domain_id,
-                                     doc_type=document.TYPE_TRAINING,
-                                     uid=uid, done=True, fields=['doc_id'])
-  done_tids = []
-  async for tsdoc in tsdocs:
-    done_tids.append(tsdoc['doc_id'])
-  # TODO(iceboy): pagination, projection.
-  tdocs = await (document.get_multi(domain_id=domain_id,
-                                    doc_type=document.TYPE_TRAINING,
-                                    require_tids={'$not': {'$elemMatch': {'$nin': done_tids}}},
-                                    fields=fields)
-                 .sort([('doc_id', 1)])
-                 .to_list(None))
-  return tdocs
+async def get_dict_status(domain_id, uid, tids, *, fields=None):
+  result = dict()
+  async for tsdoc in get_multi_status(domain_id=domain_id,
+                                      uid=uid,
+                                      doc_id={'$in': list(set(tids))},
+                                      fields=fields):
+    result[tsdoc['doc_id']] = tsdoc
+  return result
 
 
 def get_multi(domain_id: str, *, fields=None, **kwargs):
   return document.get_multi(domain_id=domain_id, doc_type=document.TYPE_TRAINING,
                             fields=fields, **kwargs)
+
+
+@argmethod.wrap
+async def enroll(domain_id: str, tid: objectid.ObjectId, uid: int):
+  try:
+    await document.capped_inc_status(domain_id, document.TYPE_TRAINING, tid,
+                                     uid, 'enroll', 1, 0, 1)
+  except errors.DuplicateKeyError:
+    raise error.TrainingAlreadyEnrollError(domain_id, tid, uid) from None
+  return await document.inc(domain_id, document.TYPE_TRAINING, tid, 'enroll', 1)
 
 
 # TODO(twd2): move to jobs
@@ -95,7 +89,7 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, done_p
   if done_pids is None:
     psdict = await problem.get_dict_status(domain_id, uid, pids)
     done_pids = set()
-     for pid, psdoc in psdict.items():
+    for pid, psdoc in psdict.items():
       if 'status' in psdoc:
         if psdoc['status'] == constant.record.STATUS_ACCEPTED:
           done_pids.add(pid)
@@ -136,6 +130,15 @@ async def update_status_by_pid(domain_id: str, uid: int, pid: document.convert_d
   async for tdoc in tdocs:
     futs.append(_update_status(domain_id, tdoc, uid, 'done_pids', pid))
   await asyncio.gather(*futs)
+
+
+async def get_dict(domain_id, tids, *, fields=None):
+  result = dict()
+  async for tdoc in get_multi(domain_id=domain_id,
+                              doc_id={'$in': list(set(tids))},
+                              fields=fields):
+    result[tdoc['doc_id']] = tdoc
+  return result
 
 
 if __name__ == '__main__':

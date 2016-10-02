@@ -351,6 +351,12 @@ async def ensure_indexes():
                                   ('doc_id', 1),
                                   ('accept', -1),
                                   ('time', 1)], sparse=True)
+  # for training
+  await status_coll.ensure_index([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('uid', 1),
+                                  ('enroll', 1),
+                                  ('doc_id', 1)], sparse=True)
 
 
 if __name__ == '__main__':

@@ -13,6 +13,7 @@ from vj4.model import domain
 from vj4.model import fs
 from vj4.model import record
 from vj4.model.adaptor import problem
+from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.util import pagination
 
@@ -66,12 +67,11 @@ class ProblemDetailHandler(base.Handler):
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
-    # TODO(twd2): tdoc
-    #tdoc = {'_id': 'todo', 'title': 'test', 'end_at': 'TODO'}
+    tdocs = await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list(None)
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], None))
-    self.render('problem_detail.html', pdoc=pdoc, udoc=udoc,
+    self.render('problem_detail.html', pdoc=pdoc, udoc=udoc, tdocs=tdocs,
                 page_title=pdoc['title'], path_components=path_components)
 
 

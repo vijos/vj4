@@ -7,22 +7,22 @@
     <!-- DEMO: A completed training section -->
     <div class="section">
     {% for node in tdoc['dag'] %}
-      <div class="training__section {% if handler.is_done(node, done_nids, done_pids) %}done{% elif handler.is_progress(node, done_nids, done_pids, prog_pids) %}progress{% elif handler.is_open(node, done_nids, done_pids, prog_pids) %}open{% else %}invalid{% endif %} {% if handler.is_progress(node, done_nids, done_pids, prog_pids) or handler.is_open(node, done_nids, done_pids, prog_pids) %}expanded{% else %}collapsed{% endif %}">
+      <div class="training__section {% if handler.is_done(node, tsdoc['done_nids'], done_pids) %}done{% elif handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) %}progress{% elif handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}open{% else %}invalid{% endif %} {% if handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) or handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}expanded{% else %}collapsed{% endif %}">
         <div class="section__header clearfix">
           <div class="float-left">
             <h1 class="section__title">{{ _('Section') }} {{ node['_id'] }}. {{ node['title'] }}</h1>
           </div>
           <div class="float-right">
-            <h1 class="section__title training-section-status--text {% if handler.is_done(node, done_nids, done_pids) %}done{% elif handler.is_progress(node, done_nids, done_pids, prog_pids) %}progress{% elif handler.is_open(node, done_nids, done_pids, prog_pids) %}open{% else %}invalid{% endif %}">
-              <span class="icon training-section-status--icon {% if handler.is_done(node, done_nids, done_pids) %}done{% elif handler.is_progress(node, done_nids, done_pids, prog_pids) %}progress{% elif handler.is_open(node, done_nids, done_pids, prog_pids) %}open{% else %}invalid{% endif %}"></span>
-            {% if handler.is_done(node, done_nids, done_pids) %}
-              {{ _('Completed') }}
-            {% elif handler.is_progress(node, done_nids, done_pids, prog_pids) %}
-              正在进行
-            {% elif handler.is_open(node, done_nids, done_pids, prog_pids) %}
-              可挑战
+            <h1 class="section__title training-section-status--text {% if handler.is_done(node, tsdoc['done_nids'], done_pids) %}done{% elif handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) %}progress{% elif handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}open{% else %}invalid{% endif %}">
+              <span class="icon training-section-status--icon {% if handler.is_done(node, tsdoc['done_nids'], done_pids) %}done{% elif handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) %}progress{% elif handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}open{% else %}invalid{% endif %}"></span>
+            {% if handler.is_done(node, tsdoc['done_nids'], done_pids) %}
+              {{ _('Done') }}
+            {% elif handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) %}
+              {{ _('In Progress') }}
+            {% elif handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}
+              {{ _('Open') }}
             {% else %}
-              不可挑战
+              {{ _('Invalid') }}
             {% endif %}
             </h1>
           </div>
@@ -43,7 +43,7 @@
         </div>
         <div class="training__section__detail">
           <div class="section__body">
-          {% if handler.is_invalid(node, done_nids) %}
+          {% if handler.is_invalid(node, tsdoc['done_nids']) %}
             <blockquote class="typo note">
               <p>该章节目前不可挑战，请先完成以下章节：</p>
               <ul>
@@ -53,7 +53,7 @@
               </ul>
             </blockquote>
           {% endif %}
-            <p>基础能力。</p>
+            {{ node['content']|default('')|markdown }}
           </div>
           <div class="section__body no-padding training__problems">
             <table class="data-table">
@@ -130,12 +130,27 @@
   </div>
   <div class="medium-3 columns">
     <div class="section side">
+    {% if not tsdoc['enroll'] %}
+      <div>
+        <ol>
+          <li class="menu__item">
+            <form action="" method="POST">
+              <input type="hidden" name="operation" value="enroll">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <button class="menu__link" type="submit">
+                <span class="icon icon-add"></span> {{ _('Enroll Training') }}
+              </button>
+            </form>
+          </li>
+        </ol>
+      </div>
+    {% endif %}
       <div class="section__body typo">
         <dl class="large horizontal">
-          <dt>状态</dt><dd>正在进行</dd>
-          <dt>进度</dt><dd>已完成 30%</dd>
-          <dt>参加人数</dt><dd>1532</dd>
-          <dt>完成人数</dt><dd>124</dd>
+          <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Done') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}({{ _('None') }}){% endif %}</dd>
+          <dt>{{ _('Progress') }}</dt><dd>{{ _('Complete') }} {{ (100 * done_pids|length / pids|length)|round|int }}%</dd>
+          <dt>参加人数</dt><dd>{{ tdoc['enroll'] }}</dd>
+          <dt>完成人数</dt><dd>?</dd>
         </dl>
       </div>
     </div>

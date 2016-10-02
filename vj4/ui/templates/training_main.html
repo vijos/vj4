@@ -23,16 +23,16 @@
           <div class="media">
             <div class="media__left middle">
               <div class="training__participants numbox">
-                <div class="numbox__num large">???</div>
+                <div class="numbox__num large">{{ tdoc['enroll'] }}</div>
                 <div class="numbox__text">{{ _('Enrolled') }}</div>
               </div>
             </div>
             <div class="media__body middle">
               <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
-              <p class="training__intro">{{ tdoc['content'] }}</p>
+              <p class="training__intro">{{ tdoc['content']|markdown }}</p>
               <ul class="supplementary list training__progress">
                 <li>
-                  <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}
+                  <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}, {{ _('{0} problems').format(handler.get_pids(tdoc)|length) }}
                 </li>
                 <li>
                   <span class="icon icon-heart text-red"></span> ???
@@ -44,10 +44,13 @@
                   <span class="icon icon-comment--text"></span> ???
                 </li>
                 <li>
+                {% if not tsdict[tdoc['doc_id']]['done'] %}
                   <span class="icon training-status--icon progress"></span>
-                  <span class="training-status--text progress">{{ _('Complete') }} ??%</span>
+                  <span class="training-status--text progress">{{ _('Complete') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
+                {% else %}
                   <span class="icon training-status--icon done"></span>
                   <span class="training-status--text done">{{ _('Complete') }} 100%</span>
+                {% endif %}
                 </li>
               </ul>
             </div>
@@ -64,35 +67,19 @@
       </div>
       <div class="section__body">
         <ol class="my secondary training__list">
+        {% for tsdoc in tsdict.values() %}
           <li class="training__item"><div class="media">
             <div class="media__left">
-              <span class="icon training-status--icon progress"></span>
+              <span class="icon training-status--icon {% if tsdoc['done'] %}done{% else %}progress{% endif %}"></span>
             </div>
             <div class="media__body">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构</a></h1>
-              <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:23%;"></div></div> 已完成 23%</div>
+              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tsdoc['doc_id']) }}" data-emoji-enabled>{{ tdict[tsdoc['doc_id']]['title'] }}</a></h1>
+              <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:{{ (100 * tsdoc['done_pids']|length / handler.get_pids(tdict[tsdoc['doc_id']])|length)|round|int }}%;"></div></div> {{ _('Complete') }} {{ (100 * tsdoc['done_pids']|length / handler.get_pids(tdict[tsdoc['doc_id']])|length)|round|int }}%</div>
             </div>
           </div></li>
-          <li class="training__item"><div class="media">
-            <div class="media__left">
-              <span class="icon training-status--icon progress"></span>
-            </div>
-            <div class="media__body">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 高级算法与数据结构</a></h1>
-              <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:76%;"></div></div> 已完成 76%</div>
-            </div>
-          </div></li>
-          <li class="training__item"><div class="media">
-            <div class="media__left">
-              <span class="icon training-status--icon done"></span>
-            </div>
-            <div class="media__body">
-              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 编程入门</a></h1>
-              <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:100%;"></div></div> 已完成 100%</div>
-            </div>
-          </div></li>
+        {% endfor %}
         </ol>
-        <p class="supplementary"><a href="{{ reverse_url('training_enrolled') }}">See Full List <span class="icon icon-chevron_right"></span></a></p>
+        <p class="supplementary"><a href="{{ reverse_url('training_enrolled') }}">// See Full List <span class="icon icon-chevron_right"></span></a></p>
       </div>
     </div>
     <div class="section side">

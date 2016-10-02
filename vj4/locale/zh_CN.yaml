@@ -508,4 +508,14 @@ At least 4 characters: 至少 4 个字符
 Contact: 联系
 Click here to chat with me: 点击这里给我发消息
 '{0} sections': '{0} 小节'
+'{0} problems': '{0} 道题'
 All Training Plans: 所有训练计划
+Section: 章节
+Complete: 完成
+Progress: 进度
+In Progress: 进行中
+Open: 开放
+Invalid: 无效
+expand: 展开
+collapse: 收缩
+'Note: Problem title may not be hidden.': 注意：题目标题可能不会被隐藏。

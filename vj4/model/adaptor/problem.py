@@ -73,8 +73,8 @@ async def get_dict(pdom_and_ids, *, fields=None):
 async def get_dict_same_domain(domain_id, pids, *, fields=None):
   result = dict()
   async for pdoc in get_multi(domain_id=domain_id,
-                               doc_id={'$in': list(set(pids))},
-                               fields=fields):
+                              doc_id={'$in': list(set(pids))},
+                              fields=fields):
     result[pdoc['doc_id']] = pdoc
   return result
 
