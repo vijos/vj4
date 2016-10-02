@@ -384,8 +384,8 @@ Remove Selected User from Domain: 将所选用户移出域
 Set Roles for Selected User: 设置所选用户的角色
 Create Role: 创建角色
 Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
-'Built-in: For visitors that are not logged in': '内置: 对未登录的游客有效'
-'Built-in: For registered users who are not members of the domain': '内置: 对域外注册用户有效'
+'Built-in: Effective for visitors that are not logged in': '内置: 对未登录的游客有效'
+'Built-in: Effective for registered users who are not members of the domain': '内置: 对域外注册用户有效'
 User defined role: 用户定义的角色
 Users: 用户
 Delete Selected Roles: 删除所选角色
