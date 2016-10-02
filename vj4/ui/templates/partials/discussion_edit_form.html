@@ -3,4 +3,4 @@
   {{ form.form_checkbox(label='Highlight', name='highlight', value=ddoc['highlight']|default(false)) }}
 {% endif %}
   {{ form.form_text(label='Title', name='title', value=ddoc['title']|default(''), autofocus=true, required=true) }}
-  {{ form.form_textarea(columns=12, label='Content', name='content', value=ddoc['content']|default(''), hotkeys=not ddoc and 'ctrl+enter:submit', markdown=true, required=true) }}
+  {{ form.form_textarea(columns=12, label='Content', name='content', value=ddoc['content']|default(''), hotkeys='ctrl+enter:submit', markdown=true, required=true) }}
