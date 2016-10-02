@@ -288,6 +288,8 @@ class DiscussionTailReplyRawHandler(base.Handler):
 
 @app.route('/discuss/{did:\w{24}}/edit', 'discussion_edit')
 class DiscussionEditHandler(base.OperationHandler):
+  DEFAULT_OPERATION = 'update'
+
   @base.route_argument
   @base.sanitize
   async def get(self, *, did: document.convert_doc_id):
