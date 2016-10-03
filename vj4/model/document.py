@@ -125,6 +125,19 @@ async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, v
 
 
 @argmethod.wrap
+async def inc_and_set(domain_id: str, doc_type: int, doc_id: convert_doc_id,
+                      inc_key: str, inc_value: int, set_key: str, set_value: lambda _: _):
+  coll = db.Collection('document')
+  doc = await coll.find_and_modify(query={'domain_id': domain_id,
+                                          'doc_type': doc_type,
+                                          'doc_id': doc_id},
+                                   update={'$inc': {inc_key: inc_value},
+                                           '$set': {set_key: set_value}},
+                                   new=True)
+  return doc
+
+
+@argmethod.wrap
 async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                content: str, owner_uid: int, **kwargs):
   coll = db.Collection('document')
@@ -303,6 +316,7 @@ async def ensure_indexes():
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('doc_id', 1)], unique=True)
+  # for problem solution
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('owner_uid', 1),
@@ -312,6 +326,13 @@ async def ensure_indexes():
                            ('parent_doc_type', 1),
                            ('parent_doc_id', 1),
                            ('vote', -1),
+                           ('doc_id', -1)], sparse=True)
+  # for discussion
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('parent_doc_type', 1),
+                           ('parent_doc_id', 1),
+                           ('update_at', -1),
                            ('doc_id', -1)], sparse=True)
   # hidden doc
   await coll.ensure_index([('domain_id', 1),
@@ -335,12 +356,12 @@ async def ensure_indexes():
                                   ('status', 1),
                                   ('rid', 1),
                                   ('rp', 1)], sparse=True)
-  # contest rule OI
+  # for contest rule OI
   await status_coll.ensure_index([('domain_id', 1),
                                   ('doc_type', 1),
                                   ('doc_id', 1),
                                   ('score', -1)], sparse=True)
-  # contest rule ACM
+  # for contest rule ACM
   await status_coll.ensure_index([('domain_id', 1),
                                   ('doc_type', 1),
                                   ('doc_id', 1),

@@ -1,6 +1,6 @@
 import asyncio
 import collections
-
+import datetime
 from bson import objectid
 from pymongo import errors
 
@@ -127,6 +127,7 @@ async def add(domain_id: str, node_or_dtuple: str, owner_uid: int, title: str, c
       raise error.DiscussionNodeNotFoundError(domain_id, node_or_dtuple)
   return await document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION,
                             title=title, num_replies=0, views=0, **flags,
+                            update_at=datetime.datetime.utcnow(),
                             parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id'])
 
 
@@ -141,6 +142,7 @@ async def edit(domain_id: str, did: document.convert_doc_id, **kwargs):
 
 @argmethod.wrap
 async def delete(domain_id: str, did: document.convert_doc_id):
+  # TODO(twd2): delete status?
   await document.delete(domain_id, document.TYPE_DISCUSSION, did)
   await document.delete_multi(domain_id, document.TYPE_DISCUSSION_REPLY,
                               parent_doc_type=document.TYPE_DISCUSSION,
@@ -167,7 +169,8 @@ def get_multi(domain_id: str, *, fields=None, **kwargs):
                             doc_type=document.TYPE_DISCUSSION,
                             fields=fields,
                             **kwargs) \
-                 .sort([('doc_id', -1)])
+                 .sort([('update_at', -1),
+                        ('doc_id', -1)])
 
 
 @argmethod.wrap
@@ -176,7 +179,8 @@ async def add_reply(domain_id: str, did: document.convert_doc_id, owner_uid: int
   drdoc, _ = await asyncio.gather(
     document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION_REPLY,
                  parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did),
-    document.inc(domain_id, document.TYPE_DISCUSSION, did, 'num_replies', 1))
+    document.inc_and_set(domain_id, document.TYPE_DISCUSSION, did,
+                         'num_replies', 1, 'update_at', datetime.datetime.utcnow()))
   return drdoc
 
 
@@ -221,8 +225,11 @@ async def get_list_reply(domain_id: str, did: document.convert_doc_id, *, fields
 async def add_tail_reply(domain_id: str, drid: document.convert_doc_id,
                          owner_uid: int, content: str):
   validator.check_content(content)
-  return await document.push(domain_id, document.TYPE_DISCUSSION_REPLY, drid,
-                             'reply', content, owner_uid)
+  drdoc, sid = await document.push(domain_id, document.TYPE_DISCUSSION_REPLY, drid,
+                                   'reply', content, owner_uid)
+  await document.set(domain_id, document.TYPE_DISCUSSION, drdoc['parent_doc_id'],
+                     update_at=datetime.datetime.utcnow())
+  return drdoc, sid
 
 
 @argmethod.wrap

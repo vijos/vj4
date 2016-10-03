@@ -14,7 +14,7 @@
           </div>
           <ol class="menu collapsed">
         {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
-          {{ sidemenu.render_item(null, 'domain_edit') }}
+          {{ sidemenu.render_item(null, 'domain_manage_edit') }}
         {% endif %}
             <!-- Discussion Nodes -->
             <!-- Ranking Settings -->
@@ -26,9 +26,9 @@
             <span class="icon icon-user"></span> {{ _('Access Control') }}
           </div>
           <ol class="menu collapsed">
-            {{ sidemenu.render_item(null, 'domain_role') }}
-            {{ sidemenu.render_item(null, 'domain_user') }}
-            {{ sidemenu.render_item(null, 'domain_permission') }}
+            {{ sidemenu.render_item(null, 'domain_manage_role') }}
+            {{ sidemenu.render_item(null, 'domain_manage_user') }}
+            {{ sidemenu.render_item(null, 'domain_manage_permission') }}
           </ol>
         </li>
       {% endif %}

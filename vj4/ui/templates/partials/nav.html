@@ -15,7 +15,7 @@
       {{ nav_item('discussion_main', 'discussion') }}
       {{ nav_item('contest_main', 'contest') }}
     {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) or handler.has_perm(vj4.model.builtin.PERM_EDIT_PERM) %}
-      {{ nav_item('domain_manage', 'domain') }}
+      {{ nav_item('domain_manage', 'domain_manage') }}
     {% endif %}
     </ol>
     <ol class="nav__list nav__list--secondary clearfix">

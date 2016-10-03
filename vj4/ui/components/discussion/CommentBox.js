@@ -2,6 +2,7 @@ import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
 import * as util from '../../misc/Util';
 import TextareaHandler from '../cmeditor/textareaHandler';
+import Notification from '../notification';
 
 let initialized = false;
 const $template = $('.dczcomments__box').eq(0).clone();
@@ -92,12 +93,16 @@ export default class CommentBox extends DOMAttachedObject {
   }
 
   async onSubmit() {
-    await util
-      .post('', {
-        ...this.options.form,
-        content: this.getText(),
-      });
-    window.location.reload();
+    try {
+      await util
+        .post('', {
+          ...this.options.form,
+          content: this.getText(),
+        });
+      window.location.reload();
+    } catch (error) {
+      Notification.error(error.message);
+    }
   }
 
   async onCancel(ev) {
