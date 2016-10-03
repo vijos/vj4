@@ -95,6 +95,7 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
   async def get(self, tid: objectid.ObjectId):
     tdoc = await training.get(self.domain_id, tid)
     pids = self.get_pids(tdoc)
+    # TODO(twd2): check status, eg. test, hidden problem, ...
     tsdoc, pdict, psdict = await asyncio.gather(
         training.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
         problem.get_dict_same_domain(self.domain_id, pids),
