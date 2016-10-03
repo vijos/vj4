@@ -68,6 +68,7 @@
       <div class="section__body">
         <ol class="my secondary training__list">
         {% for tsdoc in tsdict.values() %}
+        {% if tsdoc['enroll'] %}
           <li class="training__item"><div class="media">
             <div class="media__left">
               <span class="icon training-status--icon {% if tsdoc['done'] %}done{% else %}progress{% endif %}"></span>
@@ -77,9 +78,9 @@
               <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:{{ (100 * tsdoc['done_pids']|length / handler.get_pids(tdict[tsdoc['doc_id']])|length)|round|int }}%;"></div></div> {{ _('Complete') }} {{ (100 * tsdoc['done_pids']|length / handler.get_pids(tdict[tsdoc['doc_id']])|length)|round|int }}%</div>
             </div>
           </div></li>
+        {% endif %}
         {% endfor %}
         </ol>
-        <p class="supplementary"><a href="{{ reverse_url('training_enrolled') }}">// See Full List <span class="icon icon-chevron_right"></span></a></p>
       </div>
     </div>
     <div class="section side">
@@ -155,7 +156,7 @@
           <a href="{{ reverse_url('training_create') }}" class="menu__link"><span class="icon icon-add"></span> New Training Plan</a>
         </li>
         <li class="menu__item">
-          <a href="{{ reverse_url('training_owned') }}" class="menu__link"><span class="icon icon-crown"></span> View Owned Training Plans</a>
+          <a href="#" class="menu__link"><span class="icon icon-crown"></span> View Owned Training Plans</a>
         </li>
       </ol>
       <div class="section__body">

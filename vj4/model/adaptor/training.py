@@ -50,6 +50,10 @@ async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=No
   return await document.get_status(domain_id, document.TYPE_TRAINING, tid, uid, fields=fields)
 
 
+async def set_status(domain_id: str, tid: objectid.ObjectId, uid: int, **kwargs):
+  return await document.set_status(domain_id, document.TYPE_TRAINING, tid, uid, **kwargs)
+
+
 def get_multi_status(*, fields=None, **kwargs):
   return document.get_multi_status(doc_type=document.TYPE_TRAINING, fields=fields, **kwargs)
 
@@ -77,61 +81,6 @@ async def enroll(domain_id: str, tid: objectid.ObjectId, uid: int):
   except errors.DuplicateKeyError:
     raise error.TrainingAlreadyEnrollError(domain_id, tid, uid) from None
   return await document.inc(domain_id, document.TYPE_TRAINING, tid, 'enroll', 1)
-
-
-# TODO(twd2): move to jobs
-@argmethod.wrap
-async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, done_pids=None):
-  tdoc = await get(domain_id, tid)
-  tsdoc = await get_status(domain_id, tdoc['doc_id'], uid)
-  pids = set()
-  for node in tdoc['dag']:
-    for pid in node['pids']:
-      pids.add(pid)
-  if done_pids is None:
-    psdict = await problem.get_dict_status(domain_id, uid, pids)
-    done_pids = set()
-    for pid, psdoc in psdict.items():
-      if 'status' in psdoc:
-        if psdoc['status'] == constant.record.STATUS_ACCEPTED:
-          done_pids.add(pid)
-  done_pids = set(done_pids)
-  done_nids = set()
-  sorted_dag = sorted(tdoc['dag'], key=lambda n: n['_id'])
-  for node in sorted_dag:
-    if done_nids >= set(node['require_nids']) and done_pids >= set(node['pids']):
-      done_nids.add(node['_id'])
-  done = len(done_nids) == len(tdoc['dag'])
-  await document.rev_set_status(domain_id, document.TYPE_TRAINING, tdoc['doc_id'],
-                                uid, tsdoc['rev'],
-                                done_nids=list(done_nids), done=done)
-
-
-async def _update_status(domain_id, tdoc, uid, key, value):
-  tsdoc = await document.rev_push_status(domain_id, document.TYPE_TRAINING, tdoc['doc_id'],
-                                         uid, key, value)
-  done_pids = set(tsdoc.get('done_pids', []))
-  done_nids = set()
-  sorted_dag = sorted(tdoc['dag'], key=lambda n: n['_id'])
-  for node in sorted_dag:
-    if done_nids >= set(node['require_nids']) and done_pids >= set(node['pids']):
-      done_nids.add(node['_id'])
-  done = len(done_nids) == len(tdoc['dag'])
-  await document.rev_set_status(domain_id, document.TYPE_TRAINING, tdoc['doc_id'],
-                                uid, tsdoc['rev'],
-                                done_nids=list(done_nids), done=done)
-
-
-@argmethod.wrap
-async def update_status_by_pid(domain_id: str, uid: int, pid: document.convert_doc_id):
-  tdocs = document.get_multi(domain_id=domain_id,
-                             doc_type=document.TYPE_TRAINING,
-                             **{'dag.pids': pid},
-                             fields=['doc_id', 'dag'])
-  futs = []
-  async for tdoc in tdocs:
-    futs.append(_update_status(domain_id, tdoc, uid, 'done_pids', pid))
-  await asyncio.gather(*futs)
 
 
 async def get_dict(domain_id, tids, *, fields=None):

@@ -1,4 +1,5 @@
 import asyncio
+import time
 from json import decoder
 from bson import objectid
 
@@ -32,7 +33,6 @@ def _parse_dag_json(dag):
       new_dag.append(new_node)
   except ValueError:
     raise error.ValidationError('dag') from None
-  print(new_dag)
   return new_dag
 
 
@@ -95,8 +95,7 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
     tdoc = await training.get(self.domain_id, tid)
     pids = self.get_pids(tdoc)
     # TODO(twd2): check status, eg. test, hidden problem, ...
-    tsdoc, pdict, psdict = await asyncio.gather(
-        training.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
+    pdict, psdict = await asyncio.gather(
         problem.get_dict_same_domain(self.domain_id, pids),
         problem.get_dict_status(self.domain_id, self.user['_id'], pids))
     done_pids = set()
@@ -109,20 +108,27 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
           prog_pids.add(pid)
     nsdict = {}
     ndict = {}
+    done_nids = set()
     for node in tdoc['dag']:
       ndict[node['_id']] = node
       total_count = len(node['pids'])
-      if tsdoc:
-        done_count = len(set(node['pids']) & set(done_pids))
-      else:
-        done_count = 0
-      nsdoc = {'progress': int(100 * done_count / total_count) if total_count else 100}
+      done_count = len(set(node['pids']) & set(done_pids))
+      nsdoc = {'progress': int(100 * done_count / total_count) if total_count else 100,
+               'is_done': self.is_done(node, done_nids, done_pids),
+               'is_progress': self.is_progress(node, done_nids, done_pids, prog_pids),
+               'is_open': self.is_open(node, done_nids, done_pids, prog_pids),
+               'is_invalid': self.is_invalid(node, done_nids)}
+      if nsdoc['is_done']:
+        done_nids.add(node['_id'])
       nsdict[node['_id']] = nsdoc
+    tsdoc = await training.set_status(self.domain_id, tdoc['doc_id'], self.user['_id'],
+                                      done_nids=list(done_nids), done_pids=list(done_pids),
+                                      done=len(done_nids) == len(tdoc['dag']))
     path_components = self.build_path(
       (self.translate('training_main'), self.reverse_url('training_main')),
       (tdoc['title'], None))
     self.render('training_detail.html', tdoc=tdoc, tsdoc=tsdoc, pids=pids, pdict=pdict,
-                psdict=psdict, done_pids=list(done_pids), prog_pids=list(prog_pids),
+                psdict=psdict,
                 ndict=ndict, nsdict=nsdict,
                 page_title=tdoc['title'], path_components=path_components)
 

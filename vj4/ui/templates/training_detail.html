@@ -4,22 +4,21 @@
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
-    <!-- DEMO: A completed training section -->
     <div class="section">
     {% for node in tdoc['dag'] %}
-      <div class="training__section {% if handler.is_done(node, tsdoc['done_nids'], done_pids) %}done{% elif handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) %}progress{% elif handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}open{% else %}invalid{% endif %} {% if handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) or handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}expanded{% else %}collapsed{% endif %}">
+      <div class="training__section {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %} {% if nsdict[node['_id']]['is_progress'] or nsdict[node['_id']]['is_open'] %}expanded{% else %}collapsed{% endif %}">
         <div class="section__header clearfix">
           <div class="float-left">
             <h1 class="section__title">{{ _('Section') }} {{ node['_id'] }}. {{ node['title'] }}</h1>
           </div>
           <div class="float-right">
-            <h1 class="section__title training-section-status--text {% if handler.is_done(node, tsdoc['done_nids'], done_pids) %}done{% elif handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) %}progress{% elif handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}open{% else %}invalid{% endif %}">
-              <span class="icon training-section-status--icon {% if handler.is_done(node, tsdoc['done_nids'], done_pids) %}done{% elif handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) %}progress{% elif handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}open{% else %}invalid{% endif %}"></span>
-            {% if handler.is_done(node, tsdoc['done_nids'], done_pids) %}
+            <h1 class="section__title training-section-status--text {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %}">
+              <span class="icon training-section-status--icon {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %}"></span>
+            {% if nsdict[node['_id']]['is_done'] %}
               {{ _('Done') }}
-            {% elif handler.is_progress(node, tsdoc['done_nids'], done_pids, prog_pids) %}
+            {% elif nsdict[node['_id']]['is_progress'] %}
               {{ _('In Progress') }}
-            {% elif handler.is_open(node, tsdoc['done_nids'], done_pids, prog_pids) %}
+            {% elif nsdict[node['_id']]['is_open'] %}
               {{ _('Open') }}
             {% else %}
               {{ _('Invalid') }}
@@ -43,7 +42,7 @@
         </div>
         <div class="training__section__detail">
           <div class="section__body">
-          {% if handler.is_invalid(node, tsdoc['done_nids']) %}
+          {% if nsdict[node['_id']]['is_invalid'] %}
             <blockquote class="typo note">
               <p>该章节目前不可挑战，请先完成以下章节：</p>
               <ul>

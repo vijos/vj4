@@ -34,9 +34,6 @@ async def _post_judge(rdoc):
     if rdoc['tid']:
       post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
                                               rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
-    if accept:
-      post_coros.append(training.update_status_by_pid(rdoc['domain_id'],
-                                                      rdoc['uid'], rdoc['pid']))
   await asyncio.gather(*post_coros)
 
 
