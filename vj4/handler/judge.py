@@ -5,13 +5,13 @@ from bson import objectid
 
 from vj4 import app
 from vj4 import constant
+from vj4 import job
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import queue
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
-from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.handler import base
 
@@ -24,19 +24,23 @@ async def _post_judge(rdoc):
   post_coros = [bus.publish('record_change', rdoc['_id'])]
   # TODO(twd2): ignore no effect statuses like system error, ...
   if rdoc['type'] == constant.record.TYPE_SUBMISSION:
-    # TODO(twd2): rejudge
-    if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
-                                   rdoc['_id'], rdoc['status']):
-      post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))
-      post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'], num_accept=1))
-      # TODO(twd2): enqueue rdoc['pid'] to recalculate rp.
+    if accept:
       # TODO(twd2): send ac mail
+      pass
     if rdoc['tid']:
       post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
                                               rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
-    if accept:
-      post_coros.append(training.update_status_by_pid(rdoc['domain_id'],
-                                                      rdoc['uid'], rdoc['pid']))
+    if not rdoc.get('rejudged'):
+      if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
+                                     rdoc['_id'], rdoc['status']):
+        post_coros.append(problem.inc(rdoc['domain_id'], rdoc['pid'], 'num_accept', 1))
+        post_coros.append(domain.inc_user(rdoc['domain_id'], rdoc['uid'], num_accept=1))
+      if accept:
+        # TODO(twd2): enqueue rdoc['pid'] to recalculate rp.
+        pass
+    else:
+      # TODO(twd2): enqueue rdoc['pid'] to recalculate rp.
+      await job.record.user_in_problem(rdoc['uid'], rdoc['domain_id'], rdoc['pid'])
   await asyncio.gather(*post_coros)
 
 

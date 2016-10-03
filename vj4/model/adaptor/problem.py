@@ -75,6 +75,12 @@ async def get_status(domain_id: str, pid: document.convert_doc_id, uid: int, fie
   return await document.get_status(domain_id, document.TYPE_PROBLEM, pid, uid, fields=fields)
 
 
+@argmethod.wrap
+async def inc_status(domain_id: str, pid: document.convert_doc_id, uid: int,
+                     key: str, value: int):
+  return await document.inc_status(domain_id, document.TYPE_PROBLEM, pid, uid, key, value)
+
+
 def get_multi_status(*, fields=None, **kwargs):
   return document.get_multi_status(doc_type=document.TYPE_PROBLEM, fields=fields, **kwargs)
 
