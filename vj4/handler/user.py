@@ -20,7 +20,8 @@ from vj4.handler import base
 class UserSettingsMixin(object):
   def can_view(self, udoc, key):
     privacy = udoc.get('show_' + key, next(iter(setting.SETTINGS_BY_KEY['show_' + key].range)))
-    return (privacy == constant.setting.PRIVACY_PUBLIC and True) \
+    return udoc['_id'] == self.user['_id'] \
+           or (privacy == constant.setting.PRIVACY_PUBLIC and True) \
            or (privacy == constant.setting.PRIVACY_REGISTERED_ONLY
                and self.has_priv(builtin.PRIV_USER_PROFILE)) \
            or (privacy == constant.setting.PRIVACY_SECRET
