@@ -10,6 +10,7 @@ import markupsafe
 
 import vj4
 import vj4.constant
+import vj4.job
 from vj4.util import json
 from vj4.util import options
 

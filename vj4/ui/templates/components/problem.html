@@ -1,4 +1,4 @@
-{% macro render_problem_title(pdoc, show_invisible_flag=True) %}
+{% macro render_problem_title(pdoc, psdoc=None, show_invisible_flag=True, show_rp=False) %}
 <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id'], domain_id=pdoc['domain_id']) }}">{{ pdoc['title'] }}</a>
-{% if pdoc['hidden'] and show_invisible_flag %} <span class="text-orange">({{ _('Hidden') }})</span>{% endif %}
+{% if pdoc['hidden'] and show_invisible_flag %} <span class="text-orange">({{ _('Hidden') }})</span>{% endif %}{% if show_rp and (not psdoc or psdoc['status'] != vj4.constant.record.STATUS_ACCEPTED) %} <span class="text-orange">+{{ vj4.job.rp.get_rp_expect(pdoc)|round(1) }}</span>{% endif %}
 {% endmacro %}
