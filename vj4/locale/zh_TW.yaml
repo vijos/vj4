@@ -294,10 +294,10 @@ Properties: 屬性
 Access Control: 訪問控制
 domain_main: 首頁
 domain_manage: 管理域
-domain_edit: 編輯域資訊
-domain_role: 管理角色
-domain_user: 管理使用者
-domain_permission: 管理許可權
+domain_manage_edit: 編輯域資訊
+domain_manage_role: 管理角色
+domain_manage_user: 管理使用者
+domain_manage_permission: 管理許可權
 Update Permission: 更新許可權
 Roles: 角色
 Your role: 您的角色

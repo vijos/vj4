@@ -9,7 +9,7 @@ import tpl from '../utils/tpl';
 import delay from '../utils/delay';
 import i18n from '../utils/i18n';
 
-const page = new NamedPage('domain_role', () => {
+const page = new NamedPage('domain_manage_role', () => {
   const createRoleDialog = new ActionDialog({
     $body: $('.dialog__body--create-role > div'),
     onDispatch(action) {
