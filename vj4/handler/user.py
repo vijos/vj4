@@ -195,6 +195,7 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     rdocs = record.get_multi(get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD),
                              uid=uid).sort([('_id', -1)])
     rdocs = await rdocs.to_list(10)
+    # TODO(twd2): check status, eg. test, hidden problem, ...
     pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid).sort([('_id', -1)])
     pcount = await pdocs.count()
     pdocs = await pdocs.to_list(10)
