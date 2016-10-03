@@ -173,8 +173,6 @@ Submit At: 遞交時間
 Submit By: 遞交者
 Submit Time: 遞交時間
 Support: 支援
-Swx Good!: Swx 好棒！
-Swx Template!: Swx 模板！
 Technical Information: 技術資訊
 Temporary session: 臨時會話
 This email was sent by {0} automatically, and please do not reply directly.: 這封郵件由 {0} 自動傳送，請勿直接回復。
@@ -294,10 +292,10 @@ Properties: 屬性
 Access Control: 訪問控制
 domain_main: 首頁
 domain_manage: 管理域
-domain_edit: 編輯域資訊
-domain_role: 管理角色
-domain_user: 管理使用者
-domain_permission: 管理許可權
+domain_manage_edit: 編輯域資訊
+domain_manage_role: 管理角色
+domain_manage_user: 管理使用者
+domain_manage_permission: 管理許可權
 Update Permission: 更新許可權
 Roles: 角色
 Your role: 您的角色

@@ -10,7 +10,7 @@ export async function ajax(options, dataType = 'json') {
       throw new Error('Connection failed');
     }
     if (resp.responseJSON) {
-      throw new Error(resp.responseJSON.err);
+      throw resp.responseJSON.error;
     }
     throw new Error(resp.statusText);
   }

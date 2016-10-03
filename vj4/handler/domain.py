@@ -12,20 +12,23 @@ from vj4.handler import base
 @app.route('/', 'domain_main')
 class DomainMainHandler(base.Handler):
   async def get(self):
+    # TODO(twd2): a lot of code is coming...
     self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id))
 
 
 @app.route('/manage', 'domain_manage')
-class DomainMainHandler(base.Handler):
+class DomainManageHandler(base.Handler):
   async def get(self):
+    if not self.has_perm(builtin.PERM_EDIT_PERM):
+       self.check_perm(builtin.PERM_EDIT_DESCRIPTION)
     self.render('domain_manage.html', owner_udoc=await user.get_by_uid(self.domain['owner_uid']))
 
 
-@app.route('/domain/edit', 'domain_edit')
+@app.route('/domain/edit', 'domain_manage_edit')
 class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   async def get(self):
-    self.render('domain_edit.html')
+    self.render('domain_manage_edit.html')
 
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   @base.post_argument
@@ -36,7 +39,7 @@ class DomainEditHandler(base.Handler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/domain/user', 'domain_user')
+@app.route('/domain/user', 'domain_manage_user')
 class DomainUserHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
@@ -51,7 +54,7 @@ class DomainUserHandler(base.OperationHandler):
     roles = sorted(list(self.domain['roles'].keys()))
     roles_with_text = [(role, role) for role in roles]
     udict = await user.get_dict(uids)
-    self.render('domain_user.html', roles=roles, roles_with_text=roles_with_text,
+    self.render('domain_manage_user.html', roles=roles, roles_with_text=roles_with_text,
                 rudocs=rudocs, udict=udict)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
@@ -81,14 +84,14 @@ class DomainUserHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/domain/permission', 'domain_permission')
+@app.route('/domain/permission', 'domain_manage_permission')
 class DomainPermissionHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     def bitand(a, b):
       return a & b
     roles = sorted(list(self.domain['roles'].keys()))
-    self.render('domain_permission.html', bitand=bitand, roles=roles)
+    self.render('domain_manage_permission.html', bitand=bitand, roles=roles)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.post_argument
@@ -106,7 +109,7 @@ class DomainPermissionHandler(base.Handler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/domain/role', 'domain_role')
+@app.route('/domain/role', 'domain_manage_role')
 class DomainRoleHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
@@ -117,7 +120,7 @@ class DomainRoleHandler(base.OperationHandler):
       if 'role' in uddoc:
         rucounts[uddoc['role']] += 1
     roles = sorted(list(self.domain['roles'].keys()))
-    self.render('domain_role.html', rucounts=rucounts, roles=roles)
+    self.render('domain_manage_role.html', rucounts=rucounts, roles=roles)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token

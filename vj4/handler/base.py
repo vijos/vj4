@@ -54,6 +54,7 @@ class HandlerBase(setting.SettingMixin):
     self.timezone = pytz.timezone(self.get_setting('timezone'))
     self.translate = locale.get_translate(self.view_lang)
     self.datetime_span = functools.partial(_datetime_span, timezone=self.timezone)
+    self.datetime_stamp = _datetime_stamp
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                         domain_name=self.domain['name'])
@@ -184,6 +185,7 @@ class HandlerBase(setting.SettingMixin):
       kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
     kwargs['reverse_url'] = self.reverse_url
     kwargs['datetime_span'] = self.datetime_span
+    kwargs['datetime_stamp'] = self.datetime_stamp
     return template.Environment().get_template(template_name).render(kwargs)
 
 
@@ -199,7 +201,8 @@ class Handler(web.View, HandlerBase):
       self.response.set_status(e.http_status, None)
       if self.prefer_json:
         self.response.content_type = 'application/json'
-        self.response.text = json.encode({'error': e.to_dict()})
+        message = self.translate(e.message).format(*e.args)
+        self.response.text = json.encode({'error': {**e.to_dict(), 'message': message}})
       else:
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
@@ -338,6 +341,13 @@ def _datetime_span(dt, relative=True, format='%Y-%m-%d %H:%M:%S', timezone=pytz.
           ' relative' if relative else '',
           calendar.timegm(dt.utctimetuple()),
           dt.astimezone(timezone).strftime(format)))
+
+
+@functools.lru_cache()
+def _datetime_stamp(dt):
+  if not dt.tzinfo:
+    dt = dt.replace(tzinfo=pytz.utc)
+  return calendar.timegm(dt.utctimetuple())
 
 
 # Decorators

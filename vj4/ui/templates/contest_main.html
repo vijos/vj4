@@ -87,7 +87,7 @@
               <h1 class="contest__title"><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
               <ul class="supplementary list">
                 <li>
-                  <a href="#" class="contest-type-tag"><span class="icon icon-award"></span>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</a>
+                  <a href="?rule={{ tdoc['rule'] }}" class="contest-type-tag"><span class="icon icon-award"></span>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</a>
                 </li>
                 <li>
                   <span class="v-center">
