@@ -1,5 +1,4 @@
 {% extends "layout/basic.html" %}
-{% import "components/problem.html" as problem with context %}
 {% block content %}
 <script>
   var Context = {{ {
@@ -17,18 +16,20 @@
           <h1>{{ pdoc['title'] }}</h1>
         </div>
         <div class="section__body typo">
-          {% if not pdoc['data'] %}
+        {% if not pdoc['data'] %}
           <blockquote class="warn">
             <p>{{ _('No dataset present.') }}</p>
           </blockquote>
-          {% endif %}
+        {% endif %}
           {{ pdoc['content']|markdown }}
         </div>
       </div>
     </div>
   </div>
   <div class="medium-3 columns">
-    {{ problem.render_sidebar(pdoc, udoc) }}
+    {% with owner_udoc=udoc %}
+    {% include "partials/problem_sidebar.html" %}
+    {% endwith %}
   </div>
 </div>
 <div class="scratchpad-container" style="display:none">

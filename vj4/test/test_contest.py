@@ -3,6 +3,7 @@ import unittest
 
 from bson import objectid
 
+from vj4 import constant
 from vj4 import error
 from vj4.model.adaptor import contest
 from vj4.test import base
@@ -103,14 +104,14 @@ class OuterTest(base.DatabaseTestCase):
     begin_at = datetime.datetime.utcnow()
     end_at = begin_at + datetime.timedelta(seconds=22)
     tid = await contest.add(DOMAIN_ID_DUMMY, TITLE, CONTENT, OWNER_UID,
-                            contest.RULE_ACM, begin_at, end_at)
+                            constant.contest.RULE_ACM, begin_at, end_at)
     tdoc = await contest.get(DOMAIN_ID_DUMMY, tid)
     self.assertEqual(tdoc['doc_id'], tid)
     self.assertEqual(tdoc['domain_id'], DOMAIN_ID_DUMMY)
     self.assertEqual(tdoc['owner_uid'], OWNER_UID)
     self.assertEqual(tdoc['title'], TITLE)
     self.assertEqual(tdoc['content'], CONTENT)
-    tdocs = await contest.get_list(DOMAIN_ID_DUMMY, fields=['title'])
+    tdocs = await contest.get_multi(DOMAIN_ID_DUMMY, fields=['title']).to_list(None)
     self.assertEqual(len(tdocs), 1)
     self.assertEqual(tdocs[0]['title'], TITLE)
     self.assertFalse('content' in tdocs[0])
@@ -122,7 +123,7 @@ class InnerTest(base.DatabaseTestCase):
     begin_at = NOW
     end_at = NOW + datetime.timedelta(seconds=22)
     self.tid = base.wait(contest.add(DOMAIN_ID_DUMMY, TITLE, CONTENT, OWNER_UID,
-                                     contest.RULE_ACM, begin_at, end_at, [1000, 1001, 1002]))
+                                     constant.contest.RULE_ACM, begin_at, end_at, [1000, 1001, 1002]))
     # TODO(twd2): test RULE_OI
 
   @base.wrap_coro
