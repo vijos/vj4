@@ -179,6 +179,11 @@ async def ensure_indexes():
                            ('pid', 1),
                            ('type', 1),
                            ('_id', 1)])
+  await coll.ensure_index([('domain_id', 1),
+                           ('pid', 1),
+                           ('uid', 1),
+                           ('type', 1),
+                           ('_id', 1)])
   # TODO(iceboy): Add more indexes.
 
 

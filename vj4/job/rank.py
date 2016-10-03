@@ -45,12 +45,13 @@ async def run(domain_id: str, keyword: str='rp', rank_field: str='rank', level_f
     user_bulk = user_coll.initialize_unordered_bulk_op()
     for i in range(len(level_ranks) - 1):
       _logger.info('Updating users levelled {0}'.format(level_ranks[i][0]))
-      (user_bulk.find({'$and': [{rank_field: {'$lte': level_ranks[i][1]}},
+      (user_bulk.find({'domain_id': domain_id,
+                       '$and': [{rank_field: {'$lte': level_ranks[i][1]}},
                                 {rank_field: {'$gt': level_ranks[i + 1][1]}}]})
        .update({'$set': {level_field: level_ranks[i][0]}}))
     i = len(level_ranks) - 1
     _logger.info('Updating users levelled {0}'.format(level_ranks[i][0]))
-    (user_bulk.find({rank_field: {'$lte': level_ranks[i][1]}})
+    (user_bulk.find({'domain_id': domain_id, rank_field: {'$lte': level_ranks[i][1]}})
      .update({'$set': {level_field: level_ranks[i][0]}}))
     _logger.info('Committing')
     await user_bulk.execute()

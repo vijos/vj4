@@ -9,14 +9,14 @@ const page = new NamedPage('judge_playground', async () => {
 
   sock.onopen = () => {
     const div = $('<div class="section visible">').appendTo('#messages');
-    const head = $('<div class="section__header"><h1 class="section__title">Connection opened.</h1></div>')
+    $('<div class="section__header"><h1 class="section__title">Connection opened.</h1></div>')
       .appendTo(div);
   };
 
   sock.onmessage = (message) => {
     const msg = JSON.parse(message.data);
     const div = $('<div class="section visible">').appendTo('#messages');
-    const head = $('<div class="section__header"><h1 class="section__title">Record</h1></div>')
+    $('<div class="section__header"><h1 class="section__title">Record</h1></div>')
       .appendTo(div);
     const body = $('<div class="section__body">').text(message.data).appendTo(div);
 
@@ -79,7 +79,7 @@ const page = new NamedPage('judge_playground', async () => {
 
   sock.onclose = (message) => {
     const div = $('<div class="section visible">').appendTo('#messages');
-    const head = $(`<div class="section__header"><h1 class="section__title">Connection closed, reason=${JSON.stringify(message.reason)}</h1></div>`)
+    $(`<div class="section__header"><h1 class="section__title">Connection closed, reason=${JSON.stringify(message.reason)}</h1></div>`)
       .appendTo(div);
   };
 });
