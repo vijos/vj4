@@ -18,6 +18,38 @@ from vj4.util import domainjob
 _logger = logging.getLogger(__name__)
 
 
+@argmethod.wrap
+async def user_in_problem(uid: int, domain_id: str, pid: document.convert_doc_id):
+  psdoc = await document.rev_init_status(domain_id, document.TYPE_PROBLEM, pid, uid)
+  rdocs = record.get_multi(uid=uid, domain_id=domain_id, pid=pid,
+                           type=constant.record.TYPE_SUBMISSION,
+                           fields={'_id': 1, 'uid': 1,
+                                   'status': 1, 'score': 1}).sort('_id', 1)
+  new_psdoc = {'num_submit': 0, 'num_accept': 0, 'status': 0, 'rid': ''}
+  async for rdoc in rdocs:
+    accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
+    new_psdoc['num_submit'] += 1
+    if new_psdoc['status'] != constant.record.STATUS_ACCEPTED:
+        new_psdoc['status'] = rdoc['status']
+        new_psdoc['rid'] = rdoc['_id']
+        if accept:
+          new_psdoc['num_accept'] += 1
+  print(new_psdoc)
+  if await document.rev_set_status(domain_id, document.TYPE_PROBLEM, pid, uid,
+                                   psdoc['rev'], **new_psdoc):
+    delta_submit = new_psdoc['num_submit'] - psdoc.get('num_submit', 0)
+    delta_accept = new_psdoc['num_accept'] - psdoc.get('num_accept', 0)
+    post_coros = []
+    if delta_submit != 0:
+      post_coros.append(problem.inc(domain_id, pid, 'num_submit', delta_submit))
+      post_coros.append(domain.inc_user(domain_id, uid, num_submit=delta_submit))
+    if delta_accept != 0:
+      post_coros.append(problem.inc(domain_id, pid, 'num_accept', delta_accept))
+      post_coros.append(domain.inc_user(domain_id, uid, num_accept=delta_accept))
+    if post_coros:
+      await asyncio.gather(*post_coros)
+
+
 @domainjob.wrap
 async def run(domain_id: str):
   _logger.info('Clearing previous statuses')
@@ -32,10 +64,10 @@ async def run(domain_id: str):
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
     # TODO(twd2): ignore no effect statuses like system error, ...
-    rdocs = record.get_problem_multi(domain_id, pdoc['doc_id'],
-                                     type=constant.record.TYPE_SUBMISSION,
-                                     fields={'_id': 1, 'uid': 1,
-                                             'status': 1, 'score': 1}).sort('_id', 1)
+    rdocs = record.get_multi(domain_id=domain_id, pid=pdoc['doc_id'],
+                             type=constant.record.TYPE_SUBMISSION,
+                             fields={'_id': 1, 'uid': 1,
+                                     'status': 1, 'score': 1}).sort('_id', 1)
     _logger.info('Reading records, counting numbers, updating statuses')
     factory = functools.partial(dict, num_submit=0, num_accept=0, status=0, rid='')
     psdocs = collections.defaultdict(factory)

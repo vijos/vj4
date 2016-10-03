@@ -298,6 +298,18 @@ async def rev_push_status(domain_id, doc_type, doc_id, uid, key, value):
   return doc
 
 
+async def rev_init_status(domain_id, doc_type, doc_id, uid):
+  coll = db.Collection('document.status')
+  doc = await coll.find_and_modify(query={'domain_id': domain_id,
+                                          'doc_type': doc_type,
+                                          'doc_id': doc_id,
+                                          'uid': uid},
+                                   update={'$inc': {'rev': 1}},
+                                   upsert=True,
+                                   new=True)
+  return doc
+
+
 async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, **kwargs):
   coll = db.Collection('document.status')
   doc = await coll.find_and_modify(query={'domain_id': domain_id,
@@ -305,7 +317,8 @@ async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, **kwargs):
                                           'doc_id': doc_id,
                                           'uid': uid,
                                           'rev': rev},
-                                   update={'$set': kwargs},
+                                   update={'$set': kwargs,
+                                           '$inc': {'rev': 1}},
                                    new=True)
   return doc
 
