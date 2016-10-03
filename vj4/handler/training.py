@@ -1,13 +1,39 @@
 import asyncio
+from json import decoder
 from bson import objectid
 
 from vj4 import app
+from vj4 import error
 from vj4 import constant
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
 from vj4.handler import base
+from vj4.util import json
+
+
+def _parse_dag_json(dag):
+  try:
+    dag = json.decode(dag)
+  except decoder.JSONDecodeError:
+    raise error.ValidationError('dag') from None
+  if not isinstance(dag, list):
+    raise error.ValidationError('dag')
+  new_dag = []
+  try:
+    for node in dag:
+      if any(k not in node for k in ['_id', 'require_nids', 'pids']):
+        raise error.ValidationError('dag')
+      new_node = {'_id': int(node['_id']),
+                  'title': str(node.get('title', '')),
+                  'require_nids': list(map(int, node['require_nids'])),
+                  'pids': list(map(document.convert_doc_id, node['pids']))}
+      new_dag.append(new_node)
+  except ValueError:
+    raise error.ValidationError('dag') from None
+  print(new_dag)
+  return new_dag
 
 
 class TrainingMixin(object):
@@ -60,34 +86,7 @@ class TrainingMainHandler(base.Handler, TrainingMixin):
     self.render('training_main.html', tdocs=tdocs, tsdict=tsdict, tdict=tdict)
 
 
-@app.route('/training/enrolled', 'training_enrolled')
-class TrainingEnrolledHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_VIEW_TRAINING)
-  async def get(self):
-    # TODO: twd2
-    self.render('training_enrolled.html')
-
-
-@app.route('/training/create', 'training_create')
-class TrainingCreateHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_VIEW_TRAINING)
-  async def get(self):
-    # TODO: twd2
-    self.render('training_create.html')
-
-
-@app.route('/training/owned', 'training_owned')
-class TrainingOwnedHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_VIEW_TRAINING)
-  async def get(self):
-    # TODO: twd2
-    self.render('training_owned.html')
-
-
-@app.route('/training/{tid}', 'training_detail')
+@app.route('/training/{tid:\w{24}}', 'training_detail')
 class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.route_argument
@@ -136,3 +135,52 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
     tdoc = await training.get(self.domain_id, tid)
     await training.enroll(self.domain_id, tdoc['doc_id'], self.user['_id'])
     self.json_or_redirect(self.url)
+
+
+@app.route('/training/create', 'training_create')
+class TrainingCreateHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_CREATE_TRAINING)
+  async def get(self):
+    self.render('training_edit.html')
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_CREATE_TRAINING)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, title: str, content: str, dag: str):
+    dag = _parse_dag_json(dag)
+    # TODO(twd2): calc status
+    tid = await training.add(self.domain_id, title, content, self.user['_id'],
+                             dag=dag)
+    self.json_or_redirect(self.reverse_url('training_detail', tid=tid))
+
+
+@app.route('/training/{tid}/edit', 'training_edit')
+class TrainingEditHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_TRAINING)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc = await training.get(self.domain_id, tid)
+    dag = json.encode_pretty(tdoc['dag'])
+    path_components = self.build_path(
+        (self.translate('training_main'), self.reverse_url('training_main')),
+        (tdoc['title'], self.reverse_url('training_detail', tid=tdoc['doc_id'])),
+        (self.translate('training_edit'), None))
+    self.render('training_edit.html', tdoc=tdoc, dag=dag,
+                page_title=tdoc['title'], path_components=path_components)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_TRAINING)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, tid: objectid.ObjectId, title: str, content: str, dag: str):
+    dag = _parse_dag_json(dag)
+    # TODO(twd2): recalc status
+    await training.edit(self.domain_id, tid, title=title, content=content, dag=dag)
+    self.json_or_redirect(self.reverse_url('training_detail', tid=tid))

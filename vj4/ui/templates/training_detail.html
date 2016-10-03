@@ -130,9 +130,9 @@
   </div>
   <div class="medium-3 columns">
     <div class="section side">
-    {% if not tsdoc['enroll'] %}
       <div>
         <ol>
+        {% if not tsdoc['enroll'] %}
           <li class="menu__item">
             <form action="" method="POST">
               <input type="hidden" name="operation" value="enroll">
@@ -142,14 +142,19 @@
               </button>
             </form>
           </li>
+        {% endif %}
+        {% if handler.own(tdoc, vj4.model.builtin.PERM_EDIT_TRAINING_SELF) or handler.has_perm(vj4.model.builtin.PERM_EDIT_TRAINING) %}
+          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('training_edit', tid=tdoc['_id']) }}">
+            <span class="icon icon-edit"></span>  {{ _('Edit') }}
+          </a></li>
+        {% endif %}
         </ol>
       </div>
-    {% endif %}
       <div class="section__body typo">
         <dl class="large horizontal">
           <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Done') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}({{ _('None') }}){% endif %}</dd>
           <dt>{{ _('Progress') }}</dt><dd>{{ _('Complete') }} {{ (100 * done_pids|length / pids|length)|round|int }}%</dd>
-          <dt>{{ _('Enrolled') }}</dt><dd>{{ tdoc['enroll'] }}</dd>
+          <dt>{{ _('Enrolled') }}</dt><dd>{{ tdoc['enroll']|default(0) }}</dd>
           <dt>完成人数</dt><dd>?</dd>
         </dl>
       </div>

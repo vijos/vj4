@@ -14,12 +14,13 @@ from vj4.util import validator
 async def add(domain_id: str, title: str, content: str, owner_uid: int, dag=[]):
   validator.check_title(title)
   validator.check_content(content)
+  dag = list(dag)
   for node in dag:
     for nid in node['require_nids']:
       if nid >= node['_id']:
         raise error.ValidationError('dag')
   return await document.add(domain_id, content, owner_uid, document.TYPE_TRAINING,
-                            title=title, dag=dag, pids=list(pids))
+                            title=title, dag=dag, enroll=0)
 
 
 @argmethod.wrap
@@ -36,6 +37,7 @@ async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
   if 'content' in kwargs:
       validator.check_content(kwargs['content'])
   if 'dag' in kwargs:
+    kwargs['dag'] = list(kwargs['dag'])
     for node in kwargs['dag']:
       for nid in node['require_nids']:
         if nid >= node['_id']:

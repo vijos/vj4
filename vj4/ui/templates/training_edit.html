@@ -1,0 +1,47 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="row">
+  <div class="medium-9 columns">
+    <div class="section">
+      <div class="section__body">
+        <form method="post">
+          <div class="row">
+            <div class="medium-8 columns">
+              <label>
+                {{ _('Title') }}
+                <input name="title" placeholder="{{ _('title') }}" value="{{ tdoc['title']|default('') }}" class="textbox" autofocus>
+              </label>
+            </div>
+          </div>
+          <div class="row"><div class="columns">
+            <label>
+              {{ _('Description') }}
+              <textarea name="content" class="textbox" data-markdown style="height: 150px">{{ tdoc['content']|default('') }}</textarea>
+            </label>
+          </div></div>
+          <div class="row"><div class="columns">
+            <label>
+              {{ _('Plan') }}
+              <textarea name="dag" class="textbox" style="height: 500px">{% if tdoc %}{{ dag }}{% else %}{% include 'partials/training_default.json' %}{% endif %}</textarea>
+            </label>
+          </div></div>
+          <div class="row"><div class="columns">
+            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+            {% if page_name == 'training_edit' %}
+            <input type="submit" class="rounded primary button" value="{{ _('Update') }}">
+            {% else %}
+              <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
+            {% endif %}
+            <button class="rounded button" onclick="window.history.go(-1)">
+              {{ _('Cancel') }}
+            </button>
+          </div></div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="medium-3 columns">
+    {% include 'components/md_hint.html' %}
+  </div>
+</div>
+{% endblock %}
