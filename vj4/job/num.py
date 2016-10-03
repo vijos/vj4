@@ -63,6 +63,7 @@ async def contest(domain_id: str):
                     {'$set': {'attend': 0}}, multi=True)
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
+  _logger.info('Counting')
   async for adoc in db.Collection('document.status').aggregate(pipeline):
     bulk.find({'domain_id': domain_id,
                'doc_type': document.TYPE_CONTEST,
@@ -70,6 +71,7 @@ async def contest(domain_id: str):
         .update_one({'$set': {'attend': adoc['attend']}})
     execute = True
   if execute:
+    _logger.info('Committing')
     await bulk.execute()
 
 
@@ -92,6 +94,7 @@ async def training(domain_id: str):
                     {'$set': {'enroll': 0}}, multi=True)
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
+  _logger.info('Counting')
   async for adoc in db.Collection('document.status').aggregate(pipeline):
     bulk.find({'domain_id': domain_id,
                'doc_type': document.TYPE_TRAINING,
@@ -99,6 +102,7 @@ async def training(domain_id: str):
         .update_one({'$set': {'enroll': adoc['enroll']}})
     execute = True
   if execute:
+    _logger.info('Committing')
     await bulk.execute()
 
 
@@ -121,12 +125,14 @@ async def problem(domain_id: str):
                          {'$set': {'num_problems': 0}}, multi=True)
   user_coll = user_coll.initialize_unordered_bulk_op()
   execute = False
+  _logger.info('Counting')
   async for adoc in db.Collection('document').aggregate(pipeline):
     user_coll.find({'domain_id': domain_id,
                     'uid': adoc['_id']}) \
              .upsert().update_one({'$set': {'num_problems': adoc['num_problems']}})
     execute = True
   if execute:
+    _logger.info('Committing')
     await user_coll.execute()
 
 
@@ -149,6 +155,7 @@ async def problem_solution(domain_id: str):
                     {'$set': {'vote': 0}}, multi=True)
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
+  _logger.info('Counting')
   async for adoc in db.Collection('document.status').aggregate(pipeline):
     bulk.find({'domain_id': domain_id,
                'doc_type': document.TYPE_PROBLEM_SOLUTION,
@@ -156,6 +163,7 @@ async def problem_solution(domain_id: str):
         .update_one({'$set': {'vote': adoc['vote']}})
     execute = True
   if execute:
+    _logger.info('Committing')
     await bulk.execute()
 
   _logger.info('Problem Solution Votes group by user')
@@ -175,12 +183,14 @@ async def problem_solution(domain_id: str):
                          {'$set': {'num_liked': 0}}, multi=True)
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
+  _logger.info('Counting')
   async for adoc in db.Collection('document').aggregate(pipeline):
     user_bulk.find({'domain_id': domain_id,
                     'uid': adoc['_id']}) \
              .upsert().update_one({'$set': {'num_liked': adoc['num_liked']}})
     execute = True
   if execute:
+    _logger.info('Committing')
     await user_bulk.execute()
 
 

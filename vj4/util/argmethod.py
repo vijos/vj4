@@ -8,6 +8,8 @@ Usage example:
     python3.5 -m vj4.model.user --db-name=prod get -1
 """
 import collections
+import logging
+import logging.config
 
 from vj4.util import options
 
@@ -23,6 +25,28 @@ def wrap(method):
 
 
 def invoke_by_args():
+  logging.config.dictConfig({
+    'version': 1,
+    'handlers': {
+      'console': {
+        'class': 'logging.StreamHandler',
+        'formatter': 'colored',
+      },
+    },
+    'formatters': {
+      'colored': {
+        '()': 'colorlog.ColoredFormatter',
+        'format': '%(log_color)s[%(levelname).1s '
+                  '%(asctime)s %(module)s:%(lineno)d]%(reset)s %(message)s',
+        'datefmt': '%y%m%d %H:%M:%S'
+      }
+    },
+    'root': {
+      'level': 'INFO',
+      'handlers': ['console'],
+    },
+    'disable_existing_loggers': False,
+  })
   import argparse
   import asyncio
   import inspect
