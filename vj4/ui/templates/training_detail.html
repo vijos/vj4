@@ -149,7 +149,7 @@
         <dl class="large horizontal">
           <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Done') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}({{ _('None') }}){% endif %}</dd>
           <dt>{{ _('Progress') }}</dt><dd>{{ _('Complete') }} {{ (100 * done_pids|length / pids|length)|round|int }}%</dd>
-          <dt>参加人数</dt><dd>{{ tdoc['enroll'] }}</dd>
+          <dt>{{ _('Enrolled') }}</dt><dd>{{ tdoc['enroll'] }}</dd>
           <dt>完成人数</dt><dd>?</dd>
         </dl>
       </div>
