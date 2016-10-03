@@ -201,7 +201,8 @@ class Handler(web.View, HandlerBase):
       self.response.set_status(e.http_status, None)
       if self.prefer_json:
         self.response.content_type = 'application/json'
-        self.response.text = json.encode({'error': e.to_dict()})
+        message = self.translate(e.message).format(*e.args)
+        self.response.text = json.encode({'error': {**e.to_dict(), 'message': message}})
       else:
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),

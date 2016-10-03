@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Notification from '../../notification';
 
 export default function reducer(state = {}, action) {
   switch (action.type) {
@@ -20,7 +21,14 @@ export default function reducer(state = {}, action) {
       [id]: true,
     };
   }
-  case 'DIALOGUES_POST_REPLY_REJECTED':
+  case 'DIALOGUES_POST_REPLY_REJECTED': {
+    Notification.error(action.payload.message);
+    const id = action.meta.dialogueId;
+    return {
+      ...state,
+      [id]: false,
+    };
+  }
   case 'DIALOGUES_POST_REPLY_FULFILLED': {
     const id = action.meta.dialogueId;
     return {
@@ -36,6 +44,7 @@ export default function reducer(state = {}, action) {
     };
   }
   case 'DIALOGUES_POST_SEND_REJECTED': {
+    Notification.error(action.payload.message);
     const { placeholderId } = action.meta;
     return {
       ...state,
