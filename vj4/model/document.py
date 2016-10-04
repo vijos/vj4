@@ -316,11 +316,11 @@ async def ensure_indexes():
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('doc_id', 1)], unique=True)
-  # for problem solution
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('owner_uid', 1),
                            ('doc_id', -1)])
+  # for problem solution
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('parent_doc_type', 1),
