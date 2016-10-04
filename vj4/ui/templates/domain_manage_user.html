@@ -29,7 +29,7 @@
     <div class="row">
       <div class="medium-12 columns">
         <label>
-          {{ _('Role for selected users') }}
+          {{ _('Set Roles for selected users') }}
           {{ form.select([('', _('Select a role'))] + roles_with_text, 'role') }}
         </label>
       </div>
@@ -107,7 +107,7 @@
     </table>
   </div>
   <div class="section__body">
-    <button class="rounded button" name="remove_selected">{{ _('Remove Selected User from Domain') }}</button>
+    <button class="rounded button" name="remove_selected">{{ _('Delete Selected User from Domain') }}</button>
     <button class="rounded button" name="set_roles">{{ _('Set Roles for Selected User') }}</button>
   </div>
 </div>
