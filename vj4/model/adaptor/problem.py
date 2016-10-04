@@ -66,6 +66,8 @@ def get_multi(*, fields=None, **kwargs):
 async def get_dict(pdom_and_ids, *, fields=None):
   pquery = {'$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in set(pdom_and_ids)]}
   result = dict()
+  if not pquery['$or']:
+    return result
   async for pdoc in get_multi(**pquery, fields=fields).hint([('domain_id', 1),
                                                              ('doc_type', 1),
                                                              ('doc_id', 1)]):
