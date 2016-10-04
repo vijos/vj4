@@ -5,8 +5,9 @@
         <h1 class="section__title" id="about" data-heading>{{ _('About Vijos') }}</h1>
       </div>
       <div class="section__body typo">
-        <p>Vijos 全称为Velocious Informatics Judge Online System (高效信息学在线评测系统)，致力于为用户提供完善、开放、安全的在线评测及题目交流等服务。</p>
-        <p>Vijos是一个非营利性网站，由湖南师范大学附属中学和北京八十中共同赞助。</p>
+        {{ _('no_translation_warn')|safe }}
+        <p>Vijos 全称为 Velocious Informatics Judge Online System (高效信息学在线评测系统)，致力于为用户提供安全、完善、开放的在线评测及题目交流等服务。</p>
+        <p>Vijos 是一个非营利性网站，由湖南师范大学附属中学和北京八十中共同赞助。</p>
       </div>
     </div>
     <div class="section" data-heading-extract-to="#menu-item-about">
@@ -14,16 +15,16 @@
         <h1 class="section__title" id="contact" data-heading>{{ _('Contact Us') }}</h1>
       </div>
       <div class="section__body typo">
-        <h3>讨论:</h3>
-        <blockquote>QQ群: 248452688</blockquote>
-        <h3>Manager:</h3>
-        <blockquote>QQ: 514649176<br>EMail: mrw#vijos.org</blockquote>
-        <h3>Development:</h3>
-        <blockquote>QQ: 490241327<br>EMail: dev#vijos.org</blockquote>
-        <h3>Ops:</h3>
-        <blockquote>QQ: 459834574<br>EMail: ops#vijos.org</blockquote>
-        <h3>Feedback:</h3>
-        <blockquote>QQ: 1744540592<br>EMail: feedback#vijos.org</blockquote>
+        <h3>{{ _('Discussion') }}:</h3>
+        <blockquote>{{ _('QQ Group') }}: 248452688</blockquote>
+        <h3>{{ _('Manager') }}:</h3>
+        <blockquote>{{ _('QQ') }}: 514649176<br>{{ _('Email') }}: mrw # vijos.org</blockquote>
+        <h3>{{ _('Development') }}:</h3>
+        <blockquote>{{ _('QQ') }}: 490241327<br>{{ _('Email') }}: dev $ vijos.org</blockquote>
+        <h3>{{ _('Ops') }}:</h3>
+        <blockquote>{{ _('QQ') }}: 459834574<br>{{ _('Email') }}: ops [at] vijos.org</blockquote>
+        <h3>{{ _('Feedback') }}:</h3>
+        <blockquote>{{ _('QQ') }}: 1744540592<br>{{ _('Email') }}: feedback &amp;#64; vijos.org</blockquote>
       </div>
     </div>
     <div class="section" data-heading-extract-to="#menu-item-about">
@@ -100,6 +101,34 @@
         <p>我们可以修改上述条款或任何适用于某项服务的附加条款，您应当定期查阅本条款。所有修改的适用不具有追溯力，且会在公布十四天或更长时间后方始生效。但是，对服务新功能的特别修改或由于法律原因所作的修改将立即生效。如果您不同意服务的修改条款，应停止使用服务。</p>
         <h4>9. 其他</h4>
         <p>如果您对这个协议或我们的服务有意见或建议，可与我们联系，我们会给予您必要的帮助。</p>
+      </div>
+    </div>
+    <div class="section" data-heading-extract-to="#menu-item-about">
+      <div class="section__header">
+        <h1 class="section__title" id="discuss" data-heading>{{ _('Discussion: Terms Of Service') }}</h1>
+      </div>
+      <div class="section__body typo">
+        <p>为了更好地发挥讨论、题解的积极作用，使广大用户学到知识、获得利益，进一步规范讨论和题解功能的使用，我们制定了《讨论和题解版规》(简称《版规》)。您在发布（或回复）讨论和题解时，即代表您已充分阅读、理解、接受并保证遵守此版规。</p>
+        <p>您在发布（或回复）讨论和题解或使用相关功能时须遵守以下规定：</p>
+        <blockquote>
+        <p>第一次使用编辑器前，要先阅读编辑器快速入门和 Markdown 详细帮助。</p>
+        <p>不得将讨论、题解混淆。例如，不得将题解发布到讨论中，题解应发布在相应题目的题解区中。</p>
+        <p>发布（或回复）的所有内容不得包含会干扰 Vijos 用户界面呈现的相关内容。</p>
+        <p>发布（或回复）的所有内容不得包含恶意代码和指向恶意网站或 Vijos 明确禁止的网站的链接。</p>
+        <p>特别地，发布（或回复）含有代码的内容时，应当将代码高亮。一个简单的方法是选中代码块然后按下 Tab 键。</p>
+        <p>发布的题解禁止只包含无详细注释的代码。题解中难以理解的代码应当有尽可能详细的注释。</p>
+        <p>打分、投票和评价应当客观。例如，对于题解的打分、投票和评价应当关注于题解本身的质量。</p>
+        <p>我们欢迎原创作品，并会对其作者给予数量不等的 RP 奖励。</p>
+        </blockquote>
+        <p>您在发布、回复讨论和题解时还须遵守法律法规，不得发布违法违规内容，包括但不限于：</p>
+        <blockquote>
+        <p>危害国家安全统一、破坏社会稳定、违反公序良俗、侮辱、诽谤、淫秽、暴力以及任何违反国家法律法规的内容；</p>
+        <p>侵害他人知识产权、商业秘密等合法权利的内容；</p>
+        <p>恶意虚构事实、隐瞒真相以误导、欺骗他人的内容；</p>
+        <p>广告信息及垃圾信息；</p>
+        <p>其他法律法规禁止的内容。</p>
+        </blockquote>
+        <p>对于违反《版规》的，我们将进行警告并删除相关内容、临时冻结用户、永久冻结用户等操作。</p>
       </div>
     </div>
 {% endblock %}
