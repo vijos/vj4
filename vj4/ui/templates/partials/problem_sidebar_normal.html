@@ -109,13 +109,13 @@
       <dd><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</dd>
       <dt>{{ _('Category') }}</dt>
       <dd>动态规划 | 树形动规、高精度</dd>
-      <dt>{{ _('Submit') }}</dt>
+      <dt>{{ _('# Submissions') }}</dt>
       <dd>{{ pdoc['num_submit'] }}</dd>
-      <dt>{{ _('My Submit') }}</dt>
+      <dt>{{ _('# My Submissions') }}</dt>
       <dd>{{ pdoc['psdoc']['num_submit']|default(0) }}</dd>
       <dt>{{ _('Accepted') }}</dt>
       <dd>{{ pdoc['num_accept'] }}</dd>
-      <dt>{{ _('Accepted Rate') }}</dt>
+      <dt>{{ _('Accepted Ratio') }}</dt>
       <dd>{% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</dd>
     {% if pdoc['owner_uid'] != 0 %}
       <dt>{{ _('Uploaded By') }}</dt>
