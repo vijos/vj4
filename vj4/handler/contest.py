@@ -146,7 +146,7 @@ class ContestCodeHandler(base.OperationHandler):
         rnames[pdetail['rid']] = 'U{}_P{}_R{}'.format(tsdoc['uid'], pdetail['pid'], pdetail['rid'])
     output_buffer = io.BytesIO()
     zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
-    rdocs = record.get_multi(_id={'$in': list(rnames.keys())})
+    rdocs = record.get_multi(get_hidden=True, _id={'$in': list(rnames.keys())})
     async for rdoc in rdocs:
       zip_file.writestr(rnames[rdoc['_id']] + '.' + rdoc['lang'], rdoc['code'])
     # mark all files as created in Windows :p

@@ -4,7 +4,7 @@
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
-      <div class="profile-header user-profile-bg--12">
+      <div class="profile-header user-profile-bg--{{ bg }}">
         <div class="profile-header__content clearfix">
           <div class="media">
             <div class="media__left">
@@ -32,31 +32,39 @@
             <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Submissions') }} ({{ dudoc['num_submit']|default(0) }})</h1>
               <div class="section__tab-main">
-                blabla
+              {% for rdoc in rdocs %}
+                <p><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}">R{{ rdoc['_id'] }}</a></p>
+              {% endfor %}
               </div>
             </li>
             <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Problems') }} (5)</h1>
+              <h1 class="section__tab-title">{{ _('Problems') }} ({{ pcount }})</h1>
               <div class="section__tab-main">
-                blabla
+              {% for pdoc in pdocs %}
+                <p><a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">{{ pdoc['title'] }}</a></p>
+              {% endfor %}
               </div>
             </li>
             <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Solutions') }} (2)</h1>
+              <h1 class="section__tab-title">{{ _('Solutions') }} ({{ pscount }})</h1>
               <div class="section__tab-main">
-                blabla
+              {% for psdoc in psdocs %}
+                <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
+              {% endfor %}
               </div>
             </li>
             <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Problems Sets') }} (1)</h1>
+              <h1 class="section__tab-title">{{ _('Problems Sets') }} (?)</h1>
               <div class="section__tab-main">
-                blabla
+                ?
               </div>
             </li>
             <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Discussions') }}</h1>
+              <h1 class="section__tab-title">{{ _('Discussions') }} ({{ dcount }})</h1>
               <div class="section__tab-main">
-                blabla
+              {% for ddoc in ddocs %}
+                <p><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}">{{ ddoc['title'] }}</a></p>
+              {% endfor %}
               </div>
             </li>
           </ul>
@@ -68,6 +76,30 @@
   {% if is_self_profile %}
     {{ home.render_sidebar() }}
   {% endif %}
+    <div class="section side">
+      <div class="section__body">
+        <div class="balancer sidebar-user-stat">
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudoc['num_accept'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Accepted') }}</div>
+            </div>
+          </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudoc['num_liked'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Solutions Liked') }}</div>
+            </div>
+          </div>
+          <div class="balancer__body">
+            <div class="numbox">
+              <div class="numbox__num medium">{{ dudoc['num_problems'] or 0 }}</div>
+              <div class="numbox__text">{{ _('Upload Problem') }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   {% if handler.can_view(udoc, 'bio') %}
     <div class="section side">
       <div class="section__header">

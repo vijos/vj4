@@ -82,8 +82,9 @@ def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fie
 
 
 @argmethod.wrap
-def get_multi(fields=None, **kwargs):
+def get_multi(get_hidden: bool=False, fields=None, **kwargs):
   coll = db.Collection('record')
+  kwargs['hidden'] = False if not get_hidden else {'$gte': False}
   return coll.find(kwargs, fields=fields)
 
 
@@ -165,6 +166,9 @@ async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: s
 async def ensure_indexes():
   coll = db.Collection('record')
   await coll.ensure_index([('hidden', 1),
+                           ('_id', -1)])
+  await coll.ensure_index([('hidden', 1),
+                           ('uid', 1),
                            ('_id', -1)])
   await coll.ensure_index([('hidden', 1),
                            ('domain_id', 1),
