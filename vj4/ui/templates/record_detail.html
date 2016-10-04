@@ -87,10 +87,6 @@
               </button>
             </form>
           </li>
-        </ol>
-      </div>
-      <div class="section__body no-padding">
-        <ol class="menu">
           <li class="menu__item">
             <form method="post" action="{{ reverse_url('judge_score', rid=rdoc['_id']) }}">
               <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">

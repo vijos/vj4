@@ -2,7 +2,7 @@
 {% set label = kwargs.pop('label') %}
 {% set columns = kwargs.pop('columns') %}
 {% set required = kwargs.pop('required', false) %}
-{% set hotkeys = kwargs.pop('hotkeys', None) %}
+{% set hotkeys = kwargs.pop('hotkeys', none) %}
 <div class="row">
   <div
     class="medium-{{ columns }} columns"
@@ -16,7 +16,7 @@
 {% endmacro %}
 
 {% macro form_end() %}
-{% set help_text = kwargs.pop('help_text', None) %}
+{% set help_text = kwargs.pop('help_text', none) %}
     </label>
   {% if help_text %}
     <p class="help-text">{{ _(help_text) }}</p>
@@ -26,7 +26,7 @@
 {% endmacro %}
 
 {% macro form_attr(form_class) %}
-{% set extra_class = kwargs.pop('extra_class', None) %}
+{% set extra_class = kwargs.pop('extra_class', none) %}
 {% set disabled = kwargs.pop('disabled', false) %}
 {% set required = kwargs.pop('required', false) %}
 {% set autofocus = kwargs.pop('autofocus', false) %}
@@ -87,7 +87,7 @@
 {{ form_end(columns=columns, **kwargs) }}
 {% endmacro %}
 
-{% macro checkbox(label, name='', value=False) %}
+{% macro checkbox(label, name='', value=false) %}
 <label class="checkbox">
   <input type="checkbox" name="{{ name }}"{% if value %} checked{% endif %}>{{ _(label) }}
 </label>
