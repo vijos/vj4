@@ -8,6 +8,7 @@ from vj4 import error
 from vj4 import constant
 from vj4.model import builtin
 from vj4.model import document
+from vj4.model import user
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
 from vj4.handler import base
@@ -94,7 +95,8 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
     tdoc = await training.get(self.domain_id, tid)
     pids = self.get_pids(tdoc)
     # TODO(twd2): check status, eg. test, hidden problem, ...
-    pdict, psdict = await asyncio.gather(
+    owner_udoc, pdict, psdict = await asyncio.gather(
+        user.get_by_uid(tdoc['owner_uid']),
         problem.get_dict(self.domain_id, pids),
         problem.get_dict_status(self.domain_id, self.user['_id'], pids))
     done_pids = set()
@@ -128,7 +130,7 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
       (tdoc['title'], None))
     self.render('training_detail.html', tdoc=tdoc, tsdoc=tsdoc, pids=pids, pdict=pdict,
                 psdict=psdict,
-                ndict=ndict, nsdict=nsdict,
+                ndict=ndict, nsdict=nsdict, owner_udoc=owner_udoc,
                 page_title=tdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
