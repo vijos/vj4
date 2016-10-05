@@ -29,7 +29,7 @@ class RecordMainHandler(base.Handler):
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
         user.get_dict(rdoc['uid'] for rdoc in rdocs),
-        problem.get_dict((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs))
+        problem.get_dict_multi_domain((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs))
     # statistics
     statistics = None
     if self.has_priv(builtin.PRIV_VIEW_JUDGE_STATISTICS):
