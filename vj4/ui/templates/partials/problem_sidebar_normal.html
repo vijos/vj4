@@ -133,5 +133,11 @@
     <p>{{ _('In following training plans') }}: </p>
     <p>LV 1: 最初的最初 - 基础能力</p>
   {% endif %}
+  {% if ctdocs %}
+    <p>{{ _('In following contests') }}: </p>
+    {% for tdoc in ctdocs %}
+    <p><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a></p>
+    {% endfor %}
+  {% endif %}
   </div>
 </div>
