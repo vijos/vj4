@@ -15,7 +15,7 @@
             <h1 class="section__title training-section-status--text {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %}">
               <span class="icon training-section-status--icon {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %}"></span>
             {% if nsdict[node['_id']]['is_done'] %}
-              {{ _('Done') }}
+              {{ _('Completed') }}
             {% elif nsdict[node['_id']]['is_progress'] %}
               {{ _('In Progress') }}
             {% elif nsdict[node['_id']]['is_open'] %}
@@ -147,14 +147,18 @@
             <span class="icon icon-edit"></span>  {{ _('Edit') }}
           </a></li>
         {% endif %}
+          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('wiki_help') }}#training">
+            <span class="icon icon-help"></span> {{ _('Help') }}
+          </a></li>
+          <li class="menu__seperator"></li>
         </ol>
       </div>
       <div class="section__body typo">
         <dl class="large horizontal">
-          <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Done') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}({{ _('None') }}){% endif %}</dd>
-          <dt>{{ _('Progress') }}</dt><dd>{{ _('Complete') }} {{ (100 * done_pids|length / pids|length)|round|int }}%</dd>
-          <dt>{{ _('Enrolled') }}</dt><dd>{{ tdoc['enroll']|default(0) }}</dd>
-          <dt>完成人数</dt><dd>?</dd>
+          <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Completed') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}({{ _('None') }}){% endif %}</dd>
+          <dt>{{ _('Progress') }}</dt><dd>{{ _('Completed') }} {{ (100 * done_pids|length / pids|length)|round|int }}%</dd>
+          <dt>{{ _('Enrollees') }}</dt><dd>{{ tdoc['enroll']|default(0) }}</dd>
+          <dt>{{ _('Completed') }}</dt><dd>?</dd>
         </dl>
       </div>
     </div>

@@ -29,7 +29,7 @@
             </div>
             <div class="media__body middle">
               <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
-              <p class="training__intro">{{ tdoc['content']|markdown }}</p>
+              <div class="typo">{{ tdoc['content']|markdown }}</div>
               <ul class="supplementary list training__progress">
                 <li>
                   <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}, {{ _('{0} problems').format(handler.get_pids(tdoc)|length) }}
@@ -46,10 +46,10 @@
                 <li>
                 {% if not tsdict[tdoc['doc_id']]['done'] %}
                   <span class="icon training-status--icon progress"></span>
-                  <span class="training-status--text progress">{{ _('Complete') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
+                  <span class="training-status--text progress">{{ _('Completed') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
                 {% else %}
                   <span class="icon training-status--icon done"></span>
-                  <span class="training-status--text done">{{ _('Complete') }} 100%</span>
+                  <span class="training-status--text done">{{ _('Completed') }} 100%</span>
                 {% endif %}
                 </li>
               </ul>
