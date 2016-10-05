@@ -40,7 +40,15 @@
         <h1 class="section__title">{{ _('Statistics') }}</h1>
       </div>
       <div class="section__body">
-        <p>foo bar</p>
+        {% if statistics %}
+          <dl class="large horizontal">
+            <dt>{{ _('Day') }}</dt><dd>{{ statistics['day'] }}</dd>
+            <dt>{{ _('Week') }}</dt><dd>{{ statistics['week'] }}</dd>
+            <dt>{{ _('Month') }}</dt><dd>{{ statistics['month'] }}</dd>
+            <dt>{{ _('Year') }}</dt><dd>{{ statistics['year'] }}</dd>
+            <dt>{{ _('Total') }}</dt><dd>{{ statistics['total'] }}</dd>
+          </dl>
+        {% endif %}
       </div>
     </div>
   </div>
