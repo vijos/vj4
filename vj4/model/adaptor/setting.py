@@ -6,6 +6,7 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import user
+from vj4.model.adaptor import defaults
 from vj4.util import options
 from vj4.util import locale
 
@@ -85,3 +86,13 @@ class SettingMixin(object):
       await user.set_by_uid(self.user['_id'], **kwargs)
     else:
       await self.update_session(**kwargs)
+
+  def get_code_template(self):
+    code_template = self.get_setting('code_template')
+    if code_template:
+      return code_template
+    code_lang = self.get_setting('code_lang')
+    if code_lang in defaults.DEFAULT_CODE_TEMPLATES:
+      return defaults.DEFAULT_CODE_TEMPLATES[code_lang].strip()
+    else:
+      return ''

@@ -1,3 +1,5 @@
+import Notification from '../../notification';
+
 export default function reducer(state = {
   main: {
     size: '50%',
@@ -52,9 +54,15 @@ export default function reducer(state = {
     };
   }
   case 'SCRATCHPAD_POST_PRETEST_FULFILLED':
+  case 'SCRATCHPAD_POST_SUBMIT_FULFILLED': {
+    return {
+      ...state,
+      isPosting: false,
+    };
+  }
   case 'SCRATCHPAD_POST_PRETEST_REJECTED':
-  case 'SCRATCHPAD_POST_SUBMIT_FULFILLED':
   case 'SCRATCHPAD_POST_SUBMIT_REJECTED': {
+    Notification.error(action.payload.message);
     return {
       ...state,
       isPosting: false,
@@ -69,8 +77,17 @@ export default function reducer(state = {
       },
     };
   }
-  case 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS_FULFILLED':
   case 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS_REJECTED': {
+    Notification.error(action.payload.message);
+    return {
+      ...state,
+      records: {
+        ...state.records,
+        isLoading: false,
+      },
+    };
+  }
+  case 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS_FULFILLED': {
     return {
       ...state,
       records: {
