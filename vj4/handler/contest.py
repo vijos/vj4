@@ -88,10 +88,9 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
   async def get(self, *, tid: objectid.ObjectId, page: int=1):
     # contest
     tdoc = await contest.get(self.domain_id, tid)
-    pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
     tsdoc, pdict = await asyncio.gather(
         contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
-        problem.get_dict(pdom_and_ids))
+        problem.get_dict(self.domain_id, tdoc['pids']))
     psdict = dict()
     rdict = dict()
     if tsdoc:
@@ -266,9 +265,8 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
-    pdom_and_ids = [(tdoc['domain_id'], pid) for pid in tdoc['pids']]
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
-                                        problem.get_dict(pdom_and_ids))
+                                        problem.get_dict(self.domain_id, tdoc['pids']))
     ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
     path_components = self.build_path(
         (self.translate('contest_main'), self.reverse_url('contest_main')),

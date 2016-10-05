@@ -63,14 +63,25 @@ def get_multi(*, fields=None, **kwargs):
   return document.get_multi(doc_type=document.TYPE_PROBLEM, fields=fields, **kwargs)
 
 
-async def get_dict(pdom_and_ids, *, fields=None):
-  pquery = {'$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in set(pdom_and_ids)]}
+async def get_dict(domain_id, pids, *, fields=None):
+  pquery = {'domain_id': domain_id, 'doc_id': {'$in': list(set(pids))}}
   result = dict()
-  if not pquery['$or']:
+  async for pdoc in get_multi(**pquery, fields=fields):
+    result[pdoc['doc_id']] = pdoc
+  return result
+
+
+async def get_dict_multi_domain(pdom_and_ids, *, fields=None):
+  query = {'$or': []}
+  key_func = lambda e: e[0]
+  for domain_id, ptuples in itertools.groupby(sorted(set(pdom_and_ids), key=key_func),
+                                              key=key_func):
+    query['$or'].append({'domain_id': domain_id, 'doc_type': document.TYPE_PROBLEM,
+                         'doc_id': {'$in': [e[1] for e in ptuples]}})
+  result = dict()
+  if not query['$or']:
     return result
-  async for pdoc in get_multi(**pquery, fields=fields).hint([('domain_id', 1),
-                                                             ('doc_type', 1),
-                                                             ('doc_id', 1)]):
+  async for pdoc in document.get_multi(**query, fields=fields):
     result[(pdoc['domain_id'], pdoc['doc_id'])] = pdoc
   return result
 
