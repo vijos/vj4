@@ -88,10 +88,10 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           disabled={this.props.isPosting || !this.props.pretestValid}
           className="scratchpad__toolbar__pretest"
           onClick={() => this.props.postPretest(this.context)}
-          data-global-hotkey="f5"
-          data-tooltip={`${i18n('Pretest Your Code')} (F5)`}
+          data-global-hotkey="f9"
+          data-tooltip={`${i18n('Pretest Your Code')} (F9)`}
         >
-          <Icon name="debug" /> {i18n('Run Pretest')} (F5)
+          <Icon name="debug" /> {i18n('Run Pretest')} (F9)
         </ToolbarButton>
         <ToolbarButton
           disabled={this.props.isPosting}

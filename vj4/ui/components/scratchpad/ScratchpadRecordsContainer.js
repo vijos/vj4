@@ -63,7 +63,7 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
           />}
           renderTabContent={() => <TabContent />}
         >
-          <TabPane tab={<span>All</span>} key="all">
+          <TabPane tab={<span>{i18n('All')}</span>} key="all">
             <ScratchpadRecordsTable />
           </TabPane>
         </Tabs>
