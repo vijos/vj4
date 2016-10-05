@@ -131,9 +131,11 @@
     <h1 class="section__title">{{ _('Related') }}</h1>
   </div>
   <div class="section__body typo">
-  {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_TRAINING) %}
+  {% if tdocs %}
     <p>{{ _('In following training plans') }}: </p>
-    <p>LV 1: 最初的最初 - 基础能力</p>
+    {% for tdoc in tdocs %}
+    <p><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a></p>
+    {% endfor %}
   {% endif %}
   {% if ctdocs %}
     <p>{{ _('In following contests') }}: </p>

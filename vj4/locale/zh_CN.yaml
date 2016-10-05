@@ -441,7 +441,7 @@ View contest status: 查看比赛状态
 View hidden contest status: 查看隐藏的比赛状态
 Create contests: 创建比赛
 Attend contests: 参加比赛
-View training: 查看训练
+View training plans: 查看训练计划
 Have ALL PERMISSIONS in this domain: 在此域中拥有全部权限
 Select User: 选择用户
 Submitted: 已递交
@@ -510,8 +510,23 @@ perm_training: 训练
 discussion_edit: 编辑讨论
 At least 4 characters: 至少 4 个字符
 Contact: 联系
-Click here to chat with me: 点击这里与我聊天
+'{0} sections': '{0} 小节'
+'{0} problems': '{0} 道题'
+All Training Plans: 所有训练计划
+Section: 章节
+Complete: 完成
+Progress: 进度
+In Progress: 进行中
+Open: 开放
+Invalid: 无效
+expand: 展开
+collapse: 收缩
+'Note: Problem title may not be hidden.': 注意：题目标题可能不会被隐藏。
 Partic.: 参赛人数
+Create training plans: 创建训练计划
+Edit training plans: 修改训练计划
+Edit own training plans: 修改自己的训练计划
+Click here to chat with me: 点击这里与我聊天
 Terms of Service: 服务条款
 wiki_help: 帮助
 Discussion: 讨论
@@ -535,5 +550,14 @@ Forgot Password and/or Username: 忘记密码和/或用户名
 Reset Password or Find Username: 重置密码或找回用户名
 '{0} discussions': '{0} 条讨论'
 In following contests: 在下列比赛中
+View Owned Problems: 查看自己的题目
+Completed: 已完成
+Enrollees: 参加人数
+Monthly Popular: 月度最受欢迎
+Enroll Training: 参加训练
+Plan: 计划
+training_edit: 编辑训练
+Not Enrolled: 未参加
 Upvote: 好评
 Downvote: 差评
+View hidden problems: 查看隐藏的题目

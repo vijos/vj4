@@ -1,0 +1,14 @@
+@import '~misc/section.inc.styl'
+
+.page--training_detail
+  .training__section
+    &.invalid
+      .training__problems
+        opacity: 0.6
+
+    &.collapsed .collapsed--hidden,
+    &.expanded .expanded--hidden
+      display: none
+
+    &.collapsed .training__section__detail
+      display: none

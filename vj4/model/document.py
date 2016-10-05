@@ -80,6 +80,7 @@ async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
 
 
 async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
+  # TODO(twd2): delete status?
   coll = db.Collection('document')
   return await coll.remove({'domain_id': domain_id,
                             'doc_type': doc_type,
@@ -87,6 +88,7 @@ async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
 
 
 async def delete_multi(domain_id: str, doc_type: int, **kwargs):
+  # TODO(twd2): delete status?
   coll = db.Collection('document')
   return await coll.remove({'domain_id': domain_id,
                             'doc_type': doc_type,
@@ -374,6 +376,13 @@ async def ensure_indexes():
                            ('doc_type', 1),
                            ('rule', 1),
                            ('doc_id', -1)], sparse=True)
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('pids', 1)], sparse=True)
+  # for training
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('dag.pids', 1)], sparse=True)
   status_coll = db.Collection('document.status')
   await status_coll.ensure_index([('domain_id', 1),
                                   ('doc_type', 1),
@@ -397,6 +406,12 @@ async def ensure_indexes():
                                   ('doc_id', 1),
                                   ('accept', -1),
                                   ('time', 1)], sparse=True)
+  # for training
+  await status_coll.ensure_index([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('uid', 1),
+                                  ('enroll', 1),
+                                  ('doc_id', 1)], sparse=True)
 
 
 if __name__ == '__main__':

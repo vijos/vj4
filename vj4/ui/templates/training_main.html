@@ -1,15 +1,153 @@
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
-  <div class="medium-9 columns">
-    <ol>
-    {% for tdoc in tdocs %}
-      <a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}">{{ tdoc }}</a>
-    {% endfor %}
-    </ol>
+  <div class="large-9 columns">
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('All Training Plans') }}</h1>
+        <div class="section__tools">
+          {{ _('Sort by') }}:
+          <select class="inline select">
+            <option>{{ _('↓ # Enrollees') }}</option>
+            <option>{{ _('↓ # Likes') }}</option>
+            <option>{{ _('↓ # Stars') }}</option>
+            <option>{{ _('↓ # Comments') }}</option>
+            <option>{{ _('↓ Create Time') }}</option>
+            <option>{{ _('↓ Update Time') }}</option>
+          </select>
+        </div>
+      </div>
+      <ol class="section__list all primary training__list">
+        {% for tdoc in tdocs %}
+        <li class="section__list__item training__item">
+          <div class="media">
+            <div class="media__left middle">
+              <div class="training__participants numbox">
+                <div class="numbox__num large">{{ tdoc['enroll']|default(0) }}</div>
+                <div class="numbox__text">{{ _('Enrolled') }}</div>
+              </div>
+            </div>
+            <div class="media__body middle">
+              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+              <div class="typo">{{ tdoc['content']|markdown }}</div>
+              <ul class="supplementary list training__progress">
+                <li>
+                  <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}, {{ _('{0} problems').format(handler.get_pids(tdoc)|length) }}
+                </li>
+                <li>
+                  <span class="icon icon-heart text-red"></span> ???
+                </li>
+                <li>
+                  <span class="icon icon-star text-yellow"></span> ???
+                </li>
+                <li>
+                  <span class="icon icon-comment--text"></span> ???
+                </li>
+                <li>
+                {% if tsdict[tdoc['doc_id']]['enroll'] %}
+                  {% if not tsdict[tdoc['doc_id']]['done'] %}
+                  <span class="icon training-status--icon progress"></span>
+                  <span class="training-status--text progress">{{ _('Completed') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
+                  {% else %}
+                  <span class="icon training-status--icon done"></span>
+                  <span class="training-status--text done">{{ _('Completed') }} 100%</span>
+                  {% endif %}
+                {% elif handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                  <span class="icon training-status--icon outside"></span> <span class="training-status--text outside">{{ _('Not Enrolled') }}</span>
+                {% endif %}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
   </div>
-  <div class="medium-3 columns">
-    <h1>{{ _('Swx Template!') }}</h1>
+  <div class="large-3 columns">
+  {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Enrolled') }}</h1>
+      </div>
+      <div class="section__body">
+        <ol class="my secondary training__list">
+        {% for tsdoc in tsdict.values() %}
+        {% if tsdoc['enroll'] %}
+          <li class="training__item"><div class="media">
+            <div class="media__left">
+              <span class="icon training-status--icon {% if tsdoc['done'] %}done{% else %}progress{% endif %}"></span>
+            </div>
+            <div class="media__body">
+              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tsdoc['doc_id']) }}" data-emoji-enabled>{{ tdict[tsdoc['doc_id']]['title'] }}</a></h1>
+              <div class="supplementary training__progress"><div class="training__progress-bar"><div class="training__progress-track" style="width:{{ (100 * tsdoc['done_pids']|length / handler.get_pids(tdict[tsdoc['doc_id']])|length)|round|int }}%;"></div></div> {{ _('Complete') }} {{ (100 * tsdoc['done_pids']|length / handler.get_pids(tdict[tsdoc['doc_id']])|length)|round|int }}%</div>
+            </div>
+          </div></li>
+        {% endif %}
+        {% endfor %}
+        </ol>
+      </div>
+    </div>
+  {% endif %}
+  {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_TRAINING) %}
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Create Training Plan') }}</h1>
+      </div>
+      <ol class="menu">
+        <li class="menu__item">
+          <a href="{{ reverse_url('training_create') }}" class="menu__link"><span class="icon icon-add"></span> {{ _('New Training Plan') }}</a>
+        </li>
+        <!-- TODO(twd2) -->
+        <li class="menu__item">
+          <a href="#" class="menu__link"><span class="icon icon-crown"></span> {{ _('View Owned Training Plans') }}</a>
+        </li>
+      </ol>
+      <div class="section__body">
+        <div class="typo supplementary">
+          <p>{{ _('You can create your own training plans and share with others.') }}</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Monthly Popular') }}</h1>
+      </div>
+      <div class="section__body">
+        <ol class="popular secondary training__list">
+        {% for tdoc in mp_tdocs %}
+          <li class="training__item">
+            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+            <ul class="supplementary list">
+              <li>
+                <span class="icon icon-user--multiple"></span> {{ tdoc['enroll'] }}
+              </li>
+            {% if tsdict[tdoc['doc_id']]['enroll'] %}
+              {% if not tsdict[tdoc['doc_id']]['done'] %}
+              <li class="training-status--text progress">
+                <span class="icon training-status--icon progress"></span>
+                <span class="training-status--text progress">{{ _('Completed') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
+              </li>
+              {% else %}
+              <li class="training-status--text done">
+                <span class="icon training-status--icon done"></span>
+                <span class="training-status--text done">{{ _('Completed') }} 100%</span>
+              </li>
+              {% endif %}
+            {% elif handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+              <li class="training-status--text outside">
+                <span class="icon training-status--icon outside"></span> {{ _('Not Enrolled') }}
+              <li class="training-status--text outside">
+            {% endif %}
+            </ul>
+          </li>
+        {% else %}
+          <li class="training__item">{{ _('Not Available') }}</li>
+        {% endfor %}
+        </ol>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

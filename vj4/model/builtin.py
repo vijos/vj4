@@ -67,6 +67,9 @@ PERM_ATTEND_CONTEST = 1 << 45
 
 # Training.
 PERM_VIEW_TRAINING = 1 << 46
+PERM_CREATE_TRAINING = 1 << 47
+PERM_EDIT_TRAINING = 1 << 48
+PERM_EDIT_TRAINING_SELF = 1 << 49
 
 PERM_ALL = -1
 
@@ -83,6 +86,7 @@ PERMS = [
     Permission('perm_problem', PERM_EDIT_PROBLEM, 'Edit problems'),
     Permission('perm_problem', PERM_EDIT_PROBLEM_SELF, 'Edit own problems'),
     Permission('perm_problem', PERM_VIEW_PROBLEM, 'View problems'),
+    Permission('perm_problem', PERM_VIEW_PROBLEM_HIDDEN, 'View hidden problems'),
     Permission('perm_problem', PERM_SUBMIT_PROBLEM, 'Submit problem'),
     Permission('perm_problem', PERM_READ_PROBLEM_DATA, 'Read data of problem'),
     Permission('perm_problem', PERM_READ_PROBLEM_DATA_SELF, 'Read data of own problems'),
@@ -120,7 +124,10 @@ PERMS = [
     Permission('perm_contest', PERM_VIEW_CONTEST_HIDDEN_STATUS, 'View hidden contest status'),
     Permission('perm_contest', PERM_CREATE_CONTEST, 'Create contests'),
     Permission('perm_contest', PERM_ATTEND_CONTEST, 'Attend contests'),
-    Permission('perm_training', PERM_VIEW_TRAINING, 'View training')
+    Permission('perm_training', PERM_VIEW_TRAINING, 'View training plans'),
+    Permission('perm_training', PERM_CREATE_TRAINING, 'Create training plans'),
+    Permission('perm_training', PERM_EDIT_TRAINING, 'Edit training plans'),
+    Permission('perm_training', PERM_EDIT_TRAINING_SELF, 'Edit own training plans'),
 ]
 
 PERMS_BY_FAMILY = collections.OrderedDict(
@@ -194,8 +201,10 @@ DEFAULT_PERMISSIONS = (
     PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION |
     PERM_VIEW_CONTEST |
     PERM_VIEW_CONTEST_STATUS |
+    PERM_ATTEND_CONTEST |
     PERM_VIEW_TRAINING |
-    PERM_ATTEND_CONTEST
+    PERM_CREATE_TRAINING |
+    PERM_EDIT_TRAINING_SELF
 )
 ADMIN_PERMISSIONS = PERM_ALL
 DOMAIN_SYSTEM = {

@@ -1,11 +1,171 @@
+{% import "components/record.html" as record with context %}
+{% import "components/problem.html" as problem with context %}
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
-    {{ tdoc }}
+    <div class="section">
+    {% for node in tdoc['dag'] %}
+      <div class="training__section {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %} {% if nsdict[node['_id']]['is_progress'] or nsdict[node['_id']]['is_open'] %}expanded{% else %}collapsed{% endif %}">
+        <div class="section__header clearfix">
+          <div class="float-left">
+            <h1 class="section__title">{{ _('Section') }} {{ node['_id'] }}. {{ node['title'] }}</h1>
+          </div>
+          <div class="float-right">
+            <h1 class="section__title training-section-status--text {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %}">
+              <span class="icon training-section-status--icon {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %}"></span>
+            {% if nsdict[node['_id']]['is_done'] %}
+              {{ _('Completed') }}
+            {% elif nsdict[node['_id']]['is_progress'] %}
+              {{ _('In Progress') }}
+            {% elif nsdict[node['_id']]['is_open'] %}
+              {{ _('Open') }}
+            {% else %}
+              {{ _('Invalid') }}
+            {% endif %}
+            </h1>
+          </div>
+        </div>
+        <div class="section__body">
+          <ul class="supplementary dot list">
+            <li>
+              <a href="javascript:;" name="training__section__expand" class="expanded--hidden"><span class="icon icon-expand_more"></span> {{ _('expand') }}</a>
+              <a href="javascript:;" name="training__section__collapse" class="collapsed--hidden"><span class="icon icon-expand_less"></span> {{ _('collapse') }}</a>
+            </li>
+            <!--
+            <li>
+              递交了 ? 次完成该章节 (TOP ?%)
+            </li>
+            <li>
+              第 ? 个完成该章节 (总计 ? 用户完成)
+            </li>
+            -->
+          </ul>
+        </div>
+        <div class="training__section__detail">
+          <div class="section__body">
+          {% if nsdict[node['_id']]['is_invalid'] %}
+            <blockquote class="typo note">
+              <p>该章节目前不可挑战，请先完成以下章节：</p>
+              <ul>
+              {% for nid in node['require_nids'] %}
+                <li>{{ _('Section') }} {{ _(nid) }}. {{ ndict[nid]['title'] }} ({{ _('Completed') }} {{ nsdict[nid]['progress'] }}%)</li>
+              {% endfor %}
+              </ul>
+            </blockquote>
+          {% endif %}
+            {{ node['content']|default('')|markdown }}
+          </div>
+          <div class="section__body no-padding training__problems">
+            <table class="data-table">
+              <colgroup>
+              {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                <col class="col--status">
+              {% endif %}
+                <col class="col--name">
+                <col class="col--submit_n">
+                <col class="col--ac_rate">
+                <col class="col--difficulty">
+              </colgroup>
+              <thead>
+                <tr>
+                {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                  <th class="col--status record-status--border">{{ _('Status') }}</th>
+                {% endif %}
+                  <th class="col--name">{{ _('Problem') }}</th>
+                  <th class="col--submit_n">{{ _('Submit') }}</th>
+                  <th class="col--ac_rate">% {{ _('AC') }}</th>
+                  <th class="col--difficulty">{{ _('Difficulty') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for pid in node['pids'] %}
+              {% with pdoc = pdict[pid], psdoc = psdict[pdoc['doc_id']] %}
+                <tr>
+                {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                {% if psdoc['rid'] %}
+                  {{ record.render_status_td(psdoc, rid_key='rid') }}
+                {% else %}
+                  <td class="col--status record-status--border">
+                  </td>
+                {% endif %}
+                {% endif %}
+                  <td class="col--name">
+                  {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                    <form class="form--inline" method="post">
+                      <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
+                      <input type="hidden" name="operation" value="{% if not psdoc['star'] %}star{% else %}unstar{% endif %}">
+                      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+                      <button class="star{% if psdoc['star'] %} activated{% endif %}" type="submit">
+                        <span class="starred--hide"><span class="icon icon-star--outline" data-tooltip="{{ _('Star') }}"></span></span>
+                        <span class="starred--show"><span class="icon icon-star" data-tooltip="{{ _('Unstar') }}"></span></span>
+                      </button>
+                    </form>
+                  {% endif %}
+                    {{ problem.render_problem_title(pdoc) }}
+                  </td>
+                  <td class="col--submit_n">{{ pdoc['num_submit'] }}</td>
+                  <td class="col--ac_rate">{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int if pdoc['num_submit'] > 0 else _('?') }}</td>
+                  <td class="col--difficulty">{{ pdoc['difficulty']|default(_('(None)')) }}</td>
+                </tr>
+              {% endwith %}
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="section__body">&nbsp;<!-- space placeholder --></div>
+
+    </div>
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('{0} comments').format(0) }}</h1>
+      </div>
+      <div class="section__body">
+        <p>foo</p>
+      </div>
+    </div>
   </div>
   <div class="medium-3 columns">
-    <h1>{{ _('Swx Template!') }}</h1>
+    <div class="section side">
+      <div>
+        <ol>
+        {% if not tsdoc['enroll'] and handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+          <li class="menu__item">
+            <form action="" method="POST">
+              <input type="hidden" name="operation" value="enroll">
+              <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+              <button class="menu__link" type="submit">
+                <span class="icon icon-add"></span> {{ _('Enroll Training') }}
+              </button>
+            </form>
+          </li>
+        {% endif %}
+        {% if handler.own(tdoc, vj4.model.builtin.PERM_EDIT_TRAINING_SELF) or handler.has_perm(vj4.model.builtin.PERM_EDIT_TRAINING) %}
+          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('training_edit', tid=tdoc['_id']) }}">
+            <span class="icon icon-edit"></span>  {{ _('Edit') }}
+          </a></li>
+        {% endif %}
+          <li class="menu__item"><a class="menu__link" href="{{ reverse_url('wiki_help') }}#training">
+            <span class="icon icon-help"></span> {{ _('Help') }}
+          </a></li>
+          <li class="menu__seperator"></li>
+        </ol>
+      </div>
+      <div class="section__body typo">
+        <dl class="large horizontal">
+          <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Completed') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}{{ _('Not Enrolled') }}{% endif %}</dd>
+          <dt>{{ _('Progress') }}</dt><dd>{{ _('Completed') }} {{ (100 * tsdoc['done_pids']|length / pids|length)|round|int }}%</dd>
+          <dt>{{ _('Enrollees') }}</dt><dd>{{ tdoc['enroll']|default(0) }}</dd>
+          <dt>{{ _('Completed') }}</dt><dd>?</dd>
+          <dt>{{ _('Created By') }}</dt>
+          <dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
+        </dl>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

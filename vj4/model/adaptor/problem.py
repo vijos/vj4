@@ -64,9 +64,10 @@ def get_multi(*, fields=None, **kwargs):
 
 
 async def get_dict(domain_id, pids, *, fields=None):
-  pquery = {'domain_id': domain_id, 'doc_id': {'$in': list(set(pids))}}
   result = dict()
-  async for pdoc in get_multi(**pquery, fields=fields):
+  async for pdoc in get_multi(domain_id=domain_id,
+                              doc_id={'$in': list(set(pids))},
+                              fields=fields):
     result[pdoc['doc_id']] = pdoc
   return result
 
