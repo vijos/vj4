@@ -189,7 +189,6 @@ class HandlerBase(setting.SettingMixin):
       kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
     kwargs['reverse_url'] = self.reverse_url
     kwargs['datetime_span'] = self.datetime_span
-    kwargs['datetime_stamp'] = self.datetime_stamp
     return template.Environment().get_template(template_name).render(kwargs)
 
 
