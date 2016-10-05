@@ -51,3 +51,5 @@ perm_discussion: Discussions
 perm_contest: Contests
 perm_training: Trainings
 discussion_edit: Discussion Edit
+wiki_help: Help
+no_translation_warn: <blockquote class="warn">This part of content is under translation.</blockquote>
