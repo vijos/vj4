@@ -1,4 +1,6 @@
 import asyncio
+import calendar
+import datetime
 import logging
 import time
 from bson import objectid
@@ -63,16 +65,18 @@ class JudgeNoopHandler(base.Handler):
 class JudgeDataListHandler(base.Handler):
   @base.get_argument
   @base.sanitize
-  async def get(self, last: int):
+  async def get(self, last: int=0):
     # TODO(iceboy): This function looks strange.
-    # Judge will have PRIV_READ_PROBLEM_DATA, domain administrator will have PERM_READ_PROBLEM_DATA.
+    # Judge will have PRIV_READ_PROBLEM_DATA,
+    # domain administrator will have PERM_READ_PROBLEM_DATA.
     if not self.has_priv(builtin.PRIV_READ_PROBLEM_DATA):
       self.check_perm(builtin.PERM_READ_PROBLEM_DATA)
     pids = await problem.get_data_list(last)
     datalist = []
-    for did, pid in pids:
-      datalist.append({'domain_id': did, 'pid': pid})
-    self.json({'list': datalist, 'time': int(time.time())})
+    for domain_id, pid in pids:
+      datalist.append({'domain_id': domain_id, 'pid': pid})
+    self.json({'list': datalist,
+               'time': calendar.timegm(datetime.datetime.utcnow().utctimetuple())})
 
 
 @app.route('/judge/{rid}/score', 'judge_score')
