@@ -146,7 +146,7 @@ class ContestCodeHandler(base.OperationHandler):
         rnames[pdetail['rid']] = 'U{}_P{}_R{}'.format(tsdoc['uid'], pdetail['pid'], pdetail['rid'])
     output_buffer = io.BytesIO()
     zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
-    rdocs = record.get_multi(_id={'$in': list(rnames.keys())})
+    rdocs = record.get_multi(get_hidden=True, _id={'$in': list(rnames.keys())})
     async for rdoc in rdocs:
       zip_file.writestr(rnames[rdoc['_id']] + '.' + rdoc['lang'], rdoc['code'])
     # mark all files as created in Windows :p
@@ -159,6 +159,7 @@ class ContestCodeHandler(base.OperationHandler):
 
 @app.route('/contest/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
 class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -189,6 +190,7 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
 
 @app.route('/contest/{tid}/{pid}/submit', 'contest_detail_problem_submit')
 class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -224,6 +226,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
                         page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
   @base.post_argument
@@ -253,6 +256,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
 
 @app.route('/contest/{tid}/status', 'contest_status')
 class ContestStatusHandler(base.Handler, ContestStatusMixin):
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
   @base.sanitize

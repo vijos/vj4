@@ -12,6 +12,7 @@ from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
 from vj4.model import record
+from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
 from vj4.service import bus
@@ -67,11 +68,14 @@ class ProblemDetailHandler(base.Handler):
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
-    tdocs = await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list(None)
+    tdocs = await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list(None) \
+            if self.has_perm(builtin.PERM_VIEW_TRAINING) else None
+    ctdocs = await contest.get_multi(self.domain_id, pids=pid).to_list(None) \
+             if self.has_perm(builtin.PERM_VIEW_CONTEST) else None
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], None))
-    self.render('problem_detail.html', pdoc=pdoc, udoc=udoc, tdocs=tdocs,
+    self.render('problem_detail.html', pdoc=pdoc, udoc=udoc, tdocs=tdocs, ctdocs=ctdocs,
                 page_title=pdoc['title'], path_components=path_components)
 
 
@@ -113,7 +117,6 @@ class ProblemSubmitHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    pdoc = await problem.inc(self.domain_id, pid, 'num_submit', 1)
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
                            self.user['_id'], lang, code)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))

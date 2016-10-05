@@ -16,6 +16,10 @@ export default class Tab extends DOMAttachedObject {
     this.attached = false;
   }
 
+  handleClick(i) {
+    return () => this.selectTab(i);
+  }
+
   attach() {
     if (this.attached) {
       return false;
@@ -30,10 +34,13 @@ export default class Tab extends DOMAttachedObject {
       .append(this.$header)
       .append(this.$content);
 
+    let i = 0;
     for (const element of this.$dom.find('.section__tab-title')) {
       $(document.createElement('li')).text($(element).text())
         .addClass('section__tab-header-item')
+        .on('click', this.handleClick(i))
         .appendTo(this.$header);
+      ++i;
     }
 
     this.$dom.find('.section__tab-main')
@@ -47,7 +54,10 @@ export default class Tab extends DOMAttachedObject {
   }
 
   selectTab(index) {
+    this.$header.find('.section__tab-header-item').removeClass('selected');
     this.$header.find('.section__tab-header-item').eq(index).addClass('selected');
+    this.$content.find('.section__tab-main').css('display', 'none');
+    this.$content.find('.section__tab-main').eq(index).css('display', '');
   }
 
 }
