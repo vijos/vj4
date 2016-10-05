@@ -129,7 +129,7 @@
     <h1 class="section__title">{{ _('Related') }}</h1>
   </div>
   <div class="section__body typo">
-  {% if tdocs and handler.has_perm(vj4.model.builtin.PERM_VIEW_TRAINING) %}
+  {% if tdocs %}
     <p>{{ _('In following training plans') }}: </p>
     {% for tdoc in tdocs %}
     <p><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a></p>
