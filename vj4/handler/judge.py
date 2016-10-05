@@ -54,7 +54,7 @@ class JudgePlaygroundHandler(base.Handler):
 
 @app.route('/judge/noop', 'judge_noop')
 class JudgeNoopHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
+  @base.require_priv(builtin.JUDGE_PRIV)
   async def get(self):
     self.json({})
 

@@ -159,6 +159,25 @@ async def set_by_uid(uid, **kwargs):
 
 
 @argmethod.wrap
+async def set_priv(uid: int, priv: int):
+  """Set privilege. Returns doc or None."""
+  return await set_by_uid(uid, priv=priv)
+
+
+@argmethod.wrap
+async def set_superadmin(uid: int):
+  return await set_priv(uid, builtin.PRIV_ALL)
+
+
+set_superadmin = None
+
+
+@argmethod.wrap
+async def set_judge(uid: int):
+  return await set_priv(uid, builtin.JUDGE_PRIV)
+
+
+@argmethod.wrap
 async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
   prefix = prefix.lower()
   regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))
