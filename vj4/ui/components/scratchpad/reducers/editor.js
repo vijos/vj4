@@ -1,17 +1,6 @@
-const defaultCode = `
-#include <iostream>
-
-using namespace std;
-
-int main()
-{
-\treturn 0;
-}
-`.trim();
-
 export default function reducer(state = {
-  lang: 'cc',
-  code: defaultCode,
+  lang: Context.code_lang,
+  code: Context.code_template,
 }, action) {
   switch (action.type) {
   case 'SCRATCHPAD_EDITOR_UPDATE_CODE': {
