@@ -38,7 +38,7 @@
           <tbody>
           {% for pid in tdoc['pids'] %}
             <tr>
-            {% if psdict[pid] %}
+            {% if psdict[pid] and psdict['rid'] %}
             {% with rdoc=rdict[psdict[pid]['rid']] %}
             {% if handler.can_show(tdoc) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS) %}
               {{ record.render_status_td(rdoc) }}

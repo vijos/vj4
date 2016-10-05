@@ -25,7 +25,7 @@ async def user_in_problem(uid: int, domain_id: str, pid: document.convert_doc_id
                            type=constant.record.TYPE_SUBMISSION,
                            fields={'_id': 1, 'uid': 1,
                                    'status': 1, 'score': 1}).sort('_id', 1)
-  new_psdoc = {'num_submit': 0, 'status': 0, 'rid': ''}
+  new_psdoc = {'num_submit': 0, 'status': 0}
   async for rdoc in rdocs:
     new_psdoc['num_submit'] += 1
     if new_psdoc['status'] != constant.record.STATUS_ACCEPTED:
