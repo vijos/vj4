@@ -50,18 +50,19 @@ python3.5 -m vj4.server --debug
 
 > Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
 
-As an intuitive example, you may want to add a first user and problem to start:
+As an intuitive example, you may want to add a super administator and a problem to start:
 
 ```bash
 alias pm="python3.5 -m"
 pm vj4.model.user add -1 icebox 12345 icebox@iceboy.org
-pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 777
+pm vj4.model.user set_superadmin -1
+pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 1000
 ```
 
 You need to run rank script on a regular basis to maintain correct ranks for all users:
 
 ```bash
-pm vj4.job.rank rank
+pm vj4.job.rank run_all
 ```
 
 ### After Modifying Icons (`vj4/ui/misc/icons`)
