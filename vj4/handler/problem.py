@@ -414,12 +414,13 @@ class ProblemCreateHandler(base.Handler):
 @app.route('/p/{pid}/edit', 'problem_edit')
 class ProblemEditHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
@@ -429,25 +430,28 @@ class ProblemEditHandler(base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
-    await problem.edit(self.domain_id, pid, title=title, content=content)
+    pdoc = await problem.get(self.domain_id, pid)
+    if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM)
+    await problem.edit(self.domain_id, pdoc['doc_id'], title=title, content=content)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
 @app.route('/p/{pid}/settings', 'problem_settings')
 class ProblemSettingsHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
+    if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
@@ -457,37 +461,41 @@ class ProblemSettingsHandler(base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, hidden: bool=False):
-    await problem.edit(self.domain_id, pid, hidden=hidden)
+    pdoc = await problem.get(self.domain_id, pid)
+    if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM)
+    await problem.edit(self.domain_id, pdoc['doc_id'], hidden=hidden)
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
 @app.route('/p/{pid}/upload', 'problem_upload')
 class ProblemSettingsHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):
     pdoc = await problem.get(self.domain_id, pid)
+    if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM)
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     self.render('problem_upload.html', pdoc=pdoc)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, file: lambda _: _):
     pdoc = await problem.get(self.domain_id, pid)
+    if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM)
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
