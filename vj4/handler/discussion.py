@@ -127,18 +127,22 @@ class DiscussionCreateHandler(base.Handler):
 
 @app.route('/discuss/{did:\w{24}}', 'discussion_detail')
 class DiscussionDetailHandler(base.OperationHandler):
+  REPLIES_PER_PAGE = 50
+
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
+  @base.get_argument
   @base.route_argument
   @base.sanitize
-  async def get(self, *, did: document.convert_doc_id):
+  async def get(self, *, did: document.convert_doc_id, page: int=1):
     ddoc = await discussion.inc_views(self.domain_id, did)
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       dsdoc = await discussion.get_status(self.domain_id, ddoc['doc_id'], self.user['_id'])
     else:
       dsdoc = None
-    vnode, drdocs = await asyncio.gather(
+    vnode, (drdocs, pcount, drcount) = await asyncio.gather(
         discussion.get_vnode(self.domain_id, discussion.node_id(ddoc)),
-        discussion.get_list_reply(self.domain_id, ddoc['doc_id']))
+        pagination.paginate(discussion.get_multi_reply(self.domain_id, ddoc['doc_id']),
+                            page, self.REPLIES_PER_PAGE))
     uids = {ddoc['owner_uid']}
     uids.update(drdoc['owner_uid'] for drdoc in drdocs)
     for drdoc in drdocs:
@@ -151,7 +155,8 @@ class DiscussionDetailHandler(base.OperationHandler):
         (vnode['title'], node_url(self, 'discussion_node', discussion.node_id(ddoc))),
         (ddoc['title'], None))
     self.render('discussion_detail.html', page_title=ddoc['title'], path_components=path_components,
-                ddoc=ddoc, dsdoc=dsdoc, drdocs=drdocs, vnode=vnode, udict=udict, dudict=dudict)
+                ddoc=ddoc, dsdoc=dsdoc, drdocs=drdocs, page=page, pcount=pcount, drcount=drcount,
+                vnode=vnode, udict=udict, dudict=dudict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_REPLY_DISCUSSION)

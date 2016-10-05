@@ -89,6 +89,14 @@ def get_multi(get_hidden: bool=False, fields=None, **kwargs):
 
 
 @argmethod.wrap
+async def get_count(begin_id: objectid.ObjectId=None):
+  query = {}
+  if begin_id:
+    query['_id'] = {'$gte': begin_id}
+  return await get_multi(get_hidden=True, **query).count()
+
+
+@argmethod.wrap
 def get_problem_multi(domain_id: str, pid: document.convert_doc_id,
                       get_hidden: bool=False, type: int=None, *, fields=None):
   coll = db.Collection('record')

@@ -45,7 +45,7 @@
     </div>
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{{ _('{0} comments').format(ddoc['num_replies']) }}</h1>
+        <h1 class="section__title">{{ _('{0} comments').format(drcount) }}</h1>
       </div>
       <div class="section__body">
         {{ comments.render(
@@ -65,6 +65,7 @@
           reply_delete_perm = vj4.model.builtin.PERM_NONE if handler.own(ddoc, vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION) else vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY,
           reply_delete_self_perm = vj4.model.builtin.PERM_DELETE_DISCUSSION_REPLY_SELF
         ) }}
+        {{ paginator.render(page, pcount) }}
       </div>
     </div>
   </div>
