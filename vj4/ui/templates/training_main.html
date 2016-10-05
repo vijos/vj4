@@ -153,15 +153,16 @@
       </div>
       <ol class="menu">
         <li class="menu__item">
-          <a href="{{ reverse_url('training_create') }}" class="menu__link"><span class="icon icon-add"></span> New Training Plan</a>
+          <a href="{{ reverse_url('training_create') }}" class="menu__link"><span class="icon icon-add"></span> {{ _('New Training Plan') }}</a>
         </li>
+        <!-- TODO(twd2) -->
         <li class="menu__item">
-          <a href="#" class="menu__link"><span class="icon icon-crown"></span> View Owned Training Plans</a>
+          <a href="#" class="menu__link"><span class="icon icon-crown"></span> {{ _('View Owned Training Plans') }}</a>
         </li>
       </ol>
       <div class="section__body">
         <div class="typo supplementary">
-          <p>You can create your own training plans and share with others.</p>
+          <p>{{ _('You can create your own training plans and share with others.') }}</p>
         </div>
       </div>
     </div>
