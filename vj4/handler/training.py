@@ -65,7 +65,7 @@ class TrainingMixin(object):
 
 @app.route('/training', 'training_main')
 class TrainingMainHandler(base.Handler, TrainingMixin):
-  TRAININGS_PER_PAGE = 3
+  TRAININGS_PER_PAGE = 20
 
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.get_argument
