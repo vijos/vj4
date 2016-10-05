@@ -8,9 +8,12 @@ from vj4 import error
 from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import record
 from vj4.model import system
 from vj4.model import token
 from vj4.model import user
+from vj4.model.adaptor import discussion
+from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
 from vj4.util import options
 from vj4.util import validator
@@ -20,7 +23,8 @@ from vj4.handler import base
 class UserSettingsMixin(object):
   def can_view(self, udoc, key):
     privacy = udoc.get('show_' + key, next(iter(setting.SETTINGS_BY_KEY['show_' + key].range)))
-    return (privacy == constant.setting.PRIVACY_PUBLIC and True) \
+    return udoc['_id'] == self.user['_id'] \
+           or (privacy == constant.setting.PRIVACY_PUBLIC and True) \
            or (privacy == constant.setting.PRIVACY_REGISTERED_ONLY
                and self.has_priv(builtin.PRIV_USER_PROFILE)) \
            or (privacy == constant.setting.PRIVACY_SECRET
@@ -183,13 +187,29 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     udoc = await user.get_by_uid(uid)
     if not udoc:
       raise error.UserNotFoundError(uid)
-    dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_user, udoc),
+    dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_id, udoc['_id']),
                                        token.get_most_recent_session_by_uid(udoc['_id']))
     email = self.get_udoc_setting(udoc, 'mail')
     if email:
       email = email.replace('@', random.choice([' [at] ', '#']))
+    bg = random.randint(1, 21)
+    rdocs = record.get_multi(get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD),
+                             uid=uid).sort([('_id', -1)])
+    rdocs = await rdocs.to_list(10)
+    # TODO(twd2): check status, eg. test, hidden problem, ...
+    pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid).sort([('_id', -1)])
+    pcount = await pdocs.count()
+    pdocs = await pdocs.to_list(10)
+    psdocs = problem.get_multi_solution_by_uid(self.domain_id, uid)
+    pscount = await psdocs.count()
+    psdocs = await psdocs.to_list(10)
+    ddocs = discussion.get_multi(self.domain_id, owner_uid=uid)
+    dcount = await ddocs.count()
+    ddocs = await ddocs.to_list(10)
     self.render('user_detail.html', is_self_profile=is_self_profile,
-                udoc=udoc, dudoc=dudoc, sdoc=sdoc, email=email)
+                udoc=udoc, dudoc=dudoc, sdoc=sdoc, email=email, bg=bg,
+                rdocs=rdocs, pdocs=pdocs, pcount=pcount, psdocs=psdocs, pscount=pscount,
+                ddocs=ddocs, dcount=dcount)
 
 
 @app.route('/user/search', 'user_search')

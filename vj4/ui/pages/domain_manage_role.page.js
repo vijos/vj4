@@ -60,8 +60,8 @@ const page = new NamedPage('domain_manage_role', () => {
     const action = await new ConfirmDialog({
       $body: tpl`
         <div class="typo">
-          <p>${i18n('Are you sure want to delete the selected roles?')}</p>
-          <p>${i18n('Users in those roles will be removed from the domain.')}</p>
+          <p>${i18n('Confirm deleting the selected roles?')}</p>
+          <p>${i18n('Users with those roles will be removed from the domain.')}</p>
         </div>`,
     }).open();
     if (action !== 'yes') {
@@ -71,7 +71,7 @@ const page = new NamedPage('domain_manage_role', () => {
       operation: 'delete',
       role: selectedRoles,
     });
-    Notification.success(i18n('Selected roles are deleted.'));
+    Notification.success(i18n('Selected roles have been deleted.'));
     await delay(2000);
     window.location.reload();
   }

@@ -8,6 +8,7 @@ from vj4 import constant
 from vj4 import db
 from vj4 import error
 from vj4.model import document
+from vj4.model import domain
 from vj4.model import fs
 from vj4.util import argmethod
 from vj4.util import validator
@@ -19,9 +20,11 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
               hidden: bool=False):
   validator.check_title(title)
   validator.check_content(content)
-  return await document.add(domain_id, content, owner_uid,
-                            document.TYPE_PROBLEM, pid, title=title, data=data,
-                            hidden=hidden, num_submit=0, num_accept=0)
+  pid = await document.add(domain_id, content, owner_uid,
+                           document.TYPE_PROBLEM, pid, title=title, data=data,
+                           hidden=hidden, num_submit=0, num_accept=0)
+  await domain.inc_user(domain_id, owner_uid, num_problems=1)
+  return pid
 
 
 @argmethod.wrap
@@ -63,6 +66,8 @@ def get_multi(*, fields=None, **kwargs):
 async def get_dict(pdom_and_ids, *, fields=None):
   pquery = {'$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in set(pdom_and_ids)]}
   result = dict()
+  if not pquery['$or']:
+    return result
   async for pdoc in get_multi(**pquery, fields=fields).hint([('domain_id', 1),
                                                              ('doc_type', 1),
                                                              ('doc_id', 1)]):
@@ -73,6 +78,12 @@ async def get_dict(pdom_and_ids, *, fields=None):
 @argmethod.wrap
 async def get_status(domain_id: str, pid: document.convert_doc_id, uid: int, fields=None):
   return await document.get_status(domain_id, document.TYPE_PROBLEM, pid, uid, fields=fields)
+
+
+@argmethod.wrap
+async def inc_status(domain_id: str, pid: document.convert_doc_id, uid: int,
+                     key: str, value: int):
+  return await document.inc_status(domain_id, document.TYPE_PROBLEM, pid, uid, key, value)
 
 
 def get_multi_status(*, fields=None, **kwargs):
@@ -127,6 +138,13 @@ def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None
                  .sort([('vote', -1), ('doc_id', -1)])
 
 
+def get_multi_solution_by_uid(domain_id: str, uid: int, fields=None):
+  return document.get_multi(domain_id=domain_id,
+                            doc_type=document.TYPE_PROBLEM_SOLUTION,
+                            owner_uid=uid,
+                            fields=fields)
+
+
 @argmethod.wrap
 async def delete_solution(domain_id: str, psid: document.convert_doc_id):
   # TODO(twd2): -num_liked
@@ -174,6 +192,7 @@ async def vote_solution(domain_id: str, psid: document.convert_doc_id, uid: int,
   except errors.DuplicateKeyError:
     raise error.AlreadyVotedError(domain_id, psid, uid) from None
   psdoc = await document.inc(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'vote', value)
+  await domain.inc_user(domain_id, psdoc['owner_uid'], num_liked=value)
   return psdoc, pssdoc
 
 

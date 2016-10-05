@@ -6,7 +6,7 @@ about: 关于
 About: 关于
 About Vijos: 关于 Vijos
 Accepted: 已通过
-Accepted Rate: 通过率
+Accepted Ratio: 通过率
 Active Sessions: 活动会话
 Arguments: 参数
 Attend Contest: 参加比赛
@@ -57,7 +57,7 @@ Disabled: 关闭
 Discussion Nodes: 讨论节点
 Discussions: 讨论
 Don't have an account?: 还没有账户？
-Pretest Data: 对拍数据
+Pretest Data: 自测数据
 Problem Data: 题目数据
 Download: 下载
 Duration (hours): 持续时间 (小时)
@@ -95,7 +95,7 @@ Logout: 登出
 Logout All Sessions: 注销所有会话
 Logout This Session: 注销该会话
 Lost Password: 忘记密码
-Memory Cost: 内存使用
+Memory Cost: 内存占用
 Messages: 站内消息
 My Profile: 我的资料
 New Email: 新电子邮件
@@ -111,7 +111,7 @@ Operating System: 操作系统
 Password: 密码
 Password reset mail has been sent to your email.: 密码重置邮件已发送到您的电子邮箱。
 Peak Memory: 峰值内存
-Pretest?: 对拍?
+Pretest?: 自测?
 Privacy: 隐私
 Problem: 题目
 Problem Set: 题库
@@ -141,6 +141,7 @@ SIGN IN: 登录
 Save All Changes: 保存所有修改
 Saved session: 已保存的会话
 Score: 分数
+Secret: 保密
 Secret (visible to admins): 保密（对管理员可见）
 Security: 安全
 Select a node to create discussion.: 选择一个节点来发表讨论。
@@ -158,7 +159,7 @@ Sign up mail has been sent to your email.: 注册邮件已经发送到您的电�
 Solutions: 题解
 'Solved {0} problems, RP: {1} (No. {2})': '解决了 {0} 道题目，RP: {1} (No. {2})'
 Sorry: 对不起
-Sorry, there is no problem in the problem set: 题库中目前没有题目
+Sorry, there is no problem in the problem set: 题库中没有题目
 Solutions Liked: 题解被赞
 Statistics: 统计
 Status: 状态
@@ -172,6 +173,8 @@ Submission Statistics: 递交统计
 Submission: 递交
 Submissions: 递交
 Submit: 递交
+'# Submissions': '递交数'
+'# My Submissions': '我的递交数'
 Login to Submit: 请登录后递交
 No Permission to Submit: 您没有权限递交
 Submit At: 递交时间
@@ -241,9 +244,9 @@ problem_settings: 题目设置
 record_detail: 记录详情
 record_main: 评测队列
 reply: 回复
-setting_usage: 使用
+setting_usage: 使用偏好
 setting_info: 个人信息
-setting_display: 显示
+setting_display: 显示偏好
 setting_privacy: 隐私
 title: 标题
 training_main: 训练
@@ -256,7 +259,7 @@ user_register: 注册
 '{0} solutions': '{0} 条题解'
 '{0} views': '{0} 次查看'
 New: 创建
-Pretest: 对拍
+Pretest: 自测
 Add: 添加
 Remove: 移除
 Add new data: 添加新数据
@@ -267,11 +270,11 @@ Records: 评测记录
 Refresh Records: 刷新评测记录
 Refresh: 刷新
 Report: 举报
-Run Pretest: 运行对拍
-Pretest Your Code: 使用对拍数据测试
+Run Pretest: 运行自测
+Pretest Your Code: 使用自定义数据测试
 Submit Solution: 递交评测
 Submit Your Code: 递交代码进行正式评测
-Toggle Pretest Panel: 切换对拍面板
+Toggle Pretest Panel: 切换自测面板
 Toggle Records Panel: 切换评测记录面板
 Recent {0} Records: 最近 {0} 条记录
 You have not submitted any solutions for this problem: 您在该题下没有递交过任何解答
@@ -384,13 +387,14 @@ Remove Selected User from Domain: 将所选用户移出域
 Set Roles for Selected User: 设置所选用户的角色
 Create Role: 创建角色
 Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
-'Built-in: Effective for visitors that are not logged in': '内置: 对未登录的游客有效'
-'Built-in: Effective for registered users who are not members of the domain': '内置: 对域外注册用户有效'
-User defined role: 用户定义的角色
+'Built-in: Valid for visitors': '内置: 对未登录的游客有效'
+'Built-in: Valid for registered users who are not members of the domain': '内置: 对域外注册用户有效'
+User-defined role: 用户定义的角色
 Users: 用户
 Delete Selected Roles: 删除所选角色
 Owner: 所有者
 Permission: 权限
+Permissions: 权限
 
 View this domain: 查看此域
 Edit permissions of a role: 修改角色权限
@@ -462,11 +466,11 @@ We will check code similarity after this contest.: 我们会在赛后检查代�
 Dataset: 测试数据
 'Current dataset: {0}': '当前测试数据: {0}'
 Upload: 上传
-No dataset present.: 暂无测试数据。
+No dataset at present.: 暂无测试数据。
 All: 全部
 All {0} Contests: 所有 {0} 比赛
 Show: 显示
-There are no contests...: 没有比赛。
+There are no contests...: 没有比赛…
 View Contest: 查看比赛
 Cancel Score: 取消成绩
 score canceled: 成绩取消
@@ -484,18 +488,18 @@ New Training Plan: 新训练计划
 View Owned Training Plans: 查看自己的训练计划
 You can create your own training plans and share with others.: 您可以创建您自己的训练计划并且与他人分享。
 Set Role: 设置角色
-Role for selected users: 为所选用户设置角色
+Set Roles for selected users: 为所选用户设置角色
 Please select at least one user to perform this operation.: 请选择至少一个用户来进行操作。
-Are you sure want to remove the selected users from this domain?: 您确定将所选用户从此域中移除吗？
-Their account will not be deleted and they will have default role when visiting this domain.: 他们的账号不会被删除，他们之后将以 default 角色访问此域。
-Selected users are removed from the domain.: 所选用户已从此域中移除。
-Role updated to {0} for selected users.: 所选用户角色已更新为 {0}。
-Role updated to {0}.: 角色已更新为 {0}。
-Are you sure want to delete the selected roles?: 您确定删除所选角色吗？
-Users in those roles will be removed from the domain.: 角色的用户将从此域中移除。
-Selected roles are deleted.: 所选角色已删除。
+Confirm removing the selected users from this domain?: 您确定将所选用户从此域中移除吗？
+Their account will not be deleted and they will be with the default role when visiting this domain.: 他们的账号不会被删除，并且之后将以 default 角色访问此域。
+Selected users have been removed from the domain.: 所选用户已从此域中移除。
+Role has been updated to {0} for selected users.: 所选用户角色已更新为 {0}。
+Role has been updated to {0}.: 角色已更新为 {0}。
+Confirm deleting the selected roles?: 您确定删除所选角色吗？
+Users with those roles will be removed from the domain.: 拥有这些角色的用户将从此域中移除。
+Selected roles have been deleted.: 所选角色已删除。
 Please select at least one role to perform this operation.: 请选择至少一个角色来进行操作。
-Domain {0} is bulit-in and it cannot be modified.: 域 {0} 为内置，不可修改。
+Domain {0} is bulit-in and cannot be modified.: 域 {0} 为内置，不可修改。
 perm_general: 一般
 perm_problem: 题库
 perm_record: 记录
@@ -506,7 +510,7 @@ perm_training: 训练
 discussion_edit: 编辑讨论
 At least 4 characters: 至少 4 个字符
 Contact: 联系
-Click here to chat with me: 点击这里给我发消息
+Click here to chat with me: 点击这里与我聊天
 Partic.: 参赛人数
 Terms of Service: 服务条款
 wiki_help: 帮助
@@ -530,3 +534,4 @@ Difficulty Algorithm: 难度算法
 Dataset Format: 测试数据集格式
 Forgot Password and/or Username: 忘记密码和/或用户名
 Reset Password or Find Username: 重置密码或找回用户名
+'{0} discussions': '{0} 条讨论'

@@ -51,7 +51,7 @@ class NotFoundError(UserFacingError):
 class BuiltinDomainError(ForbiddenError):
   @property
   def message(self):
-    return 'Domain {0} is bulit-in and it cannot be modified.'
+    return 'Domain {0} is bulit-in and cannot be modified.'
 
 
 class ValidationError(ForbiddenError):

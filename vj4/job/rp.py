@@ -16,7 +16,7 @@ RP_PROBLEM_BASE = 100.0
 # minimum rp for each problem
 RP_PROBLEM_MIN = 7.0
 # rp calculate range
-# (if count of accepted user is greater, will use RP_PROBLEM_MIN for the problem)
+# (if count of accepted user is greater, will use RP_PROBLEM_MIN for this problem for each user)
 RP_PROBLEM_MAX_USER = 1500
 RP_MIN_DELTA = 10 ** (-9)
 
@@ -35,6 +35,11 @@ def get_rp_func(pdoc):
     return lambda o: max(rp_base * modulus_user(o), RP_PROBLEM_MIN)
   else:
     return lambda o: RP_PROBLEM_MIN
+
+
+def get_rp_expect(pdoc):
+  new_pdoc = {'num_accept': pdoc['num_accept'] + 1}
+  return get_rp_func(new_pdoc)(new_pdoc['num_accept'])
 
 
 @argmethod.wrap
@@ -94,6 +99,8 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
 
 @domainjob.wrap
 async def recalc(domain_id: str):
+  user_coll = db.Collection('domain.user')
+  await user_coll.update({'domain_id': domain_id}, {'$set': {'rp': 0.0}}, multi=True)
   pdocs = problem.get_multi(domain_id=domain_id,
                             fields={'_id': 1, 'doc_id': 1, 'num_accept': 1}).sort('doc_id', 1)
   uddoc_updates = {}
@@ -121,14 +128,13 @@ async def recalc(domain_id: str):
       _logger.info('Committing')
       await status_bulk.execute()
   # users' num_submit, num_accept
-  user_coll = db.Collection('domain.user')
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Updating users')
   for uid, uddoc_update in uddoc_updates.items():
     execute = True
-    (user_bulk.find({'domain_id': domain_id, 'uid': uid})
-     .upsert().update_one({'$set': uddoc_update}))
+    user_bulk.find({'domain_id': domain_id, 'uid': uid}) \
+             .upsert().update_one({'$set': uddoc_update})
   if execute:
     _logger.info('Committing')
     await user_bulk.execute()

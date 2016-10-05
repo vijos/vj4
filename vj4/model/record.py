@@ -38,6 +38,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
                            'type': type})
   await asyncio.gather(queue.publish('judge', rid=rid),
                        bus.publish('record_change', rid),
+                       problem.inc_status(domain_id, pid, uid, 'num_submit', 1),
                        problem.inc(domain_id, pid, 'num_submit', 1),
                        domain.inc_user(domain_id, uid, num_submit=1))
   return rid
@@ -62,16 +63,12 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
                                            '$set': {'status': constant.record.STATUS_WAITING,
                                                     'score': 0,
                                                     'time_ms': 0,
-                                                    'memory_kb': 0}},
+                                                    'memory_kb': 0,
+                                                    'rejudged': True}},
                                    new=False)
   post_coros = [bus.publish('record_change', doc['_id'])]
   if enqueue:
     post_coros.append(queue.publish('judge', rid=doc['_id']))
-  if doc['status'] == constant.record.STATUS_ACCEPTED:
-    # FIXME(twd2): user may be accepted before or later,
-    # in this situation we shouldn't decrease num_accept
-    post_coros.append(problem.inc(doc['domain_id'], doc['pid'], 'num_accept', -1))
-    post_coros.append(domain.inc_user(doc['domain_id'], doc['uid'], num_accept=-1))
   await asyncio.gather(*post_coros)
 
 
@@ -85,8 +82,9 @@ def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fie
 
 
 @argmethod.wrap
-def get_multi(fields=None, **kwargs):
+def get_multi(get_hidden: bool=False, fields=None, **kwargs):
   coll = db.Collection('record')
+  kwargs['hidden'] = False if not get_hidden else {'$gte': False}
   return coll.find(kwargs, fields=fields)
 
 
@@ -170,6 +168,9 @@ async def ensure_indexes():
   await coll.ensure_index([('hidden', 1),
                            ('_id', -1)])
   await coll.ensure_index([('hidden', 1),
+                           ('uid', 1),
+                           ('_id', -1)])
+  await coll.ensure_index([('hidden', 1),
                            ('domain_id', 1),
                            ('pid', 1),
                            ('uid', 1),
@@ -177,6 +178,11 @@ async def ensure_indexes():
   # for job record
   await coll.ensure_index([('domain_id', 1),
                            ('pid', 1),
+                           ('type', 1),
+                           ('_id', 1)])
+  await coll.ensure_index([('domain_id', 1),
+                           ('pid', 1),
+                           ('uid', 1),
                            ('type', 1),
                            ('_id', 1)])
   # TODO(iceboy): Add more indexes.

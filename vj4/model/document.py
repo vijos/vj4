@@ -285,6 +285,20 @@ async def capped_inc_status(domain_id: str,
   return doc
 
 
+@argmethod.wrap
+async def inc_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int,
+                     key: str, value: int):
+  coll = db.Collection('document.status')
+  doc = await coll.find_and_modify(query={'domain_id': domain_id,
+                                          'doc_type': doc_type,
+                                          'doc_id': doc_id,
+                                          'uid': uid},
+                                   update={'$inc': {key: value}},
+                                   upsert=True,
+                                   new=True)
+  return doc
+
+
 async def rev_push_status(domain_id, doc_type, doc_id, uid, key, value):
   coll = db.Collection('document.status')
   doc = await coll.find_and_modify(query={'domain_id': domain_id,
@@ -298,6 +312,18 @@ async def rev_push_status(domain_id, doc_type, doc_id, uid, key, value):
   return doc
 
 
+async def rev_init_status(domain_id, doc_type, doc_id, uid):
+  coll = db.Collection('document.status')
+  doc = await coll.find_and_modify(query={'domain_id': domain_id,
+                                          'doc_type': doc_type,
+                                          'doc_id': doc_id,
+                                          'uid': uid},
+                                   update={'$inc': {'rev': 1}},
+                                   upsert=True,
+                                   new=True)
+  return doc
+
+
 async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, **kwargs):
   coll = db.Collection('document.status')
   doc = await coll.find_and_modify(query={'domain_id': domain_id,
@@ -305,7 +331,8 @@ async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, **kwargs):
                                           'doc_id': doc_id,
                                           'uid': uid,
                                           'rev': rev},
-                                   update={'$set': kwargs},
+                                   update={'$set': kwargs,
+                                           '$inc': {'rev': 1}},
                                    new=True)
   return doc
 
@@ -316,6 +343,10 @@ async def ensure_indexes():
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('doc_id', 1)], unique=True)
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('owner_uid', 1),
+                           ('doc_id', -1)])
   # for problem solution
   await coll.ensure_index([('domain_id', 1),
                            ('doc_type', 1),
