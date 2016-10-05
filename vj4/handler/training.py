@@ -166,11 +166,12 @@ class TrainingCreateHandler(base.Handler):
 @app.route('/training/{tid}/edit', 'training_edit')
 class TrainingEditHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_TRAINING)
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc = await training.get(self.domain_id, tid)
+    if not self.own(tdoc, builtin.PERM_EDIT_TRAINING_SELF):
+      self.check_perm(builtin.PERM_EDIT_TRAINING)
     dag = json.encode_pretty(tdoc['dag'])
     path_components = self.build_path(
         (self.translate('training_main'), self.reverse_url('training_main')),
@@ -180,13 +181,15 @@ class TrainingEditHandler(base.Handler):
                 page_title=tdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_TRAINING)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, tid: objectid.ObjectId, title: str, content: str, dag: str):
+    tdoc = await training.get(self.domain_id, tid)
+    if not self.own(tdoc, builtin.PERM_EDIT_TRAINING_SELF):
+      self.check_perm(builtin.PERM_EDIT_TRAINING)
     dag = _parse_dag_json(dag)
     # TODO(twd2): recalc status
-    await training.edit(self.domain_id, tid, title=title, content=content, dag=dag)
+    await training.edit(self.domain_id, tdoc['doc_id'], title=title, content=content, dag=dag)
     self.json_or_redirect(self.reverse_url('training_detail', tid=tid))

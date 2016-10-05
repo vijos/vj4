@@ -44,12 +44,16 @@
                   <span class="icon icon-comment--text"></span> ???
                 </li>
                 <li>
-                {% if not tsdict[tdoc['doc_id']]['done'] %}
+                {% if tsdict[tdoc['doc_id']]['enroll'] %}
+                  {% if not tsdict[tdoc['doc_id']]['done'] %}
                   <span class="icon training-status--icon progress"></span>
                   <span class="training-status--text progress">{{ _('Completed') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
-                {% else %}
+                  {% else %}
                   <span class="icon training-status--icon done"></span>
                   <span class="training-status--text done">{{ _('Completed') }} 100%</span>
+                  {% endif %}
+                {% elif handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                  <span class="icon training-status--icon outside"></span> <span class="training-status--text outside">{{ _('Not Enrolled') }}</span>
                 {% endif %}
                 </li>
               </ul>
@@ -61,6 +65,7 @@
     </div>
   </div>
   <div class="large-3 columns">
+  {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Enrolled') }}</h1>
@@ -83,70 +88,8 @@
         </ol>
       </div>
     </div>
-    <div class="section side">
-      <div class="section__header">
-        <h1 class="section__title">{{ _('Monthly Popular') }}</h1>
-      </div>
-      <div class="section__body">
-        <ol class="popular secondary training__list">
-          <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos :)</a></h1>
-            <ul class="supplementary list">
-              <li>
-                <span class="icon icon-user--multiple"></span> 30
-              </li>
-              <li class="training-status--text outside">
-                <span class="icon training-status--icon outside"></span> 未参与
-              </li>
-            </ul>
-          </li>
-          <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构8</a></h1>
-            <ul class="supplementary list">
-              <li>
-                <span class="icon icon-user--multiple"></span> 25
-              </li>
-              <li class="training-status--text progress">
-                <span class="icon training-status--icon progress"></span> 已完成 33%
-              </li>
-            </ul>
-          </li>
-          <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构4</a></h1>
-            <ul class="supplementary list">
-              <li>
-                <span class="icon icon-user--multiple"></span> 22
-              </li>
-              <li class="training-status--text outside">
-                <span class="icon training-status--icon outside"></span> 未参与
-              </li>
-            </ul>
-          </li>
-          <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构1</a></h1>
-            <ul class="supplementary list">
-              <li>
-                <span class="icon icon-user--multiple"></span> 17
-              </li>
-              <li class="training-status--text done">
-                <span class="icon training-status--icon done"></span> 已完成 100%
-              </li>
-            </ul>
-          </li>
-          <li class="training__item">
-            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid='') }}" data-emoji-enabled>Vijos 基础算法与数据结构5</a></h1>
-            <ul class="supplementary list">
-              <li>
-                <span class="icon icon-user--multiple"></span> 7
-              </li>
-              <li class="training-status--text outside">
-                <span class="icon training-status--icon outside"></span> 未参与
-              </li>
-            </ul>
-          </li>
-        </ol>
-      </div>
-    </div>
+  {% endif %}
+  {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_TRAINING) %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Create Training Plan') }}</h1>
@@ -164,6 +107,45 @@
         <div class="typo supplementary">
           <p>{{ _('You can create your own training plans and share with others.') }}</p>
         </div>
+      </div>
+    </div>
+  {% endif %}
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Monthly Popular') }}</h1>
+      </div>
+      <div class="section__body">
+        <ol class="popular secondary training__list">
+        {% for tdoc in mp_tdocs %}
+          <li class="training__item">
+            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+            <ul class="supplementary list">
+              <li>
+                <span class="icon icon-user--multiple"></span> {{ tdoc['enroll'] }}
+              </li>
+            {% if tsdict[tdoc['doc_id']]['enroll'] %}
+              {% if not tsdict[tdoc['doc_id']]['done'] %}
+              <li class="training-status--text progress">
+                <span class="icon training-status--icon progress"></span>
+                <span class="training-status--text progress">{{ _('Completed') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
+              </li>
+              {% else %}
+              <li class="training-status--text done">
+                <span class="icon training-status--icon done"></span>
+                <span class="training-status--text done">{{ _('Completed') }} 100%</span>
+              </li>
+              {% endif %}
+            {% elif handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+              <li class="training-status--text outside">
+                <span class="icon training-status--icon outside"></span> {{ _('Not Enrolled') }}
+              <li class="training-status--text outside">
+            {% endif %}
+            </ul>
+          </li>
+        {% else %}
+          <li class="training__item">{{ _('Not Available') }}</li>
+        {% endfor %}
+        </ol>
       </div>
     </div>
   </div>

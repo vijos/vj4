@@ -527,7 +527,6 @@ Create training plans: 创建训练计划
 Edit training plans: 修改训练计划
 Edit own training plans: 修改自己的训练计划
 Click here to chat with me: 点击这里与我聊天
-Partic.: 参赛人数
 Terms of Service: 服务条款
 wiki_help: 帮助
 Discussion: 讨论
@@ -554,3 +553,8 @@ In following contests: 在下列比赛中
 View Owned Problems: 查看自己的题目
 Completed: 已完成
 Enrollees: 参加人数
+Monthly Popular: 月度最受欢迎
+Enroll Training: 参加训练
+Plan: 计划
+training_edit: 编辑训练
+Not Enrolled: 未参加

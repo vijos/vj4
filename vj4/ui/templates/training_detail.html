@@ -32,12 +32,14 @@
               <a href="javascript:;" name="training__section__expand" class="expanded--hidden"><span class="icon icon-expand_more"></span> {{ _('expand') }}</a>
               <a href="javascript:;" name="training__section__collapse" class="collapsed--hidden"><span class="icon icon-expand_less"></span> {{ _('collapse') }}</a>
             </li>
+            <!--
             <li>
               递交了 ? 次完成该章节 (TOP ?%)
             </li>
             <li>
               第 ? 个完成该章节 (总计 ? 用户完成)
             </li>
+            -->
           </ul>
         </div>
         <div class="training__section__detail">
@@ -120,7 +122,7 @@
     </div>
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">0 条回复</h1>
+        <h1 class="section__title">{{ _('{0} comments').format(0) }}</h1>
       </div>
       <div class="section__body">
         <p>foo</p>
@@ -131,7 +133,7 @@
     <div class="section side">
       <div>
         <ol>
-        {% if not tsdoc['enroll'] %}
+        {% if not tsdoc['enroll'] and handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
           <li class="menu__item">
             <form action="" method="POST">
               <input type="hidden" name="operation" value="enroll">
@@ -155,8 +157,8 @@
       </div>
       <div class="section__body typo">
         <dl class="large horizontal">
-          <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Completed') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}({{ _('None') }}){% endif %}</dd>
-          <dt>{{ _('Progress') }}</dt><dd>{{ _('Completed') }} {{ (100 * done_pids|length / pids|length)|round|int }}%</dd>
+          <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Completed') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}{{ _('Not Enrolled') }}{% endif %}</dd>
+          <dt>{{ _('Progress') }}</dt><dd>{{ _('Completed') }} {{ (100 * tsdoc['done_pids']|length / pids|length)|round|int }}%</dd>
           <dt>{{ _('Enrollees') }}</dt><dd>{{ tdoc['enroll']|default(0) }}</dd>
           <dt>{{ _('Completed') }}</dt><dd>?</dd>
         </dl>
