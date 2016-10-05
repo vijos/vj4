@@ -170,19 +170,20 @@ class ProblemPretestConnection(base.Connection):
 
 @app.route('/p/{pid}/solution', 'problem_solution')
 class ProblemSolutionHandler(base.OperationHandler):
-  SOLUTIONS_PER_PAGE = 30
+  SOLUTIONS_PER_PAGE = 20
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
+  @base.get_argument
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id, page: int=1):
-    skip = (page - 1) * self.SOLUTIONS_PER_PAGE
-    limit = self.SOLUTIONS_PER_PAGE
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     pdoc = await problem.get(self.domain_id, pid, uid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    psdocs = await problem.get_list_solution(self.domain_id, pdoc['doc_id'], skip=skip, limit=limit)
+    psdocs, pcount, pscount = await pagination.paginate(
+        problem.get_multi_solution(self.domain_id, pdoc['doc_id']),
+        page, self.SOLUTIONS_PER_PAGE)
     uids = {pdoc['owner_uid']}
     uids.update(psdoc['owner_uid'] for psdoc in psdocs)
     for psdoc in psdocs:
@@ -192,13 +193,15 @@ class ProblemSolutionHandler(base.OperationHandler):
         user.get_dict(uids),
         domain.get_dict_user_by_uid(self.domain_id, uids),
         problem.get_dict_solution_status(
-            ((psdoc['domain_id'], psdoc['doc_id']) for psdoc in psdocs), self.user['_id']))
+            self.domain_id, (psdoc['doc_id'] for psdoc in psdocs), self.user['_id']))
+    dudict[self.user['_id']] = self.domain_user
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
         (self.translate('problem_solution'), None))
     self.render('problem_solution.html', path_components=path_components,
-                pdoc=pdoc, psdocs=psdocs, udict=udict, dudict=dudict, pssdict=pssdict)
+                pdoc=pdoc, psdocs=psdocs, page=page, pcount=pcount, pscount=pscount,
+                udict=udict, dudict=dudict, pssdict=pssdict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM_SOLUTION)
