@@ -10,6 +10,7 @@ from vj4 import constant
 from vj4 import job
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import opcount
 from vj4.model import queue
 from vj4.model import record
 from vj4.model.adaptor import contest
@@ -22,6 +23,8 @@ _logger = logging.getLogger(__name__)
 
 
 async def _post_judge(rdoc):
+  await opcount.force_inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(rdoc['uid']),
+                          operations=rdoc['time_ms'])
   accept = rdoc['status'] == constant.record.STATUS_ACCEPTED
   post_coros = [bus.publish('record_change', rdoc['_id'])]
   # TODO(twd2): ignore no effect statuses like system error, ...
@@ -123,8 +126,18 @@ class JudgeNotifyConnection(base.Connection):
     # This callback runs in the receiver loop of the amqp connection. Should not block here.
     async def start():
       # TODO(iceboy): Error handling?
-      rdoc = await record.begin_judge(rid, self.user['_id'], self.id, constant.record.STATUS_FETCHED)
+      rdoc = await record.begin_judge(rid, self.user['_id'], self.id,
+                                      constant.record.STATUS_FETCHED)
       if rdoc:
+        used_time = await opcount.get(**opcount.OPS['run_code'],
+                                      ident=opcount.PREFIX_USER + str(rdoc['uid']))
+        if used_time >= opcount.OPS['run_code']['max_operations']:
+          await asyncio.gather(
+              record.end_judge(rid, self.user['_id'], self.id,
+                               constant.record.STATUS_CANCELED, 0, 0, 0),
+              self.channel.basic_client_ack(tag))
+          await bus.publish('record_change', rid)
+          return
         self.rids[tag] = rdoc['_id']
         self.send(rid=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
                   lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])

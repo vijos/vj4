@@ -11,6 +11,7 @@ from vj4.model import user
 from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
+from vj4.model import opcount
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
@@ -117,6 +118,7 @@ class ProblemSubmitHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
+    await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdoc = await problem.get(self.domain_id, pid)
     if pdoc.get('hidden', False):
@@ -135,7 +137,7 @@ class ProblemPretestHandler(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str,
                  data_input: str, data_output: str):
-    # TODO(twd2): check status, eg. test, hidden problem, ...
+    await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
     pdoc = await problem.get(self.domain_id, pid)
     # don't need to check hidden status
     content = list(zip(self.request.POST.getall('data_input'),

@@ -12,6 +12,7 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
+from vj4.model import opcount
 from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import discussion
@@ -135,7 +136,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
 class ContestCodeHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_READ_RECORD_CODE)
-  @base.limit_rate('contest_code', 3600, 60)
+  @base.limit_rate('contest_code')
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
@@ -238,6 +239,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
   @base.sanitize
   async def post(self, *,
                  tid: objectid.ObjectId, pid: document.convert_doc_id, lang: str, code: str):
+    await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid))
     tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])

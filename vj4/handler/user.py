@@ -45,7 +45,7 @@ class UserRegisterHandler(base.Handler):
     self.render('user_register.html')
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
-  @base.limit_rate('user_register', 3600, 60)
+  @base.limit_rate('user_register')
   @base.post_argument
   @base.sanitize
   async def post(self, *, mail: str):
@@ -97,7 +97,7 @@ class UserLostpassHandler(base.Handler):
     self.render('user_lostpass.html')
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
-  @base.limit_rate('user_register', 3600, 60)
+  @base.limit_rate('user_register')
   @base.post_argument
   @base.sanitize
   async def post(self, *, mail: str):
