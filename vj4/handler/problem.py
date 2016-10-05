@@ -100,12 +100,15 @@ class ProblemSubmitHandler(base.Handler):
           .get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
           .sort([('_id', -1)]) \
           .to_list(10)
-    path_components = self.build_path(
-        (self.translate('problem_main'), self.reverse_url('problem_main')),
-        (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
-        (self.translate('problem_submit'), None))
-    self.json_or_render('problem_submit.html', pdoc=pdoc, udoc=udoc, rdocs=rdocs,
-                        page_title=pdoc['title'], path_components=path_components)
+    if not self.prefer_json:
+      path_components = self.build_path(
+          (self.translate('problem_main'), self.reverse_url('problem_main')),
+          (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
+          (self.translate('problem_submit'), None))
+      self.render('problem_submit.html', pdoc=pdoc, udoc=udoc, rdocs=rdocs,
+                  page_title=pdoc['title'], path_components=path_components)
+    else:
+      self.json({'rdocs': rdocs})
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)

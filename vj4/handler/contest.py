@@ -216,14 +216,18 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
                           .to_list(10)
     else:
       rdocs = []
-    path_components = self.build_path(
-        (self.translate('contest_main'), self.reverse_url('contest_main')),
-        (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
-        (pdoc['title'], self.reverse_url('contest_detail_problem', tid=tid, pid=pid)),
-        (self.translate('contest_detail_problem_submit'), None))
-    self.json_or_render('problem_submit.html', tdoc=tdoc, pdoc=pdoc, rdocs=rdocs,
-                        tsdoc=tsdoc, udoc=udoc, attended=attended,
-                        page_title=pdoc['title'], path_components=path_components)
+    if not self.prefer_json:
+      path_components = self.build_path(
+          (self.translate('contest_main'), self.reverse_url('contest_main')),
+          (tdoc['title'], self.reverse_url('contest_detail', tid=tid)),
+          (pdoc['title'], self.reverse_url('contest_detail_problem', tid=tid, pid=pid)),
+          (self.translate('contest_detail_problem_submit'), None))
+      self.render('problem_submit.html', tdoc=tdoc, pdoc=pdoc, rdocs=rdocs,
+                  tsdoc=tsdoc, udoc=udoc, attended=attended,
+                  page_title=pdoc['title'], path_components=path_components)
+    else:
+      self.json({'rdocs': rdocs})
+
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
