@@ -49,7 +49,7 @@
               <p>该章节目前不可挑战，请先完成以下章节：</p>
               <ul>
               {% for nid in node['require_nids'] %}
-                <li>{{ _('Section') }} {{ _(nid) }}. {{ ndict[nid]['title'] }} (完成度 {{ nsdict[nid]['progress'] }}%)</li>
+                <li>{{ _('Section') }} {{ _(nid) }}. {{ ndict[nid]['title'] }} ({{ _('Completed') }} {{ nsdict[nid]['progress'] }}%)</li>
               {% endfor %}
               </ul>
             </blockquote>

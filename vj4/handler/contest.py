@@ -314,9 +314,10 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
     if begin_at >= end_at:
       raise error.ValidationError('duration')
     pids = list(set(map(document.convert_doc_id, pids.split(','))))
-    pdocs = (await problem.get_multi(domain_id=self.domain_id, fields={'doc_id': 1}, doc_id={'$in': pids})
-             .sort('doc_id', 1)
-             .to_list(None))
+    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
+                                    fields={'doc_id': 1}) \
+                         .sort('doc_id', 1) \
+                         .to_list(None)
     exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
     if len(pids) != len(exist_pids):
       for pid in pids:

@@ -53,7 +53,7 @@
             {% endif %}
               <td class="col--problem">
                 #{{ loop.index }}:
-                {{ problem.render_problem_title(pdict[(tdoc['domain_id'], pid)], tdoc=tdoc) }}
+                {{ problem.render_problem_title(pdict[(tdoc['domain_id'], pid)], tdoc=tdoc, show_invisible_flag=false) }}
               </td>
             </tr>
           {% endfor %}

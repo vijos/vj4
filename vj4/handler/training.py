@@ -40,8 +40,7 @@ class TrainingMixin(object):
   def get_pids(self, tdoc):
     pids = set()
     for node in tdoc['dag']:
-      for pid in node['pids']:
-        pids.add(pid)
+      pids.update(node['pids'])
     return list(pids)
 
   def is_done(self, node, done_nids, done_pids):
@@ -144,7 +143,7 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
 
 
 @app.route('/training/create', 'training_create')
-class TrainingCreateHandler(base.Handler):
+class TrainingCreateHandler(base.Handler, TrainingMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_TRAINING)
   async def get(self):
@@ -157,14 +156,26 @@ class TrainingCreateHandler(base.Handler):
   @base.sanitize
   async def post(self, *, title: str, content: str, dag: str):
     dag = _parse_dag_json(dag)
-    # TODO(twd2): calc status
+    pids = self.get_pids({'dag': dag})
+    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
+                                    fields={'doc_id': 1, 'hidden': 1}) \
+                         .sort('doc_id', 1) \
+                         .to_list(None)
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
+    for pdoc in pdocs:
+      if pdoc.get('hidden', False):
+        self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     tid = await training.add(self.domain_id, title, content, self.user['_id'],
                              dag=dag)
     self.json_or_redirect(self.reverse_url('training_detail', tid=tid))
 
 
 @app.route('/training/{tid}/edit', 'training_edit')
-class TrainingEditHandler(base.Handler):
+class TrainingEditHandler(base.Handler, TrainingMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
   @base.sanitize
@@ -190,6 +201,18 @@ class TrainingEditHandler(base.Handler):
     if not self.own(tdoc, builtin.PERM_EDIT_TRAINING_SELF):
       self.check_perm(builtin.PERM_EDIT_TRAINING)
     dag = _parse_dag_json(dag)
-    # TODO(twd2): recalc status
+    pids = self.get_pids({'dag': dag})
+    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
+                                    fields={'doc_id': 1, 'hidden': 1}) \
+                         .sort('doc_id', 1) \
+                         .to_list(None)
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
+    for pdoc in pdocs:
+      if pdoc.get('hidden', False):
+        self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     await training.edit(self.domain_id, tdoc['doc_id'], title=title, content=content, dag=dag)
     self.json_or_redirect(self.reverse_url('training_detail', tid=tid))
