@@ -17,6 +17,9 @@
           </select>
         </div>
       </div>
+    {% if not tdocs %}
+      {{ nothing.render('Sorry, there is no training plan.') }}
+    {% else %}
       <ol class="section__list all primary training__list">
         {% for tdoc in tdocs %}
         <li class="section__list__item training__item">
@@ -62,6 +65,8 @@
         </li>
         {% endfor %}
       </ol>
+      {{ paginator.render(page, tpcount, add_qs=qs) }}
+    {% endif %}
     </div>
   </div>
   <div class="large-3 columns">

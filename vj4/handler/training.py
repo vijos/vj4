@@ -13,6 +13,7 @@ from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
 from vj4.handler import base
 from vj4.util import json
+from vj4.util import pagination
 
 
 def _parse_dag_json(dag):
@@ -64,9 +65,18 @@ class TrainingMixin(object):
 
 @app.route('/training', 'training_main')
 class TrainingMainHandler(base.Handler, TrainingMixin):
+  TRAININGS_PER_PAGE = 3
+
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
-  async def get(self):
-    tdocs = await training.get_multi(self.domain_id).to_list(None)
+  @base.get_argument
+  @base.sanitize
+  async def get(self, *, sort: str='', page: int=1):
+    if sort:
+      qs = 'sort={0}'.format(sort)
+    else:
+      qs = ''
+    tdocs, tpcount, _ = await pagination.paginate(training.get_multi(self.domain_id),
+                                                  page, self.TRAININGS_PER_PAGE)
     tids = set(tdoc['doc_id'] for tdoc in tdocs)
     tsdict = dict()
     tdict = dict()
@@ -83,7 +93,8 @@ class TrainingMainHandler(base.Handler, TrainingMixin):
         tdict = await training.get_dict(self.domain_id, enrolled_tids)
     for tdoc in tdocs:
       tdict[tdoc['doc_id']] = tdoc
-    self.render('training_main.html', tdocs=tdocs, tsdict=tsdict, tdict=tdict)
+    self.render('training_main.html', tdocs=tdocs, page=page, tpcount=tpcount, qs=qs,
+                tsdict=tsdict, tdict=tdict)
 
 
 @app.route('/training/{tid:\w{24}}', 'training_detail')
