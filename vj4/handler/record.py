@@ -1,6 +1,8 @@
 import asyncio
+import calendar
 import datetime
 import io
+import struct
 import zipfile
 from bson import objectid
 
@@ -28,7 +30,23 @@ class RecordMainHandler(base.Handler):
     udict, pdict = await asyncio.gather(
         user.get_dict(rdoc['uid'] for rdoc in rdocs),
         problem.get_dict((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs))
-    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict)
+    # statistics
+    statistics = None
+    if self.has_priv(builtin.PRIV_VIEW_JUDGE_STATISTICS):
+      ts = calendar.timegm(datetime.datetime.utcnow().utctimetuple())
+      day_count, week_count, month_count, year_count, rcount = await asyncio.gather(
+          record.get_count(objectid.ObjectId(
+              struct.pack('>i', ts - 24 * 3600) + struct.pack('b', -1) * 8)),
+          record.get_count(objectid.ObjectId(
+              struct.pack('>i', ts - 7 * 24 * 3600) + struct.pack('b', -1) * 8)),
+          record.get_count(objectid.ObjectId(
+              struct.pack('>i', ts - 30 * 24 * 3600) + struct.pack('b', -1) * 8)),
+          record.get_count(objectid.ObjectId(
+              struct.pack('>i', ts - int(365.2425 * 24 * 3600)) + struct.pack('b', -1) * 8)),
+          record.get_count())
+      statistics = {'day': day_count, 'week': week_count, 'month': month_count,
+                    'year': year_count, 'total': rcount}
+    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
@@ -51,6 +69,7 @@ class RecordMainConnection(base.Connection):
     # TODO(iceboy): projection.
     udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
                                       problem.get(rdoc['domain_id'], rdoc['pid']))
+    # check permission for visibility: hidden problem
     if pdoc.get('hidden', False) and (pdoc['domain_id'] != self.domain_id
                                       or not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)):
       pdoc = None
@@ -86,13 +105,19 @@ class RecordDetailHandler(base.Handler):
       del rdoc['code']
     if not show_status and 'code' not in rdoc:
       raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
-    udoc, dudoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
-                                             domain.get_user(self.domain_id, rdoc['uid']),
-                                             problem.get(rdoc['domain_id'], rdoc['pid']))
+    udoc, dudoc, pdoc = await asyncio.gather(
+        user.get_by_uid(rdoc['uid']),
+        domain.get_user(self.domain_id, rdoc['uid']),
+        problem.get(rdoc['domain_id'], rdoc['pid']))
+    if show_status and 'judge_uid' in rdoc:
+      judge_udoc = await user.get_by_uid(rdoc['judge_uid'])
+    else:
+      judge_udoc = None
+    # check permission for visibility: hidden problem
     if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
       pdoc = None
     self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc,
-                show_status=show_status)
+                judge_udoc=judge_udoc, show_status=show_status)
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')

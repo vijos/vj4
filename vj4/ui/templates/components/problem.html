@@ -6,7 +6,7 @@
     href="{{ reverse_url('contest_detail_problem', domain_id=pdoc['domain_id'], pid=pdoc['doc_id'], tid=tdoc['doc_id']) }}"
   {% endif %}
   >
-    {{ pdoc['title'] }}
+    {% if pdoc['doc_id']|string|length < 10 %}P{{ pdoc['doc_id'] }} {% endif %}{{ pdoc['title'] }}
   </a>
 {% if pdoc['hidden'] and show_invisible_flag %}
   <span class="text-orange">({{ _('Hidden') }})</span>

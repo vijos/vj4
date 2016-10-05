@@ -221,6 +221,15 @@ async def get_list_reply(domain_id: str, did: document.convert_doc_id, *, fields
                        .to_list(None)
 
 
+def get_multi_reply(domain_id: str, did: document.convert_doc_id, *, fields=None):
+  return document.get_multi(domain_id=domain_id,
+                            doc_type=document.TYPE_DISCUSSION_REPLY,
+                            parent_doc_type=document.TYPE_DISCUSSION,
+                            parent_doc_id=did,
+                            fields=fields) \
+                 .sort([('doc_id', -1)])
+
+
 @argmethod.wrap
 async def add_tail_reply(domain_id: str, drid: document.convert_doc_id,
                          owner_uid: int, content: str):

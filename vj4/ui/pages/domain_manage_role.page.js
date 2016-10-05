@@ -45,11 +45,15 @@ const page = new NamedPage('domain_manage_role', () => {
       return;
     }
     const role = createRoleDialog.$dom.find('[name="role"]').val();
-    await util.post('', {
-      operation: 'set',
-      role,
-    });
-    window.location.reload();
+    try {
+      await util.post('', {
+        operation: 'set',
+        role,
+      });
+      window.location.reload();
+    } catch (error) {
+      Notification.error(error.message);
+    }
   }
 
   async function handleClickDeleteSelected() {
@@ -67,13 +71,17 @@ const page = new NamedPage('domain_manage_role', () => {
     if (action !== 'yes') {
       return;
     }
-    await util.post('', {
-      operation: 'delete',
-      role: selectedRoles,
-    });
-    Notification.success(i18n('Selected roles have been deleted.'));
-    await delay(2000);
-    window.location.reload();
+    try {
+      await util.post('', {
+        operation: 'delete',
+        role: selectedRoles,
+      });
+      Notification.success(i18n('Selected roles have been deleted.'));
+      await delay(2000);
+      window.location.reload();
+    } catch (error) {
+      Notification.error(error.message);
+    }
   }
 
   $('[name="create_role"]').click(() => handleClickCreateRole());

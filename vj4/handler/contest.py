@@ -116,6 +116,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
     self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udict=udict,
                 pdict=pdict, psdict=psdict, rdict=rdict,
                 ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount,
+                datetime_stamp=self.datetime_stamp,
                 page_title=tdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)

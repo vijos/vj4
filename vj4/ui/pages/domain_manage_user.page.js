@@ -93,14 +93,18 @@ const page = new NamedPage('domain_manage_user', () => {
     if (action !== 'yes') {
       return;
     }
-    await util.post('', {
-      operation: 'set_users',
-      uid: selectedUsers,
-      role: '',
-    });
-    Notification.success(i18n('Selected users have been removed from the domain.'));
-    await delay(2000);
-    window.location.reload();
+    try {
+      await util.post('', {
+        operation: 'set_users',
+        uid: selectedUsers,
+        role: '',
+      });
+      Notification.success(i18n('Selected users have been removed from the domain.'));
+      await delay(2000);
+      window.location.reload();
+    } catch (error) {
+      Notification.error(error.message);
+    }
   }
 
   async function handleClickSetSelected() {
@@ -113,25 +117,33 @@ const page = new NamedPage('domain_manage_user', () => {
       return;
     }
     const role = setRolesDialog.$dom.find('[name="role"]').val();
-    await util.post('', {
-      operation: 'set_users',
-      uid: selectedUsers,
-      role,
-    });
-    Notification.success(i18n('Role has been updated to {0} for selected users.', role));
-    await delay(2000);
-    window.location.reload();
+    try {
+      await util.post('', {
+        operation: 'set_users',
+        uid: selectedUsers,
+        role,
+      });
+      Notification.success(i18n('Role has been updated to {0} for selected users.', role));
+      await delay(2000);
+      window.location.reload();
+    } catch (error) {
+      Notification.error(error.message);
+    }
   }
 
   async function handleChangeUserRole(ev) {
     const row = $(ev.currentTarget).closest('tr');
     const role = $(ev.currentTarget).val();
-    await util.post('', {
-      operation: 'set_user',
-      uid: row.attr('data-uid'),
-      role,
-    });
-    Notification.success(i18n('Role has been updated to {0}.', role));
+    try {
+      await util.post('', {
+        operation: 'set_user',
+        uid: row.attr('data-uid'),
+        role,
+      });
+      Notification.success(i18n('Role has been updated to {0}.', role));
+    } catch (error) {
+      Notification.error(error.message);
+    }
   }
 
   $('[name="add_user"]').click(() => handleClickAddUser());

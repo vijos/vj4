@@ -179,17 +179,16 @@ async def get_solution_status(domain_id: str, psid: document.convert_doc_id, uid
   return await document.get_status(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, uid)
 
 
-async def get_dict_solution_status(dom_and_ids, uid, *, fields=None):
+async def get_dict_solution_status(domain_id, pids, uid, *, fields=None):
   query = {
+    'domain_id': domain_id,
     'doc_type': document.TYPE_PROBLEM_SOLUTION,
     'uid': uid,
-    '$or': [{'domain_id': e[0], 'doc_id': e[1]} for e in set(dom_and_ids)],
+    'doc_id': {'$in': list(set(pids))},
   }
-  if not query['$or']:
-    return {}
   result = dict()
   async for pssdoc in document.get_multi_status(**query, fields=fields):
-    result[(pssdoc['domain_id'], pssdoc['doc_id'])] = pssdoc
+    result[pssdoc['doc_id']] = pssdoc
   return result
 
 

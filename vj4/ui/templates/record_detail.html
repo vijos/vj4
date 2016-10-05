@@ -107,10 +107,12 @@
           <dd>{{ user.render_inline(udoc, dudoc, modbadge=false) }}</dd>
           <dt>{{ _('Type') }}</dt>
           <dd>{{ _(vj4.constant.record.TYPE_TEXTS[rdoc['type']]) }}</dd>
+          {% if pdoc %}
           <dt>{{ _('Problem') }}</dt>
           <dd>
             <a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">{{ pdoc['title'] }}</a>
           </dd>
+          {% endif %}
         {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST and (handler.own(rdoc, priv=vj4.model.builtin.PRIV_READ_PRETEST_DATA_SELF, field='uid') or handler.has_priv(vj4.model.builtin.PRIV_READ_PRETEST_DATA)) %}
           <dt>{{ _('Pretest Data') }}</dt>
           <dd><a href="{{ reverse_url('record_pretest_data', rid=rdoc['_id']) }}"><span class="icon icon-download"></span> {{ _('Download') }}</a></dd>
@@ -132,6 +134,10 @@
         {% if rdoc['judge_at'] %}
           <dt>{{ _('Judged At') }}</dt>
           <dd>{{ datetime_span(rdoc['judge_at']) }}</dd>
+        {% endif %}
+        {% if judge_udoc %}
+          <dt>{{ _('Judged By') }}</dt>
+          <dd>{{ user.render_inline(judge_udoc, badge=false) }}</dd>
         {% endif %}
         {% if rdoc['score'] is defined %}
           <dt>{{ _('Score') }}</dt>

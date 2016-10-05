@@ -91,9 +91,10 @@
   </div>
   <div class="section__body typo">
     <dl class="large horizontal">
+      <dt>{{ _('ID') }}</dt>
+      <dd>{{ pdoc['doc_id'] }}</dd>
       <dt>{{ _('Status') }}</dt>
       <dd>
-        {# TODO(twd2): check contest #}
       {% if pdoc['psdoc']['status'] %}
         <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}"></span>
         <a href="{{ reverse_url('record_detail', rid=pdoc['psdoc']['rid'], domain_id=pdoc['psdoc']['domain_id']) }}" class="record-status--text {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}">
@@ -124,6 +125,7 @@
     </dl>
   </div>
 </div>
+{% if page_name == 'problem_detail' %}
 <div class="section side">
   <div class="section__header">
     <h1 class="section__title">{{ _('Related') }}</h1>
@@ -143,3 +145,4 @@
   {% endif %}
   </div>
 </div>
+{% endif %}

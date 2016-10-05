@@ -5,7 +5,7 @@
   <div class="medium-9 columns">
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{{ _('{0} solutions').format(psdocs|length) }}</h1>
+        <h1 class="section__title">{{ _('{0} solutions').format(pscount) }}</h1>
       </div>
       <div class="section__body">
         {{ comments.render(
@@ -31,6 +31,7 @@
           reply_delete_perm = vj4.model.builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY,
           reply_delete_self_perm = vj4.model.builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF
         ) }}
+        {{ paginator.render(page, pcount) }}
       </div>
     </div>
   </div>
