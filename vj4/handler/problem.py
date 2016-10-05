@@ -31,10 +31,10 @@ class ProblemMainHandler(base.OperationHandler):
       f = {'hidden': False}
     else:
       f = {}
-    pdocs, ppcount, _ = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
-                                                                    **f) \
-                                                         .sort([('doc_id', 1)]),
-                                                  page, self.PROBLEMS_PER_PAGE)
+    pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
+                                                                         **f) \
+                                                              .sort([('doc_id', 1)]),
+                                                       page, self.PROBLEMS_PER_PAGE)
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       # TODO(iceboy): projection.
       psdict = await problem.get_dict_status(self.domain_id,
@@ -42,7 +42,8 @@ class ProblemMainHandler(base.OperationHandler):
                                              (pdoc['doc_id'] for pdoc in pdocs))
     else:
       psdict = None
-    self.render('problem_main.html', page=page, ppcount=ppcount, pdocs=pdocs, psdict=psdict)
+    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
+                psdict=psdict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
