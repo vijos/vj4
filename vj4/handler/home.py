@@ -228,7 +228,15 @@ class HomeDomainHandler(base.Handler):
     ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
                                               {'owner_uid': self.user['_id']}]}) \
                         .to_list(None)
-    self.render('home_domain.html', ddocs=ddocs, uddict=uddict)
+    can_manage = {}
+    for ddoc in builtin.DOMAINS + ddocs:
+      role = uddict.get(ddoc['_id'], {}).get('role', builtin.ROLE_DEFAULT)
+      mask = ddoc['roles'].get(role, builtin.PERM_NONE)
+      can_manage[ddoc['_id']] = (
+          ((builtin.PERM_EDIT_DESCRIPTION | builtin.PERM_EDIT_PERM) & mask) != 0
+          or ddoc['owner_uid'] == self.user['_id']
+          or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
+    self.render('home_domain.html', ddocs=ddocs, uddict=uddict, can_manage=can_manage)
 
 
 @app.route('/home/domain/create', 'home_domain_create')

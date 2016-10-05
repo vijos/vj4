@@ -39,9 +39,10 @@
             {{ uddict.get(ddoc['_id'], {})['role']|default(vj4.model.builtin.ROLE_DEFAULT) }}
           </td>
           <td class="col--action">
-            <!-- TODO (swx): Manage should be visible to those who have privilege -->
             <a class="typo-a" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Visit') }}</a>
+          {% if can_manage[ddoc['_id']] %}
             · <a class="typo-a" href="{{ reverse_url('domain_manage', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
+          {% endif %}
           </td>
         </tr>
       {% endfor %}
@@ -61,9 +62,10 @@
           {% endif %}
           </td>
           <td class="col--action">
-            <!-- TODO (swx): Manage should be visible to those who have privilege -->
             <a class="typo-a" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Visit') }}</a>
+          {% if can_manage[ddoc['_id']] %}
             · <a class="typo-a" href="{{ reverse_url('domain_manage', domain_id=ddoc['_id']) }}">{{ _('Manage') }}</a>
+          {% endif %}
           </td>
         </tr>
       {% endfor %}

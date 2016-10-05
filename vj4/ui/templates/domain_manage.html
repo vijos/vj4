@@ -6,8 +6,10 @@
     <h1 class="section__title" data-heading>{{ _('Description') }}</h1>
   </div>
   <div class="section__body typo">
-    <p>{{ _('Owner') }}: {{ user.render_inline(owner_udoc, badge=false) }}</p>
-    {{ handler.domain['name'] }}
+    <dl class="large horizontal">
+    <dt>{{ _('Gravatar') }}</dt><dd><img src="{{ handler.domain['gravatar']|gravatar_url }}" width="32" height="32"></dd>
+    <dt>{{ _('Owner') }}</dt><dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
+    <dt>{{ _('Name') }}</dt><dd>{{ handler.domain['name'] }}</dd>
   </div>
 </div>
 {% endblock %}
