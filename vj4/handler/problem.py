@@ -45,7 +45,7 @@ class ProblemMainHandler(base.OperationHandler):
     else:
       psdict = None
     self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
-                psdict=psdict)
+                psdict=psdict, categories=problem.get_categories())
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token

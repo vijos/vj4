@@ -1,17 +1,22 @@
 import datetime
 import itertools
-
 from bson import objectid
 from pymongo import errors
 
 from vj4 import constant
 from vj4 import db
 from vj4 import error
+from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
 from vj4.util import argmethod
 from vj4.util import validator
+
+
+@argmethod.wrap
+def get_categories():
+  return builtin.PROBLEM_CATEGORIES
 
 
 @argmethod.wrap
