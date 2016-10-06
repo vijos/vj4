@@ -323,7 +323,7 @@ You're not logged in.: 您沒有登入。
 You don't have the required privilege.: 您沒有相應的特權。
 You don't have the required permission ({0}) in this domain.: 您在該域中無相應許可權 ({0})。
 You've already voted.: 您已經投過票。
-User not found.: 使用者不存在。
+User {0} not found.: 使用者 {0} 不存在。
 Current password doesn't match.: 當前密碼輸入錯誤。
 Discussion category {1} already exists.: 討論分類 {1} 已經存在。
 Discussion category {1} not found.: 討論分類 {1} 不存在。

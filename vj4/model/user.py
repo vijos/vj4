@@ -107,10 +107,15 @@ async def check_password_by_uid(uid: int, password: str):
 
 
 @argmethod.wrap
-async def check_password_by_uname(uname: str, password: str):
+async def check_password_by_uname(uname: str, password: str, auto_upgrade: bool=False):
   """Check password. Returns doc or None."""
   doc = await get_by_uname(uname, PROJECTION_ALL)
-  if doc and pwhash.check(password, doc['salt'], doc['hash']):
+  if not doc:
+    raise error.UserNotFoundError(uname)
+  if pwhash.check(password, doc['salt'], doc['hash']):
+    if auto_upgrade and pwhash.need_upgrade(doc['hash']) \
+       and validator.is_password(password):
+      await set_password(doc['_id'], password)
     return doc
 
 

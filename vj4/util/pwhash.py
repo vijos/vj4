@@ -28,7 +28,7 @@ def _b64decode(s):
 
 
 @argmethod.wrap
-def gen_salt(byte_length: int = 20):
+def gen_salt(byte_length: int=20):
   return binascii.hexlify(os.urandom(byte_length)).decode()
 
 
@@ -59,6 +59,12 @@ def check(password: str, salt: str, hash: str):
     return hash == hash_vj4(password, salt)
   else:
     raise error.HashError('unsupported hash type')
+
+
+@argmethod.wrap
+def need_upgrade(hash: str):
+  hash_type, rest = hash.split('|', 1)
+  return hash_type != _HASH_TYPE_VJ4
 
 
 if __name__ == '__main__':

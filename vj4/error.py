@@ -147,7 +147,7 @@ class AlreadyVotedError(ForbiddenError):
 class UserNotFoundError(NotFoundError):
   @property
   def message(self):
-    return 'User not found.'
+    return 'User {0} not found.'
 
 
 class InvalidTokenDigestError(ForbiddenError):

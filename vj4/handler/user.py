@@ -154,7 +154,7 @@ class UserLoginHandler(base.Handler):
   @base.post_argument
   @base.sanitize
   async def post(self, *, uname: str, password: str, rememberme: bool=False):
-    udoc = await user.check_password_by_uname(uname, password)
+    udoc = await user.check_password_by_uname(uname, password, auto_upgrade=True)
     if not udoc:
       raise error.LoginError(uname)
     await asyncio.gather(user.set_by_uid(udoc['_id'],
