@@ -42,7 +42,6 @@ class HandlerBase(setting.SettingMixin):
         raise error.UserNotFoundError(uid)
       if not self.domain_user:
         self.domain_user = {}
-      self.user = await user.get_by_uid(self.session['uid']) or builtin.USER_GUEST
     else:
       self.user = builtin.USER_GUEST
       self.domain = await domain.get(self.domain_id)
