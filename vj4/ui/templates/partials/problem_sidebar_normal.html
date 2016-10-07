@@ -108,8 +108,32 @@
       <dd>{{ pdoc['difficulty']|default(_('(None)')) }}</dd>
       <dt>{{ _('Vote') }}</dt>
       <dd><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</dd>
+      <!-- TODO(twd2): check user's setting -->
+    {% if pdoc['category'] %}
       <dt>{{ _('Category') }}</dt>
-      <dd>动态规划 | 树形动规、高精度</dd>
+      <dd>
+      {{ pdoc['category'] }}
+      {% for category in pdoc['category'] %}
+        {{ category }}
+        {% if loop.index < pdoc['category']|length %}
+          {% if category in vj4.model.builtin.PROBLEM_CATEGORIES %}
+            |
+          {% else %}
+            、
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      </dd>
+    {% endif %}
+      <!-- TODO(twd2): check user's setting -->
+      <dt>{{ _('Tags') }}</dt>
+      <dd>
+      {% if pdoc['tag'] %}
+        {{ pdoc['tag']|join(', ') }}
+      {% else %}
+        {{ _('(None)') }}
+      {% endif %}
+      </dd>
       <dt>{{ _('# Submissions') }}</dt>
       <dd>{{ pdoc['num_submit'] }}</dd>
       <dt>{{ _('# My Submissions') }}</dt>

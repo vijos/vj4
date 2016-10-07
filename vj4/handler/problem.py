@@ -5,6 +5,7 @@ from bson import objectid
 
 from vj4 import app
 from vj4 import constant
+from vj4 import error
 from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import user
@@ -52,8 +53,61 @@ class ProblemMainHandler(base.OperationHandler):
   @base.sanitize
   async def star_unstar(self, *, pid: document.convert_doc_id, star: bool):
     pdoc = await problem.get(self.domain_id, pid)
-    pdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
-    self.json_or_redirect(self.url, star=pdoc['star'])
+    psdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
+    self.json_or_redirect(self.url, star=psdoc['star'])
+
+  post_star = functools.partialmethod(star_unstar, star=True)
+  post_unstar = functools.partialmethod(star_unstar, star=False)
+
+
+@app.route('/p/category/{category}', 'problem_category')
+class ProblemCategoryHandler(base.OperationHandler):
+  PROBLEMS_PER_PAGE = 100
+
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.get_argument
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, category: str, page: int=1):
+    # TODO(iceboy): projection.
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    categories = category.split(' ')
+    qcategory = {'$and': []}
+    for c in categories:
+      if c in builtin.PROBLEM_CATEGORIES \
+         or c in builtin.PROBLEM_SUB_CATEGORIES:
+        qcategory['$and'].append({'category': c})
+      else:
+        raise error.ValidationError('category')
+    pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
+                                                                         **qcategory,
+                                                                         **f) \
+                                                              .sort([('doc_id', 1)]),
+                                                       page, self.PROBLEMS_PER_PAGE)
+    if self.has_priv(builtin.PRIV_USER_PROFILE):
+      # TODO(iceboy): projection.
+      psdict = await problem.get_dict_status(self.domain_id,
+                                             self.user['_id'],
+                                             (pdoc['doc_id'] for pdoc in pdocs))
+    else:
+      psdict = None
+    path_components = self.build_path(
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (category, None))
+    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
+                psdict=psdict, categories=problem.get_categories(),
+                page_title=category, path_components=path_components)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_csrf_token
+  @base.sanitize
+  async def star_unstar(self, *, pid: document.convert_doc_id, star: bool):
+    pdoc = await problem.get(self.domain_id, pid)
+    psdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
+    self.json_or_redirect(self.url, star=psdoc['star'])
 
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)
