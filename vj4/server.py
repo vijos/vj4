@@ -67,7 +67,8 @@ def main():
     else:
       atexit.register(lambda: os.kill(pid, signal.SIGTERM))
   loop = asyncio.get_event_loop()
-  loop.run_until_complete(loop.create_server(app.Application().make_handler(), sock=sock))
+  loop.run_until_complete(loop.create_server(app.Application().make_handler(access_log=None),
+                                             sock=sock))
   loop.run_forever()
 
 if __name__ == '__main__':

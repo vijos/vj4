@@ -37,9 +37,7 @@ _logger = logging.getLogger(__name__)
 
 class Application(web.Application):
   def __init__(self):
-    super(Application, self).__init__(
-      handler_factory=functools.partial(web.RequestHandlerFactory, access_log=None),
-      debug=options.debug)
+    super(Application, self).__init__(debug=options.debug)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     # Initialize components.
