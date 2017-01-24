@@ -39,7 +39,6 @@ const page = new NamedPage('domain_manage_role', () => {
   }
 
   async function handleClickCreateRole() {
-    createRoleDialog.$dom.find('[name="role"]').val('');
     const action = await createRoleDialog.clear().open();
     if (action !== 'ok') {
       return;
