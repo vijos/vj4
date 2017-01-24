@@ -566,3 +566,5 @@ Created By: 创建人
 Judged By: 评测机
 Categories: 分类
 Tags: 标签
+problem-category-delim: '|'
+problem-subcategory-delim: 、
