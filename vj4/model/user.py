@@ -18,7 +18,7 @@ PROJECTION_ALL = None
 
 
 @argmethod.wrap
-async def add(uid: int, uname: str, password: str, mail: str, regip: str = ''):
+async def add(uid: int, uname: str, password: str, mail: str, regip: str=''):
   """Add a user."""
   validator.check_uname(uname)
   # TODO(iceboy): Filter uname by keywords.
@@ -106,7 +106,7 @@ async def check_password_by_uid(uid: int, password: str):
 
 
 @argmethod.wrap
-async def check_password_by_uname(uname: str, password: str, auto_upgrade: bool = False):
+async def check_password_by_uname(uname: str, password: str, auto_upgrade: bool=False):
   """Check password. Returns doc or None."""
   doc = await get_by_uname(uname, PROJECTION_ALL)
   if not doc:
@@ -182,7 +182,7 @@ async def set_judge(uid: int):
 
 
 @argmethod.wrap
-async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int = 50):
+async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
   prefix = prefix.lower()
   regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))
   coll = db.Collection('user')

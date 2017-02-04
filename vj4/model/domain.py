@@ -12,7 +12,7 @@ PROJECTION_PUBLIC = {'uid': 1}
 @argmethod.wrap
 async def add(domain_id: str, owner_uid: int,
               roles=builtin.DOMAIN_SYSTEM['roles'],
-              name: str = None, gravatar: str = None):
+              name: str=None, gravatar: str=None):
   validator.check_domain_id(domain_id)
   validator.check_name(name)
   for domain in builtin.DOMAINS:
@@ -42,7 +42,7 @@ def get_multi(*, fields=None, **kwargs):
 
 
 @argmethod.wrap
-async def get_list(*, fields=None, limit: int = None, **kwargs):
+async def get_list(*, fields=None, limit: int=None, **kwargs):
   coll = db.Collection('domain')
   return await coll.find(kwargs, fields).to_list(limit)
 

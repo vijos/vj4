@@ -33,7 +33,7 @@ MAX_OP_REGISTER = 60
 
 
 @argmethod.wrap
-async def inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int = 1):
+async def inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int=1):
   coll = db.Collection('opcount')
   cur_time = int(time.time())
   begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)
@@ -52,7 +52,7 @@ async def inc(op: str, ident: str, period_secs: int, max_operations: int, operat
 
 
 @argmethod.wrap
-async def force_inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int = 1):
+async def force_inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int=1):
   coll = db.Collection('opcount')
   cur_time = int(time.time())
   begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)

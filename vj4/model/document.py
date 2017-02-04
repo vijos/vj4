@@ -41,8 +41,8 @@ def convert_doc_id(doc_id):
 
 @argmethod.wrap
 async def add(domain_id: str, content: str, owner_uid: int,
-              doc_type: int, doc_id: convert_doc_id = None,
-              parent_doc_type: int = None, parent_doc_id: convert_doc_id = None, **kwargs):
+              doc_type: int, doc_id: convert_doc_id=None,
+              parent_doc_type: int=None, parent_doc_id: convert_doc_id=None, **kwargs):
   """Add a document. Returns the document id."""
   obj_id = objectid.ObjectId()
   coll = db.Collection('document')
@@ -82,16 +82,16 @@ async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
   # TODO(twd2): delete status?
   coll = db.Collection('document')
   return await coll.delete_one({'domain_id': domain_id,
-                            'doc_type': doc_type,
-                            'doc_id': doc_id})
+                                'doc_type': doc_type,
+                                'doc_id': doc_id})
 
 
 async def delete_multi(domain_id: str, doc_type: int, **kwargs):
   # TODO(twd2): delete status?
   coll = db.Collection('document')
   return await coll.delete_one({'domain_id': domain_id,
-                            'doc_type': doc_type,
-                            **kwargs})
+                                'doc_type': doc_type,
+                                **kwargs})
 
 
 def get_multi(*, fields=None, **kwargs):

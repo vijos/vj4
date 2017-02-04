@@ -48,7 +48,7 @@ async def add_reply(message_id: objectid.ObjectId, sender_uid: int, content: str
 
 
 @argmethod.wrap
-async def delete(message_id: objectid.ObjectId, uid: int = None):
+async def delete(message_id: objectid.ObjectId, uid: int=None):
   """Delete a message."""
   coll = db.Collection('message')
   query = {'_id': message_id}
