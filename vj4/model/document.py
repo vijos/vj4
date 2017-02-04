@@ -18,14 +18,13 @@ TYPE_PRETEST_DATA = 50
 
 DOC_ID_DISCUSSION_NODES = 1
 
-
 PROJECTION_PUBLIC = {
-    'doc_type': 1,
-    'doc_id': 1,
-    'parent_doc_type': 1,
-    'parent_doc_id': 1,
-    'title': 1,
-    'hidden': 1
+  'doc_type': 1,
+  'doc_id': 1,
+  'parent_doc_type': 1,
+  'parent_doc_id': 1,
+  'title': 1,
+  'hidden': 1
 }
 
 
@@ -66,38 +65,38 @@ async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id, fields=None
   coll = db.Collection('document')
   return await coll.find_one({'domain_id': domain_id,
                               'doc_type': doc_type,
-                              'doc_id': doc_id}, fields=fields)
+                              'doc_id': doc_id}, projection=fields)
 
 
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
   coll = db.Collection('document')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id},
-                                   update={'$set': kwargs},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id},
+                                       update={'$set': kwargs},
+                                       return_document=True)
   return doc
 
 
 async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
   # TODO(twd2): delete status?
   coll = db.Collection('document')
-  return await coll.remove({'domain_id': domain_id,
+  return await coll.delete_one({'domain_id': domain_id,
                             'doc_type': doc_type,
-                            'doc_id': doc_id}, just_one=True)
+                            'doc_id': doc_id})
 
 
 async def delete_multi(domain_id: str, doc_type: int, **kwargs):
   # TODO(twd2): delete status?
   coll = db.Collection('document')
-  return await coll.remove({'domain_id': domain_id,
+  return await coll.delete_one({'domain_id': domain_id,
                             'doc_type': doc_type,
-                            **kwargs}, just_one=False)
+                            **kwargs})
 
 
 def get_multi(*, fields=None, **kwargs):
   coll = db.Collection('document')
-  return coll.find(kwargs, fields=fields)
+  return coll.find(kwargs, projection=fields)
 
 
 async def get_dict(domain_id: str, dtuples, *, fields=None):
@@ -118,11 +117,11 @@ async def get_dict(domain_id: str, dtuples, *, fields=None):
 @argmethod.wrap
 async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, value: int):
   coll = db.Collection('document')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id},
-                                   update={'$inc': {key: value}},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id},
+                                       update={'$inc': {key: value}},
+                                       return_document=True)
   return doc
 
 
@@ -130,12 +129,12 @@ async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, v
 async def inc_and_set(domain_id: str, doc_type: int, doc_id: convert_doc_id,
                       inc_key: str, inc_value: int, set_key: str, set_value: lambda _: _):
   coll = db.Collection('document')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id},
-                                   update={'$inc': {inc_key: inc_value},
-                                           '$set': {set_key: set_value}},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id},
+                                       update={'$inc': {inc_key: inc_value},
+                                               '$set': {set_key: set_value}},
+                                       return_document=True)
   return doc
 
 
@@ -144,14 +143,14 @@ async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                content: str, owner_uid: int, **kwargs):
   coll = db.Collection('document')
   obj_id = objectid.ObjectId()
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id},
-                                   update={'$push': {key: {**kwargs,
-                                                           'content': content,
-                                                           'owner_uid': owner_uid,
-                                                           '_id': obj_id}}},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id},
+                                       update={'$push': {key: {**kwargs,
+                                                               'content': content,
+                                                               'owner_uid': owner_uid,
+                                                               '_id': obj_id}}},
+                                       return_document=True)
   return doc, obj_id
 
 
@@ -159,11 +158,11 @@ async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
 async def delete_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                      sub_id: objectid.ObjectId):
   coll = db.Collection('document')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id},
-                                   update={'$pull': {key: {'_id': sub_id}}},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id},
+                                       update={'$pull': {key: {'_id': sub_id}}},
+                                       return_document=True)
   return doc
 
 
@@ -188,12 +187,12 @@ async def set_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: st
                   sub_id: objectid.ObjectId, **kwargs):
   coll = db.Collection('document')
   mod = dict(('{0}.$.{1}'.format(key, k), v) for k, v in kwargs.items())
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id,
-                                          key: {'$elemMatch': {'_id': sub_id}}},
-                                   update={'$set': mod},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id,
+                                               key: {'$elemMatch': {'_id': sub_id}}},
+                                       update={'$set': mod},
+                                       return_document=True)
   return doc
 
 
@@ -201,11 +200,11 @@ async def set_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: st
 async def add_to_set(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: str,
                      content):
   coll = db.Collection('document')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id},
-                                   update={'$addToSet': {set_key: content}},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id},
+                                       update={'$addToSet': {set_key: content}},
+                                       return_document=True)
   return doc
 
 
@@ -213,11 +212,11 @@ async def add_to_set(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_
 async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: str,
                contents):
   coll = db.Collection('document')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id},
-                                   update={'$pull': {set_key: {'$in': contents}}},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id},
+                                       update={'$pull': {set_key: {'$in': contents}}},
+                                       return_document=True)
   return doc
 
 
@@ -227,23 +226,23 @@ async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid:
   coll = db.Collection('document.status')
   return await coll.find_one({'domain_id': domain_id, 'doc_type': doc_type,
                               'doc_id': doc_id, 'uid': uid},
-                             fields=fields)
+                             projection=fields)
 
 
 def get_multi_status(*, fields=None, **kwargs):
   coll = db.Collection('document.status')
-  return coll.find(kwargs, fields=fields)
+  return coll.find(kwargs, projection=fields)
 
 
 async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
   coll = db.Collection('document.status')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id,
-                                          'uid': uid},
-                                   update={'$set': kwargs},
-                                   upsert=True,
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id,
+                                               'uid': uid},
+                                       update={'$set': kwargs},
+                                       upsert=True,
+                                       return_document=True)
   return doc
 
 
@@ -251,14 +250,14 @@ async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
 async def set_if_not_status(domain_id: str, doc_type: int, doc_id: convert_doc_id,
                             uid: int, key: str, value: int, if_not: int, **kwargs):
   coll = db.Collection('document.status')
-  return await coll.find_and_modify(query={'domain_id': domain_id,
-                                           'doc_type': doc_type,
-                                           'doc_id': doc_id,
-                                           'uid': uid,
-                                           key: {'$not': {'$eq': if_not}}},
-                                    update={'$set': {key: value, **kwargs}},
-                                    upsert=True,
-                                    new=True)
+  return await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                                'doc_type': doc_type,
+                                                'doc_id': doc_id,
+                                                'uid': uid,
+                                                key: {'$not': {'$eq': if_not}}},
+                                        update={'$set': {key: value, **kwargs}},
+                                        upsert=True,
+                                        return_document=True)
 
 
 @argmethod.wrap
@@ -276,14 +275,14 @@ async def capped_inc_status(domain_id: str,
   else:
     not_expr = {'$lte': min_value}
   coll = db.Collection('document.status')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id,
-                                          'uid': uid,
-                                          key: {'$not': not_expr}},
-                                   update={'$inc': {key: value}},
-                                   upsert=True,
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id,
+                                               'uid': uid,
+                                               key: {'$not': not_expr}},
+                                       update={'$inc': {key: value}},
+                                       upsert=True,
+                                       return_document=True)
   return doc
 
 
@@ -291,123 +290,123 @@ async def capped_inc_status(domain_id: str,
 async def inc_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int,
                      key: str, value: int):
   coll = db.Collection('document.status')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id,
-                                          'uid': uid},
-                                   update={'$inc': {key: value}},
-                                   upsert=True,
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id,
+                                               'uid': uid},
+                                       update={'$inc': {key: value}},
+                                       upsert=True,
+                                       return_document=True)
   return doc
 
 
 async def rev_push_status(domain_id, doc_type, doc_id, uid, key, value):
   coll = db.Collection('document.status')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id,
-                                          'uid': uid},
-                                   update={'$push': {key: value},
-                                           '$inc': {'rev': 1}},
-                                   upsert=True,
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id,
+                                               'uid': uid},
+                                       update={'$push': {key: value},
+                                               '$inc': {'rev': 1}},
+                                       upsert=True,
+                                       return_document=True)
   return doc
 
 
 async def rev_init_status(domain_id, doc_type, doc_id, uid):
   coll = db.Collection('document.status')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id,
-                                          'uid': uid},
-                                   update={'$inc': {'rev': 1}},
-                                   upsert=True,
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id,
+                                               'uid': uid},
+                                       update={'$inc': {'rev': 1}},
+                                       upsert=True,
+                                       return_document=True)
   return doc
 
 
 async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, **kwargs):
   coll = db.Collection('document.status')
-  doc = await coll.find_and_modify(query={'domain_id': domain_id,
-                                          'doc_type': doc_type,
-                                          'doc_id': doc_id,
-                                          'uid': uid,
-                                          'rev': rev},
-                                   update={'$set': kwargs,
-                                           '$inc': {'rev': 1}},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
+                                               'doc_type': doc_type,
+                                               'doc_id': doc_id,
+                                               'uid': uid,
+                                               'rev': rev},
+                                       update={'$set': kwargs,
+                                               '$inc': {'rev': 1}},
+                                       return_document=True)
   return doc
 
 
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('document')
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('doc_id', 1)], unique=True)
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('owner_uid', 1),
                            ('doc_id', -1)])
   # for problem solution
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('parent_doc_type', 1),
                            ('parent_doc_id', 1),
                            ('vote', -1),
                            ('doc_id', -1)], sparse=True)
   # for discussion
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('parent_doc_type', 1),
                            ('parent_doc_id', 1),
                            ('update_at', -1),
                            ('doc_id', -1)], sparse=True)
   # hidden doc
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('hidden', 1),
                            ('doc_id', -1)], sparse=True)
   # for contest
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('pids', 1)], sparse=True)
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('rule', 1),
                            ('doc_id', -1)], sparse=True)
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('pids', 1)], sparse=True)
   # for training
-  await coll.ensure_index([('domain_id', 1),
+  await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('dag.pids', 1)], sparse=True)
   status_coll = db.Collection('document.status')
-  await status_coll.ensure_index([('domain_id', 1),
+  await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),
                                   ('uid', 1),
                                   ('doc_id', 1)], unique=True)
   # for rp system
-  await status_coll.ensure_index([('domain_id', 1),
+  await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),
                                   ('doc_id', 1),
                                   ('status', 1),
                                   ('rid', 1),
                                   ('rp', 1)], sparse=True)
   # for contest rule OI
-  await status_coll.ensure_index([('domain_id', 1),
+  await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),
                                   ('doc_id', 1),
                                   ('score', -1)], sparse=True)
   # for contest rule ACM
-  await status_coll.ensure_index([('domain_id', 1),
+  await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),
                                   ('doc_id', 1),
                                   ('accept', -1),
                                   ('time', 1)], sparse=True)
   # for training
-  await status_coll.ensure_index([('domain_id', 1),
+  await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),
                                   ('uid', 1),
                                   ('enroll', 1),

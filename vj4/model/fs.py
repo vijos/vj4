@@ -67,8 +67,8 @@ async def cat(file_id: objectid.ObjectId):
 async def link_by_md5(file_md5: str):
   """Link a file by MD5 if exists."""
   coll = db.Collection('fs.files')
-  doc = await coll.find_and_modify(query={'md5': file_md5},
-                                   update={'$inc': {'metadata.link': 1}})
+  doc = await coll.find_one_and_update(filter={'md5': file_md5},
+                                       update={'$inc': {'metadata.link': 1}})
   if doc:
     return doc['_id']
 
@@ -77,9 +77,9 @@ async def link_by_md5(file_md5: str):
 async def unlink(file_id: objectid.ObjectId):
   """Unlink a file."""
   coll = db.Collection('fs.files')
-  doc = await coll.find_and_modify(query={'_id': file_id},
-                                   update={'$inc': {'metadata.link': -1}},
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'_id': file_id},
+                                       update={'$inc': {'metadata.link': -1}},
+                                       return_document=True)
   if not doc['metadata']['link']:
     fs = db.GridFS('fs')
     await fs.delete(file_id)
