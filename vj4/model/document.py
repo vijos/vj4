@@ -1,5 +1,3 @@
-import builtins
-import datetime
 import itertools
 from bson import objectid
 from pymongo import ReturnDocument
