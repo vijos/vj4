@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 from bson import objectid
+from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4 import constant
@@ -139,7 +140,7 @@ async def begin_judge(record_id: objectid.ObjectId,
                                                         'judge_texts': [],
                                                         'cases': [],
                                                         'progress': 0.0}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -149,7 +150,7 @@ async def next_judge(record_id, judge_uid, judge_token, **kwargs):
                                                'judge_uid': judge_uid,
                                                'judge_token': judge_token},
                                        update=kwargs,
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -166,7 +167,7 @@ async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: s
                                                         'memory_kb': memory_kb},
                                                '$unset': {'judge_token': '',
                                                           'progress': ''}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 

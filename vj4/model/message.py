@@ -1,6 +1,7 @@
 import datetime
 
 from bson import objectid
+from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4.util import argmethod
@@ -43,7 +44,7 @@ async def add_reply(message_id: objectid.ObjectId, sender_uid: int, content: str
            'at': datetime.datetime.utcnow()}
   mdoc = await coll.find_one_and_update(filter={'_id': message_id},
                                         update={'$push': {'reply': reply}},
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
   return (mdoc, reply)
 
 

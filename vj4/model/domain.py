@@ -1,4 +1,5 @@
 from pymongo import errors
+from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4 import error
@@ -60,7 +61,7 @@ async def edit(domain_id: str, **kwargs):
   # TODO(twd2): check kwargs
   return await coll.find_one_and_update(filter={'_id': domain_id},
                                         update={'$set': {**kwargs}},
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 async def unset(domain_id, fields):
@@ -68,7 +69,7 @@ async def unset(domain_id, fields):
   coll = db.Collection('domain')
   return await coll.find_one_and_update(filter={'_id': domain_id},
                                         update={'$unset': dict((f, '') for f in set(fields))},
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -80,7 +81,7 @@ async def set_role(domain_id: str, role: str, perm: int):
   coll = db.Collection('domain')
   return await coll.find_one_and_update(filter={'_id': domain_id},
                                         update={'$set': {'roles.{0}'.format(role): perm}},
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -102,7 +103,7 @@ async def delete_roles(domain_id: str, roles):
   return await coll.find_one_and_update(filter={'_id': domain_id},
                                         update={'$unset': dict(('roles.{0}'.format(role), '')
                                                                for role in roles)},
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -113,7 +114,7 @@ async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
   coll = db.Collection('domain')
   return await coll.find_one_and_update(filter={'_id': domain_id, 'owner_uid': old_owner_uid},
                                         update={'$set': {'owner_uid': new_owner_uid}},
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -127,7 +128,7 @@ async def set_user(domain_id, uid, **kwargs):
   return await coll.find_one_and_update(filter={'domain_id': domain_id, 'uid': uid},
                                         update={'$set': kwargs},
                                         upsert=True,
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 async def unset_user(domain_id, uid, fields):
@@ -135,7 +136,7 @@ async def unset_user(domain_id, uid, fields):
   return await coll.find_one_and_update(filter={'domain_id': domain_id, 'uid': uid},
                                         update={'$unset': dict((f, '') for f in set(fields))},
                                         upsert=True,
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 async def set_users(domain_id, uids, **kwargs):
@@ -179,7 +180,7 @@ async def inc_user(domain_id, uid, **kwargs):
   return await coll.find_one_and_update(filter={'domain_id': domain_id, 'uid': uid},
                                         update={'$inc': kwargs},
                                         upsert=True,
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 def get_multi_user(*, fields=None, **kwargs):

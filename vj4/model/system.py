@@ -1,3 +1,5 @@
+from pymongo import ReturnDocument
+
 from vj4 import db
 from vj4.util import argmethod
 
@@ -13,7 +15,7 @@ async def inc_user_counter():
   doc = await coll.find_one_and_update(filter={'_id': 'user_counter'},
                                        update={'$inc': {'value': 1}},
                                        upsert=True,
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc['value']
 
 

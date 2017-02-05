@@ -2,6 +2,7 @@ import builtins
 import datetime
 import itertools
 from bson import objectid
+from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4.util import argmethod
@@ -41,8 +42,8 @@ def convert_doc_id(doc_id):
 
 @argmethod.wrap
 async def add(domain_id: str, content: str, owner_uid: int,
-              doc_type: int, doc_id: convert_doc_id=None,
-              parent_doc_type: int=None, parent_doc_id: convert_doc_id=None, **kwargs):
+              doc_type: int, doc_id: convert_doc_id = None,
+              parent_doc_type: int = None, parent_doc_id: convert_doc_id = None, **kwargs):
   """Add a document. Returns the document id."""
   obj_id = objectid.ObjectId()
   coll = db.Collection('document')
@@ -74,7 +75,7 @@ async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
                                        update={'$set': kwargs},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -89,9 +90,9 @@ async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
 async def delete_multi(domain_id: str, doc_type: int, **kwargs):
   # TODO(twd2): delete status?
   coll = db.Collection('document')
-  return await coll.delete_one({'domain_id': domain_id,
-                                'doc_type': doc_type,
-                                **kwargs})
+  return await coll.delete_many({'domain_id': domain_id,
+                                 'doc_type': doc_type,
+                                 **kwargs})
 
 
 def get_multi(*, fields=None, **kwargs):
@@ -121,7 +122,7 @@ async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, v
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
                                        update={'$inc': {key: value}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -134,7 +135,7 @@ async def inc_and_set(domain_id: str, doc_type: int, doc_id: convert_doc_id,
                                                'doc_id': doc_id},
                                        update={'$inc': {inc_key: inc_value},
                                                '$set': {set_key: set_value}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -150,7 +151,7 @@ async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                                                                'content': content,
                                                                'owner_uid': owner_uid,
                                                                '_id': obj_id}}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc, obj_id
 
 
@@ -162,7 +163,7 @@ async def delete_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key:
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
                                        update={'$pull': {key: {'_id': sub_id}}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -192,7 +193,7 @@ async def set_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: st
                                                'doc_id': doc_id,
                                                key: {'$elemMatch': {'_id': sub_id}}},
                                        update={'$set': mod},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -204,7 +205,7 @@ async def add_to_set(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
                                        update={'$addToSet': {set_key: content}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -216,7 +217,7 @@ async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: s
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
                                        update={'$pull': {set_key: {'$in': contents}}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -242,7 +243,7 @@ async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
                                                'uid': uid},
                                        update={'$set': kwargs},
                                        upsert=True,
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -257,7 +258,7 @@ async def set_if_not_status(domain_id: str, doc_type: int, doc_id: convert_doc_i
                                                 key: {'$not': {'$eq': if_not}}},
                                         update={'$set': {key: value, **kwargs}},
                                         upsert=True,
-                                        return_document=True)
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -282,7 +283,7 @@ async def capped_inc_status(domain_id: str,
                                                key: {'$not': not_expr}},
                                        update={'$inc': {key: value}},
                                        upsert=True,
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -296,7 +297,7 @@ async def inc_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid:
                                                'uid': uid},
                                        update={'$inc': {key: value}},
                                        upsert=True,
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -309,7 +310,7 @@ async def rev_push_status(domain_id, doc_type, doc_id, uid, key, value):
                                        update={'$push': {key: value},
                                                '$inc': {'rev': 1}},
                                        upsert=True,
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -321,7 +322,7 @@ async def rev_init_status(domain_id, doc_type, doc_id, uid):
                                                'uid': uid},
                                        update={'$inc': {'rev': 1}},
                                        upsert=True,
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -334,7 +335,7 @@ async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, **kwargs):
                                                'rev': rev},
                                        update={'$set': kwargs,
                                                '$inc': {'rev': 1}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 

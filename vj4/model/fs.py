@@ -1,6 +1,7 @@
 import sys
 
 from bson import objectid
+from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4.util import argmethod
@@ -79,7 +80,7 @@ async def unlink(file_id: objectid.ObjectId):
   coll = db.Collection('fs.files')
   doc = await coll.find_one_and_update(filter={'_id': file_id},
                                        update={'$inc': {'metadata.link': -1}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   if not doc['metadata']['link']:
     fs = db.GridFS('fs')
     await fs.delete(file_id)

@@ -1,6 +1,7 @@
 import datetime
 
 from pymongo import errors
+from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4 import error
@@ -127,7 +128,7 @@ async def set_password(uid: int, password: str):
   doc = await coll.find_one_and_update(filter={'_id': uid},
                                        update={'$set': {'salt': salt,
                                                         'hash': pwhash.hash_vj4(password, salt)}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
@@ -152,13 +153,13 @@ async def change_password(uid: int, current_password: str, password: str):
                                                'hash': doc['hash']},
                                        update={'$set': {'salt': salt,
                                                         'hash': pwhash.hash_vj4(password, salt)}},
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 
 async def set_by_uid(uid, **kwargs):
   coll = db.Collection('user')
-  doc = await coll.find_one_and_update(filter={'_id': uid}, update={'$set': kwargs}, return_document=True)
+  doc = await coll.find_one_and_update(filter={'_id': uid}, update={'$set': kwargs}, return_document=ReturnDocument.AFTER)
   return doc
 
 

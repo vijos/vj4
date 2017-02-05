@@ -2,6 +2,7 @@ import datetime
 import time
 
 from pymongo import errors
+from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4 import error
@@ -45,7 +46,7 @@ async def inc(op: str, ident: str, period_secs: int, max_operations: int, operat
                                                  op: {'$not': {'$gte': max_operations}}},
                                          update={'$inc': {op: operations}},
                                          upsert=True,
-                                         return_document=True)
+                                         return_document=ReturnDocument.AFTER)
     return doc
   except errors.DuplicateKeyError:
     raise error.OpcountExceededError(op, period_secs, max_operations)
@@ -62,7 +63,7 @@ async def force_inc(op: str, ident: str, period_secs: int, max_operations: int, 
                                                'expire_at': expire_at},
                                        update={'$inc': {op: operations}},
                                        upsert=True,
-                                       return_document=True)
+                                       return_document=ReturnDocument.AFTER)
   return doc
 
 

@@ -3,6 +3,8 @@ import datetime
 import hashlib
 import os
 
+from pymongo import ReturnDocument
+
 from vj4 import db
 from vj4.util import argmethod
 
@@ -100,7 +102,7 @@ async def update(token_id: str, token_type: int, expire_seconds: int, **kwargs):
     update={'$set': {**kwargs,
                      'update_at': now,
                      'expire_at': now + datetime.timedelta(seconds=expire_seconds)}},
-    return_document=True)
+    return_document=ReturnDocument.AFTER)
   return doc
 
 
