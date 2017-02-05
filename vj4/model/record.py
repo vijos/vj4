@@ -65,7 +65,7 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
                                                         'time_ms': 0,
                                                         'memory_kb': 0,
                                                         'rejudged': True}},
-                                       return_document=False)
+                                       return_document=ReturnDocument.BEFORE)
   post_coros = [bus.publish('record_change', doc['_id'])]
   if enqueue:
     post_coros.append(queue.publish('judge', rid=doc['_id']))
