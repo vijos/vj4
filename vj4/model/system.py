@@ -1,3 +1,5 @@
+from pymongo import ReturnDocument
+
 from vj4 import db
 from vj4.util import argmethod
 
@@ -10,19 +12,19 @@ async def inc_user_counter():
     Integer value after increment.
   """
   coll = db.Collection('system')
-  doc = await coll.find_and_modify(query={'_id': 'user_counter'},
-                                   update={'$inc': {'value': 1}},
-                                   upsert=True,
-                                   new=True)
+  doc = await coll.find_one_and_update(filter={'_id': 'user_counter'},
+                                       update={'$inc': {'value': 1}},
+                                       upsert=True,
+                                       return_document=ReturnDocument.AFTER)
   return doc['value']
 
 
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('system')
-  await coll.find_and_modify(query={'_id': 'user_counter'},
-                             update={'$setOnInsert': {'value': 1}},
-                             upsert=True)
+  await coll.find_one_and_update(filter={'_id': 'user_counter'},
+                                 update={'$setOnInsert': {'value': 1}},
+                                 upsert=True)
 
 
 if __name__ == '__main__':
