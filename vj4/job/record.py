@@ -57,10 +57,10 @@ async def user_in_problem(uid: int, domain_id: str, pid: document.convert_doc_id
 @domainjob.wrap
 async def run(domain_id: str):
   _logger.info('Clearing previous statuses')
-  await db.Collection('document.status').update(
+  await db.Collection('document.status').update_many(
     {'domain_id': domain_id, 'doc_type': document.TYPE_PROBLEM},
     {'$unset': {'journal': '', 'rev': '', 'status': '', 'rid': '',
-                'num_submit': '', 'num_accept': ''}}, multi=True)
+                'num_submit': '', 'num_accept': ''}})
   pdocs = problem.get_multi(domain_id=domain_id, fields={'_id': 1, 'doc_id': 1}).sort('doc_id', 1)
   dudoc_factory = functools.partial(dict, num_submit=0, num_accept=0)
   uddoc_updates = collections.defaultdict(dudoc_factory)

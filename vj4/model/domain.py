@@ -1,11 +1,11 @@
 from pymongo import errors
+from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4 import error
 from vj4.model import builtin
 from vj4.util import argmethod
 from vj4.util import validator
-
 
 PROJECTION_PUBLIC = {'uid': 1}
 
@@ -21,9 +21,9 @@ async def add(domain_id: str, owner_uid: int,
       raise error.DomainAlreadyExistError(domain_id)
   coll = db.Collection('domain')
   try:
-    return await coll.insert({'_id': domain_id, 'owner_uid': owner_uid,
-                              'roles': roles, 'name': name,
-                              'gravatar': gravatar})
+    return (await coll.insert_one({'_id': domain_id, 'owner_uid': owner_uid,
+                                   'roles': roles, 'name': name,
+                                   'gravatar': gravatar})).inserted_id
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
 
@@ -59,17 +59,17 @@ async def edit(domain_id: str, **kwargs):
   if 'name' in kwargs:
     validator.check_name(kwargs['name'])
   # TODO(twd2): check kwargs
-  return await coll.find_and_modify(query={'_id': domain_id},
-                                    update={'$set': {**kwargs}},
-                                    new=True)
+  return await coll.find_one_and_update(filter={'_id': domain_id},
+                                        update={'$set': {**kwargs}},
+                                        return_document=ReturnDocument.AFTER)
 
 
 async def unset(domain_id, fields):
   # TODO(twd2): check fields
   coll = db.Collection('domain')
-  return await coll.find_and_modify(query={'_id': domain_id},
-                                    update={'$unset': dict((f, '') for f in set(fields))},
-                                    new=True)
+  return await coll.find_one_and_update(filter={'_id': domain_id},
+                                        update={'$unset': dict((f, '') for f in set(fields))},
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -79,9 +79,9 @@ async def set_role(domain_id: str, role: str, perm: int):
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
   coll = db.Collection('domain')
-  return await coll.find_and_modify(query={'_id': domain_id},
-                                    update={'$set': {'roles.{0}'.format(role): perm}},
-                                    new=True)
+  return await coll.find_one_and_update(filter={'_id': domain_id},
+                                        update={'$set': {'roles.{0}'.format(role): perm}},
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -97,13 +97,13 @@ async def delete_roles(domain_id: str, roles):
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
   user_coll = db.Collection('domain.user')
-  await user_coll.update({'domain_id': domain_id, 'role': {'$in': list(roles)}},
-                         {'$unset': {'role': ''}}, multi=True)
+  await user_coll.update_many({'domain_id': domain_id, 'role': {'$in': list(roles)}},
+                              {'$unset': {'role': ''}})
   coll = db.Collection('domain')
-  return await coll.find_and_modify(query={'_id': domain_id},
-                                    update={'$unset': dict(('roles.{0}'.format(role), '')
-                                                           for role in roles)},
-                                    new=True)
+  return await coll.find_one_and_update(filter={'_id': domain_id},
+                                        update={'$unset': dict(('roles.{0}'.format(role), '')
+                                                               for role in roles)},
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -112,9 +112,9 @@ async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
   coll = db.Collection('domain')
-  return await coll.find_and_modify(query={'_id': domain_id, 'owner_uid': old_owner_uid},
-                                    update={'$set': {'owner_uid': new_owner_uid}},
-                                    new=True)
+  return await coll.find_one_and_update(filter={'_id': domain_id, 'owner_uid': old_owner_uid},
+                                        update={'$set': {'owner_uid': new_owner_uid}},
+                                        return_document=ReturnDocument.AFTER)
 
 
 @argmethod.wrap
@@ -125,34 +125,32 @@ async def get_user(domain_id: str, uid: int, fields=None):
 
 async def set_user(domain_id, uid, **kwargs):
   coll = db.Collection('domain.user')
-  return await coll.find_and_modify(query={'domain_id': domain_id, 'uid': uid},
-                                    update={'$set': kwargs},
-                                    upsert=True,
-                                    new=True)
+  return await coll.find_one_and_update(filter={'domain_id': domain_id, 'uid': uid},
+                                        update={'$set': kwargs},
+                                        upsert=True,
+                                        return_document=ReturnDocument.AFTER)
 
 
 async def unset_user(domain_id, uid, fields):
   coll = db.Collection('domain.user')
-  return await coll.find_and_modify(query={'domain_id': domain_id, 'uid': uid},
-                                    update={'$unset': dict((f, '') for f in set(fields))},
-                                    upsert=True,
-                                    new=True)
+  return await coll.find_one_and_update(filter={'domain_id': domain_id, 'uid': uid},
+                                        update={'$unset': dict((f, '') for f in set(fields))},
+                                        upsert=True,
+                                        return_document=ReturnDocument.AFTER)
 
 
 async def set_users(domain_id, uids, **kwargs):
   coll = db.Collection('domain.user')
-  await coll.update({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
-                    {'$set': kwargs},
-                    upsert=False,
-                    multi=True)
+  await coll.update_many({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                         {'$set': kwargs},
+                         upsert=False)
 
 
 async def unset_users(domain_id, uids, fields):
   coll = db.Collection('domain.user')
-  await coll.update({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
-                    {'$unset': dict((f, '') for f in set(fields))},
-                    upsert=True,
-                    multi=True)
+  await coll.update_many({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                         {'$unset': dict((f, '') for f in set(fields))},
+                         upsert=True)
 
 
 @argmethod.wrap
@@ -177,10 +175,10 @@ async def unset_users_role(domain_id: str, uids):
 
 async def inc_user(domain_id, uid, **kwargs):
   coll = db.Collection('domain.user')
-  return await coll.find_and_modify(query={'domain_id': domain_id, 'uid': uid},
-                                    update={'$inc': kwargs},
-                                    upsert=True,
-                                    new=True)
+  return await coll.find_one_and_update(filter={'domain_id': domain_id, 'uid': uid},
+                                        update={'$inc': kwargs},
+                                        upsert=True,
+                                        return_document=ReturnDocument.AFTER)
 
 
 def get_multi_user(*, fields=None, **kwargs):
@@ -206,16 +204,16 @@ async def get_dict_user_by_domain_id(uid, *, fields=None):
 @argmethod.wrap
 async def ensure_indexes():
   coll = db.Collection('domain')
-  await coll.ensure_index('owner_uid')
+  await coll.create_index('owner_uid')
   user_coll = db.Collection('domain.user')
-  await user_coll.ensure_index('uid')
-  await user_coll.ensure_index([('domain_id', 1),
+  await user_coll.create_index('uid')
+  await user_coll.create_index([('domain_id', 1),
                                 ('uid', 1)], unique=True)
-  await user_coll.ensure_index([('domain_id', 1),
+  await user_coll.create_index([('domain_id', 1),
                                 ('role', 1)], sparse=True)
-  await user_coll.ensure_index([('domain_id', 1),
+  await user_coll.create_index([('domain_id', 1),
                                 ('rp', -1)])
-  await user_coll.ensure_index([('domain_id', 1),
+  await user_coll.create_index([('domain_id', 1),
                                 ('rank', 1)])
 
 
