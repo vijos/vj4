@@ -21,9 +21,9 @@ async def add(domain_id: str, owner_uid: int,
       raise error.DomainAlreadyExistError(domain_id)
   coll = db.Collection('domain')
   try:
-    return await coll.insert({'_id': domain_id, 'owner_uid': owner_uid,
-                              'roles': roles, 'name': name,
-                              'gravatar': gravatar})
+    return (await coll.insert_one({'_id': domain_id, 'owner_uid': owner_uid,
+                                   'roles': roles, 'name': name,
+                                   'gravatar': gravatar})).inserted_id
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
 
@@ -97,8 +97,8 @@ async def delete_roles(domain_id: str, roles):
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
   user_coll = db.Collection('domain.user')
-  await user_coll.update({'domain_id': domain_id, 'role': {'$in': list(roles)}},
-                         {'$unset': {'role': ''}}, multi=True)
+  await user_coll.update_many({'domain_id': domain_id, 'role': {'$in': list(roles)}},
+                              {'$unset': {'role': ''}})
   coll = db.Collection('domain')
   return await coll.find_one_and_update(filter={'_id': domain_id},
                                         update={'$unset': dict(('roles.{0}'.format(role), '')
@@ -141,18 +141,16 @@ async def unset_user(domain_id, uid, fields):
 
 async def set_users(domain_id, uids, **kwargs):
   coll = db.Collection('domain.user')
-  await coll.update({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
-                    {'$set': kwargs},
-                    upsert=False,
-                    multi=True)
+  await coll.update_many({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                         {'$set': kwargs},
+                         upsert=False)
 
 
 async def unset_users(domain_id, uids, fields):
   coll = db.Collection('domain.user')
-  await coll.update({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
-                    {'$unset': dict((f, '') for f in set(fields))},
-                    upsert=True,
-                    multi=True)
+  await coll.update_many({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
+                         {'$unset': dict((f, '') for f in set(fields))},
+                         upsert=True)
 
 
 @argmethod.wrap

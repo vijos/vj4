@@ -40,7 +40,7 @@ async def add(token_type: int, expire_seconds: int, **kwargs):
          'update_at': now,
          'expire_at': now + datetime.timedelta(seconds=expire_seconds)}
   coll = db.Collection('token')
-  await coll.insert(doc)
+  await coll.insert_one(doc)
   return binascii.hexlify(id_binary).decode(), doc
 
 
