@@ -55,8 +55,8 @@ async def delete(message_id: objectid.ObjectId, uid: int=None):
   query = {'_id': message_id}
   if uid:
     query['$or'] = [{'sender_uid': uid}, {'sendee_uid': uid}]
-  doc = await coll.delete_one(query)
-  return bool(doc['n'])
+  result = await coll.delete_one(query)
+  return bool(result.deleted_count)
 
 
 @argmethod.wrap

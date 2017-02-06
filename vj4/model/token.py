@@ -124,17 +124,18 @@ async def delete(token_id: str, token_type: int):
 async def delete_by_hashed_id(hashed_id: str, token_type: int):
   """Delete a token by the hashed ID."""
   coll = db.Collection('token')
-  doc = await coll.delete_one({'_id': hashed_id, 'token_type': token_type})
-  return bool(doc['n'])
+  result = await coll.delete_one({'_id': hashed_id, 'token_type': token_type})
+  return bool(result.deleted_count)
 
 
 @argmethod.wrap
 async def delete_by_uid(uid: int):
   """Delete all tokens by uid."""
   coll = db.Collection('token')
-  doc = await coll.delete_many({'uid': uid,
-                                'token_type': {'$in': [TYPE_SAVED_SESSION, TYPE_UNSAVED_SESSION]}})
-  return bool(doc['n'])
+  result = await coll.delete_many({'uid': uid,
+                                   'token_type': {'$in': [TYPE_SAVED_SESSION,
+                                                          TYPE_UNSAVED_SESSION]}})
+  return bool(result.deleted_count)
 
 
 @argmethod.wrap
