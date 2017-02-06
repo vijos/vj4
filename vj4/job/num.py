@@ -28,8 +28,8 @@ async def discussion(domain_id: str):
     }
   ]
   coll = db.Collection('document')
-  await coll.update({'domain_id': domain_id, 'doc_type': document.TYPE_DISCUSSION},
-                    {'$set': {'num_replies': 0}}, multi=True)
+  await coll.update_many({'domain_id': domain_id, 'doc_type': document.TYPE_DISCUSSION},
+                         {'$set': {'num_replies': 0}})
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
@@ -59,8 +59,8 @@ async def contest(domain_id: str):
     }
   ]
   coll = db.Collection('document')
-  await coll.update({'domain_id': domain_id, 'doc_type': document.TYPE_CONTEST},
-                    {'$set': {'attend': 0}}, multi=True)
+  await coll.update_many({'domain_id': domain_id, 'doc_type': document.TYPE_CONTEST},
+                         {'$set': {'attend': 0}})
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
@@ -90,8 +90,8 @@ async def training(domain_id: str):
     }
   ]
   coll = db.Collection('document')
-  await coll.update({'domain_id': domain_id, 'doc_type': document.TYPE_TRAINING},
-                    {'$set': {'enroll': 0}}, multi=True)
+  await coll.update_many({'domain_id': domain_id, 'doc_type': document.TYPE_TRAINING},
+                         {'$set': {'enroll': 0}})
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
@@ -121,8 +121,8 @@ async def problem(domain_id: str):
     }
   ]
   user_coll = db.Collection('domain.user')
-  await user_coll.update({'domain_id': domain_id},
-                         {'$set': {'num_problems': 0}}, multi=True)
+  await user_coll.update_many({'domain_id': domain_id},
+                              {'$set': {'num_problems': 0}})
   user_coll = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
@@ -151,8 +151,8 @@ async def problem_solution(domain_id: str):
     }
   ]
   coll = db.Collection('document')
-  await coll.update({'domain_id': domain_id, 'doc_type': document.TYPE_PROBLEM_SOLUTION},
-                    {'$set': {'vote': 0}}, multi=True)
+  await coll.update_many({'domain_id': domain_id, 'doc_type': document.TYPE_PROBLEM_SOLUTION},
+                         {'$set': {'vote': 0}})
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
@@ -179,8 +179,8 @@ async def problem_solution(domain_id: str):
     }
   ]
   user_coll = db.Collection('domain.user')
-  await user_coll.update({'domain_id': domain_id},
-                         {'$set': {'num_liked': 0}}, multi=True)
+  await user_coll.update_many({'domain_id': domain_id},
+                              {'$set': {'num_liked': 0}})
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')

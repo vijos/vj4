@@ -100,7 +100,7 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
 @domainjob.wrap
 async def recalc(domain_id: str):
   user_coll = db.Collection('domain.user')
-  await user_coll.update({'domain_id': domain_id}, {'$set': {'rp': 0.0}}, multi=True)
+  await user_coll.update_many({'domain_id': domain_id}, {'$set': {'rp': 0.0}})
   pdocs = problem.get_multi(domain_id=domain_id,
                             fields={'_id': 1, 'doc_id': 1, 'num_accept': 1}).sort('doc_id', 1)
   uddoc_updates = {}

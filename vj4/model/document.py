@@ -55,7 +55,7 @@ async def add(domain_id: str, content: str, owner_uid: int,
   if parent_doc_type or parent_doc_id:
     assert parent_doc_type and parent_doc_id
     doc['parent_doc_type'], doc['parent_doc_id'] = parent_doc_type, parent_doc_id
-  await coll.insert(doc)
+  await coll.insert_one(doc)
   return doc['doc_id']
 
 

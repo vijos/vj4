@@ -22,7 +22,7 @@ async def add(sender_uid: int, sendee_uid: int, content: str):
                      'content': content,
                      'status': 0,
                      'at': datetime.datetime.utcnow()}]}
-  await coll.insert(mdoc)
+  await coll.insert_one(mdoc)
   return mdoc
 
 

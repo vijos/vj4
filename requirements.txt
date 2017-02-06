@@ -1,5 +1,5 @@
 aiohttp>=1.2.0
-jinja2==2.7.3  # there is performance bug in 2.8
+jinja2>=2.9.0  # there is performance bug in 2.8
 sockjs>=0.5.0
 motor
 hoedown
