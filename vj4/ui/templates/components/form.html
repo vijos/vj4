@@ -85,7 +85,7 @@
 >{{ value }}</textarea>
 {% endmacro %}
 
-{% macro form_textarea(columns=5) %}
+{% macro form_textarea(columns=8) %}
 {{ form_begin(columns=columns, **kwargs) }}
 {{ textarea(columns=columns, **kwargs) }}
 {{ form_end(columns=columns, **kwargs) }}
