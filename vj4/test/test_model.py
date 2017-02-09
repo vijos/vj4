@@ -125,7 +125,8 @@ class DocumentTest(base.DatabaseTestCase):
 class DomainTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_get_transfer(self):
-    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
+    inserted_id = await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
+    self.assertEqual(DOMAIN_ID, inserted_id)
     ddoc = await domain.get(DOMAIN_ID)
     self.assertEqual(ddoc['_id'], DOMAIN_ID)
     self.assertEqual(ddoc['owner_uid'], OWNER_UID)

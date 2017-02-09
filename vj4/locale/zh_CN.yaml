@@ -318,7 +318,7 @@ Field {0} validation failed.: 字段 {0} 验证失败。
 Unknown field {0}.: 未知字段 {0}。
 Passwords don't match.: 验证密码不匹配。
 User {0} already exists.: 用户 {0} 已存在。
-Invalid user {0} or password.: 用户 {0} 不存在或密码错误。
+Invalid password for user {0}.: 用户 {0} 的密码错误。
 Document {2} not found.: 文档 {2} 不存在。
 Data of Problem {0} not found.: 题目 {0} 的数据缺失。
 You're not logged in.: 您没有登录。

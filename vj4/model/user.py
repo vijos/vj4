@@ -36,19 +36,19 @@ async def add(uid: int, uname: str, password: str, mail: str, regip: str=''):
   salt = pwhash.gen_salt()
   coll = db.Collection('user')
   try:
-    await coll.insert({'_id': uid,
-                       'uname': uname,
-                       'uname_lower': uname_lower,
-                       'mail': mail,
-                       'mail_lower': mail_lower,
-                       'salt': salt,
-                       'hash': pwhash.hash_vj4(password, salt),
-                       'regat': datetime.datetime.utcnow(),
-                       'regip': regip,
-                       'priv': builtin.DEFAULT_PRIV,
-                       'loginat': datetime.datetime.utcnow(),
-                       'loginip': regip,
-                       'gravatar': mail})
+    await coll.insert_one({'_id': uid,
+                           'uname': uname,
+                           'uname_lower': uname_lower,
+                           'mail': mail,
+                           'mail_lower': mail_lower,
+                           'salt': salt,
+                           'hash': pwhash.hash_vj4(password, salt),
+                           'regat': datetime.datetime.utcnow(),
+                           'regip': regip,
+                           'priv': builtin.DEFAULT_PRIV,
+                           'loginat': datetime.datetime.utcnow(),
+                           'loginip': regip,
+                           'gravatar': mail})
   except errors.DuplicateKeyError:
     raise error.UserAlreadyExistError(uid, uname, mail) from None
 
