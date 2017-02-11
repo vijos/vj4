@@ -12,7 +12,7 @@ function getClosestTooltipElement(element) {
 }
 
 const tooltipPage = new AutoloadPage(() => {
-  $(document).on('mouseover', e => {
+  $(document).on('mouseover', (e) => {
     const element = getClosestTooltipElement(e.target);
     if (!element) {
       return;

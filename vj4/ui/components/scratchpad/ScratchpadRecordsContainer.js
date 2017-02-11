@@ -11,7 +11,7 @@ import ScratchpadRecordsTable from './ScratchpadRecordsTableContainer';
 import i18n from '../../utils/i18n';
 import * as util from '../../misc/Util';
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   loadSubmissions() {
     dispatch({
       type: 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS',
@@ -34,6 +34,9 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(null, mapDispatchToProps)
 export default class ScratchpadRecordsContainer extends React.PureComponent {
+  componentDidMount() {
+    this.props.loadSubmissions();
+  }
   render() {
     return (
       <Panel
@@ -41,7 +44,7 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
       >
         <Tabs
           className="scratchpad__panel-tab flex-col flex-fill"
-          activeKey={"all"}
+          activeKey={'all'}
           animation="slide-horizontal"
           renderTabBar={() => <ScrollableInkTabBar
             extraContent={
@@ -69,8 +72,5 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
         </Tabs>
       </Panel>
     );
-  }
-  componentDidMount() {
-    this.props.loadSubmissions();
   }
 }

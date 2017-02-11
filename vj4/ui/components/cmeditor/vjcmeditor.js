@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import SimpleMDE from 'vj-simplemde';
-import * as util from '../../misc/Util';
 
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/pascal/pascal';
 import 'codemirror/mode/python/python';
+
+import * as util from '../../misc/Util';
 
 export default class VjCmEditor extends SimpleMDE {
   constructor(options = {}) {

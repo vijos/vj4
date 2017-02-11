@@ -1,7 +1,7 @@
-import Navigation from '../navigation';
 import 'sticky-kit/dist/sticky-kit';
-
 import _ from 'lodash';
+
+import Navigation from '../navigation';
 import DOMAttachedObject from '../DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
@@ -9,9 +9,9 @@ export default class StyledTable extends DOMAttachedObject {
   static DOMAttachKey = 'vjStyledTableInstance';
 
   static attachAll() {
-    for (const table of $('.section__body > .data-table')) {
+    $('.section__body > .data-table').get().forEach((table) => {
       StyledTable.getOrConstruct($(table)).attach();
-    }
+    });
   }
 
   constructor($dom) {

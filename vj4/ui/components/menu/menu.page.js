@@ -8,9 +8,7 @@ function expandMenu($menu) {
 
 async function expandAllMenus() {
   await delay(200);
-  for (const menu of $('.menu.collapsed')) {
-    expandMenu($(menu));
-  }
+  $('.menu.collapsed').get().forEach(menu => expandMenu($(menu)));
 }
 
 const menuPage = new AutoloadPage(() => {

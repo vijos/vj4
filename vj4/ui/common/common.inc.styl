@@ -1,7 +1,7 @@
 // This file is imported in all stylus source code
-
-rupture.mobile-cutoff = unit(vjResponsiveCutoff.mobile, 'px')
-rupture.desktop-cutoff = unit(vjResponsiveCutoff.desktop, 'px')
+breakpoints = json('../breakpoints.json', { hash: true })
+rupture.mobile-cutoff = unit(breakpoints.mobile, 'px')
+rupture.desktop-cutoff = unit(breakpoints.desktop, 'px')
 
 @import '../misc/.iconfont/webicon.inc.styl'
 @import 'color.inc.styl'

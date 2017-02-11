@@ -5,7 +5,7 @@ export default function ToolbarComponent(props) {
   const {
     className,
     children,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'scratchpad__toolbar flex-row flex-cross-center');
   return (
@@ -25,7 +25,7 @@ export function ToolbarButtonComponent(props) {
     onClick,
     className,
     children,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'scratchpad__toolbar__item scratchpad__toolbar__button', {
     activated,
@@ -60,7 +60,7 @@ ToolbarButtonComponent.defaultProps = {
 export function ToolbarSplitComponent(props) {
   const {
     className,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'scratchpad__toolbar__item scratchpad__toolbar__split');
   return (
@@ -76,7 +76,7 @@ export function ToolbarItemComponent(props) {
   const {
     className,
     children,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'scratchpad__toolbar__item');
   return (

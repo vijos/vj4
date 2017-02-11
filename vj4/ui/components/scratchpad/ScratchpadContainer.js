@@ -42,12 +42,12 @@ function buildNestedPane([a, ...panes]) {
     ));
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   ui: state.ui,
   problem: state.problem,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   changeUiSize: _.debounce((uiElement, size) => {
     dispatch({
       type: 'SCRATCHPAD_UI_CHANGE_SIZE',

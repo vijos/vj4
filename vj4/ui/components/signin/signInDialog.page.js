@@ -1,6 +1,6 @@
 import { AutoloadPage } from '../../misc/PageLoader';
 import DomDialog from '../dialog/DomDialog';
-import responsiveCutoff from '../../responsive.inc.js';
+import responsiveCutoff from '../../breakpoints.json';
 
 const signinDialogPage = new AutoloadPage(() => {}, () => {
   const signInDialog = DomDialog.getOrConstruct($('.dialog--signin'), {

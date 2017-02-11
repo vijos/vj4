@@ -1,17 +1,11 @@
 import _ from 'lodash';
 import path from 'path';
 import webpack from 'webpack';
-import HappyPack from 'happypack';
 import fs from 'fs-extra';
 
-import DummyPlugin from './scripts/build/webpackDummyPlugin.js';
 import DummyOutputPlugin from './scripts/build/webpackDummyOutputPlugin.js';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import postcssAutoprefixerPlugin from 'autoprefixer';
-import stylusRupturePlugin from 'rupture';
-
-import responsiveCutoff from './vj4/ui/responsive.inc.js';
 
 const extractProjectCSS = new ExtractTextPlugin({ filename: 'vj4.css', allChunks: true });
 const extractVendorCSS = new ExtractTextPlugin({ filename: 'vendors.css', allChunks: true });
@@ -20,9 +14,53 @@ function root(fn) {
   return path.resolve(__dirname, fn);
 }
 
-function vjResponsivePlugin() {
-  return style => {
-    style.define('vjResponsiveCutoff', responsiveCutoff, true);
+function eslintLoader() {
+  return {
+    loader: 'eslint-loader',
+    options: {
+      configFile: root('vj4/ui/.eslintrc.yml'),
+    },
+  };
+}
+
+function babelLoader() {
+  return {
+    loader: 'babel-loader',
+    options: {
+      ...require('./package.json').babelForProject,
+      cacheDirectory: !_.isError(_.attempt(() => fs.ensureDirSync(root('.cache/babel'))))
+        ? root('.cache/babel')
+        : false,
+    },
+  };
+}
+
+function jsonLoader() {
+  return 'json-loader';
+}
+
+function postcssLoader() {
+  return 'postcss-loader';
+}
+
+function styleLoader() {
+  return 'style-loader';
+}
+
+function cssLoader() {
+  return 'css-loader?importLoaders=1';
+}
+
+function stylusLoader() {
+  return 'stylus-loader';
+}
+
+function fileLoader() {
+  return {
+    loader: 'file-loader',
+    options: {
+      name: '[path][name].[ext]?[sha512:hash:base62:7]',
+    },
   };
 }
 
@@ -43,90 +81,70 @@ export default function (env = {}) {
     },
     resolve: {
       modules: [root('node_modules'), root('vj4/ui')],
-      extensions: ['.js', ''],
+      //extensions: ['.js', ''],
     },
     module: {
-      preLoaders: [
+      rules: [
         {
-          test: /\.js?$/,
-          loader: 'eslint',
-          exclude: /node_modules\//,
-        }
-      ],
-      loaders: [
-        {
-          // fonts
-          test: /\.(svg|ttf|eot|woff|woff2)$/,
-          loader: 'file',
-          query: {
-            name: '[path][name].[ext]?[sha512:hash:base62:7]',
-          },
+          test: /\.jsx?$/,
+          exclude: /node_modules[\/\\]/,
+          enforce: 'pre',
+          use: [eslintLoader()],
         },
         {
-          // images
-          test: /\.(png|jpg)$/,
-          loader: 'url',
-          query: {
-            limit: 4024,
-            name: '[path][name].[ext]?[sha512:hash:base62:7]',
-          }
+          // fonts and images
+          test: /\.(svg|ttf|eot|woff|woff2|png|jpg|jpeg|gif)$/,
+          use: [fileLoader()],
         },
         {
           // ES2015 scripts
           test: /\.js$/,
-          exclude: /node_modules\//,
-          loader: 'babel',
-          query: {
-            ...require('./package.json').babelForProject,
-            cacheDirectory: !_.isError(_.attempt(() => fs.ensureDirSync(root('.cache/babel'))))
-              ? root('.cache/babel')
-              : false,
-          },
-          happy: { id: 'js' },
+          exclude: /node_modules[\/\\]/,
+          use: [babelLoader()],
+        },
+        {
+          test: /\.json$/,
+          use: [jsonLoader()],
         },
         {
           // fix pickadate loading
           test: /pickadate/,
-          loader: 'imports',
-          query: { define: '>false' },
+          use: [
+            {
+              loader: 'imports-loader',
+              options: { define: '>false' },
+            },
+          ],
         },
         {
           // project stylus stylesheets
           test: /\.styl$/,
-          loader: env.watch
-            ? ['style', 'css', 'postcss', 'stylus?resolve url']
-            : extractProjectCSS.extract(['css', 'postcss', 'stylus?resolve url'])
+          use: env.watch
+            ? [styleLoader(), cssLoader(), postcssLoader(), stylusLoader()]
+            : extractProjectCSS.extract([cssLoader(), postcssLoader(), stylusLoader()])
             ,
         },
         {
           // vendors stylesheets
           test: /\.css$/,
-          include: /node_modules\//,
-          loader: env.watch
-            ? ['style', 'css']
-            : extractVendorCSS.extract(['css'])
+          include: /node_modules[\/\\]/,
+          use: env.watch
+            ? [styleLoader(), cssLoader()]
+            : extractVendorCSS.extract([cssLoader()])
             ,
         },
         {
           // project stylesheets
           test: /\.css$/,
-          exclude: /node_modules\//,
-          loader: env.watch
-            ? ['style', 'css']
-            : extractProjectCSS.extract(['css', 'postcss'])
+          exclude: /node_modules[\/\\]/,
+          use: env.watch
+            ? [styleLoader(), cssLoader(), postcssLoader()]
+            : extractProjectCSS.extract([cssLoader(), postcssLoader()])
             ,
         },
       ],
     },
     plugins: [
-
-      env.watch
-        ? new DummyPlugin()
-        : new HappyPack({
-            id: 'js',
-            tempDir: root('.cache/happypack'),
-          })
-        ,
 
       new webpack.ProvidePlugin({
         $: 'jquery',
@@ -158,7 +176,7 @@ export default function (env = {}) {
             minChunks: (module, count) => (
               module.resource
               && module.resource.indexOf(root('vj4/ui/')) === -1
-              && module.resource.match(/\.js$/)
+              && module.resource.match(/\.jsx?$/)
             ),
           })
         ,
@@ -169,20 +187,29 @@ export default function (env = {}) {
       // copy emoji images
       new CopyWebpackPlugin([{ from: root('node_modules/emojify.js/dist/images/basic'), to: 'img/emoji/' }]),
 
+      // Options are provided by LoaderOptionsPlugin until webpack#3136 is fixed
+      new webpack.LoaderOptionsPlugin({
+        test: /\.styl$/,
+        stylus: {
+          default: {
+            preferPathResolver: 'webpack',
+            use: [
+              require('rupture')(),
+            ],
+            import: [
+              '~common/common.inc.styl',
+            ],
+          },
+        },
+      }),
+      new webpack.LoaderOptionsPlugin({
+        options: {
+          context: __dirname,
+          postcss: [require('autoprefixer')],
+        },
+      }),
+
     ],
-    postcss: () => [postcssAutoprefixerPlugin],
-    stylus: {
-      use: [
-        vjResponsivePlugin(),
-        stylusRupturePlugin(),
-      ],
-      import: [
-        '~common/common.inc.styl',
-      ]
-    },
-    eslint: {
-      configFile: root('vj4/ui/.eslintrc.yml'),
-    },
     stats: {
       children: false,
     },

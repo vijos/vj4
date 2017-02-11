@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import ScratchpadRecordsRow from './ScratchpadRecordsRowContainer';
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   rows: state.records.rows,
   isLoading: state.ui.records.isLoading,
 });

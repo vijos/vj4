@@ -5,7 +5,7 @@ export default function SplitPaneFillOverlayComponent(props) {
   const {
     className,
     children,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'splitpane-fill');
   return (

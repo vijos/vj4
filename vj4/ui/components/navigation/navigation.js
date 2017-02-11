@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import responsiveCutoff from '../../responsive.inc.js';
+import responsiveCutoff from '../../breakpoints.json';
 
 class MultipleStateContainer {
   constructor(onStateChange, initialState = false) {

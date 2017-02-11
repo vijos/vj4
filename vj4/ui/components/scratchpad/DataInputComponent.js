@@ -7,7 +7,7 @@ export default function DataInputComponent(props) {
     value,
     onChange,
     className,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'flex-col flex-fill');
   return (

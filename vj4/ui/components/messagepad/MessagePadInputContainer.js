@@ -5,7 +5,7 @@ import Icon from '../react/IconComponent';
 
 import * as util from '../../misc/Util';
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   activeId: state.activeId,
   isPosting: state.activeId !== null
     ? state.isPosting[state.activeId]
@@ -15,7 +15,7 @@ const mapStateToProps = (state) => ({
     : '',
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   handleChange(id, value) {
     if (id === null) {
       return;
@@ -69,24 +69,37 @@ export default class MessagePadInputContainer extends React.PureComponent {
   static contextTypes = {
     store: React.PropTypes.object,
   };
+  componentWillUpdate(nextProps) {
+    this.focusInput = (
+      nextProps.activeId !== this.props.activeId
+      || this.props.isPosting !== nextProps.isPosting && nextProps.isPosting === false
+    );
+  }
+  componentDidUpdate() {
+    if (this.focusInput) {
+      const { scrollX, scrollY } = window;
+      this.refs.input.focus();
+      window.scrollTo(scrollX, scrollY);
+    }
+  }
+  handleKeyDown(ev) {
+    if (ev.keyCode === 13 && (ev.ctrlKey || ev.metaKey)) {
+      this.submit();
+    }
+  }
   submit() {
     const state = this.context.store.getState();
     if (state.dialogues[this.props.activeId].isPlaceholder) {
       this.props.postSend(
         this.props.activeId,
         state.dialogues[this.props.activeId].sendee_uid,
-        this.props.inputValue
+        this.props.inputValue,
       );
     } else {
       this.props.postReply(
         this.props.activeId,
-        this.props.inputValue
+        this.props.inputValue,
       );
-    }
-  }
-  handleKeyDown(ev) {
-    if (ev.keyCode === 13 && (ev.ctrlKey || ev.metaKey)) {
-      this.submit();
     }
   }
   render() {
@@ -112,18 +125,5 @@ export default class MessagePadInputContainer extends React.PureComponent {
         </button>
       </div>
     );
-  }
-  componentWillUpdate(nextProps) {
-    this.focusInput = (
-      nextProps.activeId !== this.props.activeId
-      || this.props.isPosting !== nextProps.isPosting && nextProps.isPosting === false
-    );
-  }
-  componentDidUpdate() {
-    if (this.focusInput) {
-      const { scrollX, scrollY } = window;
-      this.refs.input.focus();
-      window.scrollTo(scrollX, scrollY);
-    }
   }
 }
