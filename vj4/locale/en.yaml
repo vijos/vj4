@@ -32,6 +32,7 @@ setting_preference: Preference
 setting_privacy: Privacy
 training_main: Training
 training_edit: Training Edit
+training_create: Training Create
 user_detail: User Detail
 user_login: Login
 user_logout: Logout
