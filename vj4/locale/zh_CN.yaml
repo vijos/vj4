@@ -241,6 +241,7 @@ problem_main: 题库
 problem_solution: 题解
 problem_submit: 递交代码
 problem_settings: 题目设置
+problem_statistics: 题目统计
 record_detail: 记录详情
 record_main: 评测队列
 reply: 回复
@@ -566,3 +567,4 @@ Created By: 创建人
 Judged By: 评测机
 Categories: 分类
 Tags: 标签
+Download Dataset: 下载数据集

@@ -23,6 +23,7 @@ problem_main: Problem Set
 problem_solution: Problem Solution
 problem_submit: Problem Submit
 problem_settings: Problem Settings
+problem_statistics: Problem Statistics
 record_detail: Record Detail
 record_main: Judging Queue
 setting_function: Function
@@ -30,6 +31,7 @@ setting_info: Personal Info
 setting_preference: Preference
 setting_privacy: Privacy
 training_main: Training
+training_edit: Training Edit
 user_detail: User Detail
 user_login: Login
 user_logout: Logout
@@ -53,3 +55,5 @@ perm_training: Trainings
 discussion_edit: Discussion Edit
 wiki_help: Help
 no_translation_warn: <blockquote class="warn">This part of content is under translation.</blockquote>
+setting_display: Display Preference
+setting_usage: Usage Preference
