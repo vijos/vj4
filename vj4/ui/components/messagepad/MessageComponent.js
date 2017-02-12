@@ -7,7 +7,7 @@ export default function MessageComponent(props) {
     isSelf,
     className,
     children,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'messagepad__message', {
     'side--self': isSelf,

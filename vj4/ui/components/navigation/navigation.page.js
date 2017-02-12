@@ -1,9 +1,10 @@
-import { AutoloadPage } from '../../misc/PageLoader';
-import * as util from '../../misc/Util';
 import _ from 'lodash';
 import Slideout from 'slideout';
+
+import { AutoloadPage } from '../../misc/PageLoader';
+import * as util from '../../misc/Util';
 import Navigation from './navigation.js';
-import responsiveCutoff from '../../responsive.inc.js';
+import responsiveCutoff from '../../breakpoints.json';
 
 const nav = Navigation.instance;
 const $nav = nav.$nav;
@@ -32,7 +33,7 @@ const navigationPage = new AutoloadPage(() => {
     $(window).on('scroll', _.throttle(handleScroll, 100));
     $nav.hover(
       () => nav.floating.set('hover', true),
-      () => nav.floating.set('hover', false)
+      () => nav.floating.set('hover', false),
     );
     $nav.on('vjDropdownShow', () => nav.floating.set('dropdown', true));
     $nav.on('vjDropdownHide', () => nav.floating.set('dropdown', false));

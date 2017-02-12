@@ -5,7 +5,7 @@ export default function PanelButtonComponent(props) {
   const {
     className,
     children,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'scratchpad__panel-button');
   return (

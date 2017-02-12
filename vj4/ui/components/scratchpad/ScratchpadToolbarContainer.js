@@ -17,13 +17,10 @@ function isTestCaseDataValid(data) {
 }
 
 function isPretestValid(state) {
-  for (const id of state.tabs) {
-    return isTestCaseDataValid(state.data[id]);
-  }
-  return false;
+  return _.some(state.tabs, id => isTestCaseDataValid(state.data[id]));
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   pretestVisible: state.ui.pretest.visible,
   recordsVisible: state.ui.records.visible,
   isPosting: state.ui.isPosting,
@@ -31,7 +28,7 @@ const mapStateToProps = (state) => ({
   pretestValid: isPretestValid(state.pretest),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   togglePanel(uiElement) {
     dispatch({
       type: 'SCRATCHPAD_UI_TOGGLE_VISIBILITY',

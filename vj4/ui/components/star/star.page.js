@@ -18,7 +18,7 @@ const starPage = new AutoloadPage(() => {
     setStarButtonState($button, !currentState);
     util
       .post($form.attr('action'), $form)
-      .then(data => {
+      .then((data) => {
         setStarButtonState($button, data.star);
       })
       .catch(() => {

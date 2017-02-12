@@ -11,9 +11,9 @@ export default function reducer(state = {}, action) {
           sender_udoc: udict[m.sender_uid],
           ...m,
         })),
-        m => m.sendee_udoc && m.sender_udoc
+        m => m.sendee_udoc && m.sender_udoc,
       ),
-      '_id'
+      '_id',
     );
   }
   case 'DIALOGUES_CREATE': {

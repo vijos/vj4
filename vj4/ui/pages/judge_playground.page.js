@@ -38,8 +38,13 @@ const page = new NamedPage('judge_playground', async () => {
     $('<button class="button rounded primary">').text('Point0')
       .on('click', () => {
         send('next', {
-          case: { status: recordEnum.STATUS_WRONG_ANSWER, score: 0, time_ms: 1, memory_kb: 777,
-                  judge_text: 'from playground' },
+          case: {
+            status: recordEnum.STATUS_WRONG_ANSWER,
+            score: 0,
+            time_ms: 1,
+            memory_kb: 777,
+            judge_text: 'from playground',
+          },
           progress: 51.123,
         });
       })
@@ -48,8 +53,13 @@ const page = new NamedPage('judge_playground', async () => {
     $('<button class="button rounded primary">').text('Point10')
       .on('click', () => {
         send('next', {
-          case: { status: recordEnum.STATUS_ACCEPTED, score: 10, time_ms: 1, memory_kb: 233,
-                  judge_text: 'from playground' },
+          case: {
+            status: recordEnum.STATUS_ACCEPTED,
+            score: 10,
+            time_ms: 1,
+            memory_kb: 233,
+            judge_text: 'from playground',
+          },
           progress: 90.0,
         });
       })
@@ -57,21 +67,36 @@ const page = new NamedPage('judge_playground', async () => {
 
     $('<button class="button rounded primary">').text('Accept')
       .on('click', () => {
-        send('end', { status: recordEnum.STATUS_ACCEPTED, score: 100, time_ms: 1, memory_kb: 1 });
+        send('end', {
+          status: recordEnum.STATUS_ACCEPTED,
+          score: 100,
+          time_ms: 1,
+          memory_kb: 1,
+        });
         $('button', div).detach();
       })
       .appendTo(body);
 
     $('<button class="button rounded primary">').text('WA')
       .on('click', () => {
-        send('end', { status: recordEnum.STATUS_WRONG_ANSWER, score: 88, time_ms: 88, memory_kb: 88 });
+        send('end', {
+          status: recordEnum.STATUS_WRONG_ANSWER,
+          score: 88,
+          time_ms: 88,
+          memory_kb: 88,
+        });
         $('button', div).detach();
       })
       .appendTo(body);
 
     $('<button class="button rounded primary">').text('TLE')
       .on('click', () => {
-        send('end', { status: recordEnum.STATUS_TIME_LIMIT_EXCEEDED, score: 10, time_ms: 9999, memory_kb: 88 });
+        send('end', {
+          status: recordEnum.STATUS_TIME_LIMIT_EXCEEDED,
+          score: 10,
+          time_ms: 9999,
+          memory_kb: 88,
+        });
         $('button', div).detach();
       })
       .appendTo(body);
@@ -79,7 +104,14 @@ const page = new NamedPage('judge_playground', async () => {
 
   sock.onclose = (message) => {
     const div = $('<div class="section visible">').appendTo('#messages');
-    $(`<div class="section__header"><h1 class="section__title">Connection closed, reason=${JSON.stringify(message.reason)}</h1></div>`)
+    $(`
+    <div class="section__header">
+      <h1 class="section__title">
+        Connection closed,
+        reason=${JSON.stringify(message.reason)}
+      </h1>
+    </div>
+    `)
       .appendTo(div);
   };
 });

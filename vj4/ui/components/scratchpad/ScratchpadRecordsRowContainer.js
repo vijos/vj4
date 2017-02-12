@@ -9,10 +9,10 @@ import { parse as parseMongoId } from '../../utils/mongoId';
 import i18n from '../../utils/i18n';
 import * as recordEnum from '../../constant/record';
 
-const shouldShowDetail = (data) =>
+const shouldShowDetail = data =>
   recordEnum.STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS[data.status];
 
-const isPretest = (data) =>
+const isPretest = data =>
   data.type === recordEnum.TYPE_PRETEST;
 
 const getRecordDetail = (data) => {
@@ -25,7 +25,7 @@ const getRecordDetail = (data) => {
   }
   const stat = _.pick(
     _.groupBy(data.cases || [], 'status'),
-    _.keys(recordEnum.STATUS_SCRATCHPAD_SHORT_TEXTS)
+    _.keys(recordEnum.STATUS_SCRATCHPAD_SHORT_TEXTS),
   );
   return _.map(recordEnum.STATUS_SCRATCHPAD_SHORT_TEXTS, (text, status) => {
     const count = (stat[status] && stat[status].length) || 0;
@@ -41,7 +41,7 @@ const getRecordDetail = (data) => {
   });
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   items: state.records.items,
 });
 

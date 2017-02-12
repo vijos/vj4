@@ -4,11 +4,11 @@ import DataInput from './DataInputComponent';
 
 import i18n from '../../utils/i18n';
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   data: state.pretest.data,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   handleDataChange(id, type, value) {
     dispatch({
       type: 'SCRATCHPAD_PRETEST_DATA_CHANGE',

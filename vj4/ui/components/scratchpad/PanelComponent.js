@@ -7,7 +7,7 @@ export default function PanelComponent(props) {
     title,
     className,
     children,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'flex-col');
   return (
