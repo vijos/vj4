@@ -18,7 +18,7 @@ RP_PROBLEM_MIN = 7.0
 # rp calculate range
 # (if count of accepted user is greater, will use RP_PROBLEM_MIN for this problem for each user)
 RP_PROBLEM_MAX_USER = 1500
-RP_MIN_DELTA = 10 ** (-9)
+RP_MIN_DELTA = 1e-9
 
 
 def modulus_problem(num_accept):
@@ -84,7 +84,7 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
   if order > 0 or execute:
     _logger.info('Committing')
     await status_bulk.execute()
-  # users' num_submit, num_accept
+  # users' rp
   user_coll = db.Collection('domain.user')
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
@@ -127,7 +127,7 @@ async def recalc(domain_id: str):
     if order > 0:
       _logger.info('Committing')
       await status_bulk.execute()
-  # users' num_submit, num_accept
+  # users' rp
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Updating users')

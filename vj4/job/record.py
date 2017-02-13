@@ -29,8 +29,8 @@ async def user_in_problem(uid: int, domain_id: str, pid: document.convert_doc_id
   async for rdoc in rdocs:
     new_psdoc['num_submit'] += 1
     if new_psdoc['status'] != constant.record.STATUS_ACCEPTED:
-        new_psdoc['status'] = rdoc['status']
-        new_psdoc['rid'] = rdoc['_id']
+      new_psdoc['status'] = rdoc['status']
+      new_psdoc['rid'] = rdoc['_id']
   _logger.info(repr(new_psdoc))
   if await document.rev_set_status(domain_id, document.TYPE_PROBLEM, pid, uid,
                                    psdoc['rev'], **new_psdoc):
