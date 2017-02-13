@@ -63,7 +63,7 @@ async def run(domain_id: str):
                 'num_submit': '', 'num_accept': ''}})
   pdocs = problem.get_multi(domain_id=domain_id, fields={'_id': 1, 'doc_id': 1}).sort('doc_id', 1)
   dudoc_factory = functools.partial(dict, num_submit=0, num_accept=0)
-  uddoc_updates = collections.defaultdict(dudoc_factory)
+  dudoc_updates = collections.defaultdict(dudoc_factory)
   status_coll = db.Collection('document.status')
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
@@ -80,13 +80,13 @@ async def run(domain_id: str):
       accept = True if rdoc['status'] == constant.record.STATUS_ACCEPTED else False
       pdoc_update['num_submit'] += 1
       psdocs[rdoc['uid']]['num_submit'] += 1
-      uddoc_updates[rdoc['uid']]['num_submit'] += 1
+      dudoc_updates[rdoc['uid']]['num_submit'] += 1
       if psdocs[rdoc['uid']]['status'] != constant.record.STATUS_ACCEPTED:
         psdocs[rdoc['uid']]['status'] = rdoc['status']
         psdocs[rdoc['uid']]['rid'] = rdoc['_id']
         if accept:
           pdoc_update['num_accept'] += 1
-          uddoc_updates[rdoc['uid']]['num_accept'] += 1
+          dudoc_updates[rdoc['uid']]['num_accept'] += 1
     status_bulk = status_coll.initialize_unordered_bulk_op()
     execute = False
     for uid, psdoc in psdocs.items():
@@ -104,10 +104,10 @@ async def run(domain_id: str):
   user_coll = db.Collection('domain.user')
   user_bulk = user_coll.initialize_unordered_bulk_op()
   _logger.info('Updating users')
-  for uid, uddoc_update in uddoc_updates.items():
+  for uid, dudoc_update in dudoc_updates.items():
     execute = True
     (user_bulk.find({'domain_id': domain_id, 'uid': uid})
-     .upsert().update_one({'$set': uddoc_update}))
+     .upsert().update_one({'$set': dudoc_update}))
   if execute:
     _logger.info('Committing')
     await user_bulk.execute()

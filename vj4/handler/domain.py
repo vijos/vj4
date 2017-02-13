@@ -114,11 +114,11 @@ class DomainRoleHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     rucounts = collections.defaultdict(int)
-    async for uddoc in domain.get_multi_user(domain_id=self.domain_id,
+    async for dudoc in domain.get_multi_user(domain_id=self.domain_id,
                                              role={'$gte': ''},
                                              fields={'uid': 1, 'role': 1}):
-      if 'role' in uddoc:
-        rucounts[uddoc['role']] += 1
+      if 'role' in dudoc:
+        rucounts[dudoc['role']] += 1
     roles = sorted(list(self.domain['roles'].keys()))
     self.render('domain_manage_role.html', rucounts=rucounts, roles=roles)
 
