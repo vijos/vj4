@@ -223,20 +223,20 @@ class HomeMessagesConnection(base.Connection):
 class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    uddict = await domain.get_dict_user_by_domain_id(self.user['_id'])
-    dids = list(uddict.keys())
+    dudict = await domain.get_dict_user_by_domain_id(self.user['_id'])
+    dids = list(dudict.keys())
     ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
                                               {'owner_uid': self.user['_id']}]}) \
                         .to_list(None)
     can_manage = {}
     for ddoc in builtin.DOMAINS + ddocs:
-      role = uddict.get(ddoc['_id'], {}).get('role', builtin.ROLE_DEFAULT)
+      role = dudict.get(ddoc['_id'], {}).get('role', builtin.ROLE_DEFAULT)
       mask = ddoc['roles'].get(role, builtin.PERM_NONE)
       can_manage[ddoc['_id']] = (
           ((builtin.PERM_EDIT_DESCRIPTION | builtin.PERM_EDIT_PERM) & mask) != 0
           or ddoc['owner_uid'] == self.user['_id']
           or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
-    self.render('home_domain.html', ddocs=ddocs, uddict=uddict, can_manage=can_manage)
+    self.render('home_domain.html', ddocs=ddocs, dudict=dudict, can_manage=can_manage)
 
 
 @app.route('/home/domain/create', 'home_domain_create')

@@ -18,7 +18,7 @@ RP_PROBLEM_MIN = 7.0
 # rp calculate range
 # (if count of accepted user is greater, will use RP_PROBLEM_MIN for this problem for each user)
 RP_PROBLEM_MAX_USER = 1500
-RP_MIN_DELTA = 10 ** (-9)
+RP_MIN_DELTA = 1e-9
 
 
 def modulus_problem(num_accept):
@@ -44,7 +44,7 @@ def get_rp_expect(pdoc):
 
 @argmethod.wrap
 async def update_problem(domain_id: str, pid: document.convert_doc_id):
-  uddoc_incs = {}
+  dudoc_incs = {}
   pdoc = await problem.get(domain_id, pid)
   _logger.info('Domain {0} Problem {1}'.format(domain_id, pdoc['doc_id']))
   status_coll = db.Collection('document.status')
@@ -61,8 +61,8 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
     delta_rp = rp - psdoc.get('rp', 0.0)
     status_bulk.find({'_id': psdoc['_id']}).update_one({'$set': {'rp': rp}})
     # (pid, uid) is unique.
-    assert psdoc['uid'] not in uddoc_incs
-    uddoc_incs[psdoc['uid']] = {'rp': delta_rp}
+    assert psdoc['uid'] not in dudoc_incs
+    dudoc_incs[psdoc['uid']] = {'rp': delta_rp}
   if order != pdoc['num_accept']:
     _logger.warning('{0} != {1}'.format(order, pdoc['num_accept']))
     _logger.warning('Problem {0} num_accept may be inconsistent.'.format(pdoc['doc_id']))
@@ -79,20 +79,20 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
     execute = True
     status_bulk.find({'_id': psdoc['_id']}).update_one({'$set': {'rp': rp}})
     # (pid, uid) is unique.
-    assert psdoc['uid'] not in uddoc_incs
-    uddoc_incs[psdoc['uid']] = {'rp': delta_rp}
+    assert psdoc['uid'] not in dudoc_incs
+    dudoc_incs[psdoc['uid']] = {'rp': delta_rp}
   if order > 0 or execute:
     _logger.info('Committing')
     await status_bulk.execute()
-  # users' num_submit, num_accept
+  # users' rp
   user_coll = db.Collection('domain.user')
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Updating users')
-  for uid, uddoc_inc in uddoc_incs.items():
-    if abs(uddoc_inc['rp']) > RP_MIN_DELTA:
+  for uid, dudoc_inc in dudoc_incs.items():
+    if abs(dudoc_inc['rp']) > RP_MIN_DELTA:
       execute = True
-      user_bulk.find({'domain_id': domain_id, 'uid': uid}).upsert().update_one({'$inc': uddoc_inc})
+      user_bulk.find({'domain_id': domain_id, 'uid': uid}).upsert().update_one({'$inc': dudoc_inc})
   if execute:
     _logger.info('Committing')
     await user_bulk.execute()
@@ -103,7 +103,7 @@ async def recalc(domain_id: str):
   await user_coll.update_many({'domain_id': domain_id}, {'$set': {'rp': 0.0}})
   pdocs = problem.get_multi(domain_id=domain_id,
                             fields={'_id': 1, 'doc_id': 1, 'num_accept': 1}).sort('doc_id', 1)
-  uddoc_updates = {}
+  dudoc_updates = {}
   status_coll = db.Collection('document.status')
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
@@ -117,24 +117,24 @@ async def recalc(domain_id: str):
       order += 1
       rp = rp_func(order)
       status_bulk.find({'_id': psdoc['_id']}).update_one({'$set': {'rp': rp}})
-      if psdoc['uid'] not in uddoc_updates:
-        uddoc_updates[psdoc['uid']] = {'rp': rp}
+      if psdoc['uid'] not in dudoc_updates:
+        dudoc_updates[psdoc['uid']] = {'rp': rp}
       else:
-        uddoc_updates[psdoc['uid']]['rp'] += rp
+        dudoc_updates[psdoc['uid']]['rp'] += rp
     if order != pdoc['num_accept']:
       _logger.warning('{0} != {1}'.format(order, pdoc['num_accept']))
       _logger.warning('Problem {0} num_accept may be inconsistent.'.format(pdoc['doc_id']))
     if order > 0:
       _logger.info('Committing')
       await status_bulk.execute()
-  # users' num_submit, num_accept
+  # users' rp
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Updating users')
-  for uid, uddoc_update in uddoc_updates.items():
+  for uid, dudoc_update in dudoc_updates.items():
     execute = True
     user_bulk.find({'domain_id': domain_id, 'uid': uid}) \
-             .upsert().update_one({'$set': uddoc_update})
+             .upsert().update_one({'$set': dudoc_update})
   if execute:
     _logger.info('Committing')
     await user_bulk.execute()
