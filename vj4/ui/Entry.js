@@ -1,6 +1,3 @@
-// eslint-disable-next-line camelcase
-__webpack_public_path__ = UiContext.cdn_prefix;
-
 import 'jquery.transit';
 
 import 'normalize.css/normalize.css';
@@ -20,6 +17,9 @@ import './misc/nothing.styl';
 
 import { PageLoader } from './misc/PageLoader';
 import delay from './utils/delay';
+
+// eslint-disable-next-line camelcase
+__webpack_public_path__ = UiContext.cdn_prefix;
 
 const pageLoader = new PageLoader();
 

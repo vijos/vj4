@@ -1,8 +1,9 @@
-import { AutoloadPage } from '../../misc/PageLoader';
 import 'jquery.easing';
 
+import { AutoloadPage } from '../../misc/PageLoader';
+
 const smoothScrollPage = new AutoloadPage(() => {
-  $(document).on('click', 'a[href*="#"]', ev => {
+  $(document).on('click', 'a[href*="#"]', (ev) => {
     const $target = $(ev.currentTarget.hash);
     if ($target.length === 0) {
       return;
@@ -18,7 +19,7 @@ const smoothScrollPage = new AutoloadPage(() => {
     }
     const scrollTop = Math.min(
       $target.offset().top - navHeight,
-      document.body.clientHeight - window.innerHeight
+      document.body.clientHeight - window.innerHeight,
     );
     $('html,body').animate({ scrollTop }, 200, 'easeOutCubic');
   });

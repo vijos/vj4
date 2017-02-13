@@ -6,9 +6,9 @@ export default class Tab extends DOMAttachedObject {
   static DOMAttachKey = 'vjTabInstance';
 
   static attachAll() {
-    for (const tab of $('.section__tabs')) {
+    $('.section__tabs').get().forEach((tab) => {
       Tab.getOrConstruct($(tab)).attach();
-    }
+    });
   }
 
   constructor($dom) {
@@ -35,13 +35,13 @@ export default class Tab extends DOMAttachedObject {
       .append(this.$content);
 
     let i = 0;
-    for (const element of this.$dom.find('.section__tab-title')) {
+    this.$dom.find('.section__tab-title').get().forEach((element) => {
       $(document.createElement('li')).text($(element).text())
         .addClass('section__tab-header-item')
         .on('click', this.handleClick(i))
         .appendTo(this.$header);
       ++i;
-    }
+    });
 
     this.$dom.find('.section__tab-main')
       .appendTo(this.$content);

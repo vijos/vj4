@@ -1,7 +1,7 @@
 import Drop from 'tether-drop';
 import _ from 'lodash';
 import DOMAttachedObject from '../DOMAttachedObject';
-import responsiveCutoff from '../../responsive.inc.js';
+import responsiveCutoff from '../../breakpoints.json';
 
 import zIndexManager from '../../utils/zIndexManager';
 
@@ -26,9 +26,7 @@ export default class Dropdown extends DOMAttachedObject {
   }
 
   static initAll() {
-    for (const dom of $('[data-dropdown-target]')) {
-      Dropdown.initFromDOM($(dom));
-    }
+    $('[data-dropdown-target]').get().forEach(dom => Dropdown.initFromDOM($(dom)));
   }
 
   constructor($trigger, options = {}) {

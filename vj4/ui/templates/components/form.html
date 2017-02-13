@@ -3,9 +3,12 @@
 {% set columns = kwargs.pop('columns') %}
 {% set required = kwargs.pop('required', false) %}
 {% set hotkeys = kwargs.pop('hotkeys', none) %}
+{% set row = kwargs.pop('row', true) %}
+{% if row %}
 <div class="row">
+{% endif %}
   <div
-    class="medium-{{ columns }} columns"
+    class="{% if columns %}medium-{{ columns }} {% endif %}columns"
     {% if hotkeys %}data-hotkey="{{ hotkeys }}"{% endif %}
   >
     <label>
@@ -17,12 +20,15 @@
 
 {% macro form_end() %}
 {% set help_text = kwargs.pop('help_text', none) %}
+{% set row = kwargs.pop('row', true) %}
     </label>
   {% if help_text %}
     <p class="help-text">{{ _(help_text) }}</p>
   {% endif %}
   </div>
+{% if row %}
 </div>
+{% endif %}
 {% endmacro %}
 
 {% macro form_attr(form_class) %}
@@ -30,10 +36,14 @@
 {% set disabled = kwargs.pop('disabled', false) %}
 {% set required = kwargs.pop('required', false) %}
 {% set autofocus = kwargs.pop('autofocus', false) %}
+{% set date = kwargs.pop('date', false) %}
+{% set time = kwargs.pop('time', false) %}
   class="{{ form_class }}{% if extra_class %} {{ extra_class }}{% endif %}"
   {% if disabled %}disabled{% endif %}
   {% if required %}required{% endif %}
   {% if autofocus %}autofocus data-autofocus{% endif %}
+  {% if date %}data-pick-date{% endif %}
+  {% if time %}data-pick-time{% endif %}
 {% endmacro %}
 
 {% macro select(options, name='', value='') %}

@@ -13,21 +13,21 @@ _logger = logging.getLogger(__name__)
 @domainjob.wrap
 async def run(domain_id: str, keyword: str='rp', rank_field: str='rank', level_field: str='level'):
   _logger.info('Ranking')
-  uddocs = domain.get_multi_user(domain_id=domain_id, fields={'_id': 1, 'uid': 1, keyword: 1}) \
+  dudocs = domain.get_multi_user(domain_id=domain_id, fields={'_id': 1, 'uid': 1, keyword: 1}) \
                  .sort(keyword, -1)
-  last_uddoc = {keyword: None}
+  last_dudoc = {keyword: None}
   rank = 0
   count = 0
   user_coll = db.Collection('domain.user')
   user_bulk = user_coll.initialize_unordered_bulk_op()
-  async for uddoc in uddocs:
+  async for dudoc in dudocs:
     count += 1
-    if keyword not in uddoc:
-      uddoc[keyword] = None
-    if uddoc[keyword] != last_uddoc[keyword]:
+    if keyword not in dudoc:
+      dudoc[keyword] = None
+    if dudoc[keyword] != last_dudoc[keyword]:
       rank = count
-    user_bulk.find({'_id': uddoc['_id']}).update_one({'$set': {rank_field: rank}})
-    last_uddoc = uddoc
+    user_bulk.find({'_id': dudoc['_id']}).update_one({'$set': {rank_field: rank}})
+    last_dudoc = dudoc
     # progress
     if count % 1000 == 0:
       _logger.info('#{0}: Rank {1}'.format(count, rank))

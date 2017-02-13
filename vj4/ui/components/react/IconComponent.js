@@ -5,7 +5,7 @@ export default function IconComponent(props) {
   const {
     name,
     className,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, `icon icon-${name}`);
   return (

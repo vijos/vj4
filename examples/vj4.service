@@ -10,6 +10,7 @@ WorkingDirectory=/home/vj4/vj4
 ExecStart=/home/vj4/python-venv/bin/python3.5 -m vj4.server \
     --listen=unix:/home/vj4/vj4.sock \
     --prefork=8 \
+    --ip-header="X-Real-IP" \
 
 Restart=always
 StandardOutput=syslog

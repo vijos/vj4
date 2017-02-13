@@ -9,7 +9,7 @@ export default function DialogueListItemComponent(props) {
     active,
     onClick,
     className,
-    ...rest,
+    ...rest
   } = props;
   const cn = classNames(className, 'messagepad__list-item media', {
     active,

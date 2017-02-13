@@ -1,24 +1,37 @@
-import { AutoloadPage } from '../../misc/PageLoader';
-import libTimeago from 'timeago.js';
-import i18n from '../../utils/i18n';
+import Timeago from 'timeago.js';
 
-const timeago = libTimeago();
-timeago.setLocale(i18n('timeago_locale'));
+import { AutoloadPage } from '../../misc/PageLoader';
 
 function runRelativeTime($container) {
-  for (const element of $container.find('.relative.time[data-timestamp]')) {
+  $container.find('span.time.relative[data-timestamp]').get().forEach((element) => {
     const $element = $(element);
-    if ($element.attr('data-timeago') !== undefined) {
-      continue;
+    if ($element.data('timeago') !== undefined) {
+      return;
     }
+    const timeago = new Timeago();
     $element.attr('data-tooltip', $element.text());
-    $element.attr('data-timeago', ($element.attr('data-timestamp') | 0) * 1000);
+    $element.attr('datetime', ($element.attr('data-timestamp') || 0) * 1000);
     timeago.render(element);
-  }
+    $element.data('timeago', timeago);
+  });
+}
+
+function cancelRelativeTime($container) {
+  $container.find('span.time.relative[data-timestamp]').get().forEach((element) => {
+    const $element = $(element);
+    const timeago = $element.data('timeago');
+    if (timeago === undefined) {
+      return;
+    }
+    timeago.cancel();
+    $element.removeData('timeago');
+  });
 }
 
 const relativeTimePage = new AutoloadPage(() => {
   runRelativeTime($('body'));
+  $(document).on('vjContentNew', e => runRelativeTime($(e.target)));
+  $(document).on('vjContentRemove', e => cancelRelativeTime($(e.target)));
 });
 
 export default relativeTimePage;

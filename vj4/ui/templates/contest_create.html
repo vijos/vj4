@@ -8,45 +8,16 @@
       </div>
       <div class="section__body">
         <form method="post">
-          <div class="row"><div class="medium-4 columns">
-            <label>
-              {{ _('Rule') }}
-              <!-- FIXME: Deprecated: use form.form_xxx -->{{ form.select(vj4.constant.contest.RULE_TEXTS.items(), 'rule') }}
-            </label>
-          </div><div class="medium-8 columns">
-            <label>
-              {{ _('Title') }}
-              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="title" placeholder="{{ _('title') }}" class="textbox" autofocus>
-            </label>
-          </div></div>
-          <div class="row"><div class="medium-4 columns">
-            <label>
-              {{ _('Begin Date') }}
-              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="begin_at_date" value="{{ date_text }}" class="textbox" placeholder="YYYY-mm-dd" data-pick-date>
-            </label>
-          </div><div class="medium-4 columns">
-            <label>
-              {{ _('Begin Time') }}
-              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="begin_at_time" value="{{ time_text }}" class="textbox" placeholder="HH:MM" data-pick-time>
-            </label>
-          </div><div class="medium-4 columns">
-            <label>
-              {{ _('Duration (hours)') }}
-              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="duration" value="3" class="textbox">
-            </label>
-          </div></div>
-          <div class="row"><div class="columns">
-            <label>
-              {{ _('Problems') }}
-              <!-- FIXME: Deprecated: use form.form_xxx --><input type="text" name="pids" value="1000,1001" class="textbox">
-            </label>
-          </div></div>
-          <div class="row"><div class="columns">
-            <label>
-              {{ _('Content') }}
-              <!-- FIXME: Deprecated: use form.form_xxx --><textarea name="content" class="textbox" data-markdown></textarea>
-            </label>
-          </div></div>
+          <div class="row">
+            {{ form.form_select(columns=4, label='Rule', name='rule', options=vj4.constant.contest.RULE_TEXTS.items(), row=False) }}
+            {{ form.form_text(columns=8, label='Title', name='title', placeholder=_('title'), autofocus=True, row=False) }}
+          </div><div class="row">
+            {{ form.form_text(columns=4, label='Begin Date', name='begin_at_date', placeholder='YYYY-mm-dd', value=date_text, date=True, row=False) }}
+            {{ form.form_text(columns=4, label='Begin Time', name='begin_at_time', placeholder='HH:MM', value=time_text, time=True, row=False) }}
+            {{ form.form_text(columns=4, label='Duration (hours)', name='duration', value='3', row=False) }}
+          </div>
+          {{ form.form_text(columns=None, label='Problems', name='pids', value='1000,1001') }}
+          {{ form.form_textarea(columns=None, label='Content', name='content', markdown=True) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <input type="submit" class="rounded primary button" value="{{ _('Create') }}">

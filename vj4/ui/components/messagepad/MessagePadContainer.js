@@ -8,7 +8,7 @@ import MessagePadInput from './MessagePadInputContainer';
 import * as util from '../../misc/Util';
 import i18n from '../../utils/i18n';
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   loadDialogues() {
     dispatch({
       type: 'DIALOGUES_LOAD_DIALOGUES',
@@ -22,6 +22,9 @@ export default class MessagePadContainer extends React.PureComponent {
   static propTypes = {
     onAdd: React.PropTypes.func.isRequired,
   };
+  componentDidMount() {
+    this.props.loadDialogues();
+  }
   render() {
     return (
       <div className="messagepad clearfix">
@@ -40,8 +43,5 @@ export default class MessagePadContainer extends React.PureComponent {
         <MessagePadInput />
       </div>
     );
-  }
-  componentDidMount() {
-    this.props.loadDialogues();
   }
 }

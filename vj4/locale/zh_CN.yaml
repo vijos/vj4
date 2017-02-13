@@ -241,6 +241,7 @@ problem_main: 题库
 problem_solution: 题解
 problem_submit: 递交代码
 problem_settings: 题目设置
+problem_statistics: 题目统计
 record_detail: 记录详情
 record_main: 评测队列
 reply: 回复
@@ -250,6 +251,8 @@ setting_display: 显示偏好
 setting_privacy: 隐私
 title: 标题
 training_main: 训练
+training_edit: 编辑训练
+training_create: 创建训练
 user_detail: 用户
 user_login: 登录
 user_logout: 登出
@@ -556,7 +559,6 @@ Enrollees: 参加人数
 Monthly Popular: 月度最受欢迎
 Enroll Training: 参加训练
 Plan: 计划
-training_edit: 编辑训练
 Not Enrolled: 未参加
 Upvote: 好评
 Downvote: 差评
@@ -568,3 +570,4 @@ Categories: 分类
 Tags: 标签
 problem-category-delim: '|'
 problem-subcategory-delim: 、
+Download Dataset: 下载数据集

@@ -1,7 +1,8 @@
 import Drop from 'tether-drop';
 import _ from 'lodash';
-import DOMAttachedObject from '../DOMAttachedObject';
 import 'jquery-scroll-lock';
+
+import DOMAttachedObject from '../DOMAttachedObject';
 
 import i18n from '../../utils/i18n';
 import tpl from '../../utils/tpl';

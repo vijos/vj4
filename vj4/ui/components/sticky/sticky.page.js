@@ -1,13 +1,14 @@
-import { AutoloadPage } from '../../misc/PageLoader';
-
-import Navigation from '../navigation';
-import responsiveCutoff from '../../responsive.inc.js';
 import 'sticky-kit/dist/sticky-kit';
 import _ from 'lodash';
 
+import { AutoloadPage } from '../../misc/PageLoader';
+
+import Navigation from '../navigation';
+import responsiveCutoff from '../../breakpoints.json';
+
 function updateStickies($stickies) {
   const ww = window.innerWidth;
-  for (const element of $stickies) {
+  $stickies.get().forEach((element) => {
     const $sticky = $(element);
     const shouldEnableSticky = (ww >= $sticky.data('sticky-cutoff-min'));
     const stickyEnabled = $sticky.data('sticky-enabled');
@@ -24,7 +25,7 @@ function updateStickies($stickies) {
       $sticky.trigger('sticky_kit:detach');
       $sticky.data('sticky-enabled', false);
     }
-  }
+  });
 }
 
 function getCutoff(str) {
@@ -43,7 +44,7 @@ function stickyRelayout() {
 const stickyPage = new AutoloadPage(() => {
   let shouldListenResize = false;
   const $stickies = $('[data-sticky]');
-  for (const element of $stickies) {
+  $stickies.get().forEach((element) => {
     const $sticky = $(element);
     const minEnabledSize = $sticky.attr('data-sticky');
     if (minEnabledSize === 'medium' || minEnabledSize === 'large') {
@@ -51,7 +52,7 @@ const stickyPage = new AutoloadPage(() => {
     }
     $sticky.data('sticky-cutoff-min', getCutoff(minEnabledSize));
     $sticky.data('sticky-enabled', false);
-  }
+  });
   updateStickies($stickies);
   if (shouldListenResize) {
     $(window).on('resize', _.throttle(() => updateStickies($stickies), 300));

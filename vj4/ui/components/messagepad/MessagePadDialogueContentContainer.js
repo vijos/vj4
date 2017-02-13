@@ -1,15 +1,15 @@
 import React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import Message from './MessageComponent';
 import TimeAgo from 'timeago-react';
 import moment from 'moment';
 import 'jquery-scroll-lock';
 import 'jquery.easing';
 
+import Message from './MessageComponent';
 import i18n from '../../utils/i18n';
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   activeId: state.activeId,
   item: state.activeId !== null
     ? state.dialogues[state.activeId]
@@ -18,34 +18,6 @@ const mapStateToProps = (state) => ({
 
 @connect(mapStateToProps, null)
 export default class MessagePadDialogueContentContainer extends React.PureComponent {
-  renderInner() {
-    if (this.props.activeId === null) {
-      return [];
-    }
-    return _.map(this.props.item.reply, (reply, idx) => (
-      <Message
-        key={idx}
-        isSelf={reply.sender_uid === UserContext.uid}
-        faceUrl={
-          reply.sender_uid === this.props.item.sender_uid
-          ? this.props.item.sender_udoc.gravatar_url
-          : this.props.item.sendee_udoc.gravatar_url
-        }
-      >
-        <div>{reply.content}</div>
-        <time data-tooltip={moment(reply.at).format('YYYY-MM-DD HH:mm:ss')}>
-          <TimeAgo date={reply.at} locale={i18n('timeago_locale')} />
-        </time>
-      </Message>
-    ));
-  }
-  render() {
-    return (
-      <ol className="messagepad__content" ref="list">
-        {this.renderInner()}
-      </ol>
-    );
-  }
   componentDidMount() {
     $(this.refs.list).scrollLock({ strict: true });
   }
@@ -73,5 +45,33 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
         node.scrollTop = targetScrollTop;
       }
     }
+  }
+  renderInner() {
+    if (this.props.activeId === null) {
+      return [];
+    }
+    return _.map(this.props.item.reply, (reply, idx) => (
+      <Message
+        key={idx}
+        isSelf={reply.sender_uid === UserContext.uid}
+        faceUrl={
+          reply.sender_uid === this.props.item.sender_uid
+          ? this.props.item.sender_udoc.gravatar_url
+          : this.props.item.sendee_udoc.gravatar_url
+        }
+      >
+        <div>{reply.content}</div>
+        <time data-tooltip={moment(reply.at).format('YYYY-MM-DD HH:mm:ss')}>
+          <TimeAgo date={reply.at} locale={i18n('timeago_locale')} />
+        </time>
+      </Message>
+    ));
+  }
+  render() {
+    return (
+      <ol className="messagepad__content" ref="list">
+        {this.renderInner()}
+      </ol>
+    );
   }
 }

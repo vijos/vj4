@@ -10,13 +10,13 @@ import ScratchpadPretestTabPane from './ScratchpadPretestTabPaneContainer';
 
 import i18n from '../../utils/i18n';
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   current: state.pretest.current,
   tabs: state.pretest.tabs,
   meta: state.pretest.meta,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   handleClickAdd() {
     dispatch({
       type: 'SCRATCHPAD_PRETEST_ADD_DATA',

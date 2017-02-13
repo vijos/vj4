@@ -108,7 +108,7 @@ async def training(domain_id: str):
 
 @domainjob.wrap
 async def problem(domain_id: str):
-  _logger.info('Training')
+  _logger.info('Problem')
   pipeline = [
     {
       '$match': {'domain_id': domain_id, 'doc_type': document.TYPE_PROBLEM}

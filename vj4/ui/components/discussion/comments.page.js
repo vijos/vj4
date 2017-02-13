@@ -1,8 +1,9 @@
+import 'jquery.easing';
+
 import { AutoloadPage } from '../../misc/PageLoader';
 import CommentBox from '../discussion/CommentBox';
 import delay from '../../utils/delay';
 import { slideDown, slideUp } from '../../utils/slide';
-import 'jquery.easing';
 
 import * as util from '../../misc/Util';
 

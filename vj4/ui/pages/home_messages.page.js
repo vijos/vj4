@@ -61,7 +61,7 @@ const page = new NamedPage('home_messages', () => {
           }}
         />
       </Provider>,
-      $('#messagePad').get(0)
+      $('#messagePad').get(0),
     );
   }
   mountComponent();

@@ -112,7 +112,7 @@ class ProblemPageExtender {
 
 }
 
-const page = new NamedPage('problem_detail', () => {
+const page = new NamedPage('contest_detail_problem', () => {
   let componentMounted = false;
   let $floatingSidebar = null;
   const extender = new ProblemPageExtender();
@@ -196,7 +196,7 @@ const page = new NamedPage('problem_detail', () => {
       <Provider store={store}>
         <ScratchpadApp />
       </Provider>,
-      $('#scratchpad').get(0),
+      $('#scratchpad').get(0)
     );
     componentMounted = true;
 
@@ -217,11 +217,11 @@ const page = new NamedPage('problem_detail', () => {
   }
 
   $(document).on('vjScratchpadRelayout', updateFloatingSidebar);
-  $(document).on('click', '[name="problem-sidebar__open-scratchpad"]', (ev) => {
+  $(document).on('click', '[name="problem-sidebar__open-scratchpad"]', ev => {
     enterScratchpadMode();
     ev.preventDefault();
   });
-  $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', (ev) => {
+  $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', ev => {
     leaveScratchpadMode();
     ev.preventDefault();
   });
