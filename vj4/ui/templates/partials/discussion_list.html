@@ -31,5 +31,7 @@
         </li>
       {% endfor %}
       </ol>
+      {% if page != undefined and dpcount != undefined %}
       {{ paginator.render(page, dpcount) }}
+      {% endif %}
     {% endif %}

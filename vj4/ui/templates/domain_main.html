@@ -71,25 +71,102 @@
       </ol>
     </div>
   {% endif %}
-    <div class="section">
+  {% if not trdocs %}
+    <!-- no training -->
+  {% else %}
+    <div class="section page--training_main">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Training') }}</h1>
+      </div>
+      {% with tdocs=trdocs, tsdocs=trsdocs %}
+      <ol class="section__list all primary training__list">
+        {% for tdoc in tdocs %}
+        <li class="section__list__item training__item">
+          <div class="media">
+            <div class="media__left middle">
+              <div class="training__participants numbox">
+                <div class="numbox__num large">{{ tdoc['enroll']|default(0) }}</div>
+                <div class="numbox__text">{{ _('Enrolled') }}</div>
+              </div>
+            </div>
+            <div class="media__body middle">
+              <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+              <div class="typo">{{ tdoc['content']|markdown }}</div>
+              <ul class="supplementary list training__progress">
+                <li>
+                  <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}, {{ _('{0} problems').format(handler.get_pids(tdoc)|length) }}
+                </li>
+                <li>
+                  <span class="icon icon-heart text-red"></span> ???
+                </li>
+                <li>
+                  <span class="icon icon-star text-yellow"></span> ???
+                </li>
+                <li>
+                  <span class="icon icon-comment--text"></span> ???
+                </li>
+                <li>
+                {% if tsdict[tdoc['doc_id']]['enroll'] %}
+                  {% if not tsdict[tdoc['doc_id']]['done'] %}
+                  <span class="icon training-status--icon progress"></span>
+                  <span class="training-status--text progress">{{ _('Completed') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
+                  {% else %}
+                  <span class="icon training-status--icon done"></span>
+                  <span class="training-status--text done">{{ _('Completed') }} 100%</span>
+                  {% endif %}
+                {% elif handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+                  <span class="icon training-status--icon outside"></span> <span class="training-status--text outside">{{ _('Not Enrolled') }}</span>
+                {% endif %}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+      {% endwith %}
+    </div>
+  {% endif %}
+  {% if not ddocs %}
+    <!-- no discussion -->
+  {% else %}
+    <div class="section page--discussion_main">
       <div class="section__header">
         <h1 class="section__title">{{ _('Discussion') }}</h1>
       </div>
-      <div class="section__body">
-      *
-      </div>
+      {% include "partials/discussion_list.html" %}
     </div>
+  {% endif %}
   </div>
   <div class="large-3 columns">
     {% include 'discussion_nodes_widget.html' %}
+    {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Recommanded') }}</h1>
       </div>
       <div class="section__body">
-      *
+        <h2 class="section__title">{{ _('Chinese') }}</h2>
+        <ol>
+        <li><a class="typo-a" href="http://www.51nod.com/" target="_blank">51Nod</a><span class="d">推荐</span></li>
+        <li><a class="typo-a" href="http://www.luogu.org/" target="_blank">洛谷</a><span class="d">推荐</span></li>
+        <li><a class="typo-a" href="https://www.contesthunter.org/" target="_blank">Contest Hunter</a><span class="d">推荐</span></li>
+        <li><a class="typo-a" href="http://www.lydsy.com/JudgeOnline/" target="_blank">BZOJ</a></li>
+        <li><a class="typo-a" href="http://www.rqnoj.cn/" target="_blank">RQNOJ</a><span class="d"></span></li>
+        <li><a class="typo-a" href="http://cojs.tk/cogs/" target="_blank">COGS</a><span class="d"></span></li>
+        </ol>
+        <h2 class="section__title">{{ _('English') }}</h2>
+        <ol>
+        <li><a class="typo-a" href="http://codeforces.com/" target="_blank">Codeforces</a><span class="d">推荐</span></li>
+        <li><a class="typo-a" href="http://www.topcoder.com/" target="_blank">TopCoder</a><span class="d">推荐</span></li>
+        <li><a class="typo-a" href="http://ace.delos.com/usacogate" target="_blank">USACO</a><span class="d"></span></li>
+        <li><a class="typo-a" href="http://spoj.pl/" target="_blank">SPOJ</a><span class="d"></span></li>
+        <li><a class="typo-a" href="http://uva.onlinejudge.org/" target="_blank">UVa</a><span class="d"></span></li>
+        <li><a class="typo-a" href="http://poj.org/" target="_blank">POJ</a><span class="d"></span></li>
+        </ol>
       </div>
     </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

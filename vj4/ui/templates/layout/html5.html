@@ -24,7 +24,7 @@
 
   <link rel="stylesheet" media="all" href="{{ static_url('vendors.css') }}">
   <link rel="stylesheet" media="all" href="{{ static_url('vj4.css') }}">
-  <title>{{ page_title }} - Vijos</title>
+  <title>{{ page_title }}{% if domain_id != vj4.model.builtin.DOMAIN_ID_SYSTEM %} - {{ handler.domain['name'] }}{% endif %} - Vijos</title>
   <script>
     var _htmlNode = document.documentElement;
     _htmlNode.className = _htmlNode.className.replace(' nojs', ' hasjs');
