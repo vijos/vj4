@@ -6,14 +6,26 @@ from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import user
 from vj4.model.adaptor import discussion
+from vj4.model.adaptor import contest
 from vj4.handler import base
 
 
 @app.route('/', 'domain_main')
 class DomainMainHandler(base.Handler):
+  CONTESTS_ON_MAIN = 5
+  DISCUSSIONS_ON_MAIN = 20
+
   async def get(self):
     # TODO(twd2): a lot of code is coming...
-    self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id))
+    if self.has_perm(builtin.PERM_VIEW_CONTEST):
+      tdocs = await contest.get_multi(self.domain_id).to_list(self.CONTESTS_ON_MAIN)
+      tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
+                                             (tdoc['doc_id'] for tdoc in tdocs))
+    else:
+      tdocs = {}
+      tsdict = {}
+    self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id),
+                tdocs=tdocs, tsdict=tsdict)
 
 
 @app.route('/manage', 'domain_manage')
