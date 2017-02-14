@@ -3,6 +3,7 @@
 <form method="post" enctype="multipart/form-data">
 <p>{{ _('Current dataset: {0}').format(pdoc['data']|default(_('(None)'))) }}</p>
 <p>
+{{ _('New dataset') }}:
 <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
 <input type="file" name="file">
 <input type="submit" value="{{ _('Upload') }}" class="rounded primary button">

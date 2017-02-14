@@ -1,3 +1,4 @@
+import collections
 import datetime
 import itertools
 from bson import objectid
@@ -12,6 +13,17 @@ from vj4.model import domain
 from vj4.model import fs
 from vj4.util import argmethod
 from vj4.util import validator
+
+
+SETTING_DIFFICULTY_ALGORITHM = 0
+SETTING_DIFFICULTY_ADMIN = 1
+SETTING_DIFFICULTY_AVERAGE = 2
+
+SETTING_DIFFICULTY_RANGE = collections.OrderedDict([
+  (SETTING_DIFFICULTY_ALGORITHM, 'Use algorithm calculated'),
+  (SETTING_DIFFICULTY_ADMIN, 'Use admin specificed'),
+  (SETTING_DIFFICULTY_AVERAGE, 'Use average of above')
+])
 
 
 @argmethod.wrap

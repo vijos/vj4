@@ -61,7 +61,7 @@
               </td>
               <td class="col--submit_n">{{ pdoc['num_submit'] }}</td>
               <td class="col--ac_rate">{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int if pdoc['num_submit'] > 0 else _('?') }}</td>
-              <td class="col--difficulty">{{ pdoc['difficulty']|default(_('(None)')) }}</td>
+              <td class="col--difficulty">{{ pdoc['difficulty']|default(_('(None)')) or _('(None)') }}</td>
             </tr>
           {% endwith %}
           {% endfor %}
