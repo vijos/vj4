@@ -121,10 +121,10 @@ def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_do
   return coll.find(query, projection=fields)
 
 
-async def get_dict(rids, *, fields=None):
+async def get_dict(rids, *, get_hidden=False, fields=None):
   query = {'_id': {'$in': list(set(rids))}}
   result = dict()
-  async for rdoc in get_multi(**query, fields=fields):
+  async for rdoc in get_multi(**query, get_hidden=get_hidden, fields=fields):
     result[rdoc['_id']] = rdoc
   return result
 
