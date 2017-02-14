@@ -4,6 +4,7 @@
 {% set required = kwargs.pop('required', false) %}
 {% set hotkeys = kwargs.pop('hotkeys', none) %}
 {% set row = kwargs.pop('row', true) %}
+{% set no_label = kwargs.pop('no_label', false) %}
 {% if row %}
 <div class="row">
 {% endif %}
@@ -11,17 +12,22 @@
     class="{% if columns %}medium-{{ columns }} {% endif %}columns"
     {% if hotkeys %}data-hotkey="{{ hotkeys }}"{% endif %}
   >
+    {% if not no_label %}
     <label>
       {{ _(label) }}
     {% if required %}
       ({{ _('required') }})
+    {% endif %}
     {% endif %}
 {% endmacro %}
 
 {% macro form_end() %}
 {% set help_text = kwargs.pop('help_text', none) %}
 {% set row = kwargs.pop('row', true) %}
+{% set no_label = kwargs.pop('no_label', false) %}
+  {% if not no_label %}
     </label>
+  {% endif %}
   {% if help_text %}
     <p class="help-text">{{ _(help_text) }}</p>
   {% endif %}
@@ -97,14 +103,16 @@
 {{ form_end(columns=columns, **kwargs) }}
 {% endmacro %}
 
-{% macro checkbox(label, name='', value=false) %}
+{% macro checkbox(label='', name='', value=false) %}
 <label class="checkbox">
-  <input type="checkbox" name="{{ name }}"{% if value %} checked{% endif %}>{{ _(label) }}
+  <input type="checkbox" name="{{ name }}"{% if value %} checked{% endif %}
+    {{ form_attr('checkbox', **kwargs) }}
+  >{{ _(label) }}
 </label>
 {% endmacro %}
 
 {% macro form_checkbox(columns=5) %}
-<div class="row"><div class="medium-{{ columns }} columns">
-  {{ checkbox(**kwargs) }}
-</div></div>
+{{ form_begin(columns=columns, no_label=True, **kwargs) }}
+{{ checkbox(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, no_label=True, **kwargs) }}
 {% endmacro %}

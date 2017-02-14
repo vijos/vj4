@@ -85,8 +85,17 @@ def difficulty_altorithm(num_submit: int, num_accept: int):
 
 
 def _get_difficulty(pdoc, calculated_difficulty):
-  # TODO(twd2): allow admin set difficulty
-  return calculated_difficulty
+  # allow admin set difficulty
+  setting = pdoc.get('difficulty_setting', next(iter(problem.SETTING_DIFFICULTY_RANGE)))
+  if setting == problem.SETTING_DIFFICULTY_ALGORITHM:
+    return calculated_difficulty
+  elif setting == problem.SETTING_DIFFICULTY_ADMIN:
+     return pdoc['difficulty_admin']
+  elif setting == problem.SETTING_DIFFICULTY_AVERAGE \
+       and pdoc.get('difficulty_admin', None):
+       return int(round((calculated_difficulty + pdoc['difficulty_admin']) / 2))
+  else:
+    return calculated_difficulty
 
 
 @argmethod.wrap
@@ -94,7 +103,8 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
   pdoc = await problem.get(domain_id, pid)
   difficulty_algo = difficulty_altorithm(pdoc['num_submit'], pdoc['num_accept'])
   difficulty = _get_difficulty(pdoc, difficulty_algo)
-  return await problem.edit(domain_id, pdoc['doc_id'], difficulty=difficulty)
+  return await problem.edit(domain_id, pdoc['doc_id'], difficulty=difficulty,
+                            difficulty_algo=difficulty_algo)
 
 
 @domainjob.wrap
@@ -109,7 +119,8 @@ async def recalc(domain_id: str):
     difficulty_algo = difficulty_altorithm(pdoc['num_submit'], pdoc['num_accept'])
     difficulty = _get_difficulty(pdoc, difficulty_algo)
     bulk.find({'_id': pdoc['_id']}) \
-        .update_one({'$set': {'difficulty': difficulty}})
+        .update_one({'$set': {'difficulty': difficulty,
+                              'difficulty_algo': difficulty_algo}})
     execute = True
   if execute:
     _logger.info('Committing')

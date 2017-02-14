@@ -105,7 +105,7 @@
       {% endif %}
       </dd>
       <dt>{{ _('Difficulty') }}</dt>
-      <dd>{{ pdoc['difficulty']|default(_('(None)')) }}</dd>
+      <dd>{{ pdoc['difficulty']|default(_('(None)')) or _('(None)') }}</dd>
       <dt>{{ _('Vote') }}</dt>
       <dd><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</dd>
       <dt>{{ _('Category') }}</dt>
