@@ -242,3 +242,9 @@ class RankTest(RecordTestCase):
     self.assertEqual(dudoc1['rank'], 1)
     self.assertEqual(dudoc2['rank'], 2)
     self.assertGreaterEqual(dudoc1['level'], dudoc2['level'])
+
+
+class DifficultyTest(unittest.TestCase):
+  def test_integrate(self):
+    for x in range(1000):
+      self.assertEqual(job.difficulty._integrate(x), job.difficulty._integrate_direct(x))
