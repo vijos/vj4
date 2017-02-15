@@ -60,9 +60,7 @@
           <div class="section__body no-padding training__problems">
             <table class="data-table">
               <colgroup>
-              {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
                 <col class="col--status">
-              {% endif %}
                 <col class="col--name">
                 <col class="col--submit_n">
                 <col class="col--ac_rate">
@@ -70,9 +68,7 @@
               </colgroup>
               <thead>
                 <tr>
-                {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
                   <th class="col--status record-status--border">{{ _('Status') }}</th>
-                {% endif %}
                   <th class="col--name">{{ _('Problem') }}</th>
                   <th class="col--submit_n">{{ _('Submit') }}</th>
                   <th class="col--ac_rate">% {{ _('AC') }}</th>
@@ -82,15 +78,13 @@
               <tbody>
               {% for pid in node['pids'] %}
               {% if pid in pdict %}
-              {% with pdoc = pdict[pid], psdoc = psdict[pdoc['doc_id']] %}
+              {% with pdoc=pdict[pid], psdoc=psdict[pid] %}
                 <tr>
-                {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
                 {% if psdoc['rid'] %}
                   {{ record.render_status_td(psdoc, rid_key='rid') }}
                 {% else %}
                   <td class="col--status record-status--border">
                   </td>
-                {% endif %}
                 {% endif %}
                   <td class="col--name">
                   {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
@@ -115,7 +109,7 @@
                 </tr>
               {% endwith %}
               {% else %}
-              {% with pdoc = {'domain_id': handler.domain_id, 'doc_id': pid, 'hidden': true, 'title': ''} %}
+              {% with pdoc = {'domain_id': handler.domain_id, 'doc_id': pid, 'hidden': true, 'title': '*'} %}
                 <tr>
                   <td class="col--status record-status--border">
                   </td>
