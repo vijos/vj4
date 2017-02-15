@@ -56,5 +56,7 @@ perm_training: Trainings
 discussion_edit: Discussion Edit
 wiki_help: Help
 no_translation_warn: <blockquote class="warn">This part of content is under translation.</blockquote>
+problem-category-delim: '|'
+problem-subcategory-delim: ', '
 setting_display: Display Preference
 setting_usage: Usage Preference

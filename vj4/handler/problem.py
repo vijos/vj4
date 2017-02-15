@@ -55,8 +55,61 @@ class ProblemMainHandler(base.OperationHandler):
   @base.sanitize
   async def star_unstar(self, *, pid: document.convert_doc_id, star: bool):
     pdoc = await problem.get(self.domain_id, pid)
-    pdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
-    self.json_or_redirect(self.url, star=pdoc['star'])
+    psdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
+    self.json_or_redirect(self.url, star=psdoc['star'])
+
+  post_star = functools.partialmethod(star_unstar, star=True)
+  post_unstar = functools.partialmethod(star_unstar, star=False)
+
+
+@app.route('/p/category/{category}', 'problem_category')
+class ProblemCategoryHandler(base.OperationHandler):
+  PROBLEMS_PER_PAGE = 100
+
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.get_argument
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, category: str, page: int=1):
+    # TODO(iceboy): projection.
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    categories = category.split(' ')
+    query = {'$and': []}
+    for c in categories:
+      if c in builtin.PROBLEM_CATEGORIES \
+         or c in builtin.PROBLEM_SUB_CATEGORIES:
+        query['$and'].append({'category': c})
+      else:
+        query['$and'].append({'tag': c})
+    pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
+                                                                         **query,
+                                                                         **f) \
+                                                              .sort([('doc_id', 1)]),
+                                                       page, self.PROBLEMS_PER_PAGE)
+    if self.has_priv(builtin.PRIV_USER_PROFILE):
+      # TODO(iceboy): projection.
+      psdict = await problem.get_dict_status(self.domain_id,
+                                             self.user['_id'],
+                                             (pdoc['doc_id'] for pdoc in pdocs))
+    else:
+      psdict = None
+    path_components = self.build_path(
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (category, None))
+    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
+                psdict=psdict, categories=problem.get_categories(),
+                page_title=category, path_components=path_components)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_csrf_token
+  @base.sanitize
+  async def star_unstar(self, *, pid: document.convert_doc_id, star: bool):
+    pdoc = await problem.get(self.domain_id, pid)
+    psdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
+    self.json_or_redirect(self.url, star=psdoc['star'])
 
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)
@@ -462,8 +515,12 @@ class ProblemSettingsHandler(base.Handler):
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
         (self.translate('problem_settings'), None))
-    self.render('problem_settings.html', pdoc=pdoc, udoc=udoc,
+    self.render('problem_settings.html', pdoc=pdoc, udoc=udoc, categories=problem.get_categories(),
                 page_title=pdoc['title'], path_components=path_components)
+
+  def split_tags(self, s):
+    s = s.replace('，', ',') # Chinese ', '
+    return list(filter(lambda _: _ != '', map(lambda _: _.strip(), s.split(','))))
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
@@ -471,10 +528,17 @@ class ProblemSettingsHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, hidden: bool=False,
+                 category: str, tag: str,
                  difficulty_setting: int, difficulty_admin: str=''):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
+    category = self.split_tags(category)
+    tag = self.split_tags(tag)
+    for c in category:
+      if not (c in builtin.PROBLEM_CATEGORIES \
+              or c in builtin.PROBLEM_SUB_CATEGORIES):
+        raise error.ValidationError('category')
     if difficulty_setting not in problem.SETTING_DIFFICULTY_RANGE:
         raise error.ValidationError('difficulty_setting')
     if difficulty_admin:
@@ -485,6 +549,7 @@ class ProblemSettingsHandler(base.Handler):
     else:
       difficulty_admin = None
     await problem.edit(self.domain_id, pdoc['doc_id'], hidden=hidden,
+                       category=category, tag=tag,
                        difficulty_setting=difficulty_setting, difficulty_admin=difficulty_admin)
     await job.difficulty.update_problem(self.domain_id, pdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))

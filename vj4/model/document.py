@@ -347,6 +347,25 @@ async def ensure_indexes():
                            ('doc_type', 1),
                            ('owner_uid', 1),
                            ('doc_id', -1)])
+  # for problem
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('category', 1),
+                           ('doc_id', 1)], sparse=True)
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('hidden', 1),
+                           ('category', 1),
+                           ('doc_id', 1)], sparse=True)
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('tag', 1),
+                           ('doc_id', 1)], sparse=True)
+  await coll.ensure_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('hidden', 1),
+                           ('tag', 1),
+                           ('doc_id', 1)], sparse=True)
   # for problem solution
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),

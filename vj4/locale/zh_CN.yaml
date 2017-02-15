@@ -568,6 +568,8 @@ Created By: 创建人
 Judged By: 评测机
 Categories: 分类
 Tags: 标签
+problem-category-delim: '|'
+problem-subcategory-delim: 、
 Download Dataset: 下载数据集
 Use algorithm calculated: 使用算法计算
 Use admin specificed: 由管理员指定
@@ -581,3 +583,6 @@ Difficulty by admin: 管理员设定的难度
 Recommanded: 推荐
 Chinese: 中文
 English: 英文
+click to add: 点击添加
+'Format: category 1, sub category 1.1, sub category 1.2, ..., sub category 1.x, ..., category n, sub category n.1, sub category n.2, ..., sub category n.m, ...': 格式：分类1, 子分类1.1, 子分类1.2, ..., 子分类1.x, ..., 分类n, 子分类n.1, 子分类n.2, ..., 子分类n.m, ...
+"Splitted by ', '.": 由“, ”或“，”分隔。

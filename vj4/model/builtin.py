@@ -285,8 +285,8 @@ FOOTER_EXTRA_HTMLS = ['© 2005 - 2017 <a href="https://vijos.org/">Vijos.org</a>
                       '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
                       '沪ICP备14040537号</a>']
 
-PROBLEM_CATEGORIES = {
-    '动态规划': [
+PROBLEM_CATEGORIES = collections.OrderedDict([
+    ('动态规划', [
         'LCS',
         'LIS',
         '背包',
@@ -294,8 +294,8 @@ PROBLEM_CATEGORIES = {
         '环形DP',
         '树形DP',
         '状态压缩DP'
-    ],
-    '搜索': [
+    ]),
+    ('搜索', [
         '枚举',
         '搜索与剪枝',
         '启发式搜索',
@@ -304,8 +304,8 @@ PROBLEM_CATEGORIES = {
         '折半搜索',
         '记忆化搜索',
         '模拟退火'
-    ],
-    '计算几何': [
+    ]),
+    ('计算几何', [
         '半平面交',
         '凸包',
         '几何图形的交与并',
@@ -319,9 +319,9 @@ PROBLEM_CATEGORIES = {
         '三角剖分',
         '梯形剖分',
         '几何知识'
-    ],
-    '贪心': [],
-    '树结构': [
+    ]),
+    ('贪心', []),
+    ('树结构', [
         '最近公共祖先',
         '生成树',
         'DFS序列',
@@ -329,8 +329,8 @@ PROBLEM_CATEGORIES = {
         '树的分治',
         '树链剖分',
         'Link-Cut-Tree'
-    ],
-    '图结构': [
+    ]),
+    ('图结构', [
         '平面图',
         '二分图',
         '二分图匹配',
@@ -342,8 +342,8 @@ PROBLEM_CATEGORIES = {
         '割点割边',
         '欧拉回路',
         '2-SAT'
-    ],
-    '数论': [
+    ]),
+    ('数论', [
         '素数判定',
         '欧几里得算法',
         '不定方程',
@@ -355,9 +355,9 @@ PROBLEM_CATEGORIES = {
         '勾股方程',
         '积性函数',
         'Fibonacci数列'
-    ],
-    '模拟': [],
-    '数据结构': [
+    ]),
+    ('模拟', []),
+    ('数据结构', [
         '栈',
         '队列',
         '链表',
@@ -375,9 +375,9 @@ PROBLEM_CATEGORIES = {
         '块状链表',
         'Hashing',
         '函数式编程'
-    ],
-    '博弈论': [],
-    '字符串': [
+    ]),
+    ('博弈论', []),
+    ('字符串', [
         'KMP',
         '后缀数据结构',
         'Trie树',
@@ -385,8 +385,8 @@ PROBLEM_CATEGORIES = {
         'Manacher',
         '表达式处理',
         '最小表示法'
-    ],
-    '组合数学': [
+    ]),
+    ('组合数学', [
         '生成函数',
         '容斥原理',
         '康托展开',
@@ -394,21 +394,21 @@ PROBLEM_CATEGORIES = {
         'Stirling数',
         '差分',
         'Polya定理'
-    ],
-    '线性代数': [
+    ]),
+    ('线性代数', [
         '矩阵乘法',
         '高斯消元',
         '线性规划'
-    ],
-    '高精度': [
+    ]),
+    ('高精度', [
         'FFT'
-    ],
-    '递推': [],
-    '概率论': [
+    ]),
+    ('递推', []),
+    ('概率论', [
         '随机化'
-    ],
-    'NPC': [],
-    '其他': [
+    ]),
+    ('NPC', []),
+    ('其他', [
         '二分查找',
         '三分查找',
         '双指针扫描',
@@ -419,5 +419,10 @@ PROBLEM_CATEGORIES = {
         '数学',
         '排序',
         '构造'
-    ]
-}
+    ])
+])
+PROBLEM_SUB_CATEGORIES = {}
+for category, sub_categories in PROBLEM_CATEGORIES.items():
+  for sub_category in sub_categories:
+    assert sub_category not in PROBLEM_SUB_CATEGORIES
+    PROBLEM_SUB_CATEGORIES[sub_category] = category
