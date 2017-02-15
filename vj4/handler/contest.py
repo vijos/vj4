@@ -98,8 +98,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
       attended = tsdoc.get('attend') == 1
       for pdetail in tsdoc.get('detail', []):
         psdict[pdetail['pid']] = pdetail
-      if contest.RULES[tdoc['rule']].show_func(tdoc, self.now) \
-         or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS):
+      if self.can_show(tdoc) or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS):
         rdict = await record.get_dict((psdoc['rid'] for psdoc in psdict.values()),
                                       get_hidden=True)
       else:

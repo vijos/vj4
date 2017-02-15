@@ -106,10 +106,15 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
     tdoc = await training.get(self.domain_id, tid)
     pids = self.get_pids(tdoc)
     # TODO(twd2): check status, eg. test, hidden problem, ...
-    owner_udoc, pdict, psdict = await asyncio.gather(
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    owner_udoc, pdict = await asyncio.gather(
         user.get_by_uid(tdoc['owner_uid']),
-        problem.get_dict(self.domain_id, pids),
-        problem.get_dict_status(self.domain_id, self.user['_id'], pids))
+        problem.get_dict(self.domain_id, pids, **f))
+    psdict = await problem.get_dict_status(self.domain_id,
+                                           self.user['_id'], pdict.keys())
     done_pids = set()
     prog_pids = set()
     for pid, psdoc in psdict.items():

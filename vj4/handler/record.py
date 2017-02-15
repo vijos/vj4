@@ -98,6 +98,8 @@ class RecordDetailHandler(base.Handler):
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
       show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
                     or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
+    else:
+      tdoc = None
     # TODO(twd2): futher check permission for visibility.
     if (not self.own(rdoc, field='uid')
         and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
@@ -116,7 +118,7 @@ class RecordDetailHandler(base.Handler):
     # check permission for visibility: hidden problem
     if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
       pdoc = None
-    self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc,
+    self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc, tdoc=tdoc,
                 judge_udoc=judge_udoc, show_status=show_status)
 
 

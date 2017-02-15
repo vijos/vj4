@@ -80,6 +80,7 @@
               </thead>
               <tbody>
               {% for pid in node['pids'] %}
+              {% if pid in pdict %}
               {% with pdoc = pdict[pid], psdoc = psdict[pdoc['doc_id']] %}
                 <tr>
                 {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
@@ -109,6 +110,20 @@
                   <td class="col--difficulty">{{ pdoc['difficulty']|default(_('(None)')) }}</td>
                 </tr>
               {% endwith %}
+              {% else %}
+              {% with pdoc = {'domain_id': handler.domain_id, 'doc_id': pid, 'hidden': true, 'title': ''} %}
+                <tr>
+                  <td class="col--status record-status--border">
+                  </td>
+                  <td class="col--name">
+                    {{ problem.render_problem_title(pdoc) }}
+                  </td>
+                  <td class="col--submit_n">*</td>
+                  <td class="col--ac_rate">*</td>
+                  <td class="col--difficulty">*</td>
+                </tr>
+              {% endwith %}
+              {% endif %}
               {% endfor %}
               </tbody>
             </table>

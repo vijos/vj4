@@ -80,11 +80,11 @@ def get_multi(*, fields=None, **kwargs):
   return document.get_multi(doc_type=document.TYPE_PROBLEM, fields=fields, **kwargs)
 
 
-async def get_dict(domain_id, pids, *, fields=None):
+async def get_dict(domain_id, pids, *, fields=None, **kwargs):
   result = dict()
   async for pdoc in get_multi(domain_id=domain_id,
                               doc_id={'$in': list(set(pids))},
-                              fields=fields):
+                              fields=fields, **kwargs):
     result[pdoc['doc_id']] = pdoc
   return result
 
