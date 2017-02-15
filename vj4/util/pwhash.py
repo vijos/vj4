@@ -35,7 +35,7 @@ def gen_salt(byte_length: int=20):
 @argmethod.wrap
 def hash_vj2(uname: str, password: str, salt: str):
   password_md5 = _md5(password)
-  mixed_sha1 = _sha1(_md5(uname + password_md5) +
+  mixed_sha1 = _sha1(_md5(uname.lower() + password_md5) +
                      salt +
                      _sha1(password_md5 + salt))
   return _HASH_TYPE_VJ2 + '|' + _b64encode(uname) + '|' + mixed_sha1

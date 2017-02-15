@@ -571,3 +571,15 @@ Tags: 标签
 problem-category-delim: '|'
 problem-subcategory-delim: 、
 Download Dataset: 下载数据集
+Use algorithm calculated: 使用算法计算
+Use admin specificed: 由管理员指定
+Use average of above: 使用上面的平均值
+New dataset: 新测试数据
+Evaluated difficulty: 估计的难度
+"Effects only when Difficulty is not 'Use algorithm calculated'.": 仅当难度不为“使用算法计算”时才起效。
+Difficulty displayed: 显示的难度
+Difficulty by algorithm: 算法计算的难度
+Difficulty by admin: 管理员设定的难度
+Recommanded: 推荐
+Chinese: 中文
+English: 英文

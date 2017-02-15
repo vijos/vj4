@@ -1,3 +1,4 @@
+import asyncio
 import collections
 
 from vj4 import app
@@ -6,14 +7,56 @@ from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import user
 from vj4.model.adaptor import discussion
+from vj4.model.adaptor import contest
+from vj4.model.adaptor import training
 from vj4.handler import base
-
+import vj4.handler.training
 
 @app.route('/', 'domain_main')
-class DomainMainHandler(base.Handler):
+class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
+  CONTESTS_ON_MAIN = 5
+  TRAININGS_ON_MAIN = 5
+  DISCUSSIONS_ON_MAIN = 20
+
+  async def prepare_contest(self):
+    if self.has_perm(builtin.PERM_VIEW_CONTEST):
+      tdocs = await contest.get_multi(self.domain_id).to_list(self.CONTESTS_ON_MAIN)
+      tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
+                                             (tdoc['doc_id'] for tdoc in tdocs))
+    else:
+      tdocs = {}
+      tsdict = {}
+    return tdocs, tsdict
+
+  async def prepare_training(self):
+    if self.has_perm(builtin.PERM_VIEW_TRAINING):
+      tdocs = await training.get_multi(self.domain_id).to_list(self.TRAININGS_ON_MAIN)
+      tsdict = await training.get_dict_status(self.domain_id, self.user['_id'],
+                                             (tdoc['doc_id'] for tdoc in tdocs))
+    else:
+      tdocs = {}
+      tsdict = {}
+    return tdocs, tsdict
+
+  async def prepare_discussion(self):
+    if self.has_perm(builtin.PERM_VIEW_DISCUSSION):
+      ddocs = await discussion.get_multi(self.domain_id).to_list(self.DISCUSSIONS_ON_MAIN)
+      vndict = await discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs))
+    else:
+      ddocs = {}
+      vndict = {}
+    return ddocs, vndict
+
   async def get(self):
-    # TODO(twd2): a lot of code is coming...
-    self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id))
+    (tdocs, tsdict), (trdocs, trsdict), (ddocs, vndict) = await asyncio.gather(
+      self.prepare_contest(), self.prepare_training(), self.prepare_discussion())
+    uids = set()
+    uids.update(ddoc['owner_uid'] for ddoc in ddocs)
+    udict = await user.get_dict(uids)
+    self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id),
+                tdocs=tdocs, tsdict=tsdict, trdocs=trdocs, trsdict=trsdict,
+                ddocs=ddocs, vndict=vndict,
+                udict=udict, datetime_stamp=self.datetime_stamp)
 
 
 @app.route('/manage', 'domain_manage')

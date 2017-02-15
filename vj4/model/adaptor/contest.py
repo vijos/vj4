@@ -42,10 +42,12 @@ def _acm_stat(tdoc, journal):
           'detail': detail}
 
 
+def _oi_equ_func(a, b):
+  return a.get('score', 0) == b.get('score', 0)
+
 RULES = {
   constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)],
-                                 functools.partial(rank.ranked,
-                                                   equ_func=lambda a, b: a['score'] == b['score'])),
+                                 functools.partial(rank.ranked, equ_func=_oi_equ_func)),
   constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'], _acm_stat,
                                   [('accept', -1), ('time', 1)], functools.partial(enumerate,
                                                                                    start=1)),

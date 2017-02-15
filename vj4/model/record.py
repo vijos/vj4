@@ -36,11 +36,13 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
                                 'tid': tid,
                                 'data_id': data_id,
                                 'type': type})).inserted_id
-  await asyncio.gather(queue.publish('judge', rid=rid),
-                       bus.publish('record_change', rid),
-                       problem.inc_status(domain_id, pid, uid, 'num_submit', 1),
+  post_coros = [queue.publish('judge', rid=rid),
+                bus.publish('record_change', rid)]
+  if type == constant.record.TYPE_SUBMISSION:
+    post_coros.extend([problem.inc_status(domain_id, pid, uid, 'num_submit', 1),
                        problem.inc(domain_id, pid, 'num_submit', 1),
-                       domain.inc_user(domain_id, uid, num_submit=1))
+                       domain.inc_user(domain_id, uid, num_submit=1)])
+  await asyncio.gather(*post_coros)
   return rid
 
 
@@ -119,10 +121,10 @@ def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_do
   return coll.find(query, projection=fields)
 
 
-async def get_dict(rids, *, fields=None):
+async def get_dict(rids, *, get_hidden=False, fields=None):
   query = {'_id': {'$in': list(set(rids))}}
   result = dict()
-  async for rdoc in get_multi(**query, fields=fields):
+  async for rdoc in get_multi(**query, get_hidden=get_hidden, fields=fields):
     result[rdoc['_id']] = rdoc
   return result
 

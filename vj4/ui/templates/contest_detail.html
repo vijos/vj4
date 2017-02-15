@@ -38,12 +38,12 @@
           <tbody>
           {% for pid in tdoc['pids'] %}
             <tr>
-            {% if psdict[pid] and psdict['rid'] %}
+            {% if psdict[pid] and psdict[pid]['rid'] %}
             {% with rdoc=rdict[psdict[pid]['rid']] %}
             {% if handler.can_show(tdoc) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS) %}
               {{ record.render_status_td(rdoc) }}
             {% else %}
-              <td class="col--status record-status--border"><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}">{{ _('Submitted') }}</a></td>
+              <td class="col--status record-status--border"><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=handler.domain_id) }}">{{ _('Submitted') }}</a></td>
             {% endif %}
               <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>
             {% endwith %}
@@ -65,7 +65,7 @@
     {% endif %}
     </div>
   {% endif %}
-    <div class="section">
+    <div class="section page--discussion_main">
       <div class="section__header">
         <h1 class="section__title">{{ _('{0} discussions').format(dcount) }}</h1>
       </div>

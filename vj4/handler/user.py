@@ -31,7 +31,6 @@ class UserSettingsMixin(object):
                and self.has_priv(builtin.PRIV_VIEW_USER_SECRET))
 
   def get_udoc_setting(self, udoc, key):
-    privacy = udoc.get('show_' + key, next(iter(setting.SETTINGS_BY_KEY['show_' + key].range)))
     if self.can_view(udoc, key):
       return udoc.get(key, None)
     else:

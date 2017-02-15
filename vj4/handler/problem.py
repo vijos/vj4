@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import functools
 import hashlib
 from bson import objectid
@@ -6,6 +7,7 @@ from bson import objectid
 from vj4 import app
 from vj4 import constant
 from vj4 import error
+from vj4 import job
 from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import user
@@ -521,11 +523,23 @@ class ProblemSettingsHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, hidden: bool=False):
+  async def post(self, *, pid: document.convert_doc_id, hidden: bool=False,
+                 difficulty_setting: int, difficulty_admin: str=''):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
-    await problem.edit(self.domain_id, pdoc['doc_id'], hidden=hidden)
+    if difficulty_setting not in problem.SETTING_DIFFICULTY_RANGE:
+        raise error.ValidationError('difficulty_setting')
+    if difficulty_admin:
+        try:
+          difficulty_admin = int(difficulty_admin)
+        except ValueError:
+          raise error.ValidationError('difficulty_admin')
+    else:
+      difficulty_admin = None
+    await problem.edit(self.domain_id, pdoc['doc_id'], hidden=hidden,
+                       difficulty_setting=difficulty_setting, difficulty_admin=difficulty_admin)
+    await job.difficulty.update_problem(self.domain_id, pdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
