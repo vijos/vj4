@@ -1,6 +1,7 @@
 import Timeago from 'timeago.js';
 
 import { AutoloadPage } from '../../misc/PageLoader';
+import i18n from '../../utils/i18n';
 
 function runRelativeTime($container) {
   $container.find('span.time.relative[data-timestamp]').get().forEach((element) => {
@@ -9,6 +10,7 @@ function runRelativeTime($container) {
       return;
     }
     const timeago = new Timeago();
+    timeago.setLocale(i18n('timeago_locale'));
     $element.attr('data-tooltip', $element.text());
     $element.attr('datetime', ($element.attr('data-timestamp') || 0) * 1000);
     timeago.render(element);
