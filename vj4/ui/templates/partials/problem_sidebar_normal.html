@@ -108,30 +108,46 @@
       <dd>{{ pdoc['difficulty']|default(_('(None)')) or _('(None)') }}</dd>
       <dt>{{ _('Vote') }}</dt>
       <dd><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</dd>
-      <!-- TODO(twd2): check user's setting -->
-    {% if pdoc['category'] %}
       <dt>{{ _('Category') }}</dt>
       <dd>
-      {{ pdoc['category'] }}
-      {% for category in pdoc['category'] %}
-        {{ category }}
-        {% if loop.index < pdoc['category']|length %}
-          {% if category in vj4.model.builtin.PROBLEM_CATEGORIES %}
-            {{ _('problem-category-delim') }}
-          {% else %}
-            {{ _('problem-subcategory-delim') }}
-          {% endif %}
+      {% if handler.get_setting('show_tags') == vj4.constant.setting.SHOW_TAGS_ALL %}
+        {% if pdoc['category'] %}
+          {% for category in pdoc['category'] %}
+            {{ category }}
+            {% if loop.index < pdoc['category']|length %}
+              {% if category in vj4.model.builtin.PROBLEM_CATEGORIES %}
+                {{ _('problem-category-delim') }}
+              {% else %}
+                {{ _('problem-subcategory-delim') }}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {{ _('(None)') }}
         {% endif %}
-      {% endfor %}
+      {% else %}
+        <!-- {{ pdoc['category'] }} -->
+        <!-- TODO(twd2): swx -->
+        <a href="javascript:;" >[{{ _('Show') }}]</a>
       </dd>
-    {% endif %}
-      <!-- TODO(twd2): check user's setting -->
+      {% endif %}
       <dt>{{ _('Tags') }}</dt>
       <dd>
-      {% if pdoc['tag'] %}
-        {{ pdoc['tag']|join(', ') }}
+      {% if handler.get_setting('show_tags') != vj4.constant.setting.SHOW_TAGS_HIDE %}
+        {% if pdoc['tag'] %}
+          {% for tag in pdoc['tag'] %}
+          <a href="{{ reverse_url('problem_category', category=tag) }}">{{ tag }}</a>
+          {% if loop.index < pdoc['tag']|length %}
+          ,
+          {% endif %}
+          {% endfor %}
+        {% else %}
+          {{ _('(None)') }}
+        {% endif %}
       {% else %}
-        {{ _('(None)') }}
+        <!-- {{ pdoc['tag'] }} -->
+        <!-- TODO(twd2): swx -->
+        <a href="javascript:;" >[{{ _('Show') }}]</a>
       {% endif %}
       </dd>
       <dt>{{ _('# Submissions') }}</dt>
