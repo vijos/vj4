@@ -95,9 +95,12 @@ class RecordDetailHandler(base.Handler):
     show_status = True
     if rdoc['tid']:
       now = datetime.datetime.utcnow()
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
-                    or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
+      try:
+        tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+        show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
+                      or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
+      except error.DocumentNotFoundError:
+        tdoc = None
     else:
       tdoc = None
     # TODO(twd2): futher check permission for visibility.
@@ -107,10 +110,13 @@ class RecordDetailHandler(base.Handler):
       del rdoc['code']
     if not show_status and 'code' not in rdoc:
       raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
-    udoc, dudoc, pdoc = await asyncio.gather(
+    udoc, dudoc = await asyncio.gather(
         user.get_by_uid(rdoc['uid']),
-        domain.get_user(self.domain_id, rdoc['uid']),
-        problem.get(rdoc['domain_id'], rdoc['pid']))
+        domain.get_user(self.domain_id, rdoc['uid']))
+    try:
+      pdoc = await problem.get(rdoc['domain_id'], rdoc['pid'])
+    except error.ProblemNotFoundError:
+      pdoc = {}
     if show_status and 'judge_uid' in rdoc:
       judge_udoc = await user.get_by_uid(rdoc['judge_uid'])
     else:
