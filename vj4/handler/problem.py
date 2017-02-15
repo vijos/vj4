@@ -56,7 +56,7 @@ class ProblemMainHandler(base.OperationHandler):
   async def star_unstar(self, *, pid: document.convert_doc_id, star: bool):
     pdoc = await problem.get(self.domain_id, pid)
     psdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
-    self.json_or_redirect(self.url, star=psdoc['star'])
+    self.json_or_redirect(self.referer_or_main, star=psdoc['star'])
 
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)
@@ -102,17 +102,6 @@ class ProblemCategoryHandler(base.OperationHandler):
     self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
                 psdict=psdict, categories=problem.get_categories(),
                 page_title=category, path_components=path_components)
-
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_csrf_token
-  @base.sanitize
-  async def star_unstar(self, *, pid: document.convert_doc_id, star: bool):
-    pdoc = await problem.get(self.domain_id, pid)
-    psdoc = await problem.set_star(self.domain_id, pdoc['doc_id'], self.user['_id'], star)
-    self.json_or_redirect(self.url, star=psdoc['star'])
-
-  post_star = functools.partialmethod(star_unstar, star=True)
-  post_unstar = functools.partialmethod(star_unstar, star=False)
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
