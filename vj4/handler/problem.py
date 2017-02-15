@@ -77,15 +77,15 @@ class ProblemCategoryHandler(base.OperationHandler):
     else:
       f = {}
     categories = category.split(' ')
-    qcategory = {'$and': []}
+    query = {'$and': []}
     for c in categories:
       if c in builtin.PROBLEM_CATEGORIES \
          or c in builtin.PROBLEM_SUB_CATEGORIES:
-        qcategory['$and'].append({'category': c})
+        query['$and'].append({'category': c})
       else:
-        raise error.ValidationError('category')
+        query['$and'].append({'tag': c})
     pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
-                                                                         **qcategory,
+                                                                         **query,
                                                                          **f) \
                                                               .sort([('doc_id', 1)]),
                                                        page, self.PROBLEMS_PER_PAGE)
