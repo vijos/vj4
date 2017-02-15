@@ -1,6 +1,7 @@
 import Timeago from 'timeago.js';
 
 import { AutoloadPage } from '../../misc/PageLoader';
+
 import i18n from '../../utils/i18n';
 
 function runRelativeTime($container) {

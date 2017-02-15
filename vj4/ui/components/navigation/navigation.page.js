@@ -26,6 +26,9 @@ function handleNavLogoutClick(ev) {
 }
 
 const navigationPage = new AutoloadPage(() => {
+  if (!document.getElementById('panel') || !document.getElementById('menu')) {
+    return;
+  }
   if ($nav.length > 0
     && document.documentElement.getAttribute('data-layout') === 'basic'
     && window.innerWidth >= responsiveCutoff.mobile

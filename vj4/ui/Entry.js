@@ -46,7 +46,7 @@ async function load() {
   for (const section of $('.section')) {
     const $section = $(section);
     $section.addClass('visible');
-    await delay(150);
+    await delay(50);
     $section.trigger('vjLayout');
   }
 }
