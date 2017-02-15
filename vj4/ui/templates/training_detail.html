@@ -103,7 +103,10 @@
                       </button>
                     </form>
                   {% endif %}
-                    {{ problem.render_problem_title(pdoc) }}
+                    {{ problem.render_problem_title(
+                      pdoc,
+                      rp=vj4.job.rp.get_rp_expect(pdoc) if (not psdoc or psdoc['status'] != vj4.constant.record.STATUS_ACCEPTED) else none
+                    ) }}
                   </td>
                   <td class="col--submit_n">{{ pdoc['num_submit'] }}</td>
                   <td class="col--ac_rate">{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int if pdoc['num_submit'] > 0 else _('?') }}</td>
