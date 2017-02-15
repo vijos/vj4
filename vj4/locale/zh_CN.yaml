@@ -587,3 +587,13 @@ click to add: 点击添加
 'Format: category 1, sub category 1.1, sub category 1.2, ..., sub category 1.x, ..., category n, sub category n.1, sub category n.2, ..., sub category n.m, ...': 格式：分类1, 子分类1.1, 子分类1.2, ..., 子分类1.x, ..., 分类n, 子分类n.1, 子分类n.2, ..., 子分类n.m, ...
 "Splitted by ', '.": 由“, ”或“，”分隔。
 This section cannot be challenged at present, so please complete the following sections first: 该章节目前不可挑战，请先完成以下章节
+Day: 日
+Week: 周
+Month: 月
+Year: 年
+Total: 总计
+Filter: 过滤
+By Username / UID: 由用户名或 UID
+By Problem: 由题目
+By Contest: 由比赛
+Reset: 重置
