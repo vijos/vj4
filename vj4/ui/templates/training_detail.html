@@ -33,6 +33,7 @@
               <a href="javascript:;" name="training__section__collapse" class="collapsed--hidden"><span class="icon icon-expand_less"></span> {{ _('collapse') }}</a>
             </li>
             <!--
+            TODO(twd2): twd2 todo
             <li>
               递交了 ? 次完成该章节 (TOP ?%)
             </li>
@@ -46,7 +47,7 @@
           <div class="section__body">
           {% if nsdict[node['_id']]['is_invalid'] %}
             <blockquote class="typo note">
-              <p>该章节目前不可挑战，请先完成以下章节：</p>
+              <p>{{ _('This section cannot be challenged at present, so please complete the following sections first') }}:</p>
               <ul>
               {% for nid in node['require_nids'] %}
                 <li>{{ _('Section') }} {{ _(nid) }}. {{ ndict[nid]['title'] }} ({{ _('Completed') }} {{ nsdict[nid]['progress'] }}%)</li>
