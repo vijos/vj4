@@ -62,7 +62,7 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
       >
         <div>{reply.content}</div>
         <time data-tooltip={moment(reply.at).format('YYYY-MM-DD HH:mm:ss')}>
-          <TimeAgo date={reply.at} locale={i18n('timeago_locale')} />
+          <TimeAgo datetime={reply.at} locale={i18n('timeago_locale')} />
         </time>
       </Message>
     ));

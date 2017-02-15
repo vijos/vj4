@@ -75,7 +75,7 @@ export default class ScratchpadRecordsRowContainer extends React.PureComponent {
         </td>
         <td className="col--at">
           <time data-tooltip={moment(submitAt).format('YYYY-MM-DD HH:mm:ss')}>
-            <TimeAgo date={submitAt} locale={i18n('timeago_locale')} />
+            <TimeAgo datetime={submitAt} locale={i18n('timeago_locale')} />
           </time>
         </td>
       </tr>
