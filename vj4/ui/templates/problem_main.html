@@ -94,23 +94,23 @@
       </div>
     </div>
   {% endif %}
-<div class="section side">
-  <div class="section__header">
-    <h1 class="section__title">{{ _('Categories') }}</h1>
-  </div>
-  <div class="section__body">
-  {% for category, sub_categories in categories.items() %}
-    <div class="topic--widget__section">
-      <h2 class="section__title"><a href="{{ reverse_url('problem_category', category=category) }}">{{ category }}</a></h2>
-      <ol>
-      {% for sub_category in sub_categories %}
-        <li><a class="typo-a" href="{{ reverse_url('problem_category', category=category + ' ' + sub_category) }}">{{ sub_category }}</a></li>
-      {% endfor %}
-      </ol>
+  <div class="section side">
+    <div class="section__header">
+      <h1 class="section__title">{{ _('Categories') }}</h1>
     </div>
-  {% endfor %}
+    <div class="section__body">
+    {% for category, sub_categories in categories.items() %}
+      <div class="topic--widget__section">
+        <h2 class="section__title"><a href="{{ reverse_url('problem_category', category=category) }}">{{ category }}</a></h2>
+        <ol>
+        {% for sub_category in sub_categories %}
+          <li><a class="typo-a" href="{{ reverse_url('problem_category', category=category + ' ' + sub_category) }}">{{ sub_category }}</a></li>
+        {% endfor %}
+        </ol>
+      </div>
+    {% endfor %}
+    </div>
   </div>
-</div>
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>

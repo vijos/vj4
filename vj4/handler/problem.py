@@ -515,8 +515,12 @@ class ProblemSettingsHandler(base.Handler):
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
         (self.translate('problem_settings'), None))
-    self.render('problem_settings.html', pdoc=pdoc, udoc=udoc,
+    self.render('problem_settings.html', pdoc=pdoc, udoc=udoc, categories=problem.get_categories(),
                 page_title=pdoc['title'], path_components=path_components)
+
+  def split_tags(self, s):
+    s = s.replace('，', ',') # Chinese ', '
+    return list(filter(lambda _: _ != '', map(lambda _: _.strip(), s.split(','))))
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
@@ -524,10 +528,17 @@ class ProblemSettingsHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, hidden: bool=False,
+                 category: str, tag: str,
                  difficulty_setting: int, difficulty_admin: str=''):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
+    category = self.split_tags(category)
+    tag = self.split_tags(tag)
+    for c in category:
+      if not (c in builtin.PROBLEM_CATEGORIES \
+              or c in builtin.PROBLEM_SUB_CATEGORIES):
+        raise error.ValidationError('category')
     if difficulty_setting not in problem.SETTING_DIFFICULTY_RANGE:
         raise error.ValidationError('difficulty_setting')
     if difficulty_admin:
@@ -538,6 +549,7 @@ class ProblemSettingsHandler(base.Handler):
     else:
       difficulty_admin = None
     await problem.edit(self.domain_id, pdoc['doc_id'], hidden=hidden,
+                       category=category, tag=tag,
                        difficulty_setting=difficulty_setting, difficulty_admin=difficulty_admin)
     await job.difficulty.update_problem(self.domain_id, pdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
