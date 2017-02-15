@@ -113,7 +113,7 @@
       {% if handler.get_setting('show_tags') == vj4.constant.setting.SHOW_TAGS_ALL %}
         {% if pdoc['category'] %}
           {% for category in pdoc['category'] %}
-            {{ category }}
+            <a href="{{ reverse_url('problem_category', category=category) }}">{{ category }}</a>
             {% if loop.index < pdoc['category']|length %}
               {% if category in vj4.model.builtin.PROBLEM_CATEGORIES %}
                 {{ _('problem-category-delim') }}
