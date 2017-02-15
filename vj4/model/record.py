@@ -75,9 +75,10 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
 
 
 @argmethod.wrap
-def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fields=None):
+def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fields=None,
+                  **kwargs):
   coll = db.Collection('record')
-  query = {'hidden': False if not get_hidden else {'$gte': False}}
+  query = {**kwargs, 'hidden': False if not get_hidden else {'$gte': False}}
   if end_id:
     query['_id'] = {'$lt': end_id}
   return coll.find(query, projection=fields)
@@ -186,6 +187,12 @@ async def ensure_indexes():
                            ('pid', 1),
                            ('uid', 1),
                            ('_id', -1)])
+  await coll.create_index([('hidden', 1),
+                           ('domain_id', 1),
+                           ('tid', 1),
+                           ('pid', 1),
+                           ('uid', 1),
+                           ('_id', -1)], sparse=True)
   # for job record
   await coll.create_index([('domain_id', 1),
                            ('pid', 1),

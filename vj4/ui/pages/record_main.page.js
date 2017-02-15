@@ -1,4 +1,5 @@
 import { NamedPage } from '../misc/PageLoader';
+import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('record_main', async () => {
   const SockJs = await System.import('sockjs-client');
@@ -18,6 +19,9 @@ const page = new NamedPage('record_main', async () => {
       $('.record_main__table tbody').prepend(newTr);
     }
   };
+
+  const filterUserSelector = UserSelectAutoComplete.getOrConstruct($('.filter-user [name="uid_or_name"]'));
+
 });
 
 export default page;

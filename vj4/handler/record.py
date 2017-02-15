@@ -22,9 +22,29 @@ from vj4.service import bus
 
 @app.route('/records', 'record_main')
 class RecordMainHandler(base.Handler):
-  async def get(self):
+  @base.get_argument
+  @base.sanitize
+  async def get(self, *, uid_or_name: str='', pid: str='', tid: str=''):
+    qs = ''
+    query = {}
+    if uid_or_name != '':
+      try:
+        query['uid'] = int(uid_or_name)
+      except ValueError:
+        udoc = await user.get_by_uname(uid_or_name)
+        if not udoc:
+          raise error.UserNotFoundError(uid_or_name) from None
+        query['uid'] = udoc['_id']
+    if pid != '':
+      pid = document.convert_doc_id(pid)
+      query['domain_id'] = self.domain_id
+      query['pid'] = pid
+    if tid != '':
+      tid = document.convert_doc_id(tid)
+      query['domain_id'] = self.domain_id
+      query['tid'] = tid
     # TODO(iceboy): projection, pagination.
-    rdocs = await record.get_all_multi(
+    rdocs = await record.get_all_multi(**query,
       get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).to_list(50)
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
@@ -46,7 +66,8 @@ class RecordMainHandler(base.Handler):
           record.get_count())
       statistics = {'day': day_count, 'week': week_count, 'month': month_count,
                     'year': year_count, 'total': rcount}
-    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics)
+    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
+                qs=qs, query=query)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')

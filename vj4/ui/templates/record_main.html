@@ -37,20 +37,47 @@
   <div class="medium-3 columns">
     <div class="section">
       <div class="section__header">
+        <h1 class="section__title">{{ _('Filter') }}</h1>
+      </div>
+      <form method="get">
+        <div class="section__body">
+          <label class="filter-user">
+            {{ _('By Username / UID') }}
+            <input name="uid_or_name" type="text" class="textbox" value="{{ query['uid']|default('') }}" autocomplete="off" data-autofocus>
+          </label>
+          <label>
+            {{ _('By Problem') }}
+            <input name="pid" type="text" class="textbox" value="{{ query['pid']|default('') }}">
+          </label>
+          <label>
+            {{ _('By Contest') }}
+            <input name="tid" type="text" class="textbox" value="{{ query['tid']|default('') }}">
+          </label>
+        </div>
+        <ol class="menu">
+          <li class="menu__item">
+            <button type="submit" class="menu__link"><span class="icon icon-add"></span> {{ _('Filter') }}</button>
+            <a href="{{ reverse_url('record_main') }}" class="menu__link"><span class="icon icon-add"></span> {{ _('Reset') }}</a>
+          </li>
+        </ol>
+      </form>
+    </div>
+  {% if statistics %}
+    <div class="section">
+      <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
       </div>
       <div class="section__body">
-        {% if statistics %}
-          <dl class="large horizontal">
-            <dt>{{ _('Day') }}</dt><dd>{{ statistics['day'] }}</dd>
-            <dt>{{ _('Week') }}</dt><dd>{{ statistics['week'] }}</dd>
-            <dt>{{ _('Month') }}</dt><dd>{{ statistics['month'] }}</dd>
-            <dt>{{ _('Year') }}</dt><dd>{{ statistics['year'] }}</dd>
-            <dt>{{ _('Total') }}</dt><dd>{{ statistics['total'] }}</dd>
-          </dl>
-        {% endif %}
+        <dl class="large horizontal">
+          <dt>{{ _('Day') }}</dt><dd>{{ statistics['day'] }}</dd>
+          <dt>{{ _('Week') }}</dt><dd>{{ statistics['week'] }}</dd>
+          <dt>{{ _('Month') }}</dt><dd>{{ statistics['month'] }}</dd>
+          <dt>{{ _('Year') }}</dt><dd>{{ statistics['year'] }}</dd>
+          <dt>{{ _('Total') }}</dt><dd>{{ statistics['total'] }}</dd>
+        </dl>
       </div>
     </div>
+  {% endif %}
   </div>
 </div>
 {% endblock %}
