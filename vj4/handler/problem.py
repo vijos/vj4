@@ -415,6 +415,7 @@ class ProblemDataHandler(base.Handler):
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     fdoc = await problem.get_data(self.domain_id, pid)
+    # TODO(twd2): cdn
     self.redirect(self.reverse_url('fs_get', secret=fdoc['metadata']['secret']))
 
 
@@ -548,12 +549,13 @@ class ProblemSettingsHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
+    # TODO(twd2): check file size
     if file:
       data = file.file.read()
       md5 = hashlib.md5(data).hexdigest()
       fid = await fs.link_by_md5(md5)
       if not fid:
-        fid = await fs.add_data(data)
+        fid = await fs.add_data('application/zip', data)
       if pdoc.get('data'):
         await fs.unlink(pdoc['data'])
       await problem.set_data(self.domain_id, pid, fid)

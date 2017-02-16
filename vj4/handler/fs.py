@@ -6,14 +6,14 @@ from vj4.handler import base
 from vj4.model import fs
 
 
-@app.route('/fs/{secret}', 'fs_get')
-class FsHandler(base.Handler):
+@app.route('/fs/{secret:\w{40}}', 'fs_get')
+class FsGetHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def stream_data(self, *, secret: str, headers_only: bool=False):
     grid_out = await fs.get_by_secret(secret)
 
-    self.response.content_type = grid_out.content_type or 'text/html' # 'application/zip'
+    self.response.content_type = grid_out.content_type or 'application/octet-stream'
     self.response.content_length = grid_out.length
 
     # Cache control.

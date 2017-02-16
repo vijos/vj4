@@ -1,4 +1,5 @@
 import sys
+import mimetypes
 
 from bson import objectid
 from pymongo import ReturnDocument
@@ -9,25 +10,26 @@ from vj4.util import argmethod
 from vj4.util import pwhash
 
 
-async def add():
+async def add(content_type):
   """Add a file. Returns MotorGridIn."""
   fs = db.GridFS('fs')
   secret = pwhash.gen_secret()
-  return await fs.new_file(metadata={'link': 1, 'secret': secret})
+  return await fs.new_file(content_type=content_type,
+                           metadata={'link': 1, 'secret': secret})
 
 
 @argmethod.wrap
-async def add_local(pathname: str):
+async def add_local(pathname: str, content_type: str=''):
   """Add a local file. Note: this method will block the thread."""
   with open(pathname, 'rb') as file_object:
-    grid_in = await add()
+    grid_in = await add(content_type or mimetypes.guess_type(pathname)[0])
     await grid_in.write(file_object)
     await grid_in.close()
     return grid_in._id
 
 
-async def add_data(data):
-  grid_in = await add()
+async def add_data(content_type, data):
+  grid_in = await add(content_type)
   await grid_in.write(data)
   await grid_in.close()
   return grid_in._id
