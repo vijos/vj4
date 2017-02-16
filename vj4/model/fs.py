@@ -4,6 +4,7 @@ from bson import objectid
 from pymongo import ReturnDocument
 
 from vj4 import db
+from vj4 import error
 from vj4.util import argmethod
 from vj4.util import pwhash
 
@@ -43,6 +44,8 @@ async def get_by_secret(secret):
   file_id = await get_file_id(str(secret))
   if file_id:
     return await get(file_id)
+  else:
+    raise error.NotFoundError(secret)
 
 
 @argmethod.wrap
