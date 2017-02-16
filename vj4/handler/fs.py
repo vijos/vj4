@@ -1,8 +1,10 @@
 import asyncio
 import functools
+import hashlib
 
 from vj4 import app
 from vj4.handler import base
+from vj4.model import builtin
 from vj4.model import fs
 
 
@@ -51,3 +53,29 @@ class FsGetHandler(base.Handler):
 
   head = functools.partialmethod(stream_data, headers_only=True)
   get = stream_data
+
+
+@app.route('/fs/upload', 'fs_upload')
+class FsUploadHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.sanitize
+  async def get(self):
+    self.render('fs_upload.html')
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, file: lambda _: _):
+    # TODO(twd2): check file size
+    fid = ''
+    if file:
+      data = file.file.read()
+      md5 = hashlib.md5(data).hexdigest()
+      fid = await fs.link_by_md5(md5)
+      if not fid:
+        # TODO(twd2): mimetype
+        fid = await fs.add_data('application/zip', data)
+    self.response.text = str(fid)
+    # TODO(twd2): UI
+    # self.json_or_redirect(self.url)
