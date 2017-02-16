@@ -406,7 +406,7 @@ class ProblemSolutionReplyRawHandler(base.Handler):
 class ProblemDataHandler(base.Handler):
   @base.route_argument
   @base.sanitize
-  async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool=False):
+  async def get(self, *, pid: document.convert_doc_id):
     # Judges will have PRIV_READ_PROBLEM_DATA,
     # domain administrators will have PERM_READ_PROBLEM_DATA,
     # problem owner will have PERM_READ_PROBLEM_DATA_SELF.
@@ -414,30 +414,8 @@ class ProblemDataHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    grid_out = await problem.get_data(self.domain_id, pid)
-
-    self.response.content_type = grid_out.content_type or 'application/zip'
-    self.response.last_modified = grid_out.upload_date
-    self.response.headers['Etag'] = '"{0}"'.format(grid_out.md5)
-    # TODO(iceboy): Handle If-Modified-Since & If-None-Match here.
-    self.response.content_length = grid_out.length
-
-    if not headers_only:
-      await self.response.prepare(self.request)
-      # TODO(twd2): Range
-      remaining = grid_out.length
-      chunk = await grid_out.readchunk()
-      while chunk and remaining >= len(chunk):
-        self.response.write(chunk)
-        remaining -= len(chunk)
-        _, chunk = await asyncio.gather(self.response.drain(), grid_out.readchunk())
-      if chunk:
-        self.response.write(chunk[:remaining])
-        await self.response.drain()
-      await self.response.write_eof()
-
-  head = functools.partialmethod(stream_data, headers_only=True)
-  get = stream_data
+    fdoc = await problem.get_data(self.domain_id, pid)
+    self.redirect(self.reverse_url('fs_get', secret=fdoc['metadata']['secret']))
 
 
 @app.route('/p/create', 'problem_create')
