@@ -33,6 +33,11 @@ def gen_salt(byte_length: int=20):
 
 
 @argmethod.wrap
+def gen_secret(byte_length: int=20):
+  return _sha1(gen_salt(byte_length))
+
+
+@argmethod.wrap
 def hash_vj2(uname: str, password: str, salt: str):
   password_md5 = _md5(password)
   mixed_sha1 = _sha1(_md5(uname.lower() + password_md5) +
@@ -47,8 +52,8 @@ def hash_vj4(password: str, salt: str):
   return _HASH_TYPE_VJ4 + '|' + binascii.hexlify(dk).decode()
 
 
-@argmethod.wrap
 @functools.lru_cache()
+@argmethod.wrap
 def check(password: str, salt: str, hash: str):
   hash_type, rest = hash.split('|', 1)
   if hash_type == _HASH_TYPE_VJ2:

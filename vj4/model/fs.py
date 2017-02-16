@@ -5,12 +5,14 @@ from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4.util import argmethod
+from vj4.util import pwhash
 
 
 async def add():
   """Add a file. Returns MotorGridIn."""
   fs = db.GridFS('fs')
-  return await fs.new_file(metadata={'link': 1})
+  secret = pwhash.gen_secret()
+  return await fs.new_file(metadata={'link': 1, 'secret': secret})
 
 
 @argmethod.wrap
@@ -36,6 +38,22 @@ async def get(file_id):
   return await fs.get(file_id)
 
 
+async def get_by_secret(secret):
+  """Get a file by secret. Returns MotorGridOut."""
+  file_id = await get_file_id(str(secret))
+  if file_id:
+    return await get(file_id)
+
+
+@argmethod.wrap
+async def get_file_id(secret: str):
+  """Get the _id of a file by secret."""
+  coll = db.Collection('fs.files')
+  doc = await coll.find_one({'metadata.secret': secret})
+  if doc:
+    return doc['_id']
+
+
 @argmethod.wrap
 async def get_md5(file_id: objectid.ObjectId):
   """Get the MD5 checksum of a file."""
@@ -52,6 +70,23 @@ async def get_datetime(file_id: objectid.ObjectId):
   doc = await coll.find_one(file_id)
   if doc:
     return doc['uploadDate']
+
+
+@argmethod.wrap
+async def get_secret(file_id: objectid.ObjectId):
+  """Get the secret of a file."""
+  coll = db.Collection('fs.files')
+  doc = await coll.find_one(file_id)
+  if doc:
+    return doc['metadata']['secret']
+
+
+@argmethod.wrap
+async def get_meta(file_id: objectid.ObjectId):
+  """Get all metadata of a file."""
+  coll = db.Collection('fs.files')
+  doc = await coll.find_one(file_id)
+  return doc
 
 
 @argmethod.wrap
@@ -84,6 +119,12 @@ async def unlink(file_id: objectid.ObjectId):
   if not doc['metadata']['link']:
     fs = db.GridFS('fs')
     await fs.delete(file_id)
+
+
+@argmethod.wrap
+async def ensure_indexes():
+  coll = db.Collection('fs.files')
+  await coll.create_index('metadata.secret', unique=True)
 
 
 if __name__ == '__main__':
