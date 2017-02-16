@@ -2,6 +2,8 @@ import asyncio
 import datetime
 import functools
 import hashlib
+import io
+import zipfile
 from bson import objectid
 
 from vj4 import app
@@ -21,6 +23,7 @@ from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.util import pagination
+from vj4.util import options
 
 
 @app.route('/p', 'problem_main')
@@ -185,12 +188,27 @@ class ProblemPretestHandler(base.Handler):
     await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
     pdoc = await problem.get(self.domain_id, pid)
     # don't need to check hidden status
+    # create zip file, TODO(twd2): check file size
     content = list(zip(self.request.POST.getall('data_input'),
                        self.request.POST.getall('data_output')))
-    did = await document.add(self.domain_id, content, self.user['_id'], document.TYPE_PRETEST_DATA,
-                             pid=pdoc['doc_id'])
+    output_buffer = io.BytesIO()
+    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
+    config_content = str(content) + '\n'
+    for i, (data_input, data_output) in enumerate(content):
+      input_file = 'input{0}.txt'.format(i)
+      output_file = 'output{0}.txt'.format(i)
+      config_content += '{0}|{1}|1|10|262144\n'.format(input_file, output_file)
+      zip_file.writestr('Input/{0}'.format(input_file), data_input)
+      zip_file.writestr('Output/{0}'.format(output_file), data_output)
+    zip_file.writestr('Config.ini', config_content)
+    # mark all files as created in Windows :p
+    for zfile in zip_file.filelist:
+      zfile.create_system = 0
+    zip_file.close()
+    fid = await fs.add_data('application/zip', output_buffer.getvalue())
+    output_buffer.close()
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST,
-                           self.user['_id'], lang, code, did)
+                           self.user['_id'], lang, code, fid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
@@ -415,8 +433,8 @@ class ProblemDataHandler(base.Handler):
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     fdoc = await problem.get_data(self.domain_id, pid)
-    # TODO(twd2): cdn
-    self.redirect(self.reverse_url('fs_get', secret=fdoc['metadata']['secret']))
+    self.redirect(options.cdn_prefix.rstrip('/') + \
+                  self.reverse_url('fs_get', secret=fdoc['metadata']['secret']))
 
 
 @app.route('/p/create', 'problem_create')

@@ -1,9 +1,7 @@
 import asyncio
 import calendar
 import datetime
-import io
 import struct
-import zipfile
 from bson import objectid
 
 from vj4 import app
@@ -13,11 +11,13 @@ from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
+from vj4.model import fs
 from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.service import bus
+from vj4.util import options
 
 
 @app.route('/records', 'record_main')
@@ -175,23 +175,10 @@ class RecordPretestDataHandler(base.Handler):
       raise error.RecordNotFoundError(rid)
     if not self.own(rdoc, builtin.PRIV_READ_PRETEST_DATA_SELF, 'uid'):
       self.check_priv(builtin.PRIV_READ_PRETEST_DATA)
-    ddoc = await document.get(rdoc['domain_id'], document.TYPE_PRETEST_DATA, rdoc['data_id'])
-    if not ddoc:
+    if not rdoc.get('data_id'):
       raise error.RecordDataNotFoundError(rdoc['_id'])
-
-    output_buffer = io.BytesIO()
-    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
-    config_content = str(len(ddoc['content'])) + '\n'
-    for i, (data_input, data_output) in enumerate(ddoc['content']):
-      input_file = 'input{0}.txt'.format(i)
-      output_file = 'output{0}.txt'.format(i)
-      config_content += '{0}|{1}|1|10|262144\n'.format(input_file, output_file)
-      zip_file.writestr('Input/{0}'.format(input_file), data_input)
-      zip_file.writestr('Output/{0}'.format(output_file), data_output)
-    zip_file.writestr('Config.ini', config_content)
-    # mark all files as created in Windows :p
-    for zfile in zip_file.filelist:
-      zfile.create_system = 0
-    zip_file.close()
-
-    await self.binary(output_buffer.getvalue(), 'application/zip')
+    secret = await fs.get_secret(rdoc['data_id'])
+    if not secret:
+      raise error.RecordDataNotFoundError(rdoc['_id'])
+    self.redirect(options.cdn_prefix.rstrip('/') + \
+                  self.reverse_url('fs_get', secret=secret))

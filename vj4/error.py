@@ -107,7 +107,7 @@ class ProblemDataNotFoundError(NotFoundError):
 class RecordDataNotFoundError(NotFoundError):
   @property
   def message(self):
-    return 'Data of record {1} not found.'
+    return 'Data of record {0} not found.'
 
 
 class PermissionError(ForbiddenError):
