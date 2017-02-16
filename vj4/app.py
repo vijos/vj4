@@ -67,7 +67,8 @@ def route(url, name):
     handler.NAME = handler.NAME or name
     handler.TITLE = handler.TITLE or name
     Application().router.add_route('*', url, handler, name=name)
-    Application().router.add_route('*', '/d/{domain_id}' + url, handler, name=name + '_with_domain_id')
+    Application().router.add_route('*', '/d/{domain_id}' + url, handler,
+                                   name=name + '_with_domain_id')
     return handler
 
   return decorate
