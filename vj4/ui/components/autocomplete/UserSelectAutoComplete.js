@@ -31,12 +31,13 @@ export default class UserSelectAutoComplete extends AutoComplete {
 
   static DOMAttachKey = 'vjUserSelectAutoCompleteInstance';
 
-  constructor($dom) {
+  constructor($dom, options) {
     super($dom, {
       classes: 'user-select',
       items: getItems,
       render: renderItem,
       text: getText,
+      ...options,
     });
   }
 

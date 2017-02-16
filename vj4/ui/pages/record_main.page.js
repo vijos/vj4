@@ -19,9 +19,9 @@ const page = new NamedPage('record_main', async () => {
       $('.record_main__table tbody').prepend(newTr);
     }
   };
-
-  const filterUserSelector = UserSelectAutoComplete.getOrConstruct($('.filter-user [name="uid_or_name"]'));
-
+  UserSelectAutoComplete.getOrConstruct($('.filter-user [name="uid_or_name"]'), {
+    clearDefaultValue: false,
+  });
 });
 
 export default page;
