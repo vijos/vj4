@@ -14,19 +14,20 @@ export default class AutoComplete extends DOMAttachedObject {
 
   constructor($dom, options = {}) {
     super($dom);
-    this.clear();
-    this.menuShown = false;
-    this.cache = {};
     this.options = {
       items: async () => [],
       render: () => '',
       text: () => null,
       minChar: 1,
       cache: true,
+      clearDefaultValue: true,
       position: 'bottom left',
       classes: '',
       ...options,
     };
+    this.clear(this.options.clearDefaultValue);
+    this.menuShown = false;
+    this.cache = {};
     this.currentItems = [];
     this.$menu = $(`<ol class="menu ${this.options.classes}"></ol>`);
     this.$menu.scrollLock({ strict: false });
@@ -45,8 +46,10 @@ export default class AutoComplete extends DOMAttachedObject {
     this.attach();
   }
 
-  clear() {
-    this.$dom.val('');
+  clear(clearValue = true) {
+    if (clearValue) {
+      this.$dom.val('');
+    }
     this._value = null;
     this.lastText = null;
   }

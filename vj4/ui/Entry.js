@@ -3,6 +3,8 @@ import 'jquery.transit';
 import 'normalize.css/normalize.css';
 import 'codemirror/lib/codemirror.css';
 
+import _ from 'lodash';
+
 import './misc/float.styl';
 import './misc/typography.styl';
 import './misc/textalign.styl';
@@ -43,12 +45,21 @@ async function load() {
       console.error(`Failed to load page ${page.name}\n${e.stack}`);
     }
   }
-  for (const section of $('.section')) {
-    const $section = $(section);
-    $section.addClass('visible');
-    await delay(50);
-    $section.trigger('vjLayout');
+  const sections = _.map($('.section').get(), (section, idx) => ({
+    shouldDelay: idx < 5, // only animate first 5 sections
+    $element: $(section),
+  }));
+  for (const { $element, shouldDelay } of sections) {
+    $element.addClass('visible');
+    if (shouldDelay) {
+      await delay(50);
+    }
   }
+  await delay(500);
+  for (const { $element } of sections) {
+    $element.trigger('vjLayout');
+  }
+  $(document).trigger('vjPageFullyInitialized');
 }
 
 load();

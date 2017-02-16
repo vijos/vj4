@@ -25,7 +25,6 @@ class RecordMainHandler(base.Handler):
   @base.get_argument
   @base.sanitize
   async def get(self, *, uid_or_name: str='', pid: str='', tid: str=''):
-    qs = ''
     query = {}
     if uid_or_name != '':
       try:
@@ -66,8 +65,7 @@ class RecordMainHandler(base.Handler):
           record.get_count())
       statistics = {'day': day_count, 'week': week_count, 'month': month_count,
                     'year': year_count, 'total': rcount}
-    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
-                qs=qs, query=query)
+    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')

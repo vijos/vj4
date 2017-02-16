@@ -217,11 +217,11 @@ const page = new NamedPage('contest_detail_problem', () => {
   }
 
   $(document).on('vjScratchpadRelayout', updateFloatingSidebar);
-  $(document).on('click', '[name="problem-sidebar__open-scratchpad"]', ev => {
+  $(document).on('click', '[name="problem-sidebar__open-scratchpad"]', (ev) => {
     enterScratchpadMode();
     ev.preventDefault();
   });
-  $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', ev => {
+  $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', (ev) => {
     leaveScratchpadMode();
     ev.preventDefault();
   });

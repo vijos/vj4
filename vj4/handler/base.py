@@ -217,11 +217,14 @@ class Handler(web.View, HandlerBase):
 
   def render(self, template_name, **kwargs):
     self.response.content_type = 'text/html'
+    self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
+    self.response.headers.add('Pragma', 'no-cache')
     self.response.text = self.render_html(template_name, **kwargs)
 
   def json(self, obj):
     self.response.content_type = 'application/json'
     self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
+    self.response.headers.add('Pragma', 'no-cache')
     self.response.text = json.encode(obj)
 
   async def binary(self, data, type='application/octet-stream'):
