@@ -55,7 +55,7 @@
             <input name="tid" type="text" class="textbox" value="{{ handler.request.GET['tid']|default('') }}">
           </label>
           <button type="submit" class="primary button"><span class="icon icon-filter"></span> {{ _('Filter') }}</button>
-          <button type="reset" class="button">{{ _('Reset') }}</button>
+          <a href="{{ reverse_url('record_main') }}" class="button">{{ _('Reset') }}</a>
         </div>
       </form>
     </div>
