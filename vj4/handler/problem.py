@@ -193,7 +193,7 @@ class ProblemPretestHandler(base.Handler):
                        self.request.POST.getall('data_output')))
     output_buffer = io.BytesIO()
     zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
-    config_content = str(content) + '\n'
+    config_content = str(len(content)) + '\n'
     for i, (data_input, data_output) in enumerate(content):
       input_file = 'input{0}.txt'.format(i)
       output_file = 'output{0}.txt'.format(i)
