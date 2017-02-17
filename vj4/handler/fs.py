@@ -1,4 +1,5 @@
 import asyncio
+import collections
 import functools
 import hashlib
 import mimetypes
@@ -12,7 +13,7 @@ from vj4.model import builtin
 from vj4.model import fs
 
 
-TITLE_MAX_LENGTH = 2 ** 10
+TEXT_FIELD_MAX_LENGTH = 2 ** 10
 FILE_MAX_LENGTH = 2 ** 27 # 128MiB
 ALLOWED_MIMETYPE_PREFIX = ['image/', 'text/', 'application/zip']
 
@@ -24,6 +25,61 @@ def check_type_and_name(field, name):
     field.headers.get('Content-Disposition'))
   if disptype != 'form-data' or parts.get('name') != name:
     raise error.ValidationError(name)
+
+
+async def handle_file_upload(self, form_fields=None, raise_error=True):
+  ''' Handles file upload, fills form fields and returns file_id. '''
+  reader = await self.request.multipart()
+  try:
+    # Check csrf token.
+    if self.csrf_token:
+      field = await reader.next()
+      check_type_and_name(field, 'csrf_token')
+      post_csrf_token = await field.read_chunk(len(self.csrf_token.encode()))
+      if self.csrf_token.encode() != post_csrf_token:
+        raise error.CsrfTokenError()
+
+    # Read form fields.
+    if form_fields:
+      for k in form_fields:
+        field = await reader.next()
+        check_type_and_name(field, k)
+        form_fields[k] = (await field.read_chunk(TEXT_FIELD_MAX_LENGTH)).decode()
+
+    # Read file data.
+    field = await reader.next()
+    check_type_and_name(field, 'file')
+    file_type = mimetypes.guess_type(field.filename)[0]
+    if not file_type or not any(file_type.startswith(allowed_type)
+                                for allowed_type in ALLOWED_MIMETYPE_PREFIX):
+      raise error.FileTypeNotAllowedError('file', file_type)
+    with tempfile.TemporaryFile() as tmp:
+      hasher = hashlib.md5()
+      size = 0
+      while True:
+        chunk = await field.read_chunk(max(field.chunk_size, 8192))
+        if not chunk:
+          break
+        size += len(chunk)
+        if size > FILE_MAX_LENGTH:
+          raise error.FileTooLongError('file')
+        hasher.update(chunk)
+        tmp.write(chunk)
+      if not size: # empty file
+        raise error.ValidationError('file')
+
+      tmp.seek(0)
+      md5 = hasher.hexdigest()
+      file_id = await fs.link_by_md5(md5)
+      if not file_id:
+        file_id = await fs.add_file_object(file_type, tmp)
+      return file_id
+  except Exception:
+    await self.request.release()
+    if raise_error:
+      raise
+    else:
+      return None
 
 
 @app.route('/fs/{secret:\w{40}}', 'fs_get')
@@ -83,48 +139,8 @@ class FsUploadHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.sanitize
   async def post(self):
-    reader = await self.request.multipart()
-
-    # Check csrf token.
-    if self.csrf_token:
-      csrf_token_field = await reader.next()
-      check_type_and_name(csrf_token_field, 'csrf_token')
-      post_csrf_token = await csrf_token_field.read_chunk(len(self.csrf_token.encode()))
-      if self.csrf_token.encode() != post_csrf_token:
-        raise error.CsrfTokenError()
-
-    # Read title.
-    title_field = await reader.next()
-    check_type_and_name(title_field, 'title')
-    title = (await title_field.read_chunk(TITLE_MAX_LENGTH)).decode()
-
-    # Read file data.
-    file_field = await reader.next()
-    check_type_and_name(file_field, 'file')
-    file_type = mimetypes.guess_type(file_field.filename)[0]
-    if not file_type or not any(file_type.startswith(allowed_type)
-                                for allowed_type in ALLOWED_MIMETYPE_PREFIX):
-      raise error.FileTypeNotAllowedError('file', file_type)
-    with tempfile.TemporaryFile() as tmp:
-      hasher = hashlib.md5()
-      size = 0
-      while True:
-        chunk = await file_field.read_chunk(max(file_field.chunk_size, 8192))
-        if not chunk:
-          break
-        size += len(chunk)
-        if size > FILE_MAX_LENGTH:
-          raise error.FileTooLongError('file')
-        hasher.update(chunk)
-        tmp.write(chunk)
-      if not size: # empty file
-        raise error.ValidationError('file')
-
-      tmp.seek(0)
-      md5 = hasher.hexdigest()
-      fid = await fs.link_by_md5(md5)
-      if not fid:
-        fid = await fs.add_file_object(file_type, tmp)
-    self.response.text = str(fid)
+    fields = collections.OrderedDict([('title', '')])
+    file_id = await handle_file_upload(self, fields)
+    self.response.text = str(file_id)
     # TODO(twd2): UI
     # self.json_or_redirect(self.url)

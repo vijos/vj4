@@ -10,6 +10,7 @@ from vj4 import app
 from vj4 import constant
 from vj4 import error
 from vj4 import job
+from vj4 import handler
 from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import user
@@ -553,30 +554,24 @@ class ProblemSettingsHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    self.render('problem_upload.html', pdoc=pdoc)
+    md5 = await fs.get_md5(pdoc.get('data'))
+    self.render('problem_upload.html', pdoc=pdoc, md5=md5)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
-  @base.post_argument
-  @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, file: lambda _: _):
+  async def post(self, *, pid: document.convert_doc_id):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    # TODO(twd2): check file size
-    if file:
-      data = file.file.read()
-      md5 = hashlib.md5(data).hexdigest()
-      fid = await fs.link_by_md5(md5)
-      if not fid:
-        fid = await fs.add_data('application/zip', data)
+    file_id = await handler.fs.handle_file_upload(self, raise_error=False)
+    if file_id:
       if pdoc.get('data'):
         await fs.unlink(pdoc['data'])
-      await problem.set_data(self.domain_id, pid, fid)
+      await problem.set_data(self.domain_id, pid, file_id)
     self.json_or_redirect(self.url)
 
 
