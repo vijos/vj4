@@ -3,7 +3,6 @@ import collections
 import functools
 import hashlib
 import mimetypes
-import tempfile
 from aiohttp import multipart
 
 from vj4 import app
@@ -55,28 +54,39 @@ async def handle_file_upload(self, form_fields=None, raise_error=True):
     if not file_type or not any(file_type.startswith(allowed_type)
                                 for allowed_type in ALLOWED_MIMETYPE_PREFIX):
       raise error.FileTypeNotAllowedError('file', file_type)
-    with tempfile.TemporaryFile() as tmp:
-      hasher = HASHER()
+    grid_in = None
+    finally_delete = True
+    try:
+      grid_in = await fs.add(file_type)
+      file_id = grid_in._id
+      # hasher = HASHER()
       size = 0
-      while True:
-        chunk = await field.read_chunk(max(field.chunk_size, 8192))
-        if not chunk:
-          break
+      chunk_size = max(field.chunk_size, 8192)
+      chunk = await field.read_chunk(chunk_size)
+      while chunk:
         size += len(chunk)
         if size > FILE_MAX_LENGTH:
           raise error.FileTooLongError('file')
-        hasher.update(chunk)
-        tmp.write(chunk)
+        _, chunk = await asyncio.gather(grid_in.write(chunk), field.read_chunk(chunk_size))
+        # hasher.update(chunk)
+      if chunk: # remaining
+        await grid_in.write(chunk)
       if not size: # empty file
         raise error.ValidationError('file')
 
-      tmp.seek(0)
-      md5 = hasher.hexdigest()
-      file_id = await fs.link_by_md5(md5)
-      if not file_id:
-        file_id = await fs.add_file_object(file_type, tmp)
+      # TODO(twd2): deduplicate using grid_in.md5
+      await grid_in.close()
+      finally_delete = False
       return file_id
+    except:
+      raise
+    finally:
+      if grid_in:
+        await grid_in.close()
+        if finally_delete:
+          await fs.unlink(grid_in._id)
   except Exception:
+    # FIXME(twd2)
     await self.request.release()
     if raise_error:
       raise
