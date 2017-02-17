@@ -213,6 +213,14 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
 
 @app.route('/user/search', 'user_search')
 class UserSearchHandler(base.Handler):
+  def modify_udoc(self, udict, key):
+    udoc = udict[key]
+    gravatar_url = template.gravatar_url(udoc.get('gravatar'))
+    if 'gravatar' in udoc and udoc['gravatar']:
+      udict[key] = {**udoc,
+                    'gravatar_url': gravatar_url,
+                    'gravatar': ''}
+
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.get_argument
   @base.route_argument
@@ -225,7 +233,6 @@ class UserSearchHandler(base.Handler):
         udocs.insert(0, udoc)
     except ValueError as e:
       pass
-    for udoc in udocs:
-      if 'gravatar' in udoc:
-        udoc['gravatar_url'] = template.gravatar_url(udoc.pop('gravatar'))
+    for i in range(len(udocs)):
+      self.modify_udoc(udocs, i)
     self.json(udocs)
