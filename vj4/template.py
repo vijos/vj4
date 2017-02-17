@@ -13,6 +13,7 @@ import vj4.constant
 import vj4.job
 from vj4.util import json
 from vj4.util import options
+from vj4.util import version
 
 
 class Undefined(jinja2.runtime.Undefined):
@@ -35,7 +36,7 @@ class Environment(jinja2.Environment):
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     self.globals['vj4'] = vj4
-    self.globals['static_url'] = lambda s: options.cdn_prefix + s
+    self.globals['static_url'] = lambda s: options.cdn_prefix + s + '?{0}'.format(version.get())
     self.globals['paginate'] = paginate
 
     self.filters['markdown'] = markdown
