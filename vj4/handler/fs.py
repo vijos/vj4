@@ -17,6 +17,7 @@ from vj4.model.adaptor import userfile
 TEXT_FIELD_MAX_LENGTH = 2 ** 10
 FILE_MAX_LENGTH = 2 ** 27 # 128MiB
 ALLOWED_MIMETYPE_PREFIX = ['image/', 'text/', 'application/zip']
+HASHER = hashlib.md5
 
 
 def check_type_and_name(field, name):
@@ -55,7 +56,7 @@ async def handle_file_upload(self, form_fields=None, raise_error=True):
                                 for allowed_type in ALLOWED_MIMETYPE_PREFIX):
       raise error.FileTypeNotAllowedError('file', file_type)
     with tempfile.TemporaryFile() as tmp:
-      hasher = hashlib.md5()
+      hasher = HASHER()
       size = 0
       while True:
         chunk = await field.read_chunk(max(field.chunk_size, 8192))

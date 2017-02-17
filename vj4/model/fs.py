@@ -137,6 +137,7 @@ async def unlink(file_id: objectid.ObjectId):
 async def ensure_indexes():
   coll = db.Collection('fs.files')
   await coll.create_index('metadata.secret', unique=True)
+  await coll.create_index('md5')
 
 
 if __name__ == '__main__':
