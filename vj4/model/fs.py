@@ -128,7 +128,7 @@ async def unlink(file_id: objectid.ObjectId):
   doc = await coll.find_one_and_update(filter={'_id': file_id},
                                        update={'$inc': {'metadata.link': -1}},
                                        return_document=ReturnDocument.AFTER)
-  if not doc['metadata']['link']:
+  if doc and not doc['metadata']['link']:
     fs = db.GridFS('fs')
     await fs.delete(file_id)
 

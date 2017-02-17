@@ -11,6 +11,7 @@ from vj4 import error
 from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import fs
+from vj4.model.adaptor import userfile
 
 
 TEXT_FIELD_MAX_LENGTH = 2 ** 10
@@ -28,7 +29,7 @@ def check_type_and_name(field, name):
 
 
 async def handle_file_upload(self, form_fields=None, raise_error=True):
-  ''' Handles file upload, fills form fields and returns file_id. '''
+  """Handles file upload, fills form fields and returns file_id."""
   reader = await self.request.multipart()
   try:
     # Check csrf token.
@@ -134,13 +135,13 @@ class FsUploadHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.sanitize
   async def get(self):
-    self.render('fs_upload.html')
+    self.render('fs_upload.html', fdoc=None)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.sanitize
   async def post(self):
-    fields = collections.OrderedDict([('title', '')])
+    fields = collections.OrderedDict([('desc', '')])
     file_id = await handle_file_upload(self, fields)
-    self.response.text = str(file_id)
-    # TODO(twd2): UI
-    # self.json_or_redirect(self.url)
+    fdoc = await fs.get_meta(file_id)
+    ufid = await userfile.add(fields['desc'], file_id, self.user['_id'], fdoc['length'])
+    self.render('fs_upload.html', fdoc=fdoc, ufid=ufid)
