@@ -35,6 +35,13 @@ async def add_data(content_type, data):
   return grid_in._id
 
 
+async def add_file_object(content_type, file_object):
+  grid_in = await add(content_type)
+  await grid_in.write(file_object)
+  await grid_in.close()
+  return grid_in._id
+
+
 async def get(file_id):
   """Get a file. Returns MotorGridOut."""
   fs = db.GridFS('fs')

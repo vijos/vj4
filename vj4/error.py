@@ -63,6 +63,18 @@ class ValidationError(ForbiddenError):
       return 'Field {0} or {1} validation failed.'
 
 
+class FileTooLongError(ValidationError):
+  @property
+  def message(self):
+    return 'The uploaded file is too long.'
+
+
+class FileTypeNotAllowedError(ValidationError):
+  @property
+  def message(self):
+    return 'This type of files are not allowed to be uploaded.'
+
+
 class UnknownFieldError(ForbiddenError):
   @property
   def message(self):

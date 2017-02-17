@@ -1,9 +1,10 @@
 {% extends 'layout/simple.html' %}
 {% block body %}
 <form method="post" enctype="multipart/form-data">
+<input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
 <p>
 {{ _('New file') }}:
-<input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+<input type="text" name="title" value="title">
 <input type="file" name="file">
 <input type="submit" value="{{ _('Upload') }}" class="rounded primary button">
 </p>
