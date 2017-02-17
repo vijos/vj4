@@ -1,3 +1,4 @@
+import moment from 'moment';
 import gulp from 'gulp';
 import del from 'del';
 import svgmin from 'gulp-svgmin';
@@ -6,7 +7,7 @@ import nunjucks from 'gulp-nunjucks';
 import vjGenerateConstant from './scripts/build/constant/gulp';
 import vjGenerateLocale from './scripts/build/locale/gulp';
 
-const iconTimestamp = ~~(Date.now() / 1000);
+const iconTimestamp = moment.utc([2017, 0, 1, 0, 0, 0, 0]).unix();
 
 gulp.task('iconfont', () => {
   return gulp
