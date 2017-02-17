@@ -7,6 +7,7 @@ from vj4 import db
 from vj4.util import argmethod
 from vj4.util import validator
 
+STATUS_UNREAD = 0
 STATUS_READ = 1
 
 
@@ -17,10 +18,10 @@ async def add(sender_uid: int, sendee_uid: int, content: str):
   coll = db.Collection('message')
   mdoc = {'sender_uid': sender_uid,
           'sendee_uid': sendee_uid,
-          'status': 0,
+          'status': STATUS_UNREAD,
           'reply': [{'sender_uid': sender_uid,
                      'content': content,
-                     'status': 0,
+                     'status': STATUS_UNREAD,
                      'at': datetime.datetime.utcnow()}]}
   await coll.insert_one(mdoc)
   return mdoc
@@ -40,7 +41,7 @@ async def add_reply(message_id: objectid.ObjectId, sender_uid: int, content: str
   coll = db.Collection('message')
   reply = {'sender_uid': sender_uid,
            'content': content,
-           'status': 0,
+           'status': STATUS_UNREAD,
            'at': datetime.datetime.utcnow()}
   mdoc = await coll.find_one_and_update(filter={'_id': message_id},
                                         update={'$push': {'reply': reply}},
