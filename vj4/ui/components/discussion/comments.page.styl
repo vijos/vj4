@@ -15,7 +15,7 @@ $downvote-color = red
   height: rem(60px)
   resize: none
   font-size: rem($font-size-title)
-  color: #AAA
+  color: $comment-placeholder-color
   padding: rem(10px)
 
 .dczcomments__item,
@@ -36,10 +36,10 @@ $downvote-color = red
   font-size: rem($font-size)
   float: right
   vertical-align: top
-  color: lighten($text-color, 30%)
+  color: $comment-op-color
 
   a, a:visited
-    color: lighten($text-color, 50%)
+    color: $comment-op-link-color
     margin-left: rem(3px)
   a:hover
     color: $primary-color

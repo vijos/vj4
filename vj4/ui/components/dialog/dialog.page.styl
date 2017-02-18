@@ -11,15 +11,15 @@
   align-items: center
   justify-content: center
   display: none
-  background: rgba(#F0F0F0, 0.6)
+  background: $dialog-layer-bg-color
 
 .dialog__content
   position: relative
 
 .dialog.withBg .dialog__content
-  background: #FFF
-  border: 1px solid lighten($primary-color, 30%)
-  box-shadow: 0 2px 10px rgba(#000, 0.2)
+  background: $dialog-bg-color
+  border: 1px solid $dialog-border-color
+  box-shadow: $dialog-shadow
   min-width: rem(500px)
   padding: rem(40px) rem(30px)
 
@@ -29,7 +29,7 @@
 
   h1
     font-size: 1.6rem
-    color: #666
+    color: $dialog-title-color
     margin-bottom: 1rem
 
 .dialog__action button

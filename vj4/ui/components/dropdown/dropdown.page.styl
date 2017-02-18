@@ -1,5 +1,3 @@
-@import '~vj/misc/section.inc.styl'
-
 .dropdown-target
   display: none
 
@@ -9,8 +7,8 @@
 .dropdown
   .menu
     min-width: rem(150px)
-    box-shadow: 0 2px 7px rgba(#000, 0.3)
-    background: #FFF
+    box-shadow: $menu-drop-shadow
+    background: $menu-drop-bg-color
     font-size: rem($font-size-small)
 
   .menu__link

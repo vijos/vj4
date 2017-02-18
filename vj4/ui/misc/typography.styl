@@ -11,13 +11,13 @@ html
   box-sizing: inherit
 
 html
-  color: $text-color
+  color: $text-1-color
   -webkit-text-size-adjust: 100%
   -ms-text-size-adjust: 100%
   text-rendering: optimizelegibility
 
 #panel
-  background: $bg-color
+  background: $page-bg-color
 
 body, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, hr, button, article, aside, details, figcaption, figure, footer, header, menu, nav, section
   margin: 0
@@ -25,7 +25,7 @@ body, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset,
 
 dt
   line-height: 1.8
-  color: lighten($text-color, 30%)
+  color: lighten($text-1-color, 30%)
 
 dd
   margin-bottom: rem(10px)
@@ -91,7 +91,7 @@ blockquote
   &.note
     border-color: $primary-color
     background: #F8F8F8
-    color: lighten($text-color, 10%)
+    color: lighten($text-1-color, 10%)
 
     &:before
       content: 'NOTE:'
@@ -100,7 +100,7 @@ blockquote
   &.warn
     border-color: red
     background: #F8F8F8
-    color: lighten($text-color, 10%)
+    color: lighten($text-1-color, 10%)
 
     &:before
       content: 'WARNING:'
@@ -145,7 +145,7 @@ sub
 
 a, .link
   &, &:visited, &:hover, &:active
-    color: $text-color
+    color: $text-1-color
 
   &:hover
     text-decoration: underline
@@ -211,7 +211,7 @@ hr
 
 small, figcaption
   font-size: 0.9em
-  color: $small-color
+  color: $text-3-color
 
 .typo
   word-wrap()
@@ -235,7 +235,7 @@ small, figcaption
 h1, h2, h3, h4, h5, h6
   font-family: $header-font-family
   font-weight: 100
-  color: $header-color
+  color: $header-1-color
   line-height: 1.1
 
 .typo h1, .typo h2, .typo h3, .typo h4, .typo h5, .typo h6

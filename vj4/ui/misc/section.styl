@@ -1,6 +1,3 @@
-@import 'section.inc.styl'
-@import '~vj/components/form/var.inc.styl'
-
 .immersive-section, .section
   margin-bottom: rem($section-margin)
 
@@ -12,8 +9,8 @@
     font-size: rem($font-size-secondary)
 
 .section
-  background: #FFF
-  box-shadow: rem(0) rem(6px) rem(22px) rgba(#AFC2C9, 0.5)
+  background: $section-bg-color
+  box-shadow: $section-shadow
   transition: transform .5s, opacity .5s
   transition-timing-function: ease-out-cubic
 
@@ -47,7 +44,7 @@
   padding: rem($section-gap-h)
 
 .section__title
-  color: #666
+  color: $section-title-color
 
 .section__header .section__title
   line-height: $form-control-height
@@ -71,7 +68,7 @@ h3.section__title
     appearance: none
     border: 0
     background: none
-    color: #AAA
+    color: $section-toolbtn-color
     margin-left: rem(5px)
     padding: rem(0 5px)
     line-height: rem(24px)
@@ -79,7 +76,7 @@ h3.section__title
     outline: 0
 
     &:hover
-      color: #444
+      color: $section-toolbtn-color-hover
 
 .section__list__item
   padding: rem($section-gap-v $section-gap-h)
