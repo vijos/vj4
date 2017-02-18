@@ -144,6 +144,16 @@ class HomeAccountHandler(base.Handler):
 
 @app.route('/home/messages', 'home_messages')
 class HomeMessagesHandler(base.OperationHandler):
+  def modify_udoc(self, udict, key):
+    udoc = udict.get(key)
+    if not udoc:
+      return
+    gravatar_url = template.gravatar_url(udoc.get('gravatar'))
+    if 'gravatar' in udoc and udoc['gravatar']:
+      udict[key] = {**udoc,
+                    'gravatar_url': gravatar_url,
+                    'gravatar': ''}
+
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): projection, pagination.
@@ -153,11 +163,8 @@ class HomeMessagesHandler(base.OperationHandler):
         fields=user.PROJECTION_PUBLIC)
     # TODO(twd2): improve here:
     for mdoc in mdocs:
-      sender_udoc, sendee_udoc = udict[mdoc['sender_uid']], udict[mdoc['sendee_uid']]
-      if 'gravatar' in sender_udoc:
-        sender_udoc['gravatar_url'] = template.gravatar_url(sender_udoc.pop('gravatar'))
-      if 'gravatar' in sendee_udoc:
-        sendee_udoc['gravatar_url'] = template.gravatar_url(sendee_udoc.pop('gravatar'))
+      self.modify_udoc(udict, mdoc['sender_uid'])
+      self.modify_udoc(udict, mdoc['sendee_uid'])
     self.json_or_render('home_messages.html', messages=mdocs, udict=udict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -168,15 +175,13 @@ class HomeMessagesHandler(base.OperationHandler):
     if not udoc:
       raise error.UserNotFoundError(uid)
     mdoc = await message.add(self.user['_id'], udoc['_id'], content)
+    # TODO(twd2): improve here:
     # projection
-    mdoc['sender_udoc'] = await user.get_by_uid(self.user['_id'], user.PROJECTION_PUBLIC)
-    # TODO(twd2): improve here:
-    mdoc['sender_udoc']['gravatar_url'] = (
-      template.gravatar_url(mdoc['sender_udoc'].pop('gravatar')))
+    sender_udoc = await user.get_by_uid(self.user['_id'], user.PROJECTION_PUBLIC)
+    mdoc['sender_udoc'] = sender_udoc
+    self.modify_udoc(mdoc, 'sender_udoc')
     mdoc['sendee_udoc'] = udoc
-    # TODO(twd2): improve here:
-    mdoc['sendee_udoc']['gravatar_url'] = (
-      template.gravatar_url(mdoc['sendee_udoc'].pop('gravatar')))
+    self.modify_udoc(mdoc, 'sendee_udoc')
     if self.user['_id'] != uid:
       await bus.publish('message_received-' + str(uid), {'type': 'new', 'data': mdoc})
     self.json_or_redirect(self.url, mdoc=mdoc)

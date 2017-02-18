@@ -5,15 +5,18 @@ export default async function loadReactRedux(storeReducer) {
   const { createStore, applyMiddleware } = await System.import('redux');
   const { default: reduxThunk } = await System.import('redux-thunk');
   const { default: reduxPromise } = await System.import('redux-promise-middleware');
-  const reduxLogger = await System.import('redux-logger');
 
   const reduxMiddlewares = [];
   reduxMiddlewares.push(reduxThunk);
   reduxMiddlewares.push(reduxPromise());
-  reduxMiddlewares.push(reduxLogger({
-    collapsed: true,
-    duration: true,
-  }));
+
+  if (process.env.NODE_ENV !== 'production') {
+    const reduxLogger = await System.import('redux-logger');
+    reduxMiddlewares.push(reduxLogger({
+      collapsed: true,
+      duration: true,
+    }));
+  }
 
   const store = createStore(storeReducer, applyMiddleware(...reduxMiddlewares));
 
