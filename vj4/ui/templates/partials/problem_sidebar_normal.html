@@ -151,9 +151,9 @@
       {% endif %}
       </dd>
       <dt>{{ _('# Submissions') }}</dt>
-      <dd>{{ pdoc['num_submit'] }}</dd>
+      <dd><a href="{{ reverse_url('record_main') }}?pid={{ pdoc['doc_id'] }}">{{ pdoc['num_submit'] }}</a></dd>
       <dt>{{ _('# My Submissions') }}</dt>
-      <dd>{{ pdoc['psdoc']['num_submit']|default(0) }}</dd>
+      <dd><a href="{{ reverse_url('record_main') }}?pid={{ pdoc['doc_id'] }}&uid_or_name={{ handler.user['_id'] }}">{{ pdoc['psdoc']['num_submit']|default(0) }}</a></dd>
       <dt>{{ _('Accepted') }}</dt>
       <dd>{{ pdoc['num_accept'] }}</dd>
       <dt>{{ _('Accepted Ratio') }}</dt>

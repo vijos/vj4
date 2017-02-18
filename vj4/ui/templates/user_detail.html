@@ -32,6 +32,7 @@
             <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Submissions') }} ({{ dudoc['num_submit']|default(0) }})</h1>
               <div class="section__tab-main">
+              <p><a href="{{ reverse_url('record_main') }}?uid_or_name={{ udoc['_id'] }}">{{ _('All Submissions') }}</a></p>
               {% for rdoc in rdocs %}
                 <p><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}">R{{ rdoc['_id'] }}</a></p>
               {% endfor %}

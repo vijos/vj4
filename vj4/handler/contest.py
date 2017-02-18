@@ -255,11 +255,11 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
                            self.user['_id'], lang, code, tid=tdoc['doc_id'], hidden=True)
-    await contest.update_status(self.domain_id, tdoc['_id'], self.user['_id'],
+    await contest.update_status(self.domain_id, tdoc['doc_id'], self.user['_id'],
                                 rid, pdoc['doc_id'], False, 0)
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
-        self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['_id']))
+        self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['doc_id']))
     else:
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
