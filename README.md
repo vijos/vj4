@@ -5,7 +5,31 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62)
 [![GitHub license](https://img.shields.io/badge/license-AGPLv3-blue.svg?style=flat-square)](https://raw.githubusercontent.com/vijos/vj4/master/LICENSE)
 
-Next generation of Vijos, built with asyncio on Python 3.5.
+Next generation of [Vijos](https://vijos.org), built with asyncio on Python 3.5.
+
+## Functionality
+
+- Problem Categories and Tags
+- Solution Sharing & Voting
+- Online Coding and Testing (a.k.a. Scratchpad Mode)
+- Discussions & Comments
+- Trainings
+- Contests (ACM & OI)
+- Dynamic Ranking System
+- Real-time Status Updates
+- Online Judge as a Service (a.k.a. Domain): create your own OJ website without dev-ops!
+- Management UI
+
+## Features
+
+- Sandboxed & Distributed Judging: see [jd4](https://github.com/vijos/jd4), [winjudge](https://github.com/iceb0y/winjudge) and [windows-container](https://github.com/iceb0y/windows-container)
+- High Performance Web Server
+- Cross Platform (both Judge and Web Server can be run on Linux & Windows)
+- Secure (we are also CTF players)
+- Modern Architecture
+- Modern User Interface
+- SEO Optimized
+- CDN Friendly
 
 ## Prerequisites
 
