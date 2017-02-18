@@ -8,6 +8,7 @@ from vj4 import app
 from vj4 import error
 from vj4 import template
 from vj4.model import builtin
+from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
 from vj4.model import message
