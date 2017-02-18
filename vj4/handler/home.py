@@ -262,13 +262,26 @@ class HomeDomainCreateHandler(base.Handler):
 
 
 @app.route('/home/file', 'home_file')
-class HomeFileHandler(base.Handler):
+class HomeFileHandler(base.OperationHandler):
   def file_url(self, fdoc):
     return options.cdn_prefix.rstrip('/') + \
       self.reverse_url('fs_get', secret=fdoc['metadata']['secret'])
 
-  @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_FILE)
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     ufdocs = await userfile.get_multi(owner_uid=self.user['_id']).to_list(None)
     fdict = await fs.get_meta_dict(ufdoc.get('file_id') for ufdoc in ufdocs)
     self.render('home_file.html', ufdocs=ufdocs, fdict=fdict)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_delete(self, *, ufid: document.convert_doc_id):
+    ufdoc = await userfile.get(ufid)
+    if not self.own(ufdoc, priv=builtin.PRIV_DELETE_FILE_SELF):
+      self.check_priv(builtin.PRIV_DELETE_FILE)
+    result = await userfile.delete(ufdoc['doc_id'])
+    if result:
+      await userfile.dec_usage(self.user['_id'], ufdoc['length'])
+    self.redirect(self.referer_or_main)

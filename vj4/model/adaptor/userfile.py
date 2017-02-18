@@ -33,8 +33,11 @@ async def get(fid: objectid.ObjectId):
 @argmethod.wrap
 async def delete(fid: objectid.ObjectId):
   doc = await get(fid)
-  await fs.unlink(doc['file_id'])
-  return await document.delete(STORE_DOMAIN_ID, document.TYPE_USERFILE, fid)
+  result = await document.delete(STORE_DOMAIN_ID, document.TYPE_USERFILE, fid)
+  result = bool(result.deleted_count)
+  if result:
+    await fs.unlink(doc['file_id'])
+  return result
 
 
 def get_multi(fields=None, **kwargs):
@@ -63,6 +66,11 @@ async def get_usage(uid: int):
 @argmethod.wrap
 async def inc_usage(uid: int, usage: int, quota: int):
   return await domain.inc_user_usage(STORE_DOMAIN_ID, uid, 'usage_userfile', usage, quota)
+
+
+@argmethod.wrap
+async def dec_usage(uid: int, usage: int):
+  return await domain.inc_user(STORE_DOMAIN_ID, uid, usage_userfile=-usage)
 
 
 if __name__ == '__main__':
