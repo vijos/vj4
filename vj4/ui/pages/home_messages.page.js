@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import { NamedPage } from '../misc/PageLoader';
-import loadReactRedux from '../utils/loadReactRedux';
+import { NamedPage } from 'vj/misc/PageLoader';
+import loadReactRedux from 'vj/utils/loadReactRedux';
 
-import { ActionDialog } from '../components/dialog';
-import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
+import { ActionDialog } from 'vj/components/dialog';
+import UserSelectAutoComplete from 'vj/components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('home_messages', () => {
   async function mountComponent() {

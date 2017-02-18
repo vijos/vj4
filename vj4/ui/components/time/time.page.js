@@ -1,8 +1,8 @@
 import Timeago from 'timeago.js';
 
-import { AutoloadPage } from '../../misc/PageLoader';
+import { AutoloadPage } from 'vj/misc/PageLoader';
 
-import i18n from '../../utils/i18n';
+import i18n from 'vj/utils/i18n';
 
 function runRelativeTime($container) {
   $container.find('span.time.relative[data-timestamp]').get().forEach((element) => {

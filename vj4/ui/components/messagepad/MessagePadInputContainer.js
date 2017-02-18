@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Icon from '../react/IconComponent';
+import Icon from 'vj/components/react/IconComponent';
 
-import * as util from '../../misc/Util';
+import request from 'vj/utils/request';
 
 const mapStateToProps = state => ({
   activeId: state.activeId,
@@ -32,7 +32,7 @@ const mapDispatchToProps = dispatch => ({
     if (placeholderId === null) {
       return;
     }
-    const req = util.post('', {
+    const req = request.post('', {
       operation: 'send_message',
       uid,
       content: value,
@@ -49,7 +49,7 @@ const mapDispatchToProps = dispatch => ({
     if (id === null) {
       return;
     }
-    const req = util.post('', {
+    const req = request.post('', {
       operation: 'reply_message',
       message_id: id,
       content: value,

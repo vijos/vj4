@@ -2,11 +2,11 @@ import Drop from 'tether-drop';
 import _ from 'lodash';
 import 'jquery-scroll-lock';
 
-import DOMAttachedObject from '../DOMAttachedObject';
+import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
-import i18n from '../../utils/i18n';
-import tpl from '../../utils/tpl';
-import zIndexManager from '../../utils/zIndexManager';
+import i18n from 'vj/utils/i18n';
+import tpl from 'vj/utils/tpl';
+import zIndexManager from 'vj/utils/zIndexManager';
 
 export default class AutoComplete extends DOMAttachedObject {
 

@@ -1,6 +1,6 @@
-import { AutoloadPage } from '../../misc/PageLoader';
+import { AutoloadPage } from 'vj/misc/PageLoader';
+import delay from 'vj/utils/delay';
 import CmEditor from './cmeditor';
-import delay from '../../utils/delay';
 
 function runSubstitute($container) {
   const selector = ['textarea[data-markdown]'];

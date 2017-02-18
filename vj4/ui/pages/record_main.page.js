@@ -1,5 +1,5 @@
-import { NamedPage } from '../misc/PageLoader';
-import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
+import { NamedPage } from 'vj/misc/PageLoader';
+import UserSelectAutoComplete from 'vj/components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('record_main', async () => {
   const SockJs = await System.import('sockjs-client');

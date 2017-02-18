@@ -3,19 +3,19 @@ import { connect } from 'react-redux';
 import Tabs, { TabPane } from 'rc-tabs';
 import TabContent from 'rc-tabs/lib/TabContent';
 import ScrollableInkTabBar from 'rc-tabs/lib/ScrollableInkTabBar';
-import Icon from '../react/IconComponent';
+
+import i18n from 'vj/utils/i18n';
+import request from 'vj/utils/request';
+import Icon from 'vj/components/react/IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
 import ScratchpadRecordsTable from './ScratchpadRecordsTableContainer';
-
-import i18n from '../../utils/i18n';
-import * as util from '../../misc/Util';
 
 const mapDispatchToProps = dispatch => ({
   loadSubmissions() {
     dispatch({
       type: 'SCRATCHPAD_RECORDS_LOAD_SUBMISSIONS',
-      payload: util.get(Context.getSubmissionsUrl),
+      payload: request.get(Context.getSubmissionsUrl),
     });
   },
   handleClickClose() {

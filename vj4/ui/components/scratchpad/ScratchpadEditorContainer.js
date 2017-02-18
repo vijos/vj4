@@ -7,7 +7,7 @@ import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/pascal/pascal';
 import 'codemirror/mode/python/python';
 
-import * as languageEnum from '../../constant/language';
+import * as languageEnum from 'vj/constant/language';
 
 const getOptions = lang => ({
   lineNumbers: true,

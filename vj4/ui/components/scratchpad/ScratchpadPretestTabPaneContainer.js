@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import DataInput from './DataInputComponent';
 
-import i18n from '../../utils/i18n';
+import i18n from 'vj/utils/i18n';
+import DataInput from './DataInputComponent';
 
 const mapStateToProps = state => ({
   data: state.pretest.data,

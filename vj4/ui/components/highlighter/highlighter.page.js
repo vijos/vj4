@@ -1,5 +1,5 @@
-import { AutoloadPage } from '../../misc/PageLoader';
-import hljs from '../highlighter/hljs';
+import { AutoloadPage } from 'vj/misc/PageLoader';
+import hljs from 'vj/components/highlighter/hljs';
 
 function runHighlight($container) {
   hljs.highlightBlocks($container);

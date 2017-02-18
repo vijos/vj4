@@ -1,4 +1,4 @@
-import { AutoloadPage } from '../../misc/PageLoader';
+import { AutoloadPage } from 'vj/misc/PageLoader';
 
 const datepickerPage = new AutoloadPage(async () => {
   if ($('[data-pick-date]').length > 0) {

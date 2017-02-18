@@ -1,4 +1,6 @@
-export async function ajax(options, dataType = 'json') {
+const request = {};
+
+request.ajax = async function (options, dataType = 'json') {
   try {
     const data = await $.ajax({
       dataType,
@@ -14,9 +16,9 @@ export async function ajax(options, dataType = 'json') {
     }
     throw new Error(resp.statusText);
   }
-}
+};
 
-export function post(url, dataOrForm = {}, dataType = 'json') {
+request.post = function (url, dataOrForm = {}, dataType = 'json') {
   let postData;
   if (dataOrForm instanceof jQuery && dataOrForm.is('form')) {
     // $form
@@ -34,17 +36,19 @@ export function post(url, dataOrForm = {}, dataType = 'json') {
       ...dataOrForm,
     }, true);
   }
-  return ajax({
+  return request.ajax({
     url,
     method: 'post',
     data: postData,
   }, dataType);
-}
+};
 
-export function get(url, qs = {}, dataType = 'json') {
-  return ajax({
+request.get = function (url, qs = {}, dataType = 'json') {
+  return request.ajax({
     url,
     data: qs,
     method: 'get',
   }, dataType);
-}
+};
+
+export default request;

@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import Tabs, { TabPane } from 'rc-tabs';
 import TabContent from 'rc-tabs/lib/TabContent';
 import ScrollableInkTabBar from 'rc-tabs/lib/ScrollableInkTabBar';
-import Icon from '../react/IconComponent';
+
+import i18n from 'vj/utils/i18n';
+import Icon from 'vj/components/react/IconComponent';
 import Panel from './PanelComponent';
 import PanelButton from './PanelButtonComponent';
 import ScratchpadPretestTabPane from './ScratchpadPretestTabPaneContainer';
-
-import i18n from '../../utils/i18n';
 
 const mapStateToProps = state => ({
   current: state.pretest.current,

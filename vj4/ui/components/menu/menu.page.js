@@ -1,6 +1,6 @@
-import { AutoloadPage } from '../../misc/PageLoader';
-import { slideDown } from '../../utils/slide';
-import delay from '../../utils/delay';
+import { AutoloadPage } from 'vj/misc/PageLoader';
+import { slideDown } from 'vj/utils/slide';
+import delay from 'vj/utils/delay';
 
 function expandMenu($menu) {
   slideDown($menu, 500, { opacity: 0 }, { opacity: 1 });

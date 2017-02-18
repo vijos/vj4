@@ -1,14 +1,14 @@
 import _ from 'lodash';
 
-import { NamedPage } from '../misc/PageLoader';
-import Notification from '../components/notification';
-import { ConfirmDialog, ActionDialog } from '../components/dialog';
-import UserSelectAutoComplete from '../components/autocomplete/UserSelectAutoComplete';
+import { NamedPage } from 'vj/misc/PageLoader';
+import Notification from 'vj/components/notification';
+import { ConfirmDialog, ActionDialog } from 'vj/components/dialog';
+import UserSelectAutoComplete from 'vj/components/autocomplete/UserSelectAutoComplete';
 
-import * as util from '../misc/Util';
-import tpl from '../utils/tpl';
-import delay from '../utils/delay';
-import i18n from '../utils/i18n';
+import request from 'vj/utils/request';
+import tpl from 'vj/utils/tpl';
+import delay from 'vj/utils/delay';
+import i18n from 'vj/utils/i18n';
 
 const page = new NamedPage('domain_manage_user', () => {
   const addUserSelector = UserSelectAutoComplete.getOrConstruct($('.dialog__body--add-user [name="user"]'));
@@ -58,7 +58,7 @@ const page = new NamedPage('domain_manage_user', () => {
     }
     const user = addUserSelector.value();
     const role = addUserDialog.$dom.find('[name="role"]').val();
-    await util.post('', {
+    await request.post('', {
       operation: 'set_user',
       uid: user._id,
       role,
@@ -94,7 +94,7 @@ const page = new NamedPage('domain_manage_user', () => {
       return;
     }
     try {
-      await util.post('', {
+      await request.post('', {
         operation: 'set_users',
         uid: selectedUsers,
         role: '',
@@ -118,7 +118,7 @@ const page = new NamedPage('domain_manage_user', () => {
     }
     const role = setRolesDialog.$dom.find('[name="role"]').val();
     try {
-      await util.post('', {
+      await request.post('', {
         operation: 'set_users',
         uid: selectedUsers,
         role,
@@ -135,7 +135,7 @@ const page = new NamedPage('domain_manage_user', () => {
     const row = $(ev.currentTarget).closest('tr');
     const role = $(ev.currentTarget).val();
     try {
-      await util.post('', {
+      await request.post('', {
         operation: 'set_user',
         uid: row.attr('data-uid'),
         role,

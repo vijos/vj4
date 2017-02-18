@@ -1,4 +1,4 @@
-import { NamedPage } from '../misc/PageLoader';
+import { NamedPage } from 'vj/misc/PageLoader';
 
 const page = new NamedPage('contest_main', () => {
   $('[name="filter-form"] [name="rule"]').change(() => {

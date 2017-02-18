@@ -1,4 +1,4 @@
-import Notification from '../../notification';
+import Notification from 'vj/components/notification';
 
 export default function reducer(state = {
   main: {

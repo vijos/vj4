@@ -9,6 +9,15 @@ export class Page {
     this.afterLoading = afterLoading;
     this.beforeLoading = beforeLoading;
   }
+  isNameMatch(name) {
+    if (typeof this.name === 'string') {
+      return this.name === name;
+    }
+    if (this.name instanceof Array) {
+      return this.name.indexOf(name) !== -1;
+    }
+    return false;
+  }
 }
 
 export class NamedPage extends Page {
@@ -35,7 +44,7 @@ export class PageLoader {
   }
 
   getNamedPage(pageName) {
-    const pages = this.pageInstances.filter(page => page.name === pageName);
+    const pages = this.pageInstances.filter(page => page.isNameMatch(pageName));
     if (pages.length > 0) {
       return pages[0];
     }

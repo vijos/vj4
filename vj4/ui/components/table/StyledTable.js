@@ -1,8 +1,8 @@
 import 'sticky-kit/dist/sticky-kit';
 import _ from 'lodash';
 
-import Navigation from '../navigation';
-import DOMAttachedObject from '../DOMAttachedObject';
+import Navigation from 'vj/components/navigation';
+import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
 

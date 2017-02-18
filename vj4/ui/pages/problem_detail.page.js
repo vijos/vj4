@@ -1,8 +1,8 @@
 import Tether from 'tether';
-import { NamedPage } from '../misc/PageLoader';
-import Navigation from '../components/navigation';
-import loadReactRedux from '../utils/loadReactRedux';
-import delay from '../utils/delay';
+import { NamedPage } from 'vj/misc/PageLoader';
+import Navigation from 'vj/components/navigation';
+import loadReactRedux from 'vj/utils/loadReactRedux';
+import delay from 'vj/utils/delay';
 
 class ProblemPageExtender {
   constructor() {
@@ -112,9 +112,10 @@ class ProblemPageExtender {
 
 }
 
-const page = new NamedPage('problem_detail', () => {
+const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
   let componentMounted = false;
   let $floatingSidebar = null;
+  let reduxStore = null;
   const extender = new ProblemPageExtender();
 
   async function scratchpadFadeIn() {
@@ -187,10 +188,7 @@ const page = new NamedPage('problem_detail', () => {
       });
     };
 
-    store.dispatch({
-      type: 'SCRATCHPAD_PROBLEM_SET_HTML',
-      payload: $('.problem-content').html(),
-    });
+    reduxStore = store;
 
     render(
       <Provider store={store}>
@@ -203,14 +201,29 @@ const page = new NamedPage('problem_detail', () => {
     $('.loader-container').hide();
   }
 
+  // Sync markers
+  function syncHtmlFromDomToReact() {
+    const html = $('.problem-content').html();
+    reduxStore.dispatch({
+      type: 'SCRATCHPAD_PROBLEM_SET_HTML',
+      payload: $('.problem-content').html(),
+    });
+  }
+  function syncHtmlFromReactToDom() {
+    const html = $('.scratchpad__problem').html();
+    $('.problem-content').html(html);
+  }
+
   async function enterScratchpadMode() {
     await extender.extend();
     await mountComponent();
+    syncHtmlFromDomToReact();
     await scratchpadFadeIn();
     await createSidebar();
   }
 
   async function leaveScratchpadMode() {
+    syncHtmlFromReactToDom();
     await removeSidebar();
     await scratchpadFadeOut();
     await extender.collapse();

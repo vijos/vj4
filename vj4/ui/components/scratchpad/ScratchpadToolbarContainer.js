@@ -1,16 +1,16 @@
 import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import Icon from '../react/IconComponent';
+
+import i18n from 'vj/utils/i18n';
+import request from 'vj/utils/request';
+import * as languageEnum from 'vj/constant/language';
+import Icon from 'vj/components/react/IconComponent';
 import Toolbar, {
   ToolbarItemComponent as ToolbarItem,
   ToolbarButtonComponent as ToolbarButton,
   ToolbarSplitComponent as ToolbarSplit,
 } from './ToolbarComponent';
-
-import i18n from '../../utils/i18n';
-import * as util from '../../misc/Util';
-import * as languageEnum from '../../constant/language';
 
 function isTestCaseDataValid(data) {
   return data.input.trim().length > 0 && data.output.trim().length > 0;
@@ -49,7 +49,7 @@ const mapDispatchToProps = dispatch => ({
     // const titles = testCases.map(tabId => pretest.meta[tabId].title);
     const inputs = testCases.map(tabId => pretest.data[tabId].input);
     const outputs = testCases.map(tabId => pretest.data[tabId].output);
-    const req = util.post(Context.postPretestUrl, {
+    const req = request.post(Context.postPretestUrl, {
       lang: state.editor.lang,
       code: state.editor.code,
       data_input: inputs,
@@ -62,7 +62,7 @@ const mapDispatchToProps = dispatch => ({
   },
   postSubmit(context) {
     const state = context.store.getState();
-    const req = util.post(Context.postSubmitUrl, {
+    const req = request.post(Context.postSubmitUrl, {
       lang: state.editor.lang,
       code: state.editor.code,
     });

@@ -6,8 +6,8 @@ import moment from 'moment';
 import 'jquery-scroll-lock';
 import 'jquery.easing';
 
+import i18n from 'vj/utils/i18n';
 import Message from './MessageComponent';
-import i18n from '../../utils/i18n';
 
 const mapStateToProps = state => ({
   activeId: state.activeId,

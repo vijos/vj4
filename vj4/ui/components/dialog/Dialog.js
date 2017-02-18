@@ -1,7 +1,6 @@
+import tpl from 'vj/utils/tpl';
+import i18n from 'vj/utils/i18n';
 import DomDialog from './DomDialog';
-
-import tpl from '../../utils/tpl';
-import i18n from '../../utils/i18n';
 
 export default class Dialog {
   constructor(options = {}) {
