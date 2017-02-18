@@ -9,10 +9,12 @@ from vj4 import error
 from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import fs
 from vj4.model import message
 from vj4.model import token
 from vj4.model import user
 from vj4.model.adaptor import setting
+from vj4.model.adaptor import userfile
 from vj4.handler import base
 from vj4.service import bus
 from vj4.util import useragent
@@ -261,8 +263,12 @@ class HomeDomainCreateHandler(base.Handler):
 
 @app.route('/home/file', 'home_file')
 class HomeFileHandler(base.Handler):
+  def file_url(self, fdoc):
+    return options.cdn_prefix.rstrip('/') + \
+      self.reverse_url('fs_get', secret=fdoc['metadata']['secret'])
+
   @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_FILE)
   async def get(self):
-    ufdocs = []
-    fdict = {}
+    ufdocs = await userfile.get_multi(owner_uid=self.user['_id']).to_list(None)
+    fdict = await fs.get_meta_dict(ufdoc.get('file_id') for ufdoc in ufdocs)
     self.render('home_file.html', ufdocs=ufdocs, fdict=fdict)

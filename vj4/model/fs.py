@@ -101,6 +101,17 @@ async def get_meta(file_id: objectid.ObjectId):
   return doc
 
 
+async def get_meta_dict(file_ids):
+  result = dict()
+  if not file_ids:
+    return result
+  coll = db.Collection('fs.files')
+  docs = coll.find({'_id': {'$in': list(set(file_ids))}})
+  async for doc in docs:
+    result[doc['_id']] = doc
+  return result
+
+
 @argmethod.wrap
 async def cat(file_id: objectid.ObjectId):
   """Cat a file. Note: this method will block the thread."""
