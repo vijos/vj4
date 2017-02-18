@@ -15,7 +15,7 @@ def check_uid(s):
 
 
 def is_uname(s):
-  return bool(re.fullmatch(r'[^\s\u3000](.*[^\s\u3000])?', s))
+  return bool(re.fullmatch(r'[^\s\u3000](.{,254}[^\s\u3000])?', s))
 
 
 def check_uname(s):
@@ -42,7 +42,8 @@ def check_mail(s):
 
 
 def is_domain_id(s):
-  return bool(re.fullmatch(r'[^0-9\\/\s\u3000][^\\/\n\r]{2,}[^\\/\s\u3000]', s))
+  # TODO(twd2): unicode char
+  return bool(re.fullmatch(r'[_A-Za-z][_0-9A-Za-z]{3,255}', s))
 
 
 def check_domain_id(s):
@@ -65,7 +66,7 @@ def check_node_name(s):
 
 
 def is_role(s):
-  return bool(re.fullmatch(r'[_0-9A-Za-z]+', s))
+  return bool(re.fullmatch(r'[_0-9A-Za-z]{1,256}', s))
 
 
 def check_role(s):
@@ -74,7 +75,7 @@ def check_role(s):
 
 
 def is_title(s):
-  return bool(re.fullmatch(r'.{1,}', s))
+  return bool(re.fullmatch(r'.{1,64}', s))
 
 
 def check_title(s):
@@ -82,7 +83,7 @@ def check_title(s):
     raise error.ValidationError('title')
 
 def is_name(s):
-  return bool(re.fullmatch(r'.{1,}', s))
+  return bool(re.fullmatch(r'.{1,256}', s))
 
 
 def check_name(s):
@@ -91,7 +92,7 @@ def check_name(s):
 
 
 def is_content(s):
-  return isinstance(s, str) and len(str(s)) >= 2
+  return isinstance(s, str) and len(str(s)) >= 2 and len(str(s)) <= 65536
 
 
 def check_content(s):
@@ -100,7 +101,7 @@ def check_content(s):
 
 
 def is_description(s):
-  return isinstance(s, str)
+  return isinstance(s, str) and len(str(s)) >= 1 and len(str(s)) <= 65536
 
 
 def check_description(s):
