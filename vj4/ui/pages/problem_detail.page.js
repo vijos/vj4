@@ -112,7 +112,7 @@ class ProblemPageExtender {
 
 }
 
-const page = new NamedPage('problem_detail', () => {
+const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
   let componentMounted = false;
   let $floatingSidebar = null;
   let reduxStore = null;
