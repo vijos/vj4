@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import MarkerReactive from 'vj/components/marker/MarkerReactive';
 
 export default class MarkerReactiveComponent extends React.PureComponent {

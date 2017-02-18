@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import delay from 'vj/utils/delay';
+import Tooltip from 'vj/components/tooltip/Tooltip';
 
 const MARKER_ID = `marker_${Math.floor(Math.random() * 0xFFFFFF).toString(16)}`;
 const MARKER_OFFSET = 20;
@@ -59,6 +60,10 @@ class Marker {
       document.execCommand('BackColor', false, color);
     }
     this.$container.removeAttr('contentEditable');
+    if (range) {
+      // remove ranges after marking
+      selection.removeAllRanges();
+    }
   }
 
   showAtPosition($container, x, y) {
@@ -83,6 +88,7 @@ class Marker {
       return;
     }
     this.isOpen = false;
+    this.closeTooltipsImmediately();
     this.unbindEventHandlers();
     this.$dom
       .css({ opacity: 0 })
@@ -91,6 +97,17 @@ class Marker {
     if (!this.isOpen) {
       this.$dom.hide();
     }
+  }
+
+  closeTooltipsImmediately() {
+    const $elements = this.$dom.find('[data-tooltip]');
+    $elements.get().forEach((element) => {
+      const $el = $(element);
+      const tooltipInstance = Tooltip.get($el);
+      if (tooltipInstance) {
+        tooltipInstance.detach();
+      }
+    });
   }
 
   bindEventHandlersForClosing() {
@@ -118,6 +135,7 @@ class Marker {
   onMarkerActionClick(ev) {
     const color = $(ev.currentTarget).attr('data-color');
     this.markSelection(color);
+    this.close();
   }
 
   onMarkerMouseDown(ev) {
