@@ -63,6 +63,18 @@ class ValidationError(ForbiddenError):
       return 'Field {0} or {1} validation failed.'
 
 
+class FileTooLongError(ValidationError):
+  @property
+  def message(self):
+    return 'The uploaded file is too long.'
+
+
+class FileTypeNotAllowedError(ValidationError):
+  @property
+  def message(self):
+    return 'This type of files are not allowed to be uploaded.'
+
+
 class UnknownFieldError(ForbiddenError):
   @property
   def message(self):
@@ -107,7 +119,7 @@ class ProblemDataNotFoundError(NotFoundError):
 class RecordDataNotFoundError(NotFoundError):
   @property
   def message(self):
-    return 'Data of record {1} not found.'
+    return 'Data of record {0} not found.'
 
 
 class PermissionError(ForbiddenError):
@@ -260,3 +272,9 @@ class OpcountExceededError(ForbiddenError):
   @property
   def message(self):
     return 'Too frequent operations of {0} (limit: {2} operations in {1} seconds).'
+
+
+class UsageExceededError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Usage exceeded.'

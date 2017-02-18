@@ -66,7 +66,8 @@ def main():
     else:
       atexit.register(lambda: os.kill(pid, signal.SIGTERM))
   loop = asyncio.get_event_loop()
-  loop.run_until_complete(loop.create_server(app.Application().make_handler(access_log=None),
+  loop.run_until_complete(loop.create_server(app.Application().make_handler(access_log=None,
+                                                                            lingering_time=0.0),
                                              sock=sock))
   _logger.info('Server listening on %s', options.listen)
   loop.run_forever()
