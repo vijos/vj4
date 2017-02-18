@@ -1,11 +1,11 @@
 import 'jquery.easing';
 
-import { AutoloadPage } from '../../misc/PageLoader';
-import CommentBox from '../discussion/CommentBox';
-import delay from '../../utils/delay';
-import { slideDown, slideUp } from '../../utils/slide';
+import { AutoloadPage } from 'vj/misc/PageLoader';
+import CommentBox from 'vj/components/discussion/CommentBox';
+import delay from 'vj/utils/delay';
+import { slideDown, slideUp } from 'vj/utils/slide';
 
-import * as util from '../../misc/Util';
+import request from 'vj/utils/request';
 
 const $replyTemplate = $('.commentbox-container').eq(0).clone();
 
@@ -102,12 +102,11 @@ async function onCommentClickEdit(mode, ev) {
 
   const $mediaBody = $evTarget.closest('.media__body');
 
-  const raw = await util
-    .get($mediaBody
-           .find('.typo')
-           .eq(0)
-           .attr('data-raw-url'),
-         {}, 'text');
+  const raw = await request.get(
+    $mediaBody.find('.typo').eq(0).attr('data-raw-url'),
+    {},
+    'text'
+  );
 
   const opt = {
     initialText: raw,

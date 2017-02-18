@@ -1,18 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Icon from '../react/IconComponent';
+
+import request from 'vj/utils/request';
+import i18n from 'vj/utils/i18n';
+import Icon from 'vj/components/react/IconComponent';
 import MessagePadDialogueList from './MessagePadDialogueListContainer';
 import MessagePadDialogueContent from './MessagePadDialogueContentContainer';
 import MessagePadInput from './MessagePadInputContainer';
-
-import * as util from '../../misc/Util';
-import i18n from '../../utils/i18n';
 
 const mapDispatchToProps = dispatch => ({
   loadDialogues() {
     dispatch({
       type: 'DIALOGUES_LOAD_DIALOGUES',
-      payload: util.get(''),
+      payload: request.get(''),
     });
   },
 });

@@ -1,13 +1,13 @@
 import _ from 'lodash';
 
-import { NamedPage } from '../misc/PageLoader';
-import Notification from '../components/notification';
-import { ConfirmDialog, ActionDialog } from '../components/dialog';
+import { NamedPage } from 'vj/misc/PageLoader';
+import Notification from 'vj/components/notification';
+import { ConfirmDialog, ActionDialog } from 'vj/components/dialog';
 
-import * as util from '../misc/Util';
-import tpl from '../utils/tpl';
-import delay from '../utils/delay';
-import i18n from '../utils/i18n';
+import request from 'vj/utils/request';
+import tpl from 'vj/utils/tpl';
+import delay from 'vj/utils/delay';
+import i18n from 'vj/utils/i18n';
 
 const page = new NamedPage('domain_manage_role', () => {
   const createRoleDialog = new ActionDialog({
@@ -45,7 +45,7 @@ const page = new NamedPage('domain_manage_role', () => {
     }
     const role = createRoleDialog.$dom.find('[name="role"]').val();
     try {
-      await util.post('', {
+      await request.post('', {
         operation: 'set',
         role,
       });
@@ -71,7 +71,7 @@ const page = new NamedPage('domain_manage_role', () => {
       return;
     }
     try {
-      await util.post('', {
+      await request.post('', {
         operation: 'delete',
         role: selectedRoles,
       });

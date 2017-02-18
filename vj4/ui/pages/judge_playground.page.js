@@ -1,6 +1,6 @@
-import { NamedPage } from '../misc/PageLoader';
+import { NamedPage } from 'vj/misc/PageLoader';
 
-import * as recordEnum from '../constant/record';
+import * as recordEnum from 'vj/constant/record';
 
 const page = new NamedPage('judge_playground', async () => {
   const SockJs = await System.import('sockjs-client');

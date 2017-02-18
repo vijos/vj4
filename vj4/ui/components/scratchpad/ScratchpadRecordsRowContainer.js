@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import TimeAgo from 'timeago-react';
 import moment from 'moment';
 import _ from 'lodash';
-import { parse as parseMongoId } from '../../utils/mongoId';
+import { parse as parseMongoId } from 'vj/utils/mongoId';
 
-import i18n from '../../utils/i18n';
-import * as recordEnum from '../../constant/record';
+import i18n from 'vj/utils/i18n';
+import * as recordEnum from 'vj/constant/record';
 
 const shouldShowDetail = data =>
   recordEnum.STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS[data.status];

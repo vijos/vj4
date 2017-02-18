@@ -1,5 +1,5 @@
-import { AutoloadPage } from '../../misc/PageLoader';
-import * as util from '../../misc/Util';
+import { AutoloadPage } from 'vj/misc/PageLoader';
+import request from 'vj/utils/request';
 
 function setStarButtonState($starButton, star) {
   if (star) {
@@ -16,7 +16,7 @@ const starPage = new AutoloadPage(() => {
     const $form = $button.closest('form');
     $form.find('[name="operation"]').val(currentState ? 'unstar' : 'star');
     setStarButtonState($button, !currentState);
-    util
+    request
       .post($form.attr('action'), $form)
       .then((data) => {
         setStarButtonState($button, data.star);

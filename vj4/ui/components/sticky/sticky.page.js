@@ -1,10 +1,10 @@
 import 'sticky-kit/dist/sticky-kit';
 import _ from 'lodash';
 
-import { AutoloadPage } from '../../misc/PageLoader';
+import { AutoloadPage } from 'vj/misc/PageLoader';
 
-import Navigation from '../navigation';
-import responsiveCutoff from '../../breakpoints.json';
+import Navigation from 'vj/components/navigation';
+import responsiveCutoff from 'vj/breakpoints.json';
 
 function updateStickies($stickies) {
   const ww = window.innerWidth;

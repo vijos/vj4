@@ -1,4 +1,4 @@
-import { AutoloadPage } from '../../misc/PageLoader';
+import { AutoloadPage } from 'vj/misc/PageLoader';
 import Tooltip from './Tooltip';
 
 function getClosestTooltipElement(element) {

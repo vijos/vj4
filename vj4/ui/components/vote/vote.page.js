@@ -1,6 +1,6 @@
-import Rotator from '../rotator';
-import { AutoloadPage } from '../../misc/PageLoader';
-import * as util from '../../misc/Util';
+import Rotator from 'vj/components/rotator';
+import { AutoloadPage } from 'vj/misc/PageLoader';
+import request from 'vj/utils/request';
 
 function setVoteState($container, value, status) {
   const $num = $container.find('.vote-number');
@@ -23,7 +23,7 @@ const votePage = new AutoloadPage(() => {
     const $button = $(ev.currentTarget);
     const $container = $button.closest('.vote');
     const $form = $button.closest('form');
-    util
+    request
       .post($form.attr('action'), $form)
       .then((data) => {
         setVoteState($container, data.vote, data.user_vote);

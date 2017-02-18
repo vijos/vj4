@@ -91,7 +91,12 @@ export default function (env = {}) {
       chunkFilename: '[name].chunk.js?[chunkhash]',
     },
     resolve: {
-      modules: [root('node_modules'), root('vj4/ui')],
+      modules: [
+        root('node_modules')
+      ],
+      alias: {
+        vj: root('vj4/ui'),
+      },
     },
     module: {
       rules: [
@@ -224,7 +229,7 @@ export default function (env = {}) {
               require('rupture')(),
             ],
             import: [
-              '~common/common.inc.styl',
+              '~vj/common/common.inc.styl',
             ],
           },
         },

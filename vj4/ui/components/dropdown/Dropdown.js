@@ -1,9 +1,9 @@
 import Drop from 'tether-drop';
 import _ from 'lodash';
-import DOMAttachedObject from '../DOMAttachedObject';
-import responsiveCutoff from '../../breakpoints.json';
+import DOMAttachedObject from 'vj/components/DOMAttachedObject';
+import responsiveCutoff from 'vj/breakpoints.json';
 
-import zIndexManager from '../../utils/zIndexManager';
+import zIndexManager from 'vj/utils/zIndexManager';
 
 export default class Dropdown extends DOMAttachedObject {
 

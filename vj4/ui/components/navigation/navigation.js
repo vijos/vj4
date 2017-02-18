@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import responsiveCutoff from '../../breakpoints.json';
+import responsiveCutoff from 'vj/breakpoints.json';
 
 class MultipleStateContainer {
   constructor(onStateChange, initialState = false) {

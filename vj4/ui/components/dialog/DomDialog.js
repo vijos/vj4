@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import DOMAttachedObject from '../DOMAttachedObject';
+import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
-import zIndexManager from '../../utils/zIndexManager';
+import zIndexManager from 'vj/utils/zIndexManager';
 
 export default class DomDialog extends DOMAttachedObject {
 

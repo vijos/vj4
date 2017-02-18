@@ -1,8 +1,8 @@
 import Tether from 'tether';
-import { NamedPage } from '../misc/PageLoader';
-import Navigation from '../components/navigation';
-import loadReactRedux from '../utils/loadReactRedux';
-import delay from '../utils/delay';
+import { NamedPage } from 'vj/misc/PageLoader';
+import Navigation from 'vj/components/navigation';
+import loadReactRedux from 'vj/utils/loadReactRedux';
+import delay from 'vj/utils/delay';
 
 class ProblemPageExtender {
   constructor() {

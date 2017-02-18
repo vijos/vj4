@@ -1,4 +1,4 @@
-import { NamedPage } from '../misc/PageLoader';
+import { NamedPage } from 'vj/misc/PageLoader';
 
 async function handleCategoryClick(ev) {
   const $target = $(ev.currentTarget);

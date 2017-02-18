@@ -5,7 +5,7 @@ import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/pascal/pascal';
 import 'codemirror/mode/python/python';
 
-import * as util from '../../misc/Util';
+import request from 'vj/utils/request';
 
 export default class VjCmEditor extends SimpleMDE {
   constructor(options = {}) {
@@ -78,7 +78,7 @@ export default class VjCmEditor extends SimpleMDE {
   }
 
   async markdown(text) {
-    const data = await util.ajax({
+    const data = await request.ajax({
       url: '/preview',
       method: 'post',
       data: $.param({ text }, true),

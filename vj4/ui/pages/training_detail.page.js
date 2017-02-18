@@ -1,5 +1,5 @@
-import { NamedPage } from '../misc/PageLoader';
-import { slideDown, slideUp } from '../utils/slide';
+import { NamedPage } from 'vj/misc/PageLoader';
+import { slideDown, slideUp } from 'vj/utils/slide';
 
 async function handleSectionExpand(ev) {
   const $section = $(ev.currentTarget).closest('.training__section');

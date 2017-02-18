@@ -5,20 +5,20 @@ import 'codemirror/lib/codemirror.css';
 
 import _ from 'lodash';
 
-import './misc/float.styl';
-import './misc/typography.styl';
-import './misc/textalign.styl';
-import './misc/grid.styl';
-import './misc/slideout.styl';
+import 'vj/misc/float.styl';
+import 'vj/misc/typography.styl';
+import 'vj/misc/textalign.styl';
+import 'vj/misc/grid.styl';
+import 'vj/misc/slideout.styl';
 
-import './misc/.iconfont/webicon.styl';
-import './misc/immersive.styl';
-import './misc/structure.styl';
-import './misc/section.styl';
-import './misc/nothing.styl';
+import 'vj/misc/.iconfont/webicon.styl';
+import 'vj/misc/immersive.styl';
+import 'vj/misc/structure.styl';
+import 'vj/misc/section.styl';
+import 'vj/misc/nothing.styl';
 
-import { PageLoader } from './misc/PageLoader';
-import delay from './utils/delay';
+import { PageLoader } from 'vj/misc/PageLoader';
+import delay from 'vj/utils/delay';
 
 // eslint-disable-next-line camelcase
 __webpack_public_path__ = UiContext.cdn_prefix;

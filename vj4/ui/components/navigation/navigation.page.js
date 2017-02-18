@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import Slideout from 'slideout';
 
-import { AutoloadPage } from '../../misc/PageLoader';
-import * as util from '../../misc/Util';
+import { AutoloadPage } from 'vj/misc/PageLoader';
+import request from 'vj/utils/request';
+import responsiveCutoff from 'vj/breakpoints.json';
 import Navigation from './navigation.js';
-import responsiveCutoff from '../../breakpoints.json';
 
 const nav = Navigation.instance;
 const $nav = nav.$nav;
@@ -19,7 +19,7 @@ function handleScroll() {
 
 function handleNavLogoutClick(ev) {
   const $logoutLink = $(ev.currentTarget);
-  util
+  request
     .post($logoutLink.attr('href'))
     .then(() => window.location.reload());
   ev.preventDefault();
