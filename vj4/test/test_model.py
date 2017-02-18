@@ -174,10 +174,11 @@ class DomainTest(base.DatabaseTestCase):
 class FsTest(base.DatabaseTestCase):
   CONTENT = b'dummy_content'
   CONTENT_MD5 = hashlib.md5(CONTENT).hexdigest()
+  SECRET = 'dummy_secret'
 
   @base.wrap_coro
   async def test(self):
-    grid_in = await fs.add()
+    grid_in = await fs.add('application/octet-stream')
     await grid_in.write(self.CONTENT)
     await grid_in.close()
     file_id = grid_in._id
@@ -193,6 +194,20 @@ class FsTest(base.DatabaseTestCase):
     await fs.unlink(file_id)
     with self.assertRaises(gridfs_errors.NoFile):
       await fs.get(file_id)
+
+  @base.wrap_coro
+  async def test_secret(self):
+    fid = await fs.add_data('application/octet-stream', self.CONTENT)
+    secret = await fs.get_secret(fid)
+    fid2 = await fs.get_file_id(secret)
+    self.assertEqual(fid, fid2)
+    grid_out = await fs.get_by_secret(secret)
+    content = await grid_out.read()
+    self.assertEqual(content, self.CONTENT)
+    await fs.unlink(fid)
+    with self.assertRaises(error.NotFoundError):
+      await fs.get_by_secret(secret)
+    self.assertEqual(bool(await fs.get_file_id(secret)), False)
 
 
 class OpcountTest(base.DatabaseTestCase):

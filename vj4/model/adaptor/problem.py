@@ -252,15 +252,7 @@ async def get_data(domain_id, pid):
   pdoc = await get(domain_id, pid)
   if not pdoc.get('data', None):
     raise error.ProblemDataNotFoundError(domain_id, pid)
-  return await fs.get(pdoc['data'])
-
-
-@argmethod.wrap
-async def get_data_md5(domain_id: str, pid: document.convert_doc_id):
-  pdoc = await get(domain_id, pid)
-  if not pdoc['data']:
-    raise error.ProblemDataNotFoundError(domain_id, pid)
-  return await fs.get_md5(pdoc['data'])
+  return await fs.get_meta(pdoc['data'])
 
 
 @argmethod.wrap

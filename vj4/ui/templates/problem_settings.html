@@ -7,7 +7,7 @@
         <h1 class="section__title">{{ _('Dataset') }}</h1>
       </div>
       <div class="section__body">
-        <iframe src="{{ reverse_url('problem_upload', pid=pdoc['doc_id']) }}" frameborder="0" style="width: 100%; height: 70px;"></iframe>
+        <iframe src="{{ reverse_url('problem_upload', pid=pdoc['doc_id']) }}" frameborder="0" style="width: 100%; height: 100px;"></iframe>
         {% if pdoc and (handler.own(pdoc, vj4.model.builtin.PERM_READ_PROBLEM_DATA_SELF) or handler.has_perm(vj4.model.builtin.PERM_READ_PROBLEM_DATA) or handler.has_priv(vj4.model.builtin.PRIV_READ_PROBLEM_DATA)) %}
         <p><a href="{{ reverse_url('problem_data', pid=pdoc['doc_id']) }}" class="expanded button">{{ _('Download Dataset') }}</a></p>
         {% endif %}

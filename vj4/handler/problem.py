@@ -2,12 +2,15 @@ import asyncio
 import datetime
 import functools
 import hashlib
+import io
+import zipfile
 from bson import objectid
 
 from vj4 import app
 from vj4 import constant
 from vj4 import error
 from vj4 import job
+from vj4 import handler
 from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import user
@@ -21,6 +24,7 @@ from vj4.model.adaptor import problem
 from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.util import pagination
+from vj4.util import options
 
 
 @app.route('/p', 'problem_main')
@@ -185,12 +189,27 @@ class ProblemPretestHandler(base.Handler):
     await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
     pdoc = await problem.get(self.domain_id, pid)
     # don't need to check hidden status
+    # create zip file, TODO(twd2): check file size
     content = list(zip(self.request.POST.getall('data_input'),
                        self.request.POST.getall('data_output')))
-    did = await document.add(self.domain_id, content, self.user['_id'], document.TYPE_PRETEST_DATA,
-                             pid=pdoc['doc_id'])
+    output_buffer = io.BytesIO()
+    zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
+    config_content = str(len(content)) + '\n'
+    for i, (data_input, data_output) in enumerate(content):
+      input_file = 'input{0}.txt'.format(i)
+      output_file = 'output{0}.txt'.format(i)
+      config_content += '{0}|{1}|1|10|262144\n'.format(input_file, output_file)
+      zip_file.writestr('Input/{0}'.format(input_file), data_input)
+      zip_file.writestr('Output/{0}'.format(output_file), data_output)
+    zip_file.writestr('Config.ini', config_content)
+    # mark all files as created in Windows :p
+    for zfile in zip_file.filelist:
+      zfile.create_system = 0
+    zip_file.close()
+    fid = await fs.add_data('application/zip', output_buffer.getvalue())
+    output_buffer.close()
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_PRETEST,
-                           self.user['_id'], lang, code, did)
+                           self.user['_id'], lang, code, fid)
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
@@ -406,7 +425,7 @@ class ProblemSolutionReplyRawHandler(base.Handler):
 class ProblemDataHandler(base.Handler):
   @base.route_argument
   @base.sanitize
-  async def stream_data(self, *, pid: document.convert_doc_id, headers_only: bool=False):
+  async def get(self, *, pid: document.convert_doc_id):
     # Judges will have PRIV_READ_PROBLEM_DATA,
     # domain administrators will have PERM_READ_PROBLEM_DATA,
     # problem owner will have PERM_READ_PROBLEM_DATA_SELF.
@@ -414,30 +433,9 @@ class ProblemDataHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    grid_out = await problem.get_data(self.domain_id, pid)
-
-    self.response.content_type = grid_out.content_type or 'application/zip'
-    self.response.last_modified = grid_out.upload_date
-    self.response.headers['Etag'] = '"{0}"'.format(grid_out.md5)
-    # TODO(iceboy): Handle If-Modified-Since & If-None-Match here.
-    self.response.content_length = grid_out.length
-
-    if not headers_only:
-      await self.response.prepare(self.request)
-      # TODO(twd2): Range
-      remaining = grid_out.length
-      chunk = await grid_out.readchunk()
-      while chunk and remaining >= len(chunk):
-        self.response.write(chunk)
-        remaining -= len(chunk)
-        _, chunk = await asyncio.gather(self.response.drain(), grid_out.readchunk())
-      if chunk:
-        self.response.write(chunk[:remaining])
-        await self.response.drain()
-      await self.response.write_eof()
-
-  head = functools.partialmethod(stream_data, headers_only=True)
-  get = stream_data
+    fdoc = await problem.get_data(self.domain_id, pid)
+    self.redirect(options.cdn_prefix.rstrip('/') + \
+                  self.reverse_url('fs_get', secret=fdoc['metadata']['secret']))
 
 
 @app.route('/p/create', 'problem_create')
@@ -556,29 +554,24 @@ class ProblemSettingsHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    self.render('problem_upload.html', pdoc=pdoc)
+    md5 = await fs.get_md5(pdoc.get('data'))
+    self.render('problem_upload.html', pdoc=pdoc, md5=md5)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
-  @base.post_argument
-  @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, file: lambda _: _):
+  async def post(self, *, pid: document.convert_doc_id):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    if file:
-      data = file.file.read()
-      md5 = hashlib.md5(data).hexdigest()
-      fid = await fs.link_by_md5(md5)
-      if not fid:
-        fid = await fs.add_data(data)
+    file_id = await handler.fs.handle_file_upload(self, raise_error=False)
+    if file_id:
       if pdoc.get('data'):
         await fs.unlink(pdoc['data'])
-      await problem.set_data(self.domain_id, pid, fid)
+      await problem.set_data(self.domain_id, pid, file_id)
     self.json_or_redirect(self.url)
 
 

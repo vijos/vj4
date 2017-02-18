@@ -181,6 +181,18 @@ async def inc_user(domain_id, uid, **kwargs):
                                         return_document=ReturnDocument.AFTER)
 
 
+async def inc_user_usage(domain_id: str, uid: int, usage_field: str, usage: int, quota: int):
+  coll = db.Collection('domain.user')
+  try:
+    return await coll.find_one_and_update(filter={'domain_id': domain_id, 'uid': uid,
+                                                  usage_field: {'$not': {'$gte': quota - usage}}},
+                                          update={'$inc': {usage_field: usage}},
+                                          upsert=True,
+                                          return_document=ReturnDocument.AFTER)
+  except errors.DuplicateKeyError:
+    raise error.UsageExceededError(domain_id, uid, usage_field, usage, quota)
+
+
 def get_multi_user(*, fields=None, **kwargs):
   coll = db.Collection('domain.user')
   return coll.find(kwargs, fields)
