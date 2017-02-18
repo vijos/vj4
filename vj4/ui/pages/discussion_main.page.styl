@@ -1,5 +1,3 @@
-@import '~vj/misc/section.inc.styl'
-
 .page--discussion_main,
 .page--discussion_node
   .discussion__item
@@ -7,7 +5,7 @@
     padding-left: rem(5px)
 
     &.highlight
-      border-color: $highlight-color
+      border-left: rem(5px) solid $highlight-color
 
   .discussion__title
     font-size: rem($font-size-title)
@@ -15,7 +13,7 @@
     margin-bottom: rem(10px)
 
     a:visited
-      color: lighten($text-color, 60%)
+      color: lighten($text-1-color, 60%)
 
   .discussion__replies
     width: rem(70px)
