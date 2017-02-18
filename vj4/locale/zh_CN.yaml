@@ -600,3 +600,14 @@ Reset: 重置
 Data of problem {1} not found.: 题目 {1} 的数据未找到。
 Data of record {0} not found.: 记录 {0} 的数据未找到。
 All Submissions: 所有递交
+My Files: 我的文件
+home_file: 我的文件
+"What's file?": 什么是文件？
+Upload File: 上传文件
+fs_upload: 上传文件
+New file: 新文件
+Size: 大小
+Hash: 散列
+This type of files are not allowed to be uploaded.: 不允许上传这种文件。
+Usage exceeded.: 用量超限。
+The uploaded file is too long.: 上传的文件太长。
