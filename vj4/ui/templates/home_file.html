@@ -1,0 +1,42 @@
+{% extends "layout/home_base.html" %}
+{% block home_content %}
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title">{{ _('My Files') }}</h1>
+    <div class="section__tools">
+    {% if handler.has_priv(vj4.model.builtin.PRIV_CREATE_FILE) %}
+      <a class="primary rounded button" href="{{ reverse_url('fs_upload') }}" target="_blank"><span class="icon icon-add"></span> {{ _('Upload File') }}</a>
+    {% endif %}
+      <a class="tool-button" href="{{ reverse_url('wiki_help') }}#domain"><span class="icon icon-help"></span> {{ _('???') }}</a>
+    </div>
+  </div>
+  <div class="section__body no-padding">
+    <table class="data-table">
+      <colgroup>
+        <col class="col--desc">
+        <col class="col--hash">
+        <col class="col--download">
+        <col class="col--code">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="col--desc">{{ _('Description') }}</th>
+          <th class="col--hash">{{ _('Hash') }}</th>
+          <th class="col--download">{{ _('Download') }}</th>
+          <th class="col--code">{{ _('Code') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for ufdoc in ufdocs %}
+        <tr>
+          <td class="col--desc">???</th>
+          <td class="col--hash">123abc</th>
+          <td class="col--download"><a href="#">{{ _('Download') }}</a></th>
+          <td class="col--code"><pre>![???](/???)</pre></th>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

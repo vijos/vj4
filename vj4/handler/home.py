@@ -257,3 +257,12 @@ class HomeDomainCreateHandler(base.Handler):
   async def post(self, *, id: str, name: str, gravatar: str):
     domain_id = await domain.add(id, self.user['_id'], name=name, gravatar=gravatar)
     self.json_or_redirect(self.reverse_url('domain_main', domain_id=domain_id))
+
+
+@app.route('/home/file', 'home_file')
+class HomeFileHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_FILE)
+  async def get(self):
+    ufdocs = []
+    fdict = {}
+    self.render('home_file.html', ufdocs=ufdocs, fdict=fdict)
