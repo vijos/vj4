@@ -112,10 +112,13 @@ async def cat(file_id: objectid.ObjectId):
 
 
 @argmethod.wrap
-async def link_by_md5(file_md5: str):
+async def link_by_md5(file_md5: str, except_id: objectid.ObjectId=None):
   """Link a file by MD5 if exists."""
+  query = {}
+  if except_id:
+    query['_id'] = {'$ne': except_id}
   coll = db.Collection('fs.files')
-  doc = await coll.find_one_and_update(filter={'md5': file_md5},
+  doc = await coll.find_one_and_update(filter={'md5': file_md5, **query},
                                        update={'$inc': {'metadata.link': 1}})
   if doc:
     return doc['_id']

@@ -14,7 +14,7 @@ from vj4.model.adaptor import userfile
 
 
 TEXT_FIELD_MAX_LENGTH = 2 ** 10
-FILE_MAX_LENGTH = 2 ** 27 # 128MiB
+FILE_MAX_LENGTH = 2 ** 27 # 128 MiB
 ALLOWED_MIMETYPE_PREFIX = ['image/', 'text/', 'application/zip']
 HASHER = hashlib.md5
 
@@ -29,7 +29,7 @@ def check_type_and_name(field, name):
 
 
 async def handle_file_upload(self, form_fields=None, raise_error=True):
-  """Handles file upload, fills form fields and returns file_id."""
+  """Handles file upload, fills form fields and returns file_id whose metadata.link is already increased."""
   reader = await self.request.multipart()
   try:
     # Check csrf token.
@@ -58,8 +58,7 @@ async def handle_file_upload(self, form_fields=None, raise_error=True):
     finally_delete = True
     try:
       grid_in = await fs.add(file_type)
-      file_id = grid_in._id
-      # hasher = HASHER()
+      # Copy file data and check file length.
       size = 0
       chunk_size = max(field.chunk_size, 8192)
       chunk = await field.read_chunk(chunk_size)
@@ -68,16 +67,17 @@ async def handle_file_upload(self, form_fields=None, raise_error=True):
         if size > FILE_MAX_LENGTH:
           raise error.FileTooLongError('file')
         _, chunk = await asyncio.gather(grid_in.write(chunk), field.read_chunk(chunk_size))
-        # hasher.update(chunk)
       if chunk: # remaining
         await grid_in.write(chunk)
       if not size: # empty file
         raise error.ValidationError('file')
-
-      # TODO(twd2): deduplicate using grid_in.md5
       await grid_in.close()
+      # Deduplicate.
+      file_id = await fs.link_by_md5(grid_in.md5, except_id=grid_in._id)
+      if file_id:
+        return file_id
       finally_delete = False
-      return file_id
+      return grid_in._id
     except:
       raise
     finally:
@@ -153,6 +153,6 @@ class FsUploadHandler(base.Handler):
   async def post(self):
     fields = collections.OrderedDict([('desc', '')])
     file_id = await handle_file_upload(self, fields)
-    fdoc = await fs.get_meta(file_id)
+    fdoc = await fs.get_meta(file_id) # TODO(twd2): join from handle_file_upload
     ufid = await userfile.add(fields['desc'], file_id, self.user['_id'], fdoc['length'])
     self.render('fs_upload.html', fdoc=fdoc, ufid=ufid)
