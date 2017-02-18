@@ -15,6 +15,7 @@ from vj4.model.adaptor import userfile
 
 TEXT_FIELD_MAX_LENGTH = 2 ** 10
 FILE_MAX_LENGTH = 2 ** 27 # 128 MiB
+USER_QUOTA = 2 ** 27 # 128 MiB
 ALLOWED_MIMETYPE_PREFIX = ['image/', 'text/', 'application/zip']
 HASHER = hashlib.md5
 
@@ -141,16 +142,39 @@ class FsGetHandler(base.Handler):
 
 @app.route('/fs/upload', 'fs_upload')
 class FsUploadHandler(base.Handler):
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  def get_quota(self):
+    quota = USER_QUOTA
+    if self.has_priv(builtin.PRIV_UNLIMITED_QUOTA):
+      quota = 2 ** 63 - 1
+    return quota
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_FILE)
   @base.sanitize
   async def get(self):
-    self.render('fs_upload.html', fdoc=None)
+    self.render('fs_upload.html', fdoc=None,
+                usage=await userfile.get_usage(self.user['_id']),
+                quota=self.get_quota())
 
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_FILE)
   @base.sanitize
   async def post(self):
+    # Check usage before handle upload.
+    quota = self.get_quota()
+    usage = await userfile.get_usage(self.user['_id'])
+    if usage >= quota:
+      raise error.UsageExceededError('system', self.user['_id'], 'usage_userfile', usage, quota)
     fields = collections.OrderedDict([('desc', '')])
     file_id = await handle_file_upload(self, fields)
     fdoc = await fs.get_meta(file_id) # TODO(twd2): join from handle_file_upload
+    # Check usage after handled upload.
+    dudoc = None
+    try:
+      dudoc = await userfile.inc_usage(self.user['_id'], fdoc['length'], quota)
+    except:
+      await fs.unlink(file_id)
+      raise
+    usage = dudoc['usage_userfile']
     ufid = await userfile.add(fields['desc'], file_id, self.user['_id'], fdoc['length'])
-    self.render('fs_upload.html', fdoc=fdoc, ufid=ufid)
+    self.render('fs_upload.html', fdoc=fdoc, ufid=ufid,
+                usage=usage,
+                quota=quota)

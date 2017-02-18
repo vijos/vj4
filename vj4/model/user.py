@@ -183,6 +183,11 @@ async def set_judge(uid: int):
 
 
 @argmethod.wrap
+async def set_default(uid: int):
+  return await set_priv(uid, builtin.DEFAULT_PRIV)
+
+
+@argmethod.wrap
 async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
   prefix = prefix.lower()
   regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))

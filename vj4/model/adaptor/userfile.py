@@ -6,6 +6,7 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
+from vj4.model import domain
 from vj4.model import fs
 from vj4.util import argmethod
 from vj4.util import validator
@@ -49,6 +50,19 @@ async def get_dict(fids, *, fields=None):
                              fields=fields):
     result[doc['doc_id']] = doc
   return result
+
+
+@argmethod.wrap
+async def get_usage(uid: int):
+  dudoc = await domain.get_user(STORE_DOMAIN_ID, uid)
+  if not dudoc:
+    return 0
+  return dudoc.get('usage_userfile', 0)
+
+
+@argmethod.wrap
+async def inc_usage(uid: int, usage: int, quota: int):
+  return await domain.inc_user_usage(STORE_DOMAIN_ID, uid, 'usage_userfile', usage, quota)
 
 
 if __name__ == '__main__':

@@ -18,5 +18,6 @@
 <input type="submit" value="{{ _('Upload') }}" class="rounded primary button">
 </p>
 <p>{{ _('Note: file size should be less then or equal to {0} Bytes, and file type should be in {1}. Empty files are not allowed.').format(vj4.handler.fs.FILE_MAX_LENGTH, vj4.handler.fs.ALLOWED_MIMETYPE_PREFIX) }}</p>
+<p>{{ _('Usage: {0} Bytes, Quota: {1} Bytes').format(usage, quota) }}</p>
 </form>
 {% endblock %}

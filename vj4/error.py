@@ -272,3 +272,9 @@ class OpcountExceededError(ForbiddenError):
   @property
   def message(self):
     return 'Too frequent operations of {0} (limit: {2} operations in {1} seconds).'
+
+
+class UsageExceededError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Usage exceeded.'
