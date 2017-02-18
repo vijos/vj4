@@ -86,8 +86,6 @@ async def handle_file_upload(self, form_fields=None, raise_error=True):
         if finally_delete:
           await fs.unlink(grid_in._id)
   except Exception:
-    # FIXME(twd2)
-    await self.request.release()
     if raise_error:
       raise
     else:
