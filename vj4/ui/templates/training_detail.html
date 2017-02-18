@@ -165,7 +165,6 @@
           <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Completed') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}{{ _('Not Enrolled') }}{% endif %}</dd>
           <dt>{{ _('Progress') }}</dt><dd>{{ _('Completed') }} {{ (100 * tsdoc['done_pids']|length / pids|length)|round|int }}%</dd>
           <dt>{{ _('Enrollees') }}</dt><dd>{{ tdoc['enroll']|default(0) }}</dd>
-          <dt>{{ _('Completed') }}</dt><dd>?</dd>
           <dt>{{ _('Created By') }}</dt>
           <dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
         </dl>

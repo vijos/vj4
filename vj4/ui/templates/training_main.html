@@ -5,17 +5,6 @@
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('All Training Plans') }}</h1>
-        <div class="section__tools">
-          {{ _('Sort by') }}:
-          <select class="inline select">
-            <option>{{ _('↓ # Enrollees') }}</option>
-            <option>{{ _('↓ # Likes') }}</option>
-            <option>{{ _('↓ # Stars') }}</option>
-            <option>{{ _('↓ # Comments') }}</option>
-            <option>{{ _('↓ Create Time') }}</option>
-            <option>{{ _('↓ Update Time') }}</option>
-          </select>
-        </div>
       </div>
     {% if not tdocs %}
       {{ nothing.render('Sorry, there is no training plan.') }}
@@ -36,15 +25,6 @@
               <ul class="supplementary list training__progress">
                 <li>
                   <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}, {{ _('{0} problems').format(handler.get_pids(tdoc)|length) }}
-                </li>
-                <li>
-                  <span class="icon icon-heart text-red"></span> ???
-                </li>
-                <li>
-                  <span class="icon icon-star text-yellow"></span> ???
-                </li>
-                <li>
-                  <span class="icon icon-comment--text"></span> ???
                 </li>
                 <li>
                 {% if tsdict[tdoc['doc_id']]['enroll'] %}

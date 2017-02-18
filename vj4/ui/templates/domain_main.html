@@ -37,11 +37,6 @@
                     <span class="icon icon-user--multiple"></span> {{ tdoc['attend']|default(0) }}
                   </span>
                 </li>
-                <li>
-                  <span class="v-center">
-                    <span class="icon icon-comment--text"></span> 0
-                  </span>
-                </li>
               {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
                 <li class="contest__info-attended">
                   <span class="v-center">
@@ -81,15 +76,6 @@
               <ul class="supplementary list training__progress">
                 <li>
                   <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}, {{ _('{0} problems').format(handler.get_pids(tdoc)|length) }}
-                </li>
-                <li>
-                  <span class="icon icon-heart text-red"></span> ???
-                </li>
-                <li>
-                  <span class="icon icon-star text-yellow"></span> ???
-                </li>
-                <li>
-                  <span class="icon icon-comment--text"></span> ???
                 </li>
                 <li>
                 {% if tsdict[tdoc['doc_id']]['enroll'] %}
