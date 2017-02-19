@@ -7,6 +7,7 @@ import mapUrl from './scripts/build/mapUrlHelper.js';
 import DummyOutputPlugin from './scripts/build/webpackDummyOutputPlugin.js';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import ManifestPlugin from 'webpack-manifest-plugin';
 
 const extractProjectCSS = new ExtractTextPlugin({ filename: 'vj4.css?[sha1:contenthash:hex:10]', allChunks: true });
 const extractVendorCSS = new ExtractTextPlugin({ filename: 'vendors.css?[sha1:contenthash:hex:10]', allChunks: true });
@@ -247,6 +248,11 @@ export default function (env = {}) {
         ? new webpack.HashedModuleIdsPlugin()
         : new webpack.NamedModulesPlugin()
         ,
+
+      // Output asset hashes
+      new ManifestPlugin({
+        fileName: 'static-manifest.json',
+      }),
 
       new webpack.LoaderOptionsPlugin({
         options: {

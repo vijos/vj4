@@ -6190,6 +6190,20 @@
       "resolved": "https://registry.npm.taobao.org/webpack/download/webpack-2.2.1.tgz",
       "dev": true
     },
+    "webpack-manifest-plugin": {
+      "version": "1.1.0",
+      "from": "webpack-manifest-plugin@latest",
+      "resolved": "https://registry.npm.taobao.org/webpack-manifest-plugin/download/webpack-manifest-plugin-1.1.0.tgz",
+      "dev": true,
+      "dependencies": {
+        "fs-extra": {
+          "version": "0.30.0",
+          "from": "fs-extra@>=0.30.0 <0.31.0",
+          "resolved": "https://registry.npm.taobao.org/fs-extra/download/fs-extra-0.30.0.tgz",
+          "dev": true
+        }
+      }
+    },
     "webpack-sources": {
       "version": "0.1.4",
       "from": "webpack-sources@>=0.1.0 <0.2.0",

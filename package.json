@@ -44,6 +44,7 @@
     "stylus-loader": "^2.4.0",
     "through2": "^2.0.3",
     "webpack": "^2.2.1",
+    "webpack-manifest-plugin": "^1.1.0",
     "yargs": "^6.6.0"
   },
   "dependencies": {
