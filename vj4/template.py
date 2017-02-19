@@ -11,6 +11,7 @@ import markupsafe
 import vj4
 import vj4.constant
 import vj4.job
+from vj4.service import staticmanifest
 from vj4.util import json
 from vj4.util import options
 from vj4.util import version
@@ -36,7 +37,7 @@ class Environment(jinja2.Environment):
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     self.globals['vj4'] = vj4
-    self.globals['static_url'] = lambda s: options.cdn_prefix + s + '?{0}'.format(version.get())
+    self.globals['static_url'] = lambda s: options.cdn_prefix + staticmanifest.get(s)
     self.globals['paginate'] = paginate
 
     self.filters['markdown'] = markdown

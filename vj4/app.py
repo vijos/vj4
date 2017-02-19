@@ -9,6 +9,7 @@ from aiohttp import web
 from vj4 import error
 from vj4.service import bus
 from vj4.service import smallcache
+from vj4.service import staticmanifest
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
@@ -40,8 +41,11 @@ class Application(web.Application):
     super(Application, self).__init__(debug=options.debug)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
-    # Initialize components.
+    static_path = path.join(path.dirname(__file__), '.uibuild')
     translation_path = path.join(path.dirname(__file__), 'locale')
+
+    # Initialize components.
+    staticmanifest.init(static_path)
     locale.load_translations(translation_path)
     self.loop.run_until_complete(asyncio.gather(tools.ensure_all_indexes(), bus.init()))
     smallcache.init()
@@ -60,7 +64,7 @@ class Application(web.Application):
     from vj4.handler import user
     from vj4.handler import i18n
     if options.static:
-      self.router.add_static('/', path.join(path.dirname(__file__), '.uibuild'), name='static')
+      self.router.add_static('/', static_path, name='static')
 
 
 def route(url, name):
