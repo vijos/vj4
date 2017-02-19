@@ -206,7 +206,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
     const html = $('.problem-content').html();
     reduxStore.dispatch({
       type: 'SCRATCHPAD_PROBLEM_SET_HTML',
-      payload: $('.problem-content').html(),
+      payload: html,
     });
   }
   function syncHtmlFromReactToDom() {
