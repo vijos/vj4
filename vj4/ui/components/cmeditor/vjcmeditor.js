@@ -47,6 +47,13 @@ export default class VjCmEditor extends SimpleMDE {
         },
         '|',
         {
+          name: 'code',
+          action: () => this.insertCodeBlock(),
+          className: 'icon icon-code',
+          title: 'Insert Code',
+          default: true,
+        },
+        {
           name: 'link',
           action: SimpleMDE.drawLink,
           className: 'icon icon-link',
@@ -92,6 +99,24 @@ export default class VjCmEditor extends SimpleMDE {
     $preview.addClass('typo');
     $preview.attr('data-emoji-enabled', 'true');
     $preview.trigger('vjContentNew');
+  }
+
+  insertCodeBlock() {
+    const text = this.codemirror.getSelection();
+    const startPoint = this.codemirror.getCursor('start');
+    const endPoint = this.codemirror.getCursor('end');
+    const leadingLines = (startPoint.line === 0 && startPoint.ch === 0) ? 0 : 2;
+    // eslint-disable-next-line prefer-template
+    const startText = _.repeat('\n', leadingLines) + '```c++\n';
+    const endText = '\n```\n';
+    this.codemirror.replaceSelection(`${startText}${text}${endText}`);
+    startPoint.line += leadingLines + 1;
+    startPoint.ch = 0;
+    if (startPoint !== endPoint) {
+      endPoint.line += leadingLines + 1;
+    }
+    this.codemirror.setSelection(startPoint, endPoint);
+    this.codemirror.focus();
   }
 
 }

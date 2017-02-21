@@ -48,8 +48,12 @@
   </div>
   <div class="section__body">
     <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-    <button class="rounded primary button" role="submit">{{ _('Update Permission') }}</button>
-    <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
+    <button class="rounded primary button" role="submit">
+      {{ _('Update Permission') }}
+    </button>
+    <button type="button" class="rounded button" onclick="window.history.go(-1)">
+      {{ _('Cancel') }}
+    </button>
   </div>
 </div>
 {% endblock %}
