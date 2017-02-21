@@ -97,10 +97,10 @@
     <div class="section__body">
     {% for category, sub_categories in categories.items() %}
       <div class="topic--widget__section">
-        <h2 class="section__title"><a href="{{ reverse_url('problem_category', category=category) }}">{{ category }}</a></h2>
+        <h2 class="section__title"><a href="{{ reverse_url('problem_category', category=category|urlencode) }}">{{ category }}</a></h2>
         <ol>
         {% for sub_category in sub_categories %}
-          <li><a class="typo-a" href="{{ reverse_url('problem_category', category=category + ' ' + sub_category) }}">{{ sub_category }}</a></li>
+          <li><a class="typo-a" href="{{ reverse_url('problem_category', category=(category|urlencode + '+' + sub_category|urlencode)) }}">{{ sub_category }}</a></li>
         {% endfor %}
         </ol>
       </div>
