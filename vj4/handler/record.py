@@ -44,7 +44,7 @@ class RecordMainHandler(base.Handler):
       query['tid'] = tid
     # TODO(iceboy): projection, pagination.
     rdocs = await record.get_all_multi(**query,
-      get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).to_list(50)
+      get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).limit(50).to_list(None)
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
         user.get_dict(rdoc['uid'] for rdoc in rdocs),

@@ -149,7 +149,8 @@ class ProblemSubmitHandler(base.Handler):
       rdocs = await record \
           .get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
           .sort([('_id', -1)]) \
-          .to_list(10)
+          .limit(10) \
+          .to_list(None)
     if not self.prefer_json:
       path_components = self.build_path(
           (self.translate('problem_main'), self.reverse_url('problem_main')),

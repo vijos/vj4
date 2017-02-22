@@ -160,7 +160,7 @@ class HomeMessagesHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): projection, pagination.
-    mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
+    mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).limit(50).to_list(None)
     udict = await user.get_dict(
         itertools.chain.from_iterable((mdoc['sender_uid'], mdoc['sendee_uid']) for mdoc in mdocs),
         fields=user.PROJECTION_PUBLIC)

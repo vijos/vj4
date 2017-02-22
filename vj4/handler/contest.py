@@ -218,7 +218,8 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
         or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
                           .sort([('_id', -1)]) \
-                          .to_list(10)
+                          .limit(10) \
+                          .to_list(None)
     else:
       rdocs = []
     if not self.prefer_json:
