@@ -45,7 +45,7 @@ def get_multi(*, fields=None, **kwargs):
 @argmethod.wrap
 async def get_list(*, fields=None, limit: int=None, **kwargs):
   coll = db.Collection('domain')
-  return await coll.find(kwargs, fields).to_list(limit)
+  return await coll.find(kwargs, fields).limit(limit).to_list(None)
 
 
 @argmethod.wrap
