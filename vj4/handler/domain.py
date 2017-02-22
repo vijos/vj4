@@ -20,39 +20,40 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
 
   async def prepare_contest(self):
     if self.has_perm(builtin.PERM_VIEW_CONTEST):
-      tdocs = await contest.get_multi(self.domain_id).to_list(self.CONTESTS_ON_MAIN)
+      tdocs = await contest.get_multi(self.domain_id, limit=self.CONTESTS_ON_MAIN) \
+                           .to_list(None)
       tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                              (tdoc['doc_id'] for tdoc in tdocs))
     else:
-      tdocs = {}
+      tdocs = []
       tsdict = {}
     return tdocs, tsdict
 
   async def prepare_training(self):
     if self.has_perm(builtin.PERM_VIEW_TRAINING):
-      tdocs = await training.get_multi(self.domain_id).to_list(self.TRAININGS_ON_MAIN)
+      tdocs = await training.get_multi(self.domain_id, limit=self.TRAININGS_ON_MAIN) \
+                            .to_list(None)
       tsdict = await training.get_dict_status(self.domain_id, self.user['_id'],
-                                             (tdoc['doc_id'] for tdoc in tdocs))
+                                              (tdoc['doc_id'] for tdoc in tdocs))
     else:
-      tdocs = {}
+      tdocs = []
       tsdict = {}
     return tdocs, tsdict
 
   async def prepare_discussion(self):
     if self.has_perm(builtin.PERM_VIEW_DISCUSSION):
-      ddocs = await discussion.get_multi(self.domain_id).to_list(self.DISCUSSIONS_ON_MAIN)
+      ddocs = await discussion.get_multi(self.domain_id, limit=self.DISCUSSIONS_ON_MAIN) \
+                              .to_list(None)
       vndict = await discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs))
     else:
-      ddocs = {}
+      ddocs = []
       vndict = {}
     return ddocs, vndict
 
   async def get(self):
     (tdocs, tsdict), (trdocs, trsdict), (ddocs, vndict) = await asyncio.gather(
-      self.prepare_contest(), self.prepare_training(), self.prepare_discussion())
-    uids = set()
-    uids.update(ddoc['owner_uid'] for ddoc in ddocs)
-    udict = await user.get_dict(uids)
+        self.prepare_contest(), self.prepare_training(), self.prepare_discussion())
+    udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
     self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id),
                 tdocs=tdocs, tsdict=tsdict, trdocs=trdocs, trsdict=trsdict,
                 ddocs=ddocs, vndict=vndict,
