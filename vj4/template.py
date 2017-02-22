@@ -1,5 +1,6 @@
 import hashlib
 import hoedown
+import re
 from os import path
 from urllib import parse
 
@@ -57,9 +58,27 @@ MARKDOWN_RENDER_FLAGS = (hoedown.HTML_ESCAPE |  # Escape all HTML.
                          hoedown.HTML_HARD_WRAP)  # Render each linebreak as <br>.
 
 
+MARKDOWN_PRERENDER = [
+  (r'\(vijos\:\/\/fs\/([0-9a-f]{40,})\)',
+   lambda m: '(' + options.cdn_prefix.rstrip('/') + '/fs/' + m.group(1) + ')')
+   # TODO(twd2): reverse_url
+]
+MARKDOWN_PRERENDER_COMPILED = []
+
+for regex, repl in MARKDOWN_PRERENDER:
+  MARKDOWN_PRERENDER_COMPILED.append((re.compile(regex), repl))
+
+
+def prerender_markdown(text):
+  for regex, repl in MARKDOWN_PRERENDER_COMPILED:
+    text = regex.sub(repl, text)
+  return text
+
+
 def markdown(text):
   return markupsafe.Markup(
-      hoedown.html(text, extensions=MARKDOWN_EXTENSIONS, render_flags=MARKDOWN_RENDER_FLAGS))
+      hoedown.html(prerender_markdown(text), extensions=MARKDOWN_EXTENSIONS,
+                                             render_flags=MARKDOWN_RENDER_FLAGS))
 
 
 def gravatar_url(gravatar, size=200):
