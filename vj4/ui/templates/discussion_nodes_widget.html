@@ -2,16 +2,16 @@
   <div class="section__header">
     <h1 class="section__title">{{ _('Discussion Nodes') }}</h1>
   </div>
-  <div class="section__body">
+  <div class="section__body"><ul class="group-list">
   {% for category, nodes in discussion_nodes.items() %}
-    <div class="topic--widget__section">
+    <li class="group-list__item">
       <h2 class="section__title">{{ category }}</h2>
-      <ol>
+      <ol class="chip-list">
       {% for node in nodes %}
-        <li><a class="typo-a" href="{{ reverse_url('discussion_node', doc_id=node['name']) }}">{{ node['name'] }}</a></li>
+        <li class="chip-list__item"><a class="typo-a" href="{{ reverse_url('discussion_node', doc_id=node['name']) }}">{{ node['name'] }}</a></li>
       {% endfor %}
       </ol>
-    </div>
+    </li>
   {% endfor %}
-  </div>
+  </ul></div>
 </div>

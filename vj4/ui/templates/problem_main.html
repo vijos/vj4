@@ -94,18 +94,18 @@
     <div class="section__header">
       <h1 class="section__title">{{ _('Categories') }}</h1>
     </div>
-    <div class="section__body">
+    <div class="section__body"><ul class="group-list">
     {% for category, sub_categories in categories.items() %}
-      <div class="topic--widget__section">
+      <li class="group-list__item">
         <h2 class="section__title"><a href="{{ reverse_url('problem_category', category=category|urlencode) }}">{{ category }}</a></h2>
-        <ol>
+        <ol class="chip-list">
         {% for sub_category in sub_categories %}
-          <li><a class="typo-a" href="{{ reverse_url('problem_category', category=(category|urlencode + '+' + sub_category|urlencode)) }}">{{ sub_category }}</a></li>
+          <li class="chip-list__item"><a class="typo-a" href="{{ reverse_url('problem_category', category=(category|urlencode + '+' + sub_category|urlencode)) }}">{{ sub_category }}</a></li>
         {% endfor %}
         </ol>
-      </div>
+      </li>
     {% endfor %}
-    </div>
+    </ul></div>
   </div>
     <div class="section side">
       <div class="section__header">
