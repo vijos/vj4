@@ -90,7 +90,7 @@
     "generate": "gulp",
     "build": "webpack --progress --color --display-error-details --bail",
     "build:production": "npm run build -- --env.production -p",
-    "watch": "npm run build -- --env.watch -d --watch"
+    "watch": "npm run build -- --env.watch --watch"
   },
   "babel": {
     "presets": [
