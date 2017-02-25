@@ -31,7 +31,7 @@
       {% with fdoc = fdict.get(ufdoc['file_id'], {}) %}
         <tr>
           <td class="col--desc">{{ ufdoc['content'] }}</td>
-          <td class="col--length">{{ fdoc['length']|default('?')|to_size }}</td>
+          <td class="col--length">{{ fdoc['length']|format_size if fdoc['length'] else '?' }}</td>
           <td class="col--hash">{{ fdoc['md5']|default('?') }}</td>
           <td class="col--action"><a class="typo-a" href="{{ handler.file_url(fdoc) if 'metadata' in fdoc else '#' }}">{{ _('Download') }}</a> · <a class="typo-a" href="#">{{ _('Code') }}</a></td>
         </tr>
