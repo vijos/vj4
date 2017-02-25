@@ -106,8 +106,6 @@
       </dd>
       <dt>{{ _('Difficulty') }}</dt>
       <dd>{{ pdoc['difficulty']|default(_('(None)')) or _('(None)') }}</dd>
-      <dt>{{ _('Vote') }}</dt>
-      <dd><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star"></span><span class="icon icon-star--outline"></span> (30)</dd>
       <dt>{{ _('Category') }}</dt>
       <dd>
       {% if handler.get_setting('show_tags') == vj4.constant.setting.SHOW_TAGS_ALL %}
@@ -165,7 +163,7 @@
     </dl>
   </div>
 </div>
-{% if page_name == 'problem_detail' %}
+{% if page_name == 'problem_detail' and (tdocs or ctdocs) %}
 <div class="section side">
   <div class="section__header">
     <h1 class="section__title">{{ _('Related') }}</h1>
