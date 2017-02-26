@@ -161,7 +161,7 @@ function onClickDummyBox(ev) {
     .focus();
 }
 
-const commentsPage = new AutoloadPage(() => {
+const commentsPage = new AutoloadPage('commentsPage', () => {
   $(document).on('click', '[name="dczcomments__dummy-box"]', onClickDummyBox);
   $(document).on('click', '[name="dczcomments__op-reply-comment"]', onCommentClickReplyComment);
   $(document).on('click', '[name="dczcomments__op-reply-reply"]', onCommentClickReplyReply);

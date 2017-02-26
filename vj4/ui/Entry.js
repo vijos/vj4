@@ -28,21 +28,45 @@ const pageLoader = new PageLoader();
 const currentPage = pageLoader.getNamedPage(document.documentElement.getAttribute('data-page'));
 const includedPages = pageLoader.getAutoloadPages();
 
+function buildSequence(pages, type) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (['before', 'after'].indexOf(type) === -1) {
+      throw new Error(`'type' should be one of 'before' or 'after'`);
+    }
+  }
+  return pages
+    .filter(p => p[`${type}Loading`])
+    .map(p => ({
+      page: p,
+      func: p[`${type}Loading`],
+      type,
+    }));
+}
+
 async function load() {
   const loadSequence = [
-    ...includedPages.map(p => [p.beforeLoading, p]),
-    [currentPage.beforeLoading, currentPage],
-    ...includedPages.map(p => [p.afterLoading, p]),
-    [currentPage.afterLoading, currentPage],
+    ...buildSequence(includedPages, 'before'),
+    ...buildSequence([currentPage], 'before'),
+    ...buildSequence(includedPages, 'after'),
+    ...buildSequence([currentPage], 'after'),
   ];
-  for (const [func, page] of loadSequence) {
+  for (const { page, func, type } of loadSequence) {
     if (typeof func !== 'function') {
+      if (process.env.NODE_ENV !== 'production') {
+        throw new Error(`The '${type}Loading' function of '${page.name}' is not callable`);
+      }
       continue;
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      console.time(`${page.name}: ${type}Loading`);
     }
     try {
       await func();
     } catch (e) {
-      console.error(`Failed to load page ${page.name}\n${e.stack}`);
+      console.error(`Failed to call '${type}Loading' of ${page.name}\n${e.stack}`);
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      console.timeEnd(`${page.name}: ${type}Loading`);
     }
   }
   const sections = _.map($('.section').get(), (section, idx) => ({

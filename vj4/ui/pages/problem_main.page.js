@@ -53,7 +53,10 @@ async function updateSelection() {
       .join('+'),   // build a beautiful URL
   });
   const resp = await request.get(url);
-  $('[data-widget-cf-target]').html(resp.html).trigger('vjContentNew');
+  $('[data-widget-cf-target]')
+    .trigger('vjContentRemove')
+    .html(resp.html)
+    .trigger('vjContentNew');
 }
 
 function buildCategoryFilter() {

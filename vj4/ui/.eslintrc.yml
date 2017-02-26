@@ -34,12 +34,13 @@ rules:
   max-len:
     - error
     - 150
+  quotes: warn
   func-names: off
   class-methods-use-this: off
   consistent-return: warn
   no-restricted-syntax: warn
   no-unused-vars: warn
-  no-console: warn
+  no-console: off
   no-continue: off
   no-mixed-operators: off
   no-plusplus: off

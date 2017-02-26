@@ -2,7 +2,7 @@ import 'jquery.easing';
 
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
-const smoothScrollPage = new AutoloadPage(null, () => {
+const smoothScrollPage = new AutoloadPage('smoothScrollPage', null, () => {
   const HISTORY_SUPPORT = !!(typeof history === 'object' && history.pushState);
   const ANCHOR_REGEX = /^#[^ ]+$/;
   const OFFSET_HEIGHT = 10 + ($('.nav').height() || 0);

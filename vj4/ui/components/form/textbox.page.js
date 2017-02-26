@@ -1,6 +1,6 @@
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
-const textboxPage = new AutoloadPage(() => {
+const textboxPage = new AutoloadPage('textboxPage', () => {
   $(document).on('focusin', '.textbox.material input', (ev) => {
     $(ev.currentTarget).parent().addClass('focus');
   });

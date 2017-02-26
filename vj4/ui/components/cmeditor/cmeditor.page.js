@@ -9,7 +9,7 @@ function runSubstitute($container) {
   });
 }
 
-const cmEditorPage = new AutoloadPage(() => {
+const cmEditorPage = new AutoloadPage('cmEditorPage', () => {
   runSubstitute($('body'));
   $(document).on('vjContentNew', async (e) => {
     await delay(0);

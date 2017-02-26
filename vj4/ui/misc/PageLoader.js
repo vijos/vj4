@@ -4,6 +4,17 @@ pageStyleReq.keys().map(key => pageStyleReq(key).default);
 
 export class Page {
   constructor(name, autoload, afterLoading, beforeLoading) {
+    if (process.env.NODE_ENV !== 'production') {
+      if (typeof name !== 'string' && !(name instanceof Array)) {
+        throw new Error(`'name' should be a string or [string]`);
+      }
+      if (typeof afterLoading !== 'function' && afterLoading != null) {
+        throw new Error(`'afterLoading' should be a function`);
+      }
+      if (typeof beforeLoading !== 'function' && beforeLoading != null) {
+        throw new Error(`'beforeLoading' should be a function`);
+      }
+    }
     this.name = name;
     this.autoload = autoload;
     this.afterLoading = afterLoading;
@@ -21,14 +32,14 @@ export class Page {
 }
 
 export class NamedPage extends Page {
-  constructor(name = 'empty', afterLoading = function () {}, beforeLoading = function () {}) {
+  constructor(name, afterLoading = null, beforeLoading = null) {
     super(name, false, afterLoading, beforeLoading);
   }
 }
 
 export class AutoloadPage extends Page {
-  constructor(afterLoading = function () {}, beforeLoading = function () {}) {
-    super('(autoload)', true, afterLoading, beforeLoading);
+  constructor(name, afterLoading = null, beforeLoading = null) {
+    super(name, true, afterLoading, beforeLoading);
   }
 }
 

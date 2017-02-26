@@ -10,7 +10,7 @@ function runEmojify($container) {
   $container.find('[data-emoji-enabled]').get().forEach(element => emojify.run(element));
 }
 
-const emojifyPage = new AutoloadPage(() => {
+const emojifyPage = new AutoloadPage('emojifyPage', () => {
   emojify.setConfig({
     img_dir: `${UiContext.cdn_prefix}img/emoji`,
   });

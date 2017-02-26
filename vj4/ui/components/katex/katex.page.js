@@ -1,6 +1,6 @@
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
-const katexPage = new AutoloadPage(async () => {
+const katexPage = new AutoloadPage('katexPage', async () => {
   const renderKatex = System.import('katex/dist/contrib/auto-render.min.js');
   async function runKatex($container) {
     (await renderKatex)($container[0]);

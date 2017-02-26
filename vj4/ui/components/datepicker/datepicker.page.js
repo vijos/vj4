@@ -1,6 +1,6 @@
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
-const datepickerPage = new AutoloadPage(async () => {
+const datepickerPage = new AutoloadPage('datepickerPage', async () => {
   if ($('[data-pick-date]').length > 0) {
     await System.import('pickadate/lib/picker.date');
     $('[data-pick-date]').pickadate({
