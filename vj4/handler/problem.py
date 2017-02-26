@@ -67,9 +67,33 @@ class ProblemMainHandler(base.OperationHandler):
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
 
-@app.route('/p/category/{category}', 'problem_category')
+@app.route('/p/category/{category:.*}', 'problem_category')
 class ProblemCategoryHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
+
+  @staticmethod
+  def my_split(string, delim):
+    return list(filter(lambda s: bool(s), map(lambda s: s.strip(), string.split(delim))))
+
+  @staticmethod
+  def build_query(query_string):
+    category_groups = ProblemCategoryHandler.my_split(query_string, ' ')
+    if not category_groups:
+      return {}
+    query = {'$or': []}
+    for g in category_groups:
+      categories = ProblemCategoryHandler.my_split(g, ',')
+      if not categories:
+        continue
+      sub_query = {'$and': []}
+      for c in categories:
+        if c in builtin.PROBLEM_CATEGORIES \
+           or c in builtin.PROBLEM_SUB_CATEGORIES:
+          sub_query['$and'].append({'category': c})
+        else:
+          sub_query['$and'].append({'tag': c})
+      query['$or'].append(sub_query)
+    return query
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.get_argument
@@ -81,14 +105,7 @@ class ProblemCategoryHandler(base.OperationHandler):
       f = {'hidden': False}
     else:
       f = {}
-    categories = category.split(' ')
-    query = {'$and': []}
-    for c in categories:
-      if c in builtin.PROBLEM_CATEGORIES \
-         or c in builtin.PROBLEM_SUB_CATEGORIES:
-        query['$and'].append({'category': c})
-      else:
-        query['$and'].append({'tag': c})
+    query = ProblemCategoryHandler.build_query(category)
     pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
                                                                          **query,
                                                                          **f) \
