@@ -75,7 +75,7 @@ const beautifyOutputUrl = mapUrl([
 export default function (env = {}) {
   const config = {
     context: root('vj4/ui'),
-    devtool: env.production ? 'source-map' : 'nosources-source-map',
+    devtool: env.production ? 'source-map' : false,
     watchOptions: {
       aggregateTimeout: 1000,
     },
@@ -93,7 +93,7 @@ export default function (env = {}) {
     },
     resolve: {
       modules: [
-        root('node_modules')
+        root('node_modules'),
       ],
       alias: {
         vj: root('vj4/ui'),

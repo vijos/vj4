@@ -2,15 +2,39 @@
 {% import "components/problem.html" as problem with context %}
 {% extends "layout/basic.html" %}
 {% block content %}
+<script>
+  var Context = {{ {
+    'getProblemUrl': reverse_url('problem_category', category='{category}'),
+  }|json|safe }};
+</script>
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
-      <div class="section__body no-padding">
+      <div class="section__body no-padding" data-widget-cf-target>
         {% include "partials/problem_list.html" %}
       </div>
     </div>
   </div>
   <div class="medium-3 columns">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Categories') }}</h1>
+      </div>
+      <div class="section__body"><ul class="group-list" data-widget-cf-container>
+      {% for category, sub_categories in categories.items() %}
+        <li class="group-list__item">
+          <h2 class="section__title"><a href="{{ reverse_url('problem_category', category=category|urlencode) }}">{{ category }}</a></h2>
+        {% if sub_categories|length > 0 %}
+          <ol class="chip-list">
+          {% for sub_category in sub_categories %}
+            <li class="chip-list__item"><a class="typo-a" href="{{ reverse_url('problem_category', category=(category|urlencode + ',' + sub_category|urlencode)) }}">{{ sub_category }}</a></li>
+          {% endfor %}
+          </ol>
+        {% endif %}
+        </li>
+      {% endfor %}
+      </ul></div>
+    </div>
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Search') }}</h1>
@@ -21,12 +45,10 @@
           <label>
             <input name="q" type="text" class="textbox" value="" placeholder="1001">
           </label>
-          <button type="submit" class="primary button"><span class="icon icon-filter"></span> {{ _('Search') }}</button>
+          <button type="submit" class="primary button">{{ _('Search') }}</button>
         </div>
       </form>
     </div>
-  </div>
-  <div class="medium-3 columns">
   {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_PROBLEM) %}
     <div class="section side">
       <div class="section__header">
@@ -44,23 +66,6 @@
       </div>
     </div>
   {% endif %}
-  <div class="section side">
-    <div class="section__header">
-      <h1 class="section__title">{{ _('Categories') }}</h1>
-    </div>
-    <div class="section__body">
-    {% for category, sub_categories in categories.items() %}
-      <div class="topic--widget__section">
-        <h2 class="section__title"><a href="{{ reverse_url('problem_category', category=category) }}">{{ category }}</a></h2>
-        <ol>
-        {% for sub_category in sub_categories %}
-          <li><a class="typo-a" href="{{ reverse_url('problem_category', category=category + ' ' + sub_category) }}">{{ sub_category }}</a></li>
-        {% endfor %}
-        </ol>
-      </div>
-    {% endfor %}
-    </div>
-  </div>
     <div class="section side">
       <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
