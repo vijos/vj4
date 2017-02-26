@@ -2,6 +2,8 @@ import _ from 'lodash';
 
 import { NamedPage } from 'vj/misc/PageLoader';
 import Dropdown from 'vj/components/dropdown/Dropdown';
+import request from 'vj/utils/request';
+import substitute from 'vj/utils/substitute';
 
 const categories = {};
 const dirtyCategories = [];
@@ -15,7 +17,7 @@ function setDomSelected($dom, selected) {
   }
 }
 
-function updateSelection() {
+async function updateSelection() {
   dirtyCategories.forEach(({ type, category, subcategory }) => {
     let item = categories[category];
     const isSelected = item.select || _.some(item.children, c => c.select);
@@ -40,7 +42,10 @@ function updateSelection() {
 
   // make request according to the selection
   const requestTags = _.uniq(_.flatten(selections.map(s => s.split(' '))));
-  console.log(requestTags);
+  const resp = await request.get(substitute(decodeURIComponent(Context.getProblemUrl), {
+    category: requestTags.map(tag => encodeURIComponent(tag)).join('+'),
+  }));
+  console.log(resp);
 }
 
 function buildCategoryFilter() {

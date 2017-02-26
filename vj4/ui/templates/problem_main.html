@@ -2,6 +2,11 @@
 {% import "components/problem.html" as problem with context %}
 {% extends "layout/basic.html" %}
 {% block content %}
+<script>
+  var Context = {{ {
+    'getProblemUrl': reverse_url('problem_category', category='{category}'),
+  }|json|safe }};
+</script>
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
