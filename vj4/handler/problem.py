@@ -101,12 +101,16 @@ class ProblemCategoryHandler(base.OperationHandler):
                                              (pdoc['doc_id'] for pdoc in pdocs))
     else:
       psdict = None
-    path_components = self.build_path(
-        (self.translate('problem_main'), self.reverse_url('problem_main')),
-        (category, None))
-    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
-                psdict=psdict, categories=problem.get_categories(),
-                page_title=category, path_components=path_components)
+    if self.prefer_json:
+      html = self.render_html('problem_main_tr.html', pdocs=pdocs, psdict=psdict)
+      self.json({'html': html})
+    else:
+      path_components = self.build_path(
+          (self.translate('problem_main'), self.reverse_url('problem_main')),
+          (category, None))
+      self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
+                  psdict=psdict, categories=problem.get_categories(),
+                  page_title=category, path_components=path_components)
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
