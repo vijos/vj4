@@ -45,7 +45,7 @@ async function updateSelection() {
   const resp = await request.get(substitute(decodeURIComponent(Context.getProblemUrl), {
     category: requestTags.map(tag => encodeURIComponent(tag)).join('+'),
   }));
-  console.log(resp);
+  $('[data-widget-cf-target]').html(resp.html).trigger('vjContentNew');
 }
 
 function buildCategoryFilter() {
