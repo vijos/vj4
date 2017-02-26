@@ -192,8 +192,9 @@ async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
   prefix = prefix.lower()
   regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))
   coll = db.Collection('user')
-  udocs = await (coll.find({'uname_lower': {'$regex': regex}}, projection=fields)
-                 .to_list(limit))
+  udocs = await coll.find({'uname_lower': {'$regex': regex}}, projection=fields) \
+                    .limit(limit) \
+                    .to_list(None)
   for udoc in builtin.USERS:
     if udoc['uname_lower'].startswith(prefix):
       udocs.append(udoc)

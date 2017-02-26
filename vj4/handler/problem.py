@@ -5,6 +5,7 @@ import hashlib
 import io
 import zipfile
 from bson import objectid
+from urllib import parse
 
 from vj4 import app
 from vj4 import constant
@@ -149,7 +150,8 @@ class ProblemSubmitHandler(base.Handler):
       rdocs = await record \
           .get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
           .sort([('_id', -1)]) \
-          .to_list(10)
+          .limit(10) \
+          .to_list(None)
     if not self.prefer_json:
       path_components = self.build_path(
           (self.translate('problem_main'), self.reverse_url('problem_main')),
@@ -592,3 +594,24 @@ class ProblemStatisticsHandler(base.Handler):
         (self.translate('problem_statistics'), None))
     self.render('problem_statistics.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
+
+
+@app.route('/p/search', 'problem_search')
+class ProblemSearchHandler(base.Handler):
+  @base.get_argument
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, q: str):
+    q = q.strip()
+    if not q:
+      self.json_or_redirect(self.referer_or_main)
+      return
+    try:
+      pdoc = await problem.get(self.domain_id, document.convert_doc_id(q))
+    except error.ProblemNotFoundError:
+      pdoc = None
+    if pdoc:
+      self.redirect(self.reverse_url('problem_detail', pid=pdoc['doc_id']))
+      return
+    self.redirect('http://cn.bing.com/search?q={0}+site%3A{1}' \
+                  .format(parse.quote(q), parse.quote(options.url_prefix)))

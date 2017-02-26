@@ -109,8 +109,7 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
 
 @domainjob.wrap
 async def recalc(domain_id: str):
-  pdocs = problem.get_multi(domain_id=domain_id,
-                            fields={'_id': 1, 'doc_id': 1, 'num_accept': 1, 'num_submit': 1})
+  pdocs = problem.get_multi(domain_id=domain_id)
   coll = db.Collection('document')
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
