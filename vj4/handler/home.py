@@ -266,7 +266,8 @@ class HomeDomainCreateHandler(base.Handler):
 class HomeFileHandler(base.OperationHandler):
   def file_url(self, fdoc):
     return options.cdn_prefix.rstrip('/') + \
-      self.reverse_url('fs_get', secret=fdoc['metadata']['secret'])
+      self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
+                       secret=fdoc['metadata']['secret'])
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):

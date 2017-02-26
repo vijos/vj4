@@ -5,6 +5,11 @@
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
+      <div class="section__body">
+        {{ tdoc['content']|markdown }}
+      </div>
+    </div>
+    <div class="section">
     {% for node in tdoc['dag'] %}
       <div class="training__section {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %} {% if nsdict[node['_id']]['is_progress'] or nsdict[node['_id']]['is_open'] %}expanded{% else %}collapsed{% endif %}">
         <div class="section__header clearfix">
