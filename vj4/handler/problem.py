@@ -459,7 +459,8 @@ class ProblemDataHandler(base.Handler):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     fdoc = await problem.get_data(self.domain_id, pid)
     self.redirect(options.cdn_prefix.rstrip('/') + \
-                  self.reverse_url('fs_get', secret=fdoc['metadata']['secret']))
+                  self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
+                                   secret=fdoc['metadata']['secret']))
 
 
 @app.route('/p/create', 'problem_create')

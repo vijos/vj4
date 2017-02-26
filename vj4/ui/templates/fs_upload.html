@@ -6,8 +6,8 @@
 <p>{{ _('Userfile doc_id') }}: {{ ufid }}</p>
 <p>{{ _('MD5') }}: {{ fdoc['md5'] }}</p>
 <p>{{ _('Secret (keep it secret)') }}: {{ fdoc['metadata']['secret'] }}</p>
-<p>{{ _('URL') }}: {{ reverse_url('fs_get', secret=fdoc['metadata']['secret']) }}</p>
-<p>{{ _('Image Markdown') }}: <pre>![{{ _('Description') }}]({{ reverse_url('fs_get', secret=fdoc['metadata']['secret']) }})</pre></p>
+<p>{{ _('URL') }}: {{ reverse_url('fs_get', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM, secret=fdoc['metadata']['secret']) }}</p>
+<p>{{ _('Image Markdown') }}: <pre>![{{ _('Description') }}](vijos:/{{ reverse_url('fs_get', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM, secret=fdoc['metadata']['secret']) }})</pre></p>
 {% endif %}
 <form method="post" enctype="multipart/form-data">
 <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
