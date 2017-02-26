@@ -1,4 +1,31 @@
+{% import "components/paginator.html" as paginator with context %}
+{% import "components/record.html" as record with context %}
 {% import "components/problem.html" as problem with context %}
+      {% if not pdocs %}
+        {{ nothing.render('Sorry, there is no problem in the problem set') }}
+      {% else %}
+        <table class="data-table">
+          <colgroup>
+          {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+            <col class="col--status">
+          {% endif %}
+            <col class="col--name">
+            <col class="col--submit_n">
+            <col class="col--ac_rate">
+            <col class="col--difficulty">
+          </colgroup>
+          <thead>
+            <tr>
+            {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+              <th class="col--status record-status--border">{{ _('Status') }}</th>
+            {% endif %}
+              <th class="col--name">{{ _('Problem') }}</th>
+              <th class="col--submit_n">{{ _('Submit') }}</th>
+              <th class="col--ac_rate">% {{ _('AC') }}</th>
+              <th class="col--difficulty">{{ _('Difficulty') }}</th>
+            </tr>
+          </thead>
+          <tbody>
           {% for pdoc in pdocs %}
           {% with psdoc = psdict[pdoc['doc_id']] %}
             <tr>
@@ -33,3 +60,7 @@
             </tr>
           {% endwith %}
           {% endfor %}
+          </tbody>
+        </table>
+        {{ paginator.render(page, ppcount) }}
+      {% endif %}

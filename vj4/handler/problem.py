@@ -102,7 +102,8 @@ class ProblemCategoryHandler(base.OperationHandler):
     else:
       psdict = None
     if self.prefer_json:
-      html = self.render_html('problem_main_tr.html', pdocs=pdocs, psdict=psdict)
+      html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
+                              pcount=pcount, pdocs=pdocs, psdict=psdict)
       self.json({'html': html})
     else:
       path_components = self.build_path(
