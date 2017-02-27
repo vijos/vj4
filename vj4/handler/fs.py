@@ -3,7 +3,6 @@ import collections
 import functools
 import hashlib
 import mimetypes
-from aiohttp import multipart
 
 from vj4 import app
 from vj4 import error

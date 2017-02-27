@@ -64,18 +64,18 @@ class ContestMainHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.get_argument
   @base.sanitize
-  async def get(self, *, rule: str=None, page: int=1):
+  async def get(self, *, rule: int=0, page: int=1):
     if not rule:
       tdocs = contest.get_multi(self.domain_id)
       qs = ''
     else:
-      tdocs = contest.get_multi(self.domain_id, rule=int(rule))
-      qs = 'rule={0}'.format(int(rule))
+      tdocs = contest.get_multi(self.domain_id, rule=rule)
+      qs = 'rule={0}'.format(rule)
     tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                            (tdoc['doc_id'] for tdoc in tdocs))
     self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs,
-                tdocs=tdocs, tsdict=tsdict)
+                tdocs=tdocs, tsdict=tsdict, rule=rule)
 
 
 @app.route('/contest/{tid:\w{24}}', 'contest_detail')

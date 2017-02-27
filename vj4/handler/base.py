@@ -6,8 +6,7 @@ import hmac
 import logging
 import markupsafe
 import pytz
-import sockjs
-from aiohttp import web
+import sanic.exceptions
 from email import utils
 
 from vj4 import app
@@ -33,7 +32,7 @@ class HandlerBase(setting.SettingMixin):
 
   async def prepare(self):
     self.session = await self.update_session()
-    self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
+    self.domain_id = self.route_args.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     if 'uid' in self.session:
       uid = self.session['uid']
       self.user, self.domain, self.domain_user = await asyncio.gather(
@@ -200,20 +199,19 @@ class HandlerBase(setting.SettingMixin):
     await mailer.send_mail(mail, '{0} - Vijos'.format(translate(title)), content)
 
 
-class Handler(web.View, HandlerBase):
-  @asyncio.coroutine
-  def __iter__(self):
+class Handler(HandlerBase):
+  async def handle(self):
     try:
-      self.response = web.Response()
-      yield from HandlerBase.prepare(self)
-      yield from super(Handler, self).__iter__()
+      await HandlerBase.prepare(self)
+      await self.get()
+      return self.response
     except error.UserFacingError as e:
       _logger.warning("User facing error: %s", repr(e))
       self.response.set_status(e.http_status, None)
       if self.prefer_json:
         self.response.content_type = 'application/json'
         message = self.translate(e.message).format(*e.args)
-        self.response.text = json.encode({'error': {**e.to_dict(), 'message': message}})
+        self.response.body = json.encode({'error': {**e.to_dict(), 'message': message}})
       else:
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
@@ -222,19 +220,18 @@ class Handler(web.View, HandlerBase):
       _logger.error("Unexpected exception occurred when handling %s (IP = %s, UID = %d): %s",
                     self.url, self.remote_ip, (self.user and self.user['_id']) or None, repr(e))
       raise
-    return self.response
 
   def render(self, template_name, **kwargs):
     self.response.content_type = 'text/html'
-    self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
-    self.response.headers.add('Pragma', 'no-cache')
-    self.response.text = self.render_html(template_name, **kwargs)
+    self.response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
+    self.response.headers['Pragma'] = 'no-cache'
+    self.response.body = self.render_html(template_name, **kwargs).encode()
 
   def json(self, obj):
     self.response.content_type = 'application/json'
-    self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
-    self.response.headers.add('Pragma', 'no-cache')
-    self.response.text = json.encode(obj)
+    self.response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
+    self.response.headers['Pragma'] = 'no-cache'
+    self.response.body = json.encode(obj).encode()
 
   async def binary(self, data, type='application/octet-stream'):
     self.response = web.StreamResponse()
@@ -254,7 +251,7 @@ class Handler(web.View, HandlerBase):
 
   @property
   def url(self):
-    return self.request.path
+    return self.request.url
 
   @property
   def referer_or_main(self):
@@ -301,6 +298,7 @@ class OperationHandler(Handler):
     await method(**arguments)
 
 
+"""
 class Connection(sockjs.Session, HandlerBase):
   def __init__(self, request, *args, **kwargs):
     super(Connection, self).__init__(*args, **kwargs)
@@ -318,6 +316,7 @@ class Connection(sockjs.Session, HandlerBase):
 
   def send(self, **kwargs):
     super(Connection, self).send(json.encode(kwargs))
+"""
 
 
 @functools.lru_cache()
@@ -330,10 +329,10 @@ def _reverse_url(name, *, domain_id, **kwargs):
   if domain_id != builtin.DOMAIN_ID_SYSTEM:
     name += '_with_domain_id'
     kwargs['domain_id'] = domain_id
-  if kwargs:
-    return app.Application().router[name].url(parts=kwargs)
-  else:
-    return app.Application().router[name].url()
+  try:
+    return app.Application().url_for(name, **kwargs)
+  except sanic.exceptions.URLBuildError:
+    pass  # TODO
 
 
 @functools.lru_cache()
@@ -397,7 +396,7 @@ def require_csrf_token(func):
 def route_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
-    return func(self, **kwargs, **self.request.match_info)
+    return func(self, **kwargs, **self.route_args)
 
   return wrapped
 
@@ -405,7 +404,7 @@ def route_argument(func):
 def get_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
-    return func(self, **kwargs, **self.request.GET)
+    return func(self, **kwargs, **self.request.args)
 
   return wrapped
 
@@ -413,7 +412,7 @@ def get_argument(func):
 def post_argument(coro):
   @functools.wraps(coro)
   async def wrapped(self, **kwargs):
-    return await coro(self, **kwargs, **await self.request.post())
+    return await coro(self, **kwargs, **self.request.form)
 
   return wrapped
 
