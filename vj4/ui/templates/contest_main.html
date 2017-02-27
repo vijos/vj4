@@ -56,14 +56,14 @@
   {% endfor %}
     <div class="section">
       <div class="section__header">
-        <h1 class="section__title">{% if not handler.request.GET.get('rule') %}{{ _('All Contests') }}{% else %}{{ _('All {0} Contests').format(_(vj4.constant.contest.RULE_TEXTS[handler.request.GET.get('rule')|int])) }}{% endif %}</h1>
+        <h1 class="section__title">{% if not rule %}{{ _('All Contests') }}{% else %}{{ _('All {0} Contests').format(_(vj4.constant.contest.RULE_TEXTS[rule])) }}{% endif %}</h1>
         <div class="section__tools">
           <form method="get" name="filter-form">
             {{ _('Show') }}:
             <select class="inline compact select" name="rule">
-              <option value=""{% if not handler.request.GET.get('rule') %} selected{% endif %}>{{ _('All') }}</option>
+              <option value=""{% if not rule %} selected{% endif %}>{{ _('All') }}</option>
             {% for k, v in vj4.constant.contest.RULE_TEXTS.items() %}
-              <option value="{{ k }}"{% if handler.request.GET.get('rule')|int == k %} selected{% endif %}>{{ _('All {0} Contests').format(_(v)) }}</option>
+              <option value="{{ k }}"{% if rule == k %} selected{% endif %}>{{ _('All {0} Contests').format(_(v)) }}</option>
             {% endfor %}
             </select>
             <button type="submit" class="button hasjs--hide">

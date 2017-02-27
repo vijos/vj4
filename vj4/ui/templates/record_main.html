@@ -44,15 +44,15 @@
           <!-- TODO: replace with form_builder -->
           <label class="filter-user">
             {{ _('By Username / UID') }}
-            <input name="uid_or_name" type="text" class="textbox" value="{{ handler.request.GET['uid_or_name']|default('') }}" autocomplete="off" data-autofocus>
+            <input name="uid_or_name" type="text" class="textbox" value="{{ filter_uid_or_name }}" autocomplete="off" data-autofocus>
           </label>
           <label>
             {{ _('By Problem') }}
-            <input name="pid" type="text" class="textbox" value="{{ handler.request.GET['pid']|default('') }}">
+            <input name="pid" type="text" class="textbox" value="{{ filter_pid }}">
           </label>
           <label>
             {{ _('By Contest') }}
-            <input name="tid" type="text" class="textbox" value="{{ handler.request.GET['tid']|default('') }}">
+            <input name="tid" type="text" class="textbox" value="{{ filter_tid }}">
           </label>
           <button type="submit" class="primary button"><span class="icon icon-filter"></span> {{ _('Filter') }}</button>
           <a href="{{ reverse_url('record_main') }}" class="button">{{ _('Reset') }}</a>
