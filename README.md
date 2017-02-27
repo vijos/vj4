@@ -52,13 +52,13 @@ You don't need root privilege to run `npm install`. It installs stuffs in the pr
 You may want to use [cnpm](https://npm.taobao.org/) and [tuna](https://pypi.tuna.tsinghua.edu.cn/)
 if you are in China. Make sure to use `cnpm` by adding `alias` to `npm` instead of installing cnpm cli-tool.
 
-Some requirements may need Python.h. In Ubuntu/Debian simply use
+Some requirements may need `Python.h`. In Ubuntu/Debian simply use
 
 ```bash
 apt install python-dev
 ```
 
-to resolve the problem
+to resolve the problem.
 
 ### IP Geo-Location
 
