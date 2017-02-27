@@ -35,7 +35,7 @@ function buildSequence(pages, type) {
     }
   }
   return pages
-    .filter(p => p[`${type}Loading`])
+    .filter(p => p && p[`${type}Loading`])
     .map(p => ({
       page: p,
       func: p[`${type}Loading`],

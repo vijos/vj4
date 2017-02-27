@@ -59,6 +59,6 @@ export class PageLoader {
     if (pages.length > 0) {
       return pages[0];
     }
-    return new NamedPage();
+    return null;
   }
 }
