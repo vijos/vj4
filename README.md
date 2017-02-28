@@ -55,7 +55,7 @@ if you are in China. Make sure to use `cnpm` by adding `alias` to `npm` instead 
 Some requirements may need `Python.h`. In Ubuntu/Debian simply use
 
 ```bash
-apt install python-dev
+apt install python3-dev
 ```
 
 to resolve the problem.
