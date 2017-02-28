@@ -67,7 +67,6 @@ You may also want to install [libmaxminddb](https://github.com/maxmind/libmaxmin
 In the root of the repository:
 
 ```bash
-npm run generate
 npm run build   # or: npm run build:watch
 python3.5 -m vj4.server --debug
 ```
@@ -97,7 +96,7 @@ Frontend source codes can be recompiled automatically by running:
 npm run build:watch
 ```
 
-You need to manually restart the server for server-side code to take effect.
+However you need to manually restart the server for server-side code to take effect.
 
 ## Production
 
