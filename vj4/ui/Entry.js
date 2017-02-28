@@ -31,6 +31,7 @@ const includedPages = pageLoader.getAutoloadPages();
 function buildSequence(pages, type) {
   if (process.env.NODE_ENV !== 'production') {
     if (['before', 'after'].indexOf(type) === -1) {
+      // eslint-disable-next-line quotes
       throw new Error(`'type' should be one of 'before' or 'after'`);
     }
   }
@@ -50,6 +51,7 @@ async function load() {
     ...buildSequence(includedPages, 'after'),
     ...buildSequence([currentPage], 'after'),
   ];
+  // eslint-disable-next-line no-restricted-syntax
   for (const { page, func, type } of loadSequence) {
     if (typeof func !== 'function') {
       if (process.env.NODE_ENV !== 'production') {
@@ -73,6 +75,7 @@ async function load() {
     shouldDelay: idx < 5, // only animate first 5 sections
     $element: $(section),
   }));
+  // eslint-disable-next-line no-restricted-syntax
   for (const { $element, shouldDelay } of sections) {
     $element.addClass('visible');
     if (shouldDelay) {
@@ -80,6 +83,7 @@ async function load() {
     }
   }
   await delay(500);
+  // eslint-disable-next-line no-restricted-syntax
   for (const { $element } of sections) {
     $element.trigger('vjLayout');
   }

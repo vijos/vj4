@@ -1,5 +1,10 @@
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
+import 'pickadate/lib/themes/classic.css';
+import 'pickadate/lib/themes/classic.date.css';
+import 'pickadate/lib/themes/classic.time.css';
+import './datepicker.styl';
+
 const datepickerPage = new AutoloadPage('datepickerPage', async () => {
   if ($('[data-pick-date]').length > 0) {
     await System.import('pickadate/lib/picker.date');

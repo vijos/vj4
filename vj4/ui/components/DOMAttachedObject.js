@@ -48,6 +48,7 @@ export default class DOMAttachedObject {
   static attachAll(container = document.body, ...args) {
     if (process.env.NODE_ENV !== 'production') {
       if (!this.DOMAttachSelector) {
+        // eslint-disable-next-line quotes
         throw new Error(`'DOMAttachSelector' should be specified`);
       }
     }
@@ -68,6 +69,7 @@ export default class DOMAttachedObject {
     const selector = this.DOMDetachSelector || this.DOMAttachSelector;
     if (process.env.NODE_ENV !== 'production') {
       if (!selector) {
+        // eslint-disable-next-line quotes
         throw new Error(`'DOMDetachSelector' or 'DOMAttachSelector' should be specified`);
       }
     }
@@ -92,6 +94,7 @@ export default class DOMAttachedObject {
   static registerLifeCycleHooks(attach = true) {
     if (process.env.NODE_ENV !== 'production') {
       if (!this.DOMAttachSelector) {
+        // eslint-disable-next-line quotes
         throw new Error(`'DOMAttachSelector' should be specified`);
       }
     }

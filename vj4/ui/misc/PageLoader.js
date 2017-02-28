@@ -6,12 +6,15 @@ export class Page {
   constructor(name, autoload, afterLoading, beforeLoading) {
     if (process.env.NODE_ENV !== 'production') {
       if (typeof name !== 'string' && !(name instanceof Array)) {
+        // eslint-disable-next-line quotes
         throw new Error(`'name' should be a string or [string]`);
       }
       if (typeof afterLoading !== 'function' && afterLoading != null) {
+        // eslint-disable-next-line quotes
         throw new Error(`'afterLoading' should be a function`);
       }
       if (typeof beforeLoading !== 'function' && beforeLoading != null) {
+        // eslint-disable-next-line quotes
         throw new Error(`'beforeLoading' should be a function`);
       }
     }

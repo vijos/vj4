@@ -1,20 +1,19 @@
 import _ from 'lodash';
-import path from 'path';
+
 import webpack from 'webpack';
 import fs from 'fs-extra';
 
-import mapUrl from './scripts/build/mapUrlHelper.js';
-import DummyOutputPlugin from './scripts/build/webpackDummyOutputPlugin.js';
+import root from '../utils/root.js';
+import mapWebpackUrlPrefix from '../utils/mapWebpackUrlPrefix.js';
+import DummyOutputPlugin from '../plugins/webpackDummyOutputPlugin.js';
+import FriendlyErrorsPlugin from 'friendly-errors-webpack-plugin';
+import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ManifestPlugin from 'webpack-manifest-plugin';
 
 const extractProjectCSS = new ExtractTextPlugin({ filename: 'vj4.css?[sha1:contenthash:hex:10]', allChunks: true });
 const extractVendorCSS = new ExtractTextPlugin({ filename: 'vendors.css?[sha1:contenthash:hex:10]', allChunks: true });
-
-function root(fn) {
-  return path.resolve(__dirname, fn);
-}
 
 function eslintLoader() {
   return {
@@ -26,13 +25,17 @@ function eslintLoader() {
 }
 
 function babelLoader() {
+  let cacheDirectory = root('.cache/babel');
+  try {
+    fs.ensureDirSync(cacheDirectory);
+  } catch (ignored) {
+    cacheDirectory = false;
+  }
   return {
     loader: 'babel-loader',
     options: {
-      ...require('./package.json').babelForProject,
-      cacheDirectory: !_.isError(_.attempt(() => fs.ensureDirSync(root('.cache/babel'))))
-        ? root('.cache/babel')
-        : false,
+      ...require(root('package.json')).babelForProject,
+      cacheDirectory,
     },
   };
 }
@@ -66,7 +69,7 @@ function fileLoader() {
   };
 }
 
-const beautifyOutputUrl = mapUrl([
+const beautifyOutputUrl = mapWebpackUrlPrefix([
   { prefix: 'vj4/ui/',                  replace: 'ui/' },
   { prefix: 'node_modules/katex/dist/', replace: 'katex/' },
   { prefix: 'ui/misc/.iconfont',        replace: 'ui/iconfont' },
@@ -74,11 +77,9 @@ const beautifyOutputUrl = mapUrl([
 
 export default function (env = {}) {
   const config = {
+    bail: true,
     context: root('vj4/ui'),
     devtool: env.production ? 'source-map' : false,
-    watchOptions: {
-      aggregateTimeout: 1000,
-    },
     entry: {
       vj4: './Entry.js',
     },
@@ -169,6 +170,8 @@ export default function (env = {}) {
         katex: 'katex',
       }),
 
+      new FriendlyErrorsPlugin(),
+
       // don't include momentjs locale files
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
@@ -243,6 +246,18 @@ export default function (env = {}) {
         },
       }),
 
+      env.production
+        ? new webpack.optimize.UglifyJsPlugin({ sourceMap: true })
+        : function () {}
+        ,
+      env.production
+        ? new OptimizeCssAssetsPlugin()
+        : function () {}
+        ,
+      env.production
+        ? new webpack.LoaderOptionsPlugin({ minimize: true })
+        : function () {}
+        ,
       // Replace Module Id with hash or name
       env.production
         ? new webpack.HashedModuleIdsPlugin()
@@ -256,7 +271,7 @@ export default function (env = {}) {
 
       new webpack.LoaderOptionsPlugin({
         options: {
-          context: __dirname,
+          context: root(),
 
           postcss: [require('autoprefixer')],
 
@@ -266,9 +281,6 @@ export default function (env = {}) {
       }),
 
     ],
-    stats: {
-      children: false,
-    },
   };
 
   return config;
