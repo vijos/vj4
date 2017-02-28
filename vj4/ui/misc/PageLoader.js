@@ -49,16 +49,22 @@ export class AutoloadPage extends Page {
 export class PageLoader {
   constructor() {
     const pageReq = require.context('../', true, /\.page\.js$/i);
-    this.pageInstances = pageReq.keys().map(key => pageReq(key).default);
+    this.pageInstances = pageReq.keys().map((key) => {
+      const page = pageReq(key).default;
+      if (!page || !(page instanceof Page)) {
+        return null;
+      }
+      return page;
+    });
   }
 
   getAutoloadPages() {
-    const pages = this.pageInstances.filter(page => page.autoload);
+    const pages = this.pageInstances.filter(page => page && page.autoload);
     return pages;
   }
 
   getNamedPage(pageName) {
-    const pages = this.pageInstances.filter(page => page.isNameMatch(pageName));
+    const pages = this.pageInstances.filter(page => page && page.isNameMatch(pageName));
     if (pages.length > 0) {
       return pages[0];
     }
