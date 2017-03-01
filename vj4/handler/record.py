@@ -179,4 +179,5 @@ class RecordPretestDataHandler(base.Handler):
     if not secret:
       raise error.RecordDataNotFoundError(rdoc['_id'])
     self.redirect(options.cdn_prefix.rstrip('/') + \
-                  self.reverse_url('fs_get', secret=secret))
+                  self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
+                                   secret=secret))
