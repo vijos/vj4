@@ -103,6 +103,10 @@ def connection_route(prefix, name):
 
     sockjs.add_endpoint(Application(), handler, name=name, prefix=prefix,
                         manager=Manager(name, Application(), handler, Application().loop))
+    sockjs.add_endpoint(Application(), handler,
+                        name=name + '_with_domain_id', prefix='/d/{domain_id}' + prefix,
+                        manager=Manager(name + '_with_domain_id', Application(), handler,
+                                        Application().loop))
     return conn
 
   return decorate

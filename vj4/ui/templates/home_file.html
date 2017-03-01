@@ -30,10 +30,10 @@
       {% for ufdoc in ufdocs %}
       {% with fdoc = fdict.get(ufdoc['file_id'], {}) %}
         <tr>
-          <td class="col--desc">{{ ufdoc['content'] }}</th>
-          <td class="col--length">{{ fdoc['length']|default('?') }}</th>
-          <td class="col--hash">{{ fdoc['md5']|default('?') }}</th>
-          <td class="col--action"><a class="typo-a" href="{{ handler.file_url(fdoc) if 'metadata' in fdoc else '#' }}">{{ _('Download') }}</a> · <a class="typo-a" href="#">{{ _('Code') }}</a></th>
+          <td class="col--desc">{{ ufdoc['content'] }}</td>
+          <td class="col--length">{{ fdoc['length']|format_size if fdoc['length'] else '?' }}</td>
+          <td class="col--hash">{{ fdoc['md5']|default('?') }}</td>
+          <td class="col--action"><a class="typo-a" href="{{ handler.file_url(fdoc) if 'metadata' in fdoc else '#' }}">{{ _('Download') }}</a> · <a class="typo-a" href="#">{{ _('Code') }}</a></td>
         </tr>
       {% endwith %}
       {% endfor %}

@@ -44,6 +44,8 @@ class Environment(jinja2.Environment):
     self.filters['markdown'] = markdown
     self.filters['json'] = json.encode
     self.filters['gravatar_url'] = gravatar_url
+    self.filters['format_size'] = format_size
+
 
 
 MARKDOWN_EXTENSIONS = (hoedown.EXT_TABLES |  # Parse PHP-Markdown style tables.
@@ -112,3 +114,14 @@ def paginate(page, num_pages):
   if page < num_pages:
     yield 'next', page + 1
     yield 'last', num_pages
+
+
+def format_size(size, base=1, ndigits=3):
+  size *= base
+  unit = 1024
+  unit_names = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+  for unit_name in unit_names:
+    if size < unit:
+      return '{0}{1}'.format(round(size, ndigits=ndigits), unit_name)
+    size /= unit
+  return '{0}{1}'.format(round(size * unit, ndigits=ndigits), unit_names[-1])

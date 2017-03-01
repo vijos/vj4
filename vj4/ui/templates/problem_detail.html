@@ -3,6 +3,7 @@
 <script>
   var Context = {{ {
     'problemId': pdoc['doc_id'],
+    'socketUrl': '{0}-conn'.format(reverse_url('problem_pretest', pid=pdoc['doc_id'])|string()),
     'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['doc_id'])|string(),
     'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string() if not tdoc else reverse_url('contest_detail_problem_submit', tid=tdoc['doc_id'], pid=pdoc['doc_id'])|string(),
     'getSubmissionsUrl': reverse_url('problem_submit', pid=pdoc['doc_id'])|string() if not tdoc else reverse_url('contest_detail_problem_submit', tid=tdoc['doc_id'], pid=pdoc['doc_id'])|string(),

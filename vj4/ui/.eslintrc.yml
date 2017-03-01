@@ -49,6 +49,7 @@ rules:
   import/no-extraneous-dependencies: off
   import/extensions: off
   import/no-unresolved: off    # have bugs
+  import/prefer-default-export: off
   react/prefer-stateless-function: off
   react/self-closing-comp: off
   react/prop-types: off
