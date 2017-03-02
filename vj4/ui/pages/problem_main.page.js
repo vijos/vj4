@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { NamedPage } from 'vj/misc/PageLoader';
 import Dropdown from 'vj/components/dropdown/Dropdown';
-import request from 'vj/utils/request';
+import pjax from 'vj/utils/pjax';
 import substitute from 'vj/utils/substitute';
 
 const categories = {};
@@ -52,11 +52,7 @@ async function updateSelection() {
       .map(tag => tag.split(',').map(encodeURIComponent).join(','))
       .join('+'),   // build a beautiful URL
   });
-  const resp = await request.get(url);
-  $('[data-widget-cf-target]')
-    .trigger('vjContentRemove')
-    .html(resp.html)
-    .trigger('vjContentNew');
+  pjax.request({ url });
 }
 
 function buildCategoryFilter() {

@@ -4499,6 +4499,11 @@
       "resolved": "https://registry.npm.taobao.org/npmlog/download/npmlog-4.0.2.tgz",
       "dev": true
     },
+    "nprogress": {
+      "version": "0.2.0",
+      "from": "nprogress@latest",
+      "resolved": "https://registry.npm.taobao.org/nprogress/download/nprogress-0.2.0.tgz"
+    },
     "num2fraction": {
       "version": "1.2.2",
       "from": "num2fraction@>=1.2.2 <2.0.0",

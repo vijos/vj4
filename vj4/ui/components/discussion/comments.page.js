@@ -104,8 +104,7 @@ async function onCommentClickEdit(mode, ev) {
 
   const raw = await request.get(
     $mediaBody.find('.typo').eq(0).attr('data-raw-url'),
-    {},
-    'text'
+    { dataType: 'text' },
   );
 
   const opt = {

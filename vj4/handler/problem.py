@@ -121,7 +121,7 @@ class ProblemCategoryHandler(base.OperationHandler):
     if self.prefer_json:
       html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
                               pcount=pcount, pdocs=pdocs, psdict=psdict)
-      self.json({'html': html})
+      self.json({'title': category, 'fragments': [{'html': html}]})
     else:
       path_components = self.build_path(
           (self.translate('problem_main'), self.reverse_url('problem_main')),

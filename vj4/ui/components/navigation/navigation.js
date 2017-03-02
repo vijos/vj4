@@ -47,9 +47,11 @@ class Navigation {
     if (state) {
       this.$nav.addClass('floating');
       this.$navShadow.addClass('floating');
+      $('body').addClass('nav--floating');
     } else {
       this.$nav.removeClass('floating');
       this.$navShadow.removeClass('floating');
+      $('body').removeClass('nav--floating');
     }
   }
 

@@ -1,24 +1,31 @@
 const request = {};
 
-request.ajax = async function (options, dataType = 'json') {
-  try {
-    const data = await $.ajax({
-      dataType,
+request.ajax = async function (options) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      dataType: 'json',
       ...options,
-    });
-    return data;
-  } catch (resp) {
-    if (resp.status === 0) {
-      throw new Error('Connection failed');
-    }
-    if (resp.responseJSON) {
-      throw resp.responseJSON.error;
-    }
-    throw new Error(resp.statusText);
-  }
+    })
+    .fail((jqXHR, textStatus, errorThrown) => {
+      if (textStatus === 'abort') {
+        const err = new Error('aborted');
+        err.aborted = true;
+        reject(err);
+      } if (jqXHR.readyState === 0) {
+        reject(new Error('Network error'));
+      } else if (errorThrown instanceof Error) {
+        reject(errorThrown);
+      } else if (typeof jqXHR.responseJSON === 'object' && jqXHR.responseJSON.error) {
+        reject(new Error(jqXHR.responseJSON.error));
+      } else {
+        reject(new Error(textStatus));
+      }
+    })
+    .done(resolve);
+  });
 };
 
-request.post = function (url, dataOrForm = {}, dataType = 'json') {
+request.post = function (url, dataOrForm = {}) {
   let postData;
   if (dataOrForm instanceof jQuery && dataOrForm.is('form')) {
     // $form
@@ -40,15 +47,15 @@ request.post = function (url, dataOrForm = {}, dataType = 'json') {
     url,
     method: 'post',
     data: postData,
-  }, dataType);
+  });
 };
 
-request.get = function (url, qs = {}, dataType = 'json') {
+request.get = function (url, qs = {}) {
   return request.ajax({
     url,
     data: qs,
     method: 'get',
-  }, dataType);
+  });
 };
 
 export default request;
