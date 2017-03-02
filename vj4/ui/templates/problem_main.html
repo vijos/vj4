@@ -5,6 +5,7 @@
 <script>
   var Context = {{ {
     'getProblemUrl': reverse_url('problem_category', category='{category}'),
+    'currentCategory': category,
   }|json|safe }};
 </script>
 <div class="row">

@@ -53,7 +53,7 @@ class ProblemMainHandler(base.OperationHandler):
     else:
       psdict = None
     self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
-                psdict=psdict, categories=problem.get_categories())
+                category='', psdict=psdict, categories=problem.get_categories())
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
@@ -127,7 +127,7 @@ class ProblemCategoryHandler(base.OperationHandler):
           (self.translate('problem_main'), self.reverse_url('problem_main')),
           (category, None))
       self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
-                  psdict=psdict, categories=problem.get_categories(),
+                  category=category, psdict=psdict, categories=problem.get_categories(),
                   page_title=category, path_components=path_components)
 
 
