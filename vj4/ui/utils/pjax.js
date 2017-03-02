@@ -76,7 +76,6 @@ pjax.request = async (opt) => {
       },
       ...options,
     });
-    console.log('xhr done');
     const meta = extractMetaData(options, data);
     currentState = {
       id: uuid(),
@@ -120,8 +119,8 @@ pjax.request = async (opt) => {
     });
   } catch (err) {
     if (!err.aborted) {
-      console.log(err);
       Notification.error(err.message);
+      console.log(err);
     }
   } finally {
     decProgress();
