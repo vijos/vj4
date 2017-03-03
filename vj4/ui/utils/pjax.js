@@ -92,7 +92,7 @@ pjax.request = async (opt) => {
           throw new Error(`Fragement should contain 'html'`);
         }
       }
-      const $el = $(fragment.html);
+      const $el = $(fragment.html.trim());
       if (process.env.NODE_ENV !== 'production') {
         if ($el.length === 0) {
           // eslint-disable-next-line quotes
