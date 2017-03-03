@@ -27,7 +27,6 @@ reviewers:
         - master
       files:
         - "vj4/ui/*"
-        - "webpack.config.js"
         - "package.json"
         - "npm-shrinkwrap.json"
   -
