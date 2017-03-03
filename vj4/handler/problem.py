@@ -119,15 +119,18 @@ class ProblemCategoryHandler(base.OperationHandler):
     else:
       psdict = None
     page_title = category or self.translate('(All Problems)')
+    path_components = self.build_path(
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (page_title, None))
     if self.prefer_json:
       list_html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
                                    pcount=pcount, pdocs=pdocs, psdict=psdict)
       stat_html = self.render_html('partials/problem_stat.html', pcount=pcount)
-      self.json({'title': page_title, 'fragments': [{'html': list_html}, {'html': stat_html}]})
+      path_html = self.render_html('partials/path.html', path_components=path_components)
+      self.json({'title': page_title, 'fragments': [{'html': list_html},
+                                                    {'html': stat_html},
+                                                    {'html': path_html}]})
     else:
-      path_components = self.build_path(
-          (self.translate('problem_main'), self.reverse_url('problem_main')),
-          (page_title, None))
       self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
                   category=category, psdict=psdict, categories=problem.get_categories(),
                   page_title=page_title, path_components=path_components)

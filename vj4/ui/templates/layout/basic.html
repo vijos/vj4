@@ -10,16 +10,7 @@
     <div class="header-content"><div class="row"><div class="columns">
       <a class="header__logo" href="{{ reverse_url('domain_main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
     </div></div></div>
-    <div class="header__layer"><div class="row"><div class="columns">
-    {% if not header_mini %}
-      <div class="location-path">
-      {% for c in path_components %}
-        / {% if c[1] %}<a href="{{ c[1] }}">{{ c[0] }}</a>{% endif %}
-      {%- endfor %}
-      </div>
-      <h1 class="location-current" data-emoji-enabled>{{ path_components[-1][0] }}</h1>
-    {% endif %}
-    </div></div></div>
+    {% include "partials/path.html" %}
   </div>
 
   <div class="main">
