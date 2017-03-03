@@ -13,9 +13,7 @@
   </form>
 </div>
 <div class="nojs--hide">
-{% if handler.has_perm(comment_post_perm) %}
   <textarea class="textbox" name="dczcomments__dummy-box" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ _(comment_placeholder) }}"></textarea>
-{% endif %}
 </div>
 {% endmacro %}
 

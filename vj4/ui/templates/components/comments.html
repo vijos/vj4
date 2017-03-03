@@ -25,7 +25,9 @@
 {% import "components/comments_base.html" as comment_base with context %}
 {% import "components/comments_"~view~".html" as comment_impl with context %}
 <ul class="dczcomments__list view--{{ view }}">
+{% if handler.has_perm(comment_post_perm) %}
   {{ comment_impl.comment(true, handler.user) }}
+{% endif %}
 {% for doc in docs %}
   {{ comment_impl.comment(false, udict[doc['owner_uid']], doc) }}
 {% endfor %}
