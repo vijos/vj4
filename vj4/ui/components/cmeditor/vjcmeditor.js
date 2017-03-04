@@ -90,7 +90,8 @@ export default class VjCmEditor extends SimpleMDE {
       url: '/preview',
       method: 'post',
       data: $.param({ text }, true),
-    }, 'html');
+      dataType: 'text',
+    });
     _.defer(this.preparePreview.bind(this));
     return data;
   }

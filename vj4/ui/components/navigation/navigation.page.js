@@ -25,7 +25,7 @@ function handleNavLogoutClick(ev) {
   ev.preventDefault();
 }
 
-const navigationPage = new AutoloadPage(() => {
+const navigationPage = new AutoloadPage('navigationPage', () => {
   if (!document.getElementById('panel') || !document.getElementById('menu')) {
     return;
   }

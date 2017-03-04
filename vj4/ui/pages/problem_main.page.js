@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { NamedPage } from 'vj/misc/PageLoader';
 import Dropdown from 'vj/components/dropdown/Dropdown';
-import request from 'vj/utils/request';
+import pjax from 'vj/utils/pjax';
 import substitute from 'vj/utils/substitute';
 
 const categories = {};
@@ -17,7 +17,7 @@ function setDomSelected($dom, selected) {
   }
 }
 
-async function updateSelection() {
+async function updateSelection(sendRequest = true) {
   dirtyCategories.forEach(({ type, category, subcategory }) => {
     let item = categories[category];
     const isSelected = item.select || _.some(item.children, c => c.select);
@@ -40,20 +40,21 @@ async function updateSelection() {
   });
   dirtyCategories.length = 0;
 
-  // a list of categories which subcategory is selected
-  const requestCategoryTags = _.uniq(selections
-    .filter(s => s.indexOf(',') !== -1)
-    .map(s => s.split(',')[0])
-  );
-  // drop the category if its subcategory is selected
-  const requestTags = _.uniq(_.pullAll(selections, requestCategoryTags));
-  const url = substitute(decodeURIComponent(Context.getProblemUrl), {
-    category: requestTags
-      .map(tag => tag.split(',').map(encodeURIComponent).join(','))
-      .join('+'),   // build a beautiful URL
-  });
-  const resp = await request.get(url);
-  $('[data-widget-cf-target]').html(resp.html).trigger('vjContentNew');
+  if (sendRequest) {
+    // a list of categories which subcategory is selected
+    const requestCategoryTags = _.uniq(selections
+      .filter(s => s.indexOf(',') !== -1)
+      .map(s => s.split(',')[0])
+    );
+    // drop the category if its subcategory is selected
+    const requestTags = _.uniq(_.pullAll(selections, requestCategoryTags));
+    const url = substitute(decodeURIComponent(Context.getProblemUrl), {
+      category: requestTags
+        .map(tag => tag.split(',').map(encodeURIComponent).join(','))
+        .join('+'),   // build a beautiful URL
+    });
+    pjax.request({ url });
+  }
 }
 
 function buildCategoryFilter() {
@@ -138,8 +139,29 @@ function buildCategoryFilter() {
   });
 }
 
+function parseCategorySelection() {
+  Context.currentCategory.split(' ').forEach((cline) => {
+    const [category, subcategory] = cline.split(',');
+    if (!categories[category]) {
+      return;
+    }
+    if (subcategory && !categories[category].children[subcategory]) {
+      return;
+    }
+    if (!subcategory) {
+      categories[category].select = true;
+      dirtyCategories.push({ type: 'category', category });
+    } else {
+      categories[category].children[subcategory].select = true;
+      dirtyCategories.push({ type: 'subcategory', subcategory, category });
+    }
+  });
+  updateSelection(false);
+}
+
 const page = new NamedPage(['problem_main', 'problem_category'], () => {
   buildCategoryFilter();
+  parseCategorySelection();
 });
 
 export default page;

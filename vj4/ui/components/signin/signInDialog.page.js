@@ -2,7 +2,7 @@ import { AutoloadPage } from 'vj/misc/PageLoader';
 import DomDialog from 'vj/components/dialog/DomDialog';
 import responsiveCutoff from 'vj/breakpoints.json';
 
-const signinDialogPage = new AutoloadPage(() => {}, () => {
+const signinDialogPage = new AutoloadPage('signinDialogPage', null, () => {
   const signInDialog = DomDialog.getOrConstruct($('.dialog--signin'), {
     cancelByClickingBack: true,
     cancelByEsc: true,

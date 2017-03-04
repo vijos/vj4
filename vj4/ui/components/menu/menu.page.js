@@ -11,7 +11,7 @@ async function expandAllMenus() {
   $('.menu.collapsed').get().forEach(menu => expandMenu($(menu)));
 }
 
-const menuPage = new AutoloadPage(() => {
+const menuPage = new AutoloadPage('menuPage', () => {
   expandAllMenus();
 });
 

@@ -45,6 +45,66 @@ export default class DOMAttachedObject {
     return newInstance;
   }
 
+  static attachAll(container = document.body, ...args) {
+    if (process.env.NODE_ENV !== 'production') {
+      if (!this.DOMAttachSelector) {
+        // eslint-disable-next-line quotes
+        throw new Error(`'DOMAttachSelector' should be specified`);
+      }
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      console.time(`DOMAttachedObject[${this.DOMAttachKey}]: attachAll`);
+    }
+    $(container)
+      .find(this.DOMAttachSelector)
+      .addBack(this.DOMAttachSelector)
+      .get()
+      .forEach(element => this.getOrConstruct($(element), ...args));
+    if (process.env.NODE_ENV !== 'production') {
+      console.timeEnd(`DOMAttachedObject[${this.DOMAttachKey}]: attachAll`);
+    }
+  }
+
+  static detachAll(container = document.body) {
+    const selector = this.DOMDetachSelector || this.DOMAttachSelector;
+    if (process.env.NODE_ENV !== 'production') {
+      if (!selector) {
+        // eslint-disable-next-line quotes
+        throw new Error(`'DOMDetachSelector' or 'DOMAttachSelector' should be specified`);
+      }
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      console.time(`DOMAttachedObject[${this.DOMAttachKey}]: detachAll`);
+    }
+    $(container)
+      .find(selector)
+      .addBack(selector)
+      .get()
+      .forEach((element) => {
+        const instance = this.get($(element));
+        if (instance) {
+          instance.detach();
+        }
+      });
+    if (process.env.NODE_ENV !== 'production') {
+      console.timeEnd(`DOMAttachedObject[${this.DOMAttachKey}]: detachAll`);
+    }
+  }
+
+  static registerLifeCycleHooks(attach = true) {
+    if (process.env.NODE_ENV !== 'production') {
+      if (!this.DOMAttachSelector) {
+        // eslint-disable-next-line quotes
+        throw new Error(`'DOMAttachSelector' should be specified`);
+      }
+    }
+    $(document).on('vjContentNew', e => this.attachAll(e.target));
+    $(document).on('vjContentRemove', e => this.detachAll(e.target));
+    if (attach) {
+      this.attachAll();
+    }
+  }
+
   detach() {
     if (this.constructor.DOMAttachKey) {
       this.$dom.removeData(this.constructor.DOMAttachKey);
@@ -53,6 +113,9 @@ export default class DOMAttachedObject {
   }
 
   constructor($dom, monitorDetach = false) {
+    if ($dom == null) {
+      return null;
+    }
     this.$dom = $dom;
     this.id = ++DOMAttachedObject.uniqueIdCounter;
     this.eventNS = `vj4obj_${this.id}`;

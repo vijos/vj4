@@ -9,7 +9,7 @@ function setStarButtonState($starButton, star) {
   }
 }
 
-const starPage = new AutoloadPage(() => {
+const starPage = new AutoloadPage('starPage', () => {
   $(document).on('click', '.star', (ev) => {
     const $button = $(ev.currentTarget);
     const currentState = $button.hasClass('activated');

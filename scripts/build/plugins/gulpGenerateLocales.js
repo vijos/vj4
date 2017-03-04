@@ -4,7 +4,7 @@ import { PluginError } from 'gulp-util';
 import through from 'through2';
 import path from 'path';
 
-export default function generateConstant() {
+export default function generateLocales() {
 
   function bufferContents(file, encoding, callback) {
     if (file.isNull()) {

@@ -1,10 +1,10 @@
-import transformConstant from './transformConstant';
+import transformConstant from '../utils/transformConstant';
 
 import { PluginError } from 'gulp-util';
 import through from 'through2';
 import path from 'path';
 
-export default function generateConstant() {
+export default function generateConstants() {
 
   let lastFile = null;
   const packages = [];
