@@ -75,8 +75,7 @@ You may also want to install [libmaxminddb](https://github.com/maxmind/libmaxmin
 In the root of the repository:
 
 ```bash
-npm run generate
-npm run build  # to watch modifications: npm run watch
+npm run build   # or: npm run build:watch
 python3.5 -m vj4.server --debug
 ```
 
@@ -97,19 +96,15 @@ You need to run rank script on a regular basis to maintain correct ranks for all
 pm vj4.job.rank run_all
 ```
 
-### After Modifying Icons (`vj4/ui/misc/icons`)
+### Watch and Restart
 
-1. `npm run generate:icon`
+Frontend source codes can be recompiled automatically by running:
 
-### After Modifying Constants (`vj4/ui/constant`)
+```bash
+npm run build:watch
+```
 
-1. `npm run generate:constant`
-2. Restart server
-
-### After Modifying Locales (`vj4/locale`)
-
-1. `npm run generate:locale`
-2. Restart server
+However you need to manually restart the server for server-side code to take effect.
 
 ## Production
 

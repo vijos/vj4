@@ -2,7 +2,7 @@ import { AutoloadPage } from 'vj/misc/PageLoader';
 
 import tpl from 'vj/utils/tpl';
 
-const menuHeadingPage = new AutoloadPage(null, () => {
+const menuHeadingPage = new AutoloadPage('menuHeadingPage', null, () => {
   $('[data-heading-extract-to]').get().forEach((container) => {
     const $container = $(container);
     const $target = $('body').find($container.attr('data-heading-extract-to'));

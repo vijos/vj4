@@ -17,7 +17,7 @@ function applyRotator(element) {
   Rotator.getOrConstruct($(element));
 }
 
-const votePage = new AutoloadPage(() => {
+const votePage = new AutoloadPage('votePage', () => {
   $('.vote-number.rotator--enabled').get().forEach(element => applyRotator(element));
   $(document).on('click', '.vote-button', (ev) => {
     const $button = $(ev.currentTarget);

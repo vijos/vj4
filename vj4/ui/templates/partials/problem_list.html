@@ -2,6 +2,7 @@
 {% import "components/record.html" as record with context %}
 {% import "components/problem.html" as problem with context %}
 {% import "components/nothing.html" as nothing with context %}
+<div data-fragment-id="problem_list">
 {% if not pdocs %}
   {{ nothing.render('Sorry, there is no problem in the problem set') }}
 {% else %}
@@ -65,3 +66,4 @@
   </table>
   {{ paginator.render(page, ppcount) }}
 {% endif %}
+</div>

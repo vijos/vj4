@@ -5,7 +5,7 @@ export default class Tab extends DOMAttachedObject {
 
   static DOMAttachKey = 'vjTabInstance';
 
-  static attachAll() {
+  static initAll() {
     $('.section__tabs').get().forEach((tab) => {
       Tab.getOrConstruct($(tab)).attach();
     });
