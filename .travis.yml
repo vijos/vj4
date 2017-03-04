@@ -15,8 +15,8 @@ install:
   - node scripts/fix_abroad_shrinkwrap.js
   - npm install
 script:
-  - python -m unittest
   - npm run build:production
+  - python -m unittest
 addons:
   apt:
     sources:
