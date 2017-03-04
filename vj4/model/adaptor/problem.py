@@ -176,8 +176,11 @@ def get_multi_solution_by_uid(domain_id: str, uid: int, fields=None):
 
 @argmethod.wrap
 async def delete_solution(domain_id: str, psid: document.convert_doc_id):
-  # TODO(twd2): -num_liked
-  return await document.delete(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+  # -num_liked
+  psdoc = await get_solution(domain_id, psid)
+  result = await document.delete(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+  await domain.inc_user(domain_id, psdoc['owner_uid'], num_liked=-psdoc['vote'])
+  return result
 
 
 @argmethod.wrap
