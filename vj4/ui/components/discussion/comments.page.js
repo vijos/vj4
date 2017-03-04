@@ -135,6 +135,7 @@ async function onCommentClickEdit(mode, ev) {
 
   const raw = await request.get(
     $mediaBody.find('.typo').eq(0).attr('data-raw-url'),
+    {},
     { dataType: 'text' },
   );
 
@@ -180,9 +181,7 @@ async function onCommentClickDelete(type, ev) {
   const $evTarget = $(ev.currentTarget);
   const form = JSON.parse($evTarget.attr('data-form'));
 
-  await request.post('', {
-    ...form
-  });
+  await request.post('', form);
   window.location.reload();
 }
 

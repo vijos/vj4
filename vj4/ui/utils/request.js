@@ -27,7 +27,7 @@ request.ajax = async function (options) {
   });
 };
 
-request.post = function (url, dataOrForm = {}) {
+request.post = function (url, dataOrForm = {}, options = {}) {
   let postData;
   if (dataOrForm instanceof jQuery && dataOrForm.is('form')) {
     // $form
@@ -49,14 +49,16 @@ request.post = function (url, dataOrForm = {}) {
     url,
     method: 'post',
     data: postData,
+    ...options,
   });
 };
 
-request.get = function (url, qs = {}) {
+request.get = function (url, qs = {}, options = {}) {
   return request.ajax({
     url,
     data: qs,
     method: 'get',
+    ...options,
   });
 };
 
