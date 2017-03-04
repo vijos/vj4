@@ -392,7 +392,7 @@ class ProblemSolutionHandler(base.OperationHandler):
       raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
-    await problem.delete_solution_reply(self.domain_id, psid, psrid, content)
+    await problem.delete_solution_reply(self.domain_id, psid, psrid)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)

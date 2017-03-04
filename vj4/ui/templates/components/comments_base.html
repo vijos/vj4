@@ -13,9 +13,7 @@
   </form>
 </div>
 <div class="nojs--hide">
-{% if handler.has_perm(comment_post_perm) %}
   <textarea class="textbox" name="dczcomments__dummy-box" readonly data-form="{{ {"operation": comment_post_op}|json }}" placeholder="{{ _(comment_placeholder) }}"></textarea>
-{% endif %}
 </div>
 {% endmacro %}
 
@@ -28,7 +26,7 @@
   <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-comment" data-form="{{ {'operation': comment_edit_op, comment_ref: doc['doc_id']}|json }}"><span class="icon icon-edit"></span></a>
 {% endif %}
 {% if handler.own(doc, comment_delete_self_perm) or handler.has_perm(comment_delete_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete-comment" data-form="{{ {'operation': comment_delete_op, comment_ref: doc['doc_id']}|json }}"><span class="icon icon-delete"></span></a>
 {% endif %}
 </div>
 {% endmacro %}
@@ -42,7 +40,7 @@
   <a href="javascript:;" data-tooltip="{{ _('Edit') }}" name="dczcomments__op-edit-reply" data-form="{{ {'operation': reply_edit_op, comment_ref: doc['doc_id'], reply_ref: rdoc['_id']}|json }}"><span class="icon icon-edit"></span></a>
 {% endif %}
 {% if handler.own(rdoc, reply_delete_self_perm) or handler.has_perm(reply_delete_perm) %}
-  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete"><span class="icon icon-delete"></span></a>
+  <a href="javascript:;" data-tooltip="{{ _('Delete') }}" name="dczcomments__op-delete-reply" data-form="{{ {'operation': reply_delete_op, comment_ref: doc['doc_id'], reply_ref: rdoc['_id']}|json }}"><span class="icon icon-delete"></span></a>
 {% endif %}
 </div>
 {% endmacro %}
