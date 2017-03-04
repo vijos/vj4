@@ -1,3 +1,5 @@
+import i18n from './i18n';
+
 const request = {};
 
 request.ajax = async function (options) {
@@ -8,15 +10,15 @@ request.ajax = async function (options) {
     })
     .fail((jqXHR, textStatus, errorThrown) => {
       if (textStatus === 'abort') {
-        const err = new Error('aborted');
+        const err = new Error(i18n('Aborted'));
         err.aborted = true;
         reject(err);
       } if (jqXHR.readyState === 0) {
-        reject(new Error('Network error'));
+        reject(new Error(i18n('Network error')));
       } else if (errorThrown instanceof Error) {
         reject(errorThrown);
       } else if (typeof jqXHR.responseJSON === 'object' && jqXHR.responseJSON.error) {
-        reject(new Error(jqXHR.responseJSON.error));
+        reject(new Error(jqXHR.responseJSON.error.message));
       } else {
         reject(new Error(textStatus));
       }
