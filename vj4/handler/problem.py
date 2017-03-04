@@ -19,6 +19,7 @@ from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
 from vj4.model import opcount
+from vj4.model import oplog
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
@@ -357,7 +358,8 @@ class ProblemSolutionHandler(base.OperationHandler):
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
     if not self.own(psdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION)
-    psdoc = await problem.delete_solution(self.domain_id, psdoc['doc_id'])
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_DOCUMENT, doc=psdoc)
+    await problem.delete_solution(self.domain_id, psdoc['doc_id'])
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -392,6 +394,8 @@ class ProblemSolutionHandler(base.OperationHandler):
       raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_SUB_DOCUMENT, sub_doc=psrdoc,
+                    doc_type=psdoc['doc_type'], doc_id=psdoc['doc_id'])
     await problem.delete_solution_reply(self.domain_id, psid, psrid)
     self.json_or_redirect(self.url)
 
