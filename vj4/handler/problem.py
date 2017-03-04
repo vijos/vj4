@@ -40,9 +40,10 @@ async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
                                  pcount=pcount, pdocs=pdocs, psdict=psdict)
     stat_html = self.render_html('partials/problem_stat.html', pcount=pcount)
     path_html = self.render_html('partials/path.html', path_components=kwargs['path_components'])
-    self.json({'title': kwargs['page_title'], 'fragments': [{'html': list_html},
-                                                            {'html': stat_html},
-                                                            {'html': path_html}]})
+    self.json({'title': self.render_title(kwargs['page_title']),
+               'fragments': [{'html': list_html},
+                             {'html': stat_html},
+                             {'html': path_html}]})
   else:
     self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
                 category=category, psdict=psdict, categories=problem.get_categories(),
