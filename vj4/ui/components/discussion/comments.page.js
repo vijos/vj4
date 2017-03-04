@@ -181,12 +181,10 @@ async function onCommentClickDelete(type, ev) {
   const $evTarget = $(ev.currentTarget);
   const form = JSON.parse($evTarget.attr('data-form'));
 
-  // TODO
-  /*await request.post('', {
-    ...this.options.form,
-    content: this.getText(),
+  await request.post('', {
+    ...form
   });
-  window.location.reload();*/
+  window.location.reload();
 }
 
 function onCommentClickDeleteComment(ev) {

@@ -20,7 +20,9 @@
   reply_post_op = 'tail_reply',
   reply_post_text = 'Reply',
   reply_edit_op = 'edit_tail_reply',
-  reply_edit_text = 'Update'
+  reply_edit_text = 'Update',
+  comment_delete_op = 'delete_reply',
+  reply_delete_op = 'delete_tail_reply'
 ) %}
 {% import "components/comments_base.html" as comment_base with context %}
 {% import "components/comments_"~view~".html" as comment_impl with context %}
