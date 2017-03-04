@@ -119,7 +119,7 @@
                   <td class="col--status record-status--border">
                   </td>
                   <td class="col--name">
-                    {{ problem.render_problem_title(pdoc) }}
+                    {{ problem.render_problem_title(pdoc, invalid=true) }}
                   </td>
                   <td class="col--submit_n">*</td>
                   <td class="col--ac_rate">*</td>
@@ -167,8 +167,10 @@
       </div>
       <div class="section__body typo">
         <dl class="large horizontal">
-          <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['done'] %}{{ _('Completed') }}{% elif tsdoc['enroll'] %}{{ _('In Progress') }}{% else %}{{ _('Not Enrolled') }}{% endif %}</dd>
+          <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['enroll'] %}{{ _('Completed' if tsdoc['done'] else 'In Progress') }}{% else %}{{ _('Not Enrolled') }}{% endif %}</dd>
+          {% if tsdoc['enroll'] %}
           <dt>{{ _('Progress') }}</dt><dd>{{ _('Completed') }} {{ (100 * tsdoc['done_pids']|length / pids|length)|round|int }}%</dd>
+          {% endif %}
           <dt>{{ _('Enrollees') }}</dt><dd>{{ tdoc['enroll']|default(0) }}</dd>
           <dt>{{ _('Created By') }}</dt>
           <dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
