@@ -87,12 +87,13 @@ As an intuitive example, you may want to add a super administator and a problem 
 alias pm="python3.5 -m"
 pm vj4.model.user add -1 icebox 12345 icebox@iceboy.org
 pm vj4.model.user set_superadmin -1
-pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 1000
+pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 1000   # you can also use web UI
 ```
 
-You need to run rank script on a regular basis to maintain correct ranks for all users:
+You need to run these scripts on a regular basis to maintain correct RP and ranks for all users:
 
 ```bash
+pm vj4.job.rp recalc_all
 pm vj4.job.rank run_all
 ```
 
@@ -109,7 +110,6 @@ However you need to manually restart the server for server-side code to take eff
 ## Production
 
 ```bash
-npm run generate
 npm run build:production
 python3.5 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
 ```
