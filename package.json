@@ -81,7 +81,7 @@
     "timeago-react": "^1.0.8",
     "timeago.js": "^2.0.5",
     "uuid": "^3.0.1",
-    "vj-simplemde": "0.0.7"
+    "vj-simplemde": "0.0.8"
   },
   "scripts": {
     "generate:icon": "gulp iconfont",
