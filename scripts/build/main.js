@@ -5,8 +5,10 @@ import runWebpack from './runWebpack.js';
 
 const { watch, production } = argv;
 
-process.chdir(root());
-
-runGulp(argv, () => {
+async function main() {
+  await runGulp(argv);
   runWebpack(argv);
-});
+}
+
+process.chdir(root());
+main();
