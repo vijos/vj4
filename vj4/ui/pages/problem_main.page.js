@@ -48,11 +48,16 @@ async function updateSelection(sendRequest = true) {
     );
     // drop the category if its subcategory is selected
     const requestTags = _.uniq(_.pullAll(selections, requestCategoryTags));
-    const url = substitute(decodeURIComponent(Context.getProblemUrl), {
-      category: requestTags
-        .map(tag => tag.split(',').map(encodeURIComponent).join(','))
-        .join('+'),   // build a beautiful URL
-    });
+    let url;
+    if (requestTags.length === 0) {
+      url = Context.getProblemUrlWithoutCategory;
+    } else {
+      url = substitute(decodeURIComponent(Context.getProblemUrlWithCategory), {
+        category: requestTags
+          .map(tag => tag.split(',').map(encodeURIComponent).join(','))
+          .join('+'),   // build a beautiful URL
+      });
+    }
     pjax.request({ url });
   }
 }
