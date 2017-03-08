@@ -41,7 +41,7 @@ class HomeSecurityHandler(base.OperationHandler):
         'update_ua': useragent.parse(session.get('update_ua') or
                                      session.get('create_ua') or ''),
         'update_geoip': geoip.ip2geo(session.get('update_ip') or
-                                     session.get('create_ua'),
+                                     session.get('create_ip'),
                                      self.get_setting('view_lang')),
         'token_digest': hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest(),
         'is_current': session['_id'] == self.session['_id']
