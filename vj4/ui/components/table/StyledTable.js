@@ -35,7 +35,7 @@ export default class StyledTable extends DOMAttachedObject {
       parent: this.$container,
       offset_top: Navigation.instance.getHeight(),
     };
-    this.$header.stick_in_parent(stickyOptions);
+    _.defer(() => this.$header.stick_in_parent(stickyOptions));
   }
 
   detach() {

@@ -82,11 +82,17 @@ class Navigation {
       return 0;
     }
     if (window.innerWidth > responsiveCutoff.mobile) {
-      return this.$nav.height();
+      if (!this._navHeight) {
+        this._navHeight = this.$nav.height();
+      }
+      return this._navHeight;
     }
     const $slideoutNav = $('.nav--slideout-trigger');
     if ($slideoutNav.length > 0) {
-      return $slideoutNav.height();
+      if (!this._slideoutNavHeight) {
+        this._slideoutNavHeight = $slideoutNav.height();
+      }
+      return this._slideoutNavHeight;
     }
     return 0;
   }

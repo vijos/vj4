@@ -4,7 +4,8 @@
 {% block content %}
 <script>
   var Context = {{ {
-    'getProblemUrl': reverse_url('problem_category', category='{category}'),
+    'getProblemUrlWithCategory': reverse_url('problem_category', category='{category}'),
+    'getProblemUrlWithoutCategory': reverse_url('problem_main'),
     'currentCategory': category,
   }|json|safe }};
 </script>

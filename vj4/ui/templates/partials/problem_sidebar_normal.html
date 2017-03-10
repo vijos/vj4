@@ -1,4 +1,5 @@
 {% import "components/user.html" as user with context %}
+{% import "components/problem.html" as problem with context %}
 <div class="section side section--problem-sidebar">
 {% if page_name != 'problem_detail' and page_name != 'contest_detail_problem' %}
   <div class="section__header">
@@ -91,9 +92,12 @@
   </div>
   <div class="section__body typo">
     <dl class="large horizontal">
+    {% if pdoc['doc_id']|string|length < 10 %}
       <dt>{{ _('ID') }}</dt>
       <dd>{{ pdoc['doc_id'] }}</dd>
-      <dt>{{ _('Status') }}</dt>
+    {% endif %}
+    {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+      <dt>{{ _('Submission') }}</dt>
       <dd>
       {% if pdoc['psdoc']['status'] %}
         <span class="icon record-status--icon {{ vj4.constant.record.STATUS_CODES[pdoc['psdoc']['status']] }}"></span>
@@ -104,12 +108,13 @@
         {{ _('(None)') }}
       {% endif %}
       </dd>
+    {% endif %}
       <dt>{{ _('Difficulty') }}</dt>
       <dd>{{ pdoc['difficulty']|default(_('(None)')) or _('(None)') }}</dd>
       <dt>{{ _('Category') }}</dt>
       <dd>
-      {% if handler.get_setting('show_tags') == vj4.constant.setting.SHOW_TAGS_ALL %}
         {% if pdoc['category'] %}
+          <span class="hasjs--hide" name="problem-sidebar__categories">
           {% for category in pdoc['category'] %}
             <a href="{{ reverse_url('problem_category', category=category) }}">{{ category }}</a>
             {% if loop.index < pdoc['category']|length %}
@@ -120,33 +125,17 @@
               {% endif %}
             {% endif %}
           {% endfor %}
+          </span>
+          <span class="nojs--hide">
+            <a href="javascript:;" name="problem-sidebar__show-category">{{ _('page.problem_detail.sidebar.show_category') }}</a>
+          </span>
         {% else %}
           {{ _('(None)') }}
         {% endif %}
-      {% else %}
-        <!-- {{ pdoc['category'] }} -->
-        <!-- TODO(twd2): swx -->
-        <a href="javascript:;" >[{{ _('Show') }}]</a>
       </dd>
-      {% endif %}
       <dt>{{ _('Tags') }}</dt>
       <dd>
-      {% if handler.get_setting('show_tags') != vj4.constant.setting.SHOW_TAGS_HIDE %}
-        {% if pdoc['tag'] %}
-          {% for tag in pdoc['tag'] %}
-          <a href="{{ reverse_url('problem_category', category=tag) }}">{{ tag }}</a>
-          {% if loop.index < pdoc['tag']|length %}
-          ,
-          {% endif %}
-          {% endfor %}
-        {% else %}
-          {{ _('(None)') }}
-        {% endif %}
-      {% else %}
-        <!-- {{ pdoc['tag'] }} -->
-        <!-- TODO(twd2): swx -->
-        <a href="javascript:;" >[{{ _('Show') }}]</a>
-      {% endif %}
+        {{ problem.render_problem_tags(pdoc, true) }}
       </dd>
       <dt>{{ _('# Submissions') }}</dt>
       <dd><a href="{{ reverse_url('record_main') }}?pid={{ pdoc['doc_id'] }}">{{ pdoc['num_submit'] }}</a></dd>
