@@ -50,7 +50,8 @@
         </div>
         <div class="training__section__detail">
           <div class="section__body">
-          {% if nsdict[node['_id']]['is_invalid'] %}
+          {% set is_invalid = nsdict[node['_id']]['is_invalid'] %}
+          {% if is_invalid %}
             <blockquote class="typo note">
               <p>{{ _('This section cannot be challenged at present, so please complete the following sections first') }}:</p>
               <ul>
@@ -65,7 +66,9 @@
           <div class="section__body no-padding training__problems">
             <table class="data-table">
               <colgroup>
+              {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
                 <col class="col--status">
+              {% endif %}
                 <col class="col--name">
                 <col class="col--submit_n">
                 <col class="col--ac_rate">
@@ -73,7 +76,9 @@
               </colgroup>
               <thead>
                 <tr>
+                {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
                   <th class="col--status record-status--border">{{ _('Status') }}</th>
+                {% endif %}
                   <th class="col--name">{{ _('Problem') }}</th>
                   <th class="col--submit_n">{{ _('Submit') }}</th>
                   <th class="col--ac_rate">% {{ _('AC') }}</th>
@@ -85,11 +90,12 @@
               {% if pid in pdict %}
               {% with pdoc=pdict[pid], psdoc=psdict[pid] %}
                 <tr>
+                {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
                 {% if psdoc['rid'] %}
                   {{ record.render_status_td(psdoc, rid_key='rid') }}
                 {% else %}
-                  <td class="col--status record-status--border">
-                  </td>
+                  <td class="col--status record-status--border"></td>
+                {% endif %}
                 {% endif %}
                   <td class="col--name col--problem-name">
                   {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
@@ -105,6 +111,7 @@
                   {% endif %}
                     {{ problem.render_problem_title(
                       pdoc,
+                      invalid=is_invalid,
                       rp=vj4.job.rp.get_rp_expect(pdoc) if (not psdoc or psdoc['status'] != vj4.constant.record.STATUS_ACCEPTED) else none
                     ) }}
                   </td>
@@ -167,7 +174,9 @@
       </div>
       <div class="section__body typo">
         <dl class="large horizontal">
+        {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
           <dt>{{ _('Status') }}</dt><dd>{% if tsdoc['enroll'] %}{{ _('Completed' if tsdoc['done'] else 'In Progress') }}{% else %}{{ _('Not Enrolled') }}{% endif %}</dd>
+        {% endif %}
           {% if tsdoc['enroll'] %}
           <dt>{{ _('Progress') }}</dt><dd>{{ _('Completed') }} {{ (100 * tsdoc['done_pids']|length / pids|length)|round|int }}%</dd>
           {% endif %}

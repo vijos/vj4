@@ -24,32 +24,38 @@
       <div class="section__body no-padding">
         <table class="data-table">
           <colgroup>
+          {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
             <col class="col--status">
             <col class="col--submit-at">
+          {% endif %}
             <col class="col--problem">
           </colgroup>
           <thead>
             <tr>
+            {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
               <th class="col--status record-status--border">{{ _('Status') }}</th>
               <th class="col--submit-at">{{ _('Last Submit At') }}</th>
+            {% endif %}
               <th class="col--problem">{{ _('Problem') }}</th>
             </tr>
           </thead>
           <tbody>
           {% for pid in tdoc['pids'] %}
             <tr>
-            {% if psdict[pid] and psdict[pid]['rid'] %}
-            {% with rdoc=rdict[psdict[pid]['rid']] %}
-            {% if handler.can_show(tdoc) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS) %}
-              {{ record.render_status_td(rdoc) }}
-            {% else %}
-              <td class="col--status record-status--border"><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=handler.domain_id) }}">{{ _('Submitted') }}</a></td>
-            {% endif %}
-              <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>
-            {% endwith %}
-            {% else %}
-              <td class="col--status record-status--border">{{ _('No Submissions') }}</td>
-              <td class="col--submit-at">-</td>
+            {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+              {% if psdict[pid] and psdict[pid]['rid'] %}
+              {% with rdoc=rdict[psdict[pid]['rid']] %}
+              {% if handler.can_show(tdoc) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS) %}
+                {{ record.render_status_td(rdoc) }}
+              {% else %}
+                <td class="col--status record-status--border"><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=handler.domain_id) }}">{{ _('Submitted') }}</a></td>
+              {% endif %}
+                <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>
+              {% endwith %}
+              {% else %}
+                <td class="col--status record-status--border">{{ _('No Submissions') }}</td>
+                <td class="col--submit-at">-</td>
+              {% endif %}
             {% endif %}
               <td class="col--problem col--problem-name">
                 #{{ loop.index }}:
