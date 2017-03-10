@@ -75,7 +75,8 @@ class TrainingMainHandler(base.Handler, TrainingMixin):
       qs = 'sort={0}'.format(sort)
     else:
       qs = ''
-    tdocs, tpcount, _ = await pagination.paginate(training.get_multi(self.domain_id),
+    tdocs, tpcount, _ = await pagination.paginate(training.get_multi(self.domain_id) \
+                                                          .sort('doc_id', 1),
                                                   page, self.TRAININGS_PER_PAGE)
     tids = set(tdoc['doc_id'] for tdoc in tdocs)
     tsdict = dict()

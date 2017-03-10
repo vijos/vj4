@@ -33,6 +33,7 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
   async def prepare_training(self):
     if self.has_perm(builtin.PERM_VIEW_TRAINING):
       tdocs = await training.get_multi(self.domain_id) \
+                            .sort('doc_id', 1) \
                             .limit(self.TRAININGS_ON_MAIN) \
                             .to_list(None)
       tsdict = await training.get_dict_status(self.domain_id, self.user['_id'],
