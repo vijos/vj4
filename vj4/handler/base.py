@@ -441,7 +441,10 @@ def sanitize(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
     for key, value in kwargs.items():
-      kwargs[key] = func.__annotations__[key](value)
+      try:
+        kwargs[key] = func.__annotations__[key](value)
+      except KeyError:
+        pass
     return func(self, **kwargs)
 
   return wrapped
