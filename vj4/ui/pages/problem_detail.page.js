@@ -238,6 +238,10 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
     leaveScratchpadMode();
     ev.preventDefault();
   });
+  $(document).on('click', '[name="problem-sidebar__show-category"]', (ev) => {
+    $(ev.currentTarget).hide();
+    $('[name="problem-sidebar__categories"]').show();
+  });
 });
 
 export default page;
