@@ -5,7 +5,7 @@
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
-      <div class="section__body">
+      <div class="section__body typo">
         {{ tdoc['content']|markdown }}
       </div>
     </div>
@@ -56,8 +56,8 @@
           </ul>
         </div>
         <div class="training__section__detail">
+        {% if nsdict[node['_id']]['is_invalid'] %}
           <div class="section__body">
-          {% if nsdict[node['_id']]['is_invalid'] %}
             <blockquote class="typo note">
               <p>{{ _('This section cannot be challenged at present, so please complete the following sections first') }}:</p>
               <ul>
@@ -66,9 +66,13 @@
               {% endfor %}
               </ul>
             </blockquote>
-          {% endif %}
-            {{ node['content']|default('')|markdown }}
           </div>
+        {% endif %}
+        {% if node['content'] %}
+          <div class="section__body typo">
+            {{ node['content']|markdown }}
+          </div>
+        {% endif %}
           <div class="section__body no-padding training__problems">
             <table class="data-table">
               <colgroup>
