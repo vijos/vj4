@@ -6,7 +6,7 @@ import './katex.styl';
 const katexPage = new AutoloadPage('katexPage', () => {
   System.import('katex/dist/contrib/auto-render.min.js').then((renderKatex) => {
     function runKatex($containers) {
-      $containers.forEach(container => renderKatex(container));
+      $containers.get().forEach(container => renderKatex(container));
     }
     runKatex($('.typo'));
     $(document).on('vjContentNew', e => runKatex($(e.target).find('.typo')));
