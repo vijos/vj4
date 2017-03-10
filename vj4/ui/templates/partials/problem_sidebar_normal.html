@@ -109,7 +109,6 @@
       <dd>{{ pdoc['difficulty']|default(_('(None)')) or _('(None)') }}</dd>
       <dt>{{ _('Category') }}</dt>
       <dd>
-      {% if handler.get_setting('show_tags') == vj4.constant.setting.SHOW_TAGS_ALL %}
         {% if pdoc['category'] %}
           {% for category in pdoc['category'] %}
             <a href="{{ reverse_url('problem_category', category=category) }}">{{ category }}</a>
@@ -124,19 +123,10 @@
         {% else %}
           {{ _('(None)') }}
         {% endif %}
-      {% else %}
-        <!-- {{ pdoc['category'] }} -->
-        <!-- TODO(twd2): swx -->
-        <a href="javascript:;" >[{{ _('Show') }}]</a>
       </dd>
-      {% endif %}
       <dt>{{ _('Tags') }}</dt>
       <dd>
-      {% if handler.get_setting('show_tags') != vj4.constant.setting.SHOW_TAGS_HIDE %}
         {{ problem.render_problem_tags(pdoc, true) }}
-      {% else %}
-        <a href="javascript:;" >[{{ _('Show') }}]</a>
-      {% endif %}
       </dd>
       <dt>{{ _('# Submissions') }}</dt>
       <dd><a href="{{ reverse_url('record_main') }}?pid={{ pdoc['doc_id'] }}">{{ pdoc['num_submit'] }}</a></dd>
