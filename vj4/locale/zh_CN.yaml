@@ -630,4 +630,5 @@ Confirm deleting this comment? Its replies will be deleted as well.: 确认删�
 Confirm deleting this reply?: 确认删除这个回复吗？
 Aborted: 已放弃
 Network error: 网络错误
-page.problem.sidebar.show_category: 点击显示
+page.training_detail.invalid_when_not_enrolled: 未参加训练计划时您不能查看题目详情。
+page.problem_detail.sidebar.show_category: 点击显示

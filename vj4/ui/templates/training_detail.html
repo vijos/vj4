@@ -10,6 +10,13 @@
       </div>
     </div>
     <div class="section">
+    {% if not tsdoc['enroll'] %}
+      <div class="section__body">
+        <blockquote class="typo warn">
+          <p>{{ _('page.training_detail.invalid_when_not_enrolled') }}</p>
+        </blockquote>
+      </div>
+    {% endif %}
     {% for node in tdoc['dag'] %}
       <div class="training__section {% if nsdict[node['_id']]['is_done'] %}done{% elif nsdict[node['_id']]['is_progress'] %}progress{% elif nsdict[node['_id']]['is_open'] %}open{% else %}invalid{% endif %} {% if nsdict[node['_id']]['is_progress'] or nsdict[node['_id']]['is_open'] %}expanded{% else %}collapsed{% endif %}">
         <div class="section__header clearfix">
@@ -50,8 +57,7 @@
         </div>
         <div class="training__section__detail">
           <div class="section__body">
-          {% set is_invalid = nsdict[node['_id']]['is_invalid'] %}
-          {% if is_invalid %}
+          {% if nsdict[node['_id']]['is_invalid'] %}
             <blockquote class="typo note">
               <p>{{ _('This section cannot be challenged at present, so please complete the following sections first') }}:</p>
               <ul>
@@ -111,7 +117,8 @@
                   {% endif %}
                     {{ problem.render_problem_title(
                       pdoc,
-                      invalid=is_invalid,
+                      invalid=not tsdoc['enroll'],
+                      show_tags=false,
                       rp=vj4.job.rp.get_rp_expect(pdoc) if (not psdoc or psdoc['status'] != vj4.constant.record.STATUS_ACCEPTED) else none
                     ) }}
                   </td>
