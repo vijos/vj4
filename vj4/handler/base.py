@@ -444,7 +444,7 @@ def sanitize(func):
       try:
         kwargs[key] = func.__annotations__[key](value)
       except KeyError:
-        raise error.BadRequestError(key)
+        raise error.UnknownArgumentError(key)
     return func(self, **kwargs)
 
   return wrapped
