@@ -96,6 +96,7 @@
       <dt>{{ _('ID') }}</dt>
       <dd>{{ pdoc['doc_id'] }}</dd>
     {% endif %}
+    {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
       <dt>{{ _('Submission') }}</dt>
       <dd>
       {% if pdoc['psdoc']['status'] %}
@@ -107,6 +108,7 @@
         {{ _('(None)') }}
       {% endif %}
       </dd>
+    {% endif %}
       <dt>{{ _('Difficulty') }}</dt>
       <dd>{{ pdoc['difficulty']|default(_('(None)')) or _('(None)') }}</dd>
       <dt>{{ _('Category') }}</dt>
