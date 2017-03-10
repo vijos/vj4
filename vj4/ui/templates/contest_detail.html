@@ -51,9 +51,9 @@
               <td class="col--status record-status--border">{{ _('No Submissions') }}</td>
               <td class="col--submit-at">-</td>
             {% endif %}
-              <td class="col--problem">
+              <td class="col--problem col--problem-name">
                 #{{ loop.index }}:
-                {{ problem.render_problem_title(pdict[pid], tdoc=tdoc, show_invisible_flag=false) }}
+                {{ problem.render_problem_title(pdict[pid], tdoc=tdoc, show_invisible_flag=false, show_tags=false) }}
               </td>
             </tr>
           {% endfor %}

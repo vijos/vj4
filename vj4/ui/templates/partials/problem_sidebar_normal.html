@@ -1,4 +1,5 @@
 {% import "components/user.html" as user with context %}
+{% import "components/problem.html" as problem with context %}
 <div class="section side section--problem-sidebar">
 {% if page_name != 'problem_detail' and page_name != 'contest_detail_problem' %}
   <div class="section__header">
@@ -132,19 +133,8 @@
       <dt>{{ _('Tags') }}</dt>
       <dd>
       {% if handler.get_setting('show_tags') != vj4.constant.setting.SHOW_TAGS_HIDE %}
-        {% if pdoc['tag'] %}
-          {% for tag in pdoc['tag'] %}
-          <a href="{{ reverse_url('problem_category', category=tag) }}">{{ tag }}</a>
-          {% if loop.index < pdoc['tag']|length %}
-          ,
-          {% endif %}
-          {% endfor %}
-        {% else %}
-          {{ _('(None)') }}
-        {% endif %}
+        {{ problem.render_problem_tags(pdoc, true) }}
       {% else %}
-        <!-- {{ pdoc['tag'] }} -->
-        <!-- TODO(twd2): swx -->
         <a href="javascript:;" >[{{ _('Show') }}]</a>
       {% endif %}
       </dd>
