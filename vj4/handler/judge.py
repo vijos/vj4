@@ -101,7 +101,7 @@ class JudgeDataListHandler(base.Handler):
     datalist = []
     for domain_id, pid in pids:
       datalist.append({'domain_id': domain_id, 'pid': pid})
-    self.json({'list': datalist,
+    self.json({'pids': datalist,
                'time': calendar.timegm(datetime.datetime.utcnow().utctimetuple())})
 
 
@@ -142,8 +142,13 @@ class JudgeNotifyConnection(base.Connection):
   @base.require_priv(builtin.PRIV_READ_RECORD_CODE | builtin.PRIV_WRITE_RECORD)
   async def on_open(self):
     self.rids = {}  # delivery_tag -> rid
+    bus.subscribe(self.on_problem_data_change, ['problem_data_change'])
     self.channel = await queue.consume('judge', self._on_queue_message)
     asyncio.ensure_future(self.channel.close_event.wait()).add_done_callback(lambda _: self.close())
+
+  async def on_problem_data_change(self, e):
+    domain_id_pid = dict(e['value'])
+    self.send(event=e['key'], **domain_id_pid)
 
   async def _on_queue_message(self, tag, *, rid):
     # This callback runs in the receiver loop of the amqp connection. Should not block here.
