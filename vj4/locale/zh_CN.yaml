@@ -625,3 +625,11 @@ Insert Code: 插入代码
 Create Link: 创建链接
 Insert Image: 插入图像
 Toggle Preview: 切换预览
+(All Problems): (所有题目)
+Confirm deleting this comment? Its replies will be deleted as well.: 确认删除这个评论吗？回复会被同时删除。
+Confirm deleting this reply?: 确认删除这个回复吗？
+Aborted: 已放弃
+Network error: 网络错误
+page.training_detail.invalid_when_not_enrolled: 未参加训练计划时您不能查看题目详情。
+page.problem_detail.sidebar.show_category: 点击显示
+Argument {0} is unknown.: 未知的参数 {0} 。

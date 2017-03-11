@@ -37,7 +37,7 @@ function onToggleRoleCheckboxClick(ev) {
   $targets.prop('checked', destCheck);
 }
 
-const multiSelectCheckboxPage = new AutoloadPage(() => {
+const multiSelectCheckboxPage = new AutoloadPage('multiSelectCheckboxPage', () => {
   $(document).on('click', '[data-checkbox-range]', onRangeRoleCheckboxClick);
   $(document).on('click', '[data-checkbox-toggle]', onToggleRoleCheckboxClick);
 });

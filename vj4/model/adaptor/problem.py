@@ -11,6 +11,7 @@ from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
+from vj4.service import bus
 from vj4.util import argmethod
 from vj4.util import validator
 
@@ -176,8 +177,11 @@ def get_multi_solution_by_uid(domain_id: str, uid: int, fields=None):
 
 @argmethod.wrap
 async def delete_solution(domain_id: str, psid: document.convert_doc_id):
-  # TODO(twd2): -num_liked
-  return await document.delete(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+  # -num_liked
+  psdoc = await get_solution(domain_id, psid)
+  result = await document.delete(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+  await domain.inc_user(domain_id, psdoc['owner_uid'], num_liked=-psdoc['vote'])
+  return result
 
 
 @argmethod.wrap
@@ -260,6 +264,7 @@ async def set_data(domain_id: str, pid: document.convert_doc_id, data: objectid.
   pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, data=data)
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
+  await bus.publish('problem_data_change', {'domain_id': domain_id, 'pid': pid})
   return pdoc
 
 
@@ -276,9 +281,9 @@ async def get_data_list(last: int):
   last_datetime = datetime.datetime.fromtimestamp(last)
   # TODO(twd2): performance improve, more elegant
   coll = db.Collection('document')
-  cursor = coll.find({'doc_type': document.TYPE_PROBLEM})
+  pdocs = coll.find({'doc_type': document.TYPE_PROBLEM})
   pids = []  # with domain_id
-  async for pdoc in cursor:
+  async for pdoc in pdocs:
     if 'data' not in pdoc or not pdoc['data']:
       continue
     date = await fs.get_datetime(pdoc['data'])
@@ -286,7 +291,6 @@ async def get_data_list(last: int):
       continue
     if last_datetime < date:
       pids.append((pdoc['domain_id'], pdoc['doc_id']))
-
   return list(set(pids))
 
 

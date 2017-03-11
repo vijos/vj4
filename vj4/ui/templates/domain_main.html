@@ -59,7 +59,7 @@
       <div class="section__header">
         <h1 class="section__title">{{ _('Training') }}</h1>
       </div>
-      {% with tdocs=trdocs, tsdocs=trsdocs %}
+      {% with tdocs=trdocs, tsdict=trsdict %}
       <ol class="section__list all primary training__list">
         {% for tdoc in tdocs %}
         <li class="section__list__item training__item">

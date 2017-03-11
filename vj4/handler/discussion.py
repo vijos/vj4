@@ -7,6 +7,7 @@ from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
+from vj4.model import oplog
 from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.handler import base
@@ -208,6 +209,7 @@ class DiscussionDetailHandler(base.OperationHandler):
     if (not self.own(ddoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION)
         and not self.own(drdoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF)):
       self.check_perm(builtin.PERM_DELETE_DISCUSSION_REPLY)
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_DOCUMENT, doc=drdoc)
     drdoc = await discussion.delete_reply(self.domain_id, drdoc['doc_id'])
     self.json_or_redirect(self.url)
 
@@ -241,6 +243,8 @@ class DiscussionDetailHandler(base.OperationHandler):
     if (not self.own(ddoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION)
         and not self.own(drrdoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF)):
       self.check_perm(builtin.PERM_DELETE_DISCUSSION_REPLY)
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_SUB_DOCUMENT, sub_doc=drrdoc,
+                    doc_type=drdoc['doc_type'], doc_id=drdoc['doc_id'])
     await discussion.delete_tail_reply(self.domain_id, drid, drrid)
     self.json_or_redirect(self.url)
 
@@ -337,5 +341,6 @@ class DiscussionEditHandler(base.OperationHandler):
       raise error.DiscussionNotFoundError(self.domain_id, did)
     if not self.own(ddoc, builtin.PERM_DELETE_DISCUSSION_SELF):
       self.check_perm(builtin.PERM_DELETE_DISCUSSION)
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_DOCUMENT, doc=ddoc)
     await discussion.delete(self.domain_id, did)
     self.json_or_redirect(node_url(self, 'discussion_node', discussion.node_id(ddoc)))

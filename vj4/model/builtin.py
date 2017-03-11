@@ -4,6 +4,7 @@ import functools
 import itertools
 
 from vj4 import constant
+from vj4 import error
 from vj4.util import version
 
 # Permissions.
@@ -160,6 +161,7 @@ PRIV_ALL = -1
 
 DEFAULT_PRIV = PRIV_USER_PROFILE | PRIV_CREATE_DOMAIN | PRIV_CREATE_FILE | PRIV_DELETE_FILE_SELF
 JUDGE_PRIV = (PRIV_USER_PROFILE
+              | PRIV_VIEW_ALL_DOMAIN
               | PRIV_READ_PROBLEM_DATA
               | PRIV_READ_PRETEST_DATA
               | PRIV_READ_RECORD_CODE
@@ -427,6 +429,10 @@ PROBLEM_CATEGORIES = collections.OrderedDict([
 ])
 PROBLEM_SUB_CATEGORIES = {}
 for category, sub_categories in PROBLEM_CATEGORIES.items():
+  assert ' ' not in category
+  assert ',' not in category
   for sub_category in sub_categories:
+    assert ' ' not in sub_category
+    assert ',' not in sub_category
     assert sub_category not in PROBLEM_SUB_CATEGORIES
     PROBLEM_SUB_CATEGORIES[sub_category] = category

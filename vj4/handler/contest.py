@@ -74,8 +74,8 @@ class ContestMainHandler(base.Handler, ContestStatusMixin):
     tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                            (tdoc['doc_id'] for tdoc in tdocs))
-    self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs,
-                tdocs=tdocs, tsdict=tsdict, rule=rule)
+    self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs, rule=rule,
+                tdocs=tdocs, tsdict=tsdict)
 
 
 @app.route('/contest/{tid:\w{24}}', 'contest_detail')

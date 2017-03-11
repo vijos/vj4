@@ -190,6 +190,14 @@ class HandlerBase(setting.SettingMixin):
     kwargs['datetime_span'] = self.datetime_span
     return template.Environment().get_template(template_name).render(kwargs)
 
+  def render_title(self, page_title=None):
+    if not page_title:
+      page_title = self.translate(self.TITLE)
+    if self.domain_id != builtin.DOMAIN_ID_SYSTEM:
+      page_title += ' - {}'.format(self.domain['name'])
+    page_title += ' - Vijos'
+    return page_title
+
   async def send_mail(self, mail, title, template_name, **kwargs):
     content = self.render_html(template_name, url_prefix=options.url_prefix,
                                **kwargs)
@@ -432,7 +440,10 @@ def sanitize(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
     for key, value in kwargs.items():
-      kwargs[key] = func.__annotations__[key](value)
+      try:
+        kwargs[key] = func.__annotations__[key](value)
+      except KeyError:
+        raise error.UnknownArgumentError(key)
     return func(self, **kwargs)
 
   return wrapped

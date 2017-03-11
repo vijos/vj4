@@ -2,6 +2,9 @@ import { AutoloadPage } from 'vj/misc/PageLoader';
 import delay from 'vj/utils/delay';
 import CmEditor from './cmeditor';
 
+import 'vj-simplemde/src/css/simplemde.css';
+import './cmeditor.styl';
+
 function runSubstitute($container) {
   const selector = ['textarea[data-markdown]'];
   $container.find(selector.join(', ')).get().forEach((element) => {
@@ -9,7 +12,7 @@ function runSubstitute($container) {
   });
 }
 
-const cmEditorPage = new AutoloadPage(() => {
+const cmEditorPage = new AutoloadPage('cmEditorPage', () => {
   runSubstitute($('body'));
   $(document).on('vjContentNew', async (e) => {
     await delay(0);

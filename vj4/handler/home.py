@@ -36,12 +36,17 @@ class HomeSecurityHandler(base.OperationHandler):
   async def get(self):
     # TODO(iceboy): pagination? or limit session count for uid?
     sessions = await token.get_session_list_by_uid(self.user['_id'])
-    for session in sessions:
-      session['update_ua'] = useragent.parse(session['update_ua'])
-      session['update_geoip'] = geoip.ip2geo(session['update_ip'], self.get_setting('view_lang'))
-      session['token_digest'] = hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest()
-      session['is_current'] = (session['_id'] == self.session['_id'])
-    self.render('home_security.html', sessions=sessions)
+    annotated_sessions = list({
+        **session,
+        'update_ua': useragent.parse(session.get('update_ua') or
+                                     session.get('create_ua') or ''),
+        'update_geoip': geoip.ip2geo(session.get('update_ip') or
+                                     session.get('create_ip'),
+                                     self.get_setting('view_lang')),
+        'token_digest': hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest(),
+        'is_current': session['_id'] == self.session['_id']
+    } for session in sessions)
+    self.render('home_security.html', sessions=annotated_sessions)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token

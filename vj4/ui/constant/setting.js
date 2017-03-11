@@ -10,16 +10,6 @@ export const PRIVACY_RANGE = {
 };
 attachObjectMeta(PRIVACY_RANGE, 'intKey', true);
 
-export const SHOW_TAGS_ALL = 0;
-export const SHOW_TAGS_PARTIALLY = 1;
-export const SHOW_TAGS_HIDE = 2;
-export const SHOW_TAGS_RANGE = {
-  [SHOW_TAGS_ALL]: 'Show all tags',
-  [SHOW_TAGS_PARTIALLY]: 'Hide categorical tags',
-  [SHOW_TAGS_HIDE]: 'Hide all tags',
-};
-attachObjectMeta(SHOW_TAGS_RANGE, 'intKey', true);
-
 export const FUNCTION_RANGE = {
   0: 'Disabled',
   1: 'Enabled',

@@ -14,13 +14,18 @@ install:
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - node scripts/fix_abroad_shrinkwrap.js
   - npm install
-  - npm run generate
 script:
-  - python -m unittest
   - npm run build:production
+  - python -m unittest
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - node_modules
+before_cache:
+  - rm -f $HOME/.cache/pip/log/debug.log

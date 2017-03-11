@@ -19,6 +19,7 @@ from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
 from vj4.model import opcount
+from vj4.model import oplog
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
@@ -26,6 +27,28 @@ from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.util import pagination
 from vj4.util import options
+
+
+
+async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
+                                      category, psdict, **kwargs):
+  if 'page_title' not in kwargs:
+    kwargs['page_title'] = self.translate(self.TITLE)
+  if 'path_components' not in kwargs:
+    kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
+  if self.prefer_json:
+    list_html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
+                                 pcount=pcount, pdocs=pdocs, psdict=psdict)
+    stat_html = self.render_html('partials/problem_stat.html', pcount=pcount)
+    path_html = self.render_html('partials/path.html', path_components=kwargs['path_components'])
+    self.json({'title': self.render_title(kwargs['page_title']),
+               'fragments': [{'html': list_html},
+                             {'html': stat_html},
+                             {'html': path_html}]})
+  else:
+    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
+                category=category, psdict=psdict, categories=problem.get_categories(),
+                **kwargs)
 
 
 @app.route('/p', 'problem_main')
@@ -52,8 +75,8 @@ class ProblemMainHandler(base.OperationHandler):
                                              (pdoc['doc_id'] for pdoc in pdocs))
     else:
       psdict = None
-    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
-                psdict=psdict, categories=problem.get_categories())
+    await render_or_json_problem_list(self, page=page, ppcount=ppcount, pcount=pcount,
+                                      pdocs=pdocs, category='', psdict=psdict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
@@ -118,17 +141,13 @@ class ProblemCategoryHandler(base.OperationHandler):
                                              (pdoc['doc_id'] for pdoc in pdocs))
     else:
       psdict = None
-    if self.prefer_json:
-      html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
-                              pcount=pcount, pdocs=pdocs, psdict=psdict)
-      self.json({'html': html})
-    else:
-      path_components = self.build_path(
-          (self.translate('problem_main'), self.reverse_url('problem_main')),
-          (category, None))
-      self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
-                  psdict=psdict, categories=problem.get_categories(),
-                  page_title=category, path_components=path_components)
+    page_title = category or self.translate('(All Problems)')
+    path_components = self.build_path(
+        (self.translate('problem_main'), self.reverse_url('problem_main')),
+        (page_title, None))
+    await render_or_json_problem_list(self, page=page, ppcount=ppcount, pcount=pcount,
+                                      pdocs=pdocs, category=category, psdict=psdict,
+                                      page_title=page_title, path_components=path_components)
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
@@ -339,7 +358,8 @@ class ProblemSolutionHandler(base.OperationHandler):
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
     if not self.own(psdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION)
-    psdoc = await problem.delete_solution(self.domain_id, psdoc['doc_id'])
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_DOCUMENT, doc=psdoc)
+    await problem.delete_solution(self.domain_id, psdoc['doc_id'])
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -374,7 +394,9 @@ class ProblemSolutionHandler(base.OperationHandler):
       raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
-    await problem.delete_solution_reply(self.domain_id, psid, psrid, content)
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_SUB_DOCUMENT, sub_doc=psrdoc,
+                    doc_type=psdoc['doc_type'], doc_id=psdoc['doc_id'])
+    await problem.delete_solution_reply(self.domain_id, psid, psrid)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)

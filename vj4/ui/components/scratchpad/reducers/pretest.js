@@ -1,7 +1,7 @@
-import uuid from 'uuid';
+import uuid from 'uuid/v4';
 import _ from 'lodash';
 
-const initialId = uuid.v4();
+const initialId = uuid();
 
 export default function reducer(state = {
   counter: 1,

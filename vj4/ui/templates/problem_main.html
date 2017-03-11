@@ -4,13 +4,15 @@
 {% block content %}
 <script>
   var Context = {{ {
-    'getProblemUrl': reverse_url('problem_category', category='{category}'),
+    'getProblemUrlWithCategory': reverse_url('problem_category', category='{category}'),
+    'getProblemUrlWithoutCategory': reverse_url('problem_main'),
+    'currentCategory': category,
   }|json|safe }};
 </script>
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
-      <div class="section__body no-padding" data-widget-cf-target>
+      <div class="section__body no-padding">
         {% include "partials/problem_list.html" %}
       </div>
     </div>
@@ -70,9 +72,7 @@
       <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
       </div>
-      <div class="section__body">
-        <p>{{ _('{0} problems').format(pcount) }}</p>
-      </div>
+      {% include "partials/problem_stat.html" %}
     </div>
   </div>
 </div>

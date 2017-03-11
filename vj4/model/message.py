@@ -62,7 +62,7 @@ async def delete(message_id: objectid.ObjectId, uid: int=None):
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.Collection('user.message')
+  coll = db.Collection('message')
   await coll.create_index([('sender_uid', 1), ('_id', -1)])
   await coll.create_index([('sendee_uid', 1), ('_id', -1)])
 
