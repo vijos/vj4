@@ -88,7 +88,7 @@ def connection_route(prefix, name):
           await session.on_open()
         elif msg.tp == sockjs.MSG_MESSAGE:
           await session.on_message(**json.decode(msg.data))
-        elif msg.tp == sockjs.MSG_CLOSE:
+        elif msg.tp == sockjs.MSG_CLOSED:
           await session.on_close()
       except error.UserFacingError as e:
         _logger.warning("Websocket user facing error: %s", repr(e))
