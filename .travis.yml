@@ -1,9 +1,10 @@
 sudo: required
+dist: trusty
 services:
   - rabbitmq
   - mongodb
 env:
-  - CXX=g++-4.8 TRAVIS_NODE_VERSION="5.11"
+  - CXX=g++-4.8 TRAVIS_NODE_VERSION="6.9.4"
 language: python
 python:
   - "3.5"
