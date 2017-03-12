@@ -32,7 +32,7 @@ export default function reducer(state = {
   }
   case 'SCRATCHPAD_PRETEST_ADD_DATA': {
     const newCounter = state.counter + 1;
-    const newId = uuid.v4();
+    const newId = uuid();
     return {
       ...state,
       counter: newCounter,
@@ -63,7 +63,7 @@ export default function reducer(state = {
     const newData = _.omit(state.data, state.current);
     if (newTabs.length === 0) {
       // keep at least one data
-      const id = uuid.v4();
+      const id = uuid();
       newTabs.push(id);
       newMeta[id] = {
         id,
