@@ -151,30 +151,26 @@ class JudgeNotifyConnection(base.Connection):
     self.send(event=e['key'], **domain_id_pid)
 
   async def _on_queue_message(self, tag, *, rid):
-    # This callback runs in the receiver loop of the amqp connection. Should not block here.
-    async def start():
-      # TODO(iceboy): Error handling?
-      rdoc = await record.begin_judge(rid, self.user['_id'], self.id,
-                                      constant.record.STATUS_FETCHED)
-      if rdoc:
-        used_time = await opcount.get(**opcount.OPS['run_code'],
-                                      ident=opcount.PREFIX_USER + str(rdoc['uid']))
-        if used_time >= opcount.OPS['run_code']['max_operations']:
-          await asyncio.gather(
-              record.end_judge(rid, self.user['_id'], self.id,
-                               constant.record.STATUS_CANCELED, 0, 0, 0),
-              self.channel.basic_client_ack(tag))
-          await bus.publish('record_change', rid)
-          return
-        self.rids[tag] = rdoc['_id']
-        self.send(rid=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
-                  lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])
-        await bus.publish('record_change', rdoc['_id'])
-      else:
-        # Record not found, eat it.
-        await self.channel.basic_client_ack(tag)
-
-    asyncio.get_event_loop().create_task(start())
+    # TODO(iceboy): Error handling?
+    rdoc = await record.begin_judge(rid, self.user['_id'], self.id,
+                                    constant.record.STATUS_FETCHED)
+    if rdoc:
+      used_time = await opcount.get(**opcount.OPS['run_code'],
+                                    ident=opcount.PREFIX_USER + str(rdoc['uid']))
+      if used_time >= opcount.OPS['run_code']['max_operations']:
+        await asyncio.gather(
+            record.end_judge(rid, self.user['_id'], self.id,
+                             constant.record.STATUS_CANCELED, 0, 0, 0),
+            self.channel.basic_client_ack(tag))
+        await bus.publish('record_change', rid)
+        return
+      self.rids[tag] = rdoc['_id']
+      self.send(rid=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
+                lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])
+      await bus.publish('record_change', rdoc['_id'])
+    else:
+      # Record not found, eat it.
+      await self.channel.basic_client_ack(tag)
 
   async def on_message(self, *, key, tag, **kwargs):
     if key == 'next':
@@ -212,12 +208,12 @@ class JudgeNotifyConnection(base.Connection):
 
   async def on_close(self):
     async def close():
-      await asyncio.gather(*[record.end_judge(rid, self.user['_id'], self.id,
-                                              constant.record.STATUS_CANCELED, 0, 0, 0)
-                             for rid in self.rids.values()])
-      await asyncio.gather(*[bus.publish('record_change', rid)
-                             for rid in self.rids.values()])
-      # There is a bug in current version's aioamqp and we cannot use no_wait=True here.
+      async def reset_record(rid):
+        await record.end_judge(rid, self.user['_id'], self.id,
+                               constant.record.STATUS_WAITING, 0, 0, 0)
+        await bus.publish('record_change', rid)
+
+      await asyncio.gather(*[reset_record(rid) for rid in self.rids.values()])
       await self.channel.close()
 
     asyncio.get_event_loop().create_task(close())

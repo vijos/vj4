@@ -48,7 +48,7 @@ export default function ({ watch, production, errorHandler }) {
       }))
       .on('glyphs', (glyphs, options) => {
         gulp
-          .src(`vj4/ui/misc/icons/template/*.styl`)
+          .src('vj4/ui/misc/icons/template/*.styl')
           .pipe(nunjucks.compile({ glyphs, options }))
           .pipe(gulp.dest('vj4/ui/misc/.iconfont'))
           .pipe(offsetMtimeAtFirstBuild());
