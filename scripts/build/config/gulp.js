@@ -31,6 +31,15 @@ function offsetMtimeAtFirstBuild() {
 
 export default function ({ watch, production, errorHandler }) {
 
+  let iconfontTemplateArgs = null;
+
+  gulp.task('iconfont:template', () => {
+    return gulp.src('vj4/ui/misc/icons/template/*.styl')
+      .pipe(nunjucks.compile(iconfontTemplateArgs))
+      .pipe(gulp.dest('vj4/ui/misc/.iconfont'))
+      .pipe(offsetMtimeAtFirstBuild())
+  });
+
   gulp.task('iconfont', () => {
     return gulp
       .src('vj4/ui/misc/icons/*.svg')
@@ -47,11 +56,8 @@ export default function ({ watch, production, errorHandler }) {
         timestamp: iconTimestamp,
       }))
       .on('glyphs', (glyphs, options) => {
-        gulp
-          .src('vj4/ui/misc/icons/template/*.styl')
-          .pipe(nunjucks.compile({ glyphs, options }))
-          .pipe(gulp.dest('vj4/ui/misc/.iconfont'))
-          .pipe(offsetMtimeAtFirstBuild());
+        iconfontTemplateArgs = { glyphs, options };
+        gulp.start('iconfont:template');
       })
       .pipe(gulp.dest('vj4/ui/misc/.iconfont'))
       .pipe(offsetMtimeAtFirstBuild());

@@ -25,7 +25,10 @@ export default function touch(mtime) {
     }
     touchFile(file)
       .catch(err => this.emit('error', err))
-      .then(() => callback());
+      .then(() => {
+        this.push(file);
+        callback();
+      });
   }
 
   return through.obj(processStream);
