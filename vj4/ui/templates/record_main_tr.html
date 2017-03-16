@@ -22,5 +22,8 @@
   {% endif %}
   </td>
   <td class="col--submit-by"><a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">{{ udoc['uname'] }}</a></td>
+  <td class="col--time">{{ rdoc['time_ms'] }}ms</td>
+  <td class="col--memory">{{ rdoc['memory_kb']|format_size(1024) }}</td>
+  <td class="col--lang">{{ vj4.constant.language.LANG_TEXTS[rdoc['lang']] }}</td>
   <td class="col--submit-at">{{ datetime_span(rdoc['_id'].generation_time) }}</td>
 </tr>
