@@ -64,17 +64,17 @@ class ContestMainHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.get_argument
   @base.sanitize
-  async def get(self, *, rule: str=None, page: int=1):
+  async def get(self, *, rule: int=0, page: int=1):
     if not rule:
       tdocs = contest.get_multi(self.domain_id)
       qs = ''
     else:
-      tdocs = contest.get_multi(self.domain_id, rule=int(rule))
-      qs = 'rule={0}'.format(int(rule))
+      tdocs = contest.get_multi(self.domain_id, rule=rule)
+      qs = 'rule={0}'.format(rule)
     tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                            (tdoc['doc_id'] for tdoc in tdocs))
-    self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs,
+    self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs, rule=rule,
                 tdocs=tdocs, tsdict=tsdict)
 
 
@@ -218,7 +218,8 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
         or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
                           .sort([('_id', -1)]) \
-                          .to_list(10)
+                          .limit(10) \
+                          .to_list(None)
     else:
       rdocs = []
     if not self.prefer_json:
@@ -255,11 +256,11 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
                            self.user['_id'], lang, code, tid=tdoc['doc_id'], hidden=True)
-    await contest.update_status(self.domain_id, tdoc['_id'], self.user['_id'],
+    await contest.update_status(self.domain_id, tdoc['doc_id'], self.user['_id'],
                                 rid, pdoc['doc_id'], False, 0)
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
-        self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['_id']))
+        self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['doc_id']))
     else:
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 

@@ -22,15 +22,19 @@
   &.drop-after-open
     opacity: 1
 
-.drop-element-attached-bottom.drop-element-attached-center .drop-content
-  transform-origin: 50% 100%
-.drop-element-attached-top.drop-element-attached-center .drop-content
-  transform-origin: 50% 0
-.drop-element-attached-top.drop-element-attached-left .drop-content
-  transform-origin: 0 0
-.drop-element-attached-top.drop-element-attached-right .drop-content
-  transform-origin: 100% 0
-.drop-element-attached-bottom.drop-element-attached-left .drop-content
-  transform-origin: 0 100%
-.drop-element-attached-bottom.drop-element-attached-right .drop-content
-  transform-origin: 100% 100%
+.drop-target-attached-top.drop-target-attached-left .drop-content
+  transform-origin: -10% 110%
+.drop-target-attached-top.drop-target-attached-center .drop-content
+  transform-origin: 50% 110%
+.drop-target-attached-top.drop-target-attached-right .drop-content
+  transform-origin: 110% 110%
+.drop-target-attached-bottom.drop-target-attached-left .drop-content
+  transform-origin: -10% -10%
+.drop-target-attached-bottom.drop-target-attached-center .drop-content
+  transform-origin: 50% -10%
+.drop-target-attached-bottom.drop-target-attached-right .drop-content
+  transform-origin: 110% -10%
+.drop-target-attached-center.drop-target-attached-right .drop-content
+  transform-origin: -10% 50%
+.drop-target-attached-center.drop-target-attached-left .drop-content
+  transform-origin: 110% 50%

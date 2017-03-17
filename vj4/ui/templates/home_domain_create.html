@@ -13,7 +13,7 @@
         <li>{{ _('At least 4 characters') }}</li>
         <li>{{ _('Not wrapped with space') }}</li>
         <li>{{ _('Not started with a number') }}</li>
-        <li>{{ _('Without slashes or backslashes') }}</li>
+        <li>{{ _('Only A-Z, a-z, 0-9 and _ are accepted') }}</li>
       </ul>
     </blockquote>
     <form method="post">
@@ -22,8 +22,12 @@
     {% endwith %}
       <div class="row"><div class="columns">
         <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-        <input type="submit" class="rounded primary button" value="{{ _('Create') }}">
-        <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
+        <button type="submit" class="rounded primary button">
+          {{ _('Create') }}
+        </button>
+        <button type="button" class="rounded button" onclick="window.history.go(-1)">
+          {{ _('Cancel') }}
+        </button>
       </div></div>
     </form>
   </div>

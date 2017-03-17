@@ -32,6 +32,12 @@ class UserFacingError(Error):
     return 'An error has occurred.'
 
 
+class BadRequestError(UserFacingError):
+  @property
+  def http_status(self):
+    return 400
+
+
 class ForbiddenError(UserFacingError):
   @property
   def http_status(self):
@@ -278,3 +284,9 @@ class UsageExceededError(ForbiddenError):
   @property
   def message(self):
     return 'Usage exceeded.'
+
+
+class UnknownArgumentError(BadRequestError):
+  @property
+  def message(self):
+    return 'Argument {0} is unknown.'

@@ -178,7 +178,8 @@ class HandlerBase(setting.SettingMixin):
 
   def render_html(self, template_name, **kwargs):
     kwargs['handler'] = self
-    kwargs['_'] = self.translate
+    if '_' not in kwargs:
+      kwargs['_'] = self.translate
     kwargs['domain_id'] = self.domain_id
     if 'page_name' not in kwargs:
       kwargs['page_name'] = self.NAME
@@ -189,6 +190,22 @@ class HandlerBase(setting.SettingMixin):
     kwargs['reverse_url'] = self.reverse_url
     kwargs['datetime_span'] = self.datetime_span
     return template.Environment().get_template(template_name).render(kwargs)
+
+  def render_title(self, page_title=None):
+    if not page_title:
+      page_title = self.translate(self.TITLE)
+    if self.domain_id != builtin.DOMAIN_ID_SYSTEM:
+      page_title += ' - {}'.format(self.domain['name'])
+    page_title += ' - Vijos'
+    return page_title
+
+  async def send_mail(self, mail, title, template_name, **kwargs):
+    content = self.render_html(template_name, url_prefix=options.url_prefix,
+                               **kwargs)
+    translate = self.translate
+    if '_' in kwargs:
+      translate = kwargs['_']
+    await mailer.send_mail(mail, '{0} - Vijos'.format(translate(title)), content)
 
 
 class Handler(web.View, HandlerBase):
@@ -233,11 +250,6 @@ class Handler(web.View, HandlerBase):
     self.response.content_type = type
     await self.response.prepare(self.request)
     self.response.write(data)
-
-  async def send_mail(self, mail, title, template_name, **kwargs):
-    content = self.render_html(template_name, url_prefix=options.url_prefix,
-                               **kwargs)
-    await mailer.send_mail(mail, '{0} - Vijos'.format(self.translate(title)), content)
 
   @property
   def prefer_json(self):
@@ -429,7 +441,10 @@ def sanitize(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
     for key, value in kwargs.items():
-      kwargs[key] = func.__annotations__[key](value)
+      try:
+        kwargs[key] = func.__annotations__[key](value)
+      except KeyError:
+        raise error.UnknownArgumentError(key)
     return func(self, **kwargs)
 
   return wrapped

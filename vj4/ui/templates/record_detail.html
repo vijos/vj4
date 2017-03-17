@@ -52,7 +52,7 @@
                 <a class="tool-button" href="{{ reverse_url('wiki_help') }}#status"><span class="icon icon-help"></span></a>
               </td>
               <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
-              <td class="col--memory">{{ rcdoc['memory_kb'] / 1000 }}MiB</td>
+              <td class="col--memory">{{ rcdoc['memory_kb']|format_size(1024) }}</td>
             </tr>
           {% endfor %}
           </tbody>
@@ -152,7 +152,7 @@
           <dt>{{ _('Total Time') }}</dt>
           <dd>{{ rdoc['time_ms'] }}ms</dd>
           <dt>{{ _('Peak Memory') }}</dt>
-          <dd>{{ rdoc['memory_kb'] / 1000 }}MiB</dd>
+          <dd>{{ rdoc['memory_kb']|format_size(1024) }}</dd>
         {% endif %}
         </dl>
       </div>

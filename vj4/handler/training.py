@@ -75,7 +75,8 @@ class TrainingMainHandler(base.Handler, TrainingMixin):
       qs = 'sort={0}'.format(sort)
     else:
       qs = ''
-    tdocs, tpcount, _ = await pagination.paginate(training.get_multi(self.domain_id),
+    tdocs, tpcount, _ = await pagination.paginate(training.get_multi(self.domain_id) \
+                                                          .sort('doc_id', 1),
                                                   page, self.TRAININGS_PER_PAGE)
     tids = set(tdoc['doc_id'] for tdoc in tdocs)
     tsdict = dict()
@@ -175,6 +176,9 @@ class TrainingCreateHandler(base.Handler, TrainingMixin):
   async def post(self, *, title: str, content: str, dag: str):
     dag = _parse_dag_json(dag)
     pids = self.get_pids({'dag': dag})
+    if not pids:
+      # empty plan
+      raise error.ValidationError('dag')
     pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
                                     fields={'doc_id': 1, 'hidden': 1}) \
                          .sort('doc_id', 1) \
@@ -220,6 +224,9 @@ class TrainingEditHandler(base.Handler, TrainingMixin):
       self.check_perm(builtin.PERM_EDIT_TRAINING)
     dag = _parse_dag_json(dag)
     pids = self.get_pids({'dag': dag})
+    if not pids:
+      # empty plan
+      raise error.ValidationError('dag')
     pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
                                     fields={'doc_id': 1, 'hidden': 1}) \
                          .sort('doc_id', 1) \

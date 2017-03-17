@@ -12,6 +12,9 @@
             <col class="col--status">
             <col class="col--problem">
             <col class="col--submit-by">
+            <col class="col--time">
+            <col class="col--memory">
+            <col class="col--lang">
             <col class="col--submit-at">
           </colgroup>
           <thead>
@@ -19,6 +22,9 @@
               <th class="col--status record-status--border">{{ _('Status') }}</th>
               <th class="col--problem">{{ _('Problem') }}</th>
               <th class="col--submit-by">{{ _('Submit By') }}</th>
+              <th class="col--time">{{ _('Time') }}</th>
+              <th class="col--memory">{{ _('Memory') }}</th>
+              <th class="col--lang">{{ _('Language') }}</th>
               <th class="col--submit-at">{{ _('Submit At') }}</th>
             </tr>
           </thead>
@@ -44,15 +50,15 @@
           <!-- TODO: replace with form_builder -->
           <label class="filter-user">
             {{ _('By Username / UID') }}
-            <input name="uid_or_name" type="text" class="textbox" value="{{ handler.request.GET['uid_or_name']|default('') }}" autocomplete="off" data-autofocus>
+            <input name="uid_or_name" type="text" class="textbox" value="{{ filter_uid_or_name }}" autocomplete="off" data-autofocus>
           </label>
           <label>
             {{ _('By Problem') }}
-            <input name="pid" type="text" class="textbox" value="{{ handler.request.GET['pid']|default('') }}">
+            <input name="pid" type="text" class="textbox" value="{{ filter_pid }}">
           </label>
           <label>
             {{ _('By Contest') }}
-            <input name="tid" type="text" class="textbox" value="{{ handler.request.GET['tid']|default('') }}">
+            <input name="tid" type="text" class="textbox" value="{{ filter_tid }}">
           </label>
           <button type="submit" class="primary button"><span class="icon icon-filter"></span> {{ _('Filter') }}</button>
           <a href="{{ reverse_url('record_main') }}" class="button">{{ _('Reset') }}</a>

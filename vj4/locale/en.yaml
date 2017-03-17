@@ -60,3 +60,7 @@ problem-category-delim: '|'
 problem-subcategory-delim: ', '
 setting_display: Display Preference
 setting_usage: Usage Preference
+home_file: My Files
+fs_upload: File Upload
+page.training_detail.invalid_when_not_enrolled: You cannot view problem details unless enrolled.
+page.problem_detail.sidebar.show_category: Click to Show

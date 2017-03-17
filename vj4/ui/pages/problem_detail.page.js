@@ -179,7 +179,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
     const { default: ScratchpadReducer } = await System.import('../components/scratchpad/reducers');
     const { React, render, Provider, store } = await loadReactRedux(ScratchpadReducer);
 
-    const sock = new SockJs(`/p/${Context.problemId}/pretest-conn`);
+    const sock = new SockJs(Context.socketUrl);
     sock.onmessage = (message) => {
       const msg = JSON.parse(message.data);
       store.dispatch({
@@ -206,7 +206,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
     const html = $('.problem-content').html();
     reduxStore.dispatch({
       type: 'SCRATCHPAD_PROBLEM_SET_HTML',
-      payload: $('.problem-content').html(),
+      payload: html,
     });
   }
   function syncHtmlFromReactToDom() {
@@ -237,6 +237,10 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
   $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', (ev) => {
     leaveScratchpadMode();
     ev.preventDefault();
+  });
+  $(document).on('click', '[name="problem-sidebar__show-category"]', (ev) => {
+    $(ev.currentTarget).hide();
+    $('[name="problem-sidebar__categories"]').show();
   });
 });
 

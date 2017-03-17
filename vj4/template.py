@@ -1,5 +1,6 @@
 import hashlib
 import hoedown
+import re
 from os import path
 from urllib import parse
 
@@ -11,6 +12,7 @@ import markupsafe
 import vj4
 import vj4.constant
 import vj4.job
+from vj4.service import staticmanifest
 from vj4.util import json
 from vj4.util import options
 from vj4.util import version
@@ -36,12 +38,14 @@ class Environment(jinja2.Environment):
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     self.globals['vj4'] = vj4
-    self.globals['static_url'] = lambda s: options.cdn_prefix + s + '?{0}'.format(version.get())
+    self.globals['static_url'] = lambda s: options.cdn_prefix + staticmanifest.get(s)
     self.globals['paginate'] = paginate
 
     self.filters['markdown'] = markdown
     self.filters['json'] = json.encode
     self.filters['gravatar_url'] = gravatar_url
+    self.filters['format_size'] = format_size
+
 
 
 MARKDOWN_EXTENSIONS = (hoedown.EXT_TABLES |  # Parse PHP-Markdown style tables.
@@ -54,9 +58,27 @@ MARKDOWN_RENDER_FLAGS = (hoedown.HTML_ESCAPE |  # Escape all HTML.
                          hoedown.HTML_HARD_WRAP)  # Render each linebreak as <br>.
 
 
+MARKDOWN_PRERENDER = [
+  (r'\(vijos\:\/\/fs\/([0-9a-f]{40,})\)',
+   lambda m: '(' + options.cdn_prefix.rstrip('/') + '/fs/' + m.group(1) + ')')
+   # TODO(twd2): reverse_url
+]
+MARKDOWN_PRERENDER_COMPILED = []
+
+for regex, repl in MARKDOWN_PRERENDER:
+  MARKDOWN_PRERENDER_COMPILED.append((re.compile(regex), repl))
+
+
+def prerender_markdown(text):
+  for regex, repl in MARKDOWN_PRERENDER_COMPILED:
+    text = regex.sub(repl, text)
+  return text
+
+
 def markdown(text):
   return markupsafe.Markup(
-      hoedown.html(text, extensions=MARKDOWN_EXTENSIONS, render_flags=MARKDOWN_RENDER_FLAGS))
+      hoedown.html(prerender_markdown(text), extensions=MARKDOWN_EXTENSIONS,
+                                             render_flags=MARKDOWN_RENDER_FLAGS))
 
 
 def gravatar_url(gravatar, size=200):
@@ -92,3 +114,14 @@ def paginate(page, num_pages):
   if page < num_pages:
     yield 'next', page + 1
     yield 'last', num_pages
+
+
+def format_size(size, base=1, ndigits=3):
+  size *= base
+  unit = 1024
+  unit_names = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+  for unit_name in unit_names:
+    if size < unit:
+      return '{0}{1}'.format(round(size, ndigits=ndigits), unit_name)
+    size /= unit
+  return '{0}{1}'.format(round(size * unit, ndigits=ndigits), unit_names[-1])

@@ -23,7 +23,7 @@
     opacity: 1
 
 .section__header
-  padding: rem($section-gap-v) rem($section-gap-h) 0.7em
+  padding: rem($section-gap-v) rem($section-gap-h) 0
   position: relative
 
 .section__body
@@ -51,12 +51,18 @@
 
 h1.section__title
   font-size: 1.4rem
+  margin-bottom: rem(12px)
 
 h2.section__title
   font-size: 1.2rem
+  margin-bottom: rem(10px)
 
 h3.section__title
   font-size: 1rem
+  margin-bottom: rem(8px)
+
+.section__header .section__title
+  margin-bottom: 0
 
 .section__tools
   position: absolute

@@ -2,10 +2,13 @@ import 'jquery.easing';
 
 import { AutoloadPage } from 'vj/misc/PageLoader';
 import CommentBox from 'vj/components/discussion/CommentBox';
+import { ConfirmDialog } from 'vj/components/dialog';
+
 import delay from 'vj/utils/delay';
 import { slideDown, slideUp } from 'vj/utils/slide';
-
 import request from 'vj/utils/request';
+import i18n from 'vj/utils/i18n';
+import tpl from 'vj/utils/tpl';
 
 const $replyTemplate = $('.commentbox-container').eq(0).clone();
 
@@ -41,6 +44,34 @@ async function destroyReplyContainer($parent) {
   await $container.transition({ opacity: 0 }, { duration: 200 }).promise();
   await slideUp($container, 300);
   $container.remove();
+}
+
+function onClickDummyBox(ev) {
+  const $evTarget = $(ev.currentTarget);
+
+  if (CommentBox.get($evTarget)) {
+    CommentBox
+      .get($evTarget)
+      .focus();
+    return;
+  }
+
+  const $mediaBody = $evTarget.closest('.media__body');
+
+  const opt = {
+    form: JSON.parse($evTarget.attr('data-form')),
+    mode: 'comment',
+    onCancel: () => {
+      $mediaBody.removeClass('is-editing');
+    },
+  };
+
+  $mediaBody.addClass('is-editing');
+
+  CommentBox
+    .getOrConstruct($evTarget, opt)
+    .appendTo($mediaBody.find('.commentbox-placeholder').eq(0))
+    .focus();
 }
 
 async function onCommentClickReplyComment(ev, options = {}) {
@@ -105,7 +136,7 @@ async function onCommentClickEdit(mode, ev) {
   const raw = await request.get(
     $mediaBody.find('.typo').eq(0).attr('data-raw-url'),
     {},
-    'text'
+    { dataType: 'text' },
   );
 
   const opt = {
@@ -133,40 +164,43 @@ function onCommentClickEditReply(ev) {
   return onCommentClickEdit('reply-update', ev);
 }
 
-function onClickDummyBox(ev) {
-  const $evTarget = $(ev.currentTarget);
-
-  if (CommentBox.get($evTarget)) {
-    CommentBox
-      .get($evTarget)
-      .focus();
+async function onCommentClickDelete(type, ev) {
+  const message = (type === 'comment')
+    ? 'Confirm deleting this comment? Its replies will be deleted as well.'
+    : 'Confirm deleting this reply?';
+  const action = await new ConfirmDialog({
+    $body: tpl`
+      <div class="typo">
+        <p>${i18n(message)}</p>
+      </div>`,
+  }).open();
+  if (action !== 'yes') {
     return;
   }
 
-  const $mediaBody = $evTarget.closest('.media__body');
+  const $evTarget = $(ev.currentTarget);
+  const form = JSON.parse($evTarget.attr('data-form'));
 
-  const opt = {
-    form: JSON.parse($evTarget.attr('data-form')),
-    mode: 'comment',
-    onCancel: () => {
-      $mediaBody.removeClass('is-editing');
-    },
-  };
-
-  $mediaBody.addClass('is-editing');
-
-  CommentBox
-    .getOrConstruct($evTarget, opt)
-    .appendTo($mediaBody.find('.commentbox-placeholder').eq(0))
-    .focus();
+  await request.post('', form);
+  window.location.reload();
 }
 
-const commentsPage = new AutoloadPage(() => {
+function onCommentClickDeleteComment(ev) {
+  onCommentClickDelete('comment', ev);
+}
+
+function onCommentClickDeleteReply(ev) {
+  onCommentClickDelete('reply', ev);
+}
+
+const commentsPage = new AutoloadPage('commentsPage', () => {
   $(document).on('click', '[name="dczcomments__dummy-box"]', onClickDummyBox);
   $(document).on('click', '[name="dczcomments__op-reply-comment"]', onCommentClickReplyComment);
   $(document).on('click', '[name="dczcomments__op-reply-reply"]', onCommentClickReplyReply);
   $(document).on('click', '[name="dczcomments__op-edit-comment"]', onCommentClickEditComment);
   $(document).on('click', '[name="dczcomments__op-edit-reply"]', onCommentClickEditReply);
+  $(document).on('click', '[name="dczcomments__op-delete-comment"]', onCommentClickDeleteComment);
+  $(document).on('click', '[name="dczcomments__op-delete-reply"]', onCommentClickDeleteReply);
 });
 
 export default commentsPage;

@@ -7,22 +7,15 @@ import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 export default class StyledTable extends DOMAttachedObject {
 
   static DOMAttachKey = 'vjStyledTableInstance';
-
-  static attachAll() {
-    $('.section__body > .data-table').get().forEach((table) => {
-      StyledTable.getOrConstruct($(table)).attach();
-    });
-  }
+  static DOMAttachSelector = '.data-table';
 
   constructor($dom) {
-    super($dom);
-    this.attached = false;
-  }
-
-  attach() {
-    if (this.attached) {
-      return false;
+    if ($dom.closest('.section__body').length === 0) {
+      super(null);
+      return;
     }
+
+    super($dom);
 
     this.$container = $('<div>').addClass('section__table-container');
     this.$container.insertBefore(this.$dom);
@@ -34,21 +27,20 @@ export default class StyledTable extends DOMAttachedObject {
       .append(this.$header)
       .append(this.$dom);
 
-    this.update();
+    this.$header.empty();
+    this.$dom.children('colgroup').clone().appendTo(this.$header);
+    this.$dom.children('thead').appendTo(this.$header);
 
     const stickyOptions = {
       parent: this.$container,
       offset_top: Navigation.instance.getHeight(),
     };
-    this.$header.stick_in_parent(stickyOptions);
-
-    return true;
+    _.defer(() => this.$header.stick_in_parent(stickyOptions));
   }
 
-  update() {
-    this.$header.empty();
-    this.$dom.children('colgroup').clone().appendTo(this.$header);
-    this.$dom.children('thead').appendTo(this.$header);
+  detach() {
+    super.detach();
+    this.$header.trigger('sticky_kit:detach');
   }
 
 }

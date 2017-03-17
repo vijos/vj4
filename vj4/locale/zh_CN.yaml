@@ -95,6 +95,7 @@ Logout: 登出
 Logout All Sessions: 注销所有会话
 Logout This Session: 注销该会话
 Lost Password: 忘记密码
+Memory: 内存
 Memory Cost: 内存占用
 Messages: 站内消息
 My Profile: 我的资料
@@ -350,7 +351,7 @@ Domain ID cannot be changed once the domain is created.: 在创建后不能更�
 Unique: 唯一
 Not wrapped with space: 两侧不含空格
 Not started with a number: 不以数字开头
-Without slashes or backslashes: 不含斜杠和反斜杠
+Only A-Z, a-z, 0-9 and _ are accepted: 只接受 A-Z, a-z, 0-9 和 _
 Username / UID: 用户名或 UID
 Last Submit At: 最后递交于
 Start at: 开始于
@@ -599,3 +600,37 @@ By Contest: 由比赛
 Reset: 重置
 Data of problem {1} not found.: 题目 {1} 的数据未找到。
 Data of record {0} not found.: 记录 {0} 的数据未找到。
+All Submissions: 所有递交
+My Files: 我的文件
+home_file: 我的文件
+"What's file?": 什么是文件？
+Upload File: 上传文件
+fs_upload: 上传文件
+New file: 新文件
+Size: 大小
+Hash: 散列
+This type of files are not allowed to be uploaded.: 不允许上传这种文件。
+Usage exceeded.: 用量超限。
+The uploaded file is too long.: 上传的文件太长。
+Congratulations! Your submission is accepted.: 恭喜！您的递交已评测通过。
+Search: 搜索
+Mark Yellow: 标黄
+Mark Green: 标绿
+Clear Marks: 清除标记
+Bold: 加粗
+Italic: 斜体
+Quote: 引用
+Unordered List: 无序列表
+Ordered List: 有序列表
+Insert Code: 插入代码
+Create Link: 创建链接
+Insert Image: 插入图像
+Toggle Preview: 切换预览
+(All Problems): (所有题目)
+Confirm deleting this comment? Its replies will be deleted as well.: 确认删除这个评论吗？回复会被同时删除。
+Confirm deleting this reply?: 确认删除这个回复吗？
+Aborted: 已放弃
+Network error: 网络错误
+page.training_detail.invalid_when_not_enrolled: 未参加训练计划时您不能查看题目详情。
+page.problem_detail.sidebar.show_category: 点击显示
+Argument {0} is unknown.: 未知的参数 {0} 。

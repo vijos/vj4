@@ -33,8 +33,12 @@
           </div>
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-            <input type="submit" class="rounded primary button" value="{{ _('Update') }}">
-            <a class="rounded button" href="javascript:window.history.go(-1)">{{ _('Cancel') }}</a>
+            <button type="submit" class="rounded primary button">
+              {{ _('Update') }}
+            </button>
+            <button type="button" class="rounded button" onclick="window.history.go(-1)">
+              {{ _('Cancel') }}
+            </button>
           </div></div>
         </form>
       </div>
@@ -44,8 +48,9 @@
         <h1 class="section__title">{{ _('Categories') }} ({{ _('click to add') }})</h1>
       </div>
       <div class="section__body">
+      <!-- TODO: chip -->
       {% for category, sub_categories in categories.items() %}
-        <div class="topic--widget__section">
+        <div>
           <h2 class="section__title"><a class="category-a" href="javascript:;" data-category="{{ category }}">{{ category }}</a></h2>
           <ol>
           {% for sub_category in sub_categories %}

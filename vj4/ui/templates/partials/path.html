@@ -1,0 +1,10 @@
+    <div class="header__layer" data-fragment-id="path"><div class="row"><div class="columns">
+    {% if not header_mini %}
+      <div class="location-path">
+      {% for c in path_components %}
+        / {% if c[1] %}<a href="{{ c[1] }}">{{ c[0] }}</a>{% endif %}
+      {%- endfor %}
+      </div>
+      <h1 class="location-current" data-emoji-enabled>{{ path_components[-1][0] }}</h1>
+    {% endif %}
+    </div></div></div>

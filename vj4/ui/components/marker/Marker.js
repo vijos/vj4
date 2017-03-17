@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import delay from 'vj/utils/delay';
 import Tooltip from 'vj/components/tooltip/Tooltip';
+import i18n from 'vj/utils/i18n';
 
 const MARKER_ID = `marker_${Math.floor(Math.random() * 0xFFFFFF).toString(16)}`;
 const MARKER_OFFSET = 20;
@@ -30,9 +31,9 @@ class Marker {
     }
     this.$dom = $(`
       <div class="marker" id="${MARKER_ID}"><div class="marker__toolbar">
-        <div class="marker__action" data-color="#ffff00" data-tooltip="Mark Yellow"><span class="marker__icon icon-yellow"></span></div>
-        <div class="marker__action" data-color="#47ff6f" data-tooltip="Mark Green"><span class="marker__icon icon-green"></span></div>
-        <div class="marker__action" data-color="transparent" data-tooltip="Clear Marks"><span class="icon icon-erase"></span></div>
+        <div class="marker__action" data-color="#ffff00" data-tooltip="${i18n('Mark Yellow')}"><span class="marker__icon icon-yellow"></span></div>
+        <div class="marker__action" data-color="#47ff6f" data-tooltip="${i18n('Mark Green')}"><span class="marker__icon icon-green"></span></div>
+        <div class="marker__action" data-color="transparent" data-tooltip="${i18n('Clear Marks')}"><span class="icon icon-erase"></span></div>
       </div></div>
     `)
       .appendTo('body');

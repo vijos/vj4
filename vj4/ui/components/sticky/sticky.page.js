@@ -41,7 +41,7 @@ function stickyRelayout() {
   $('body').trigger('sticky_kit:recalc');
 }
 
-const stickyPage = new AutoloadPage(() => {
+const stickyPage = new AutoloadPage('stickyPage', () => {
   let shouldListenResize = false;
   const $stickies = $('[data-sticky]');
   $stickies.get().forEach((element) => {

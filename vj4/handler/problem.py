@@ -5,6 +5,7 @@ import hashlib
 import io
 import zipfile
 from bson import objectid
+from urllib import parse
 
 from vj4 import app
 from vj4 import constant
@@ -18,6 +19,7 @@ from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
 from vj4.model import opcount
+from vj4.model import oplog
 from vj4.model import record
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
@@ -25,6 +27,28 @@ from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.util import pagination
 from vj4.util import options
+
+
+
+async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
+                                      category, psdict, **kwargs):
+  if 'page_title' not in kwargs:
+    kwargs['page_title'] = self.translate(self.TITLE)
+  if 'path_components' not in kwargs:
+    kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
+  if self.prefer_json:
+    list_html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
+                                 pcount=pcount, pdocs=pdocs, psdict=psdict)
+    stat_html = self.render_html('partials/problem_stat.html', pcount=pcount)
+    path_html = self.render_html('partials/path.html', path_components=kwargs['path_components'])
+    self.json({'title': self.render_title(kwargs['page_title']),
+               'fragments': [{'html': list_html},
+                             {'html': stat_html},
+                             {'html': path_html}]})
+  else:
+    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
+                category=category, psdict=psdict, categories=problem.get_categories(),
+                **kwargs)
 
 
 @app.route('/p', 'problem_main')
@@ -51,8 +75,8 @@ class ProblemMainHandler(base.OperationHandler):
                                              (pdoc['doc_id'] for pdoc in pdocs))
     else:
       psdict = None
-    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
-                psdict=psdict, categories=problem.get_categories())
+    await render_or_json_problem_list(self, page=page, ppcount=ppcount, pcount=pcount,
+                                      pdocs=pdocs, category='', psdict=psdict)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
@@ -66,9 +90,33 @@ class ProblemMainHandler(base.OperationHandler):
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
 
-@app.route('/p/category/{category}', 'problem_category')
+@app.route('/p/category/{category:.*}', 'problem_category')
 class ProblemCategoryHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
+
+  @staticmethod
+  def my_split(string, delim):
+    return list(filter(lambda s: bool(s), map(lambda s: s.strip(), string.split(delim))))
+
+  @staticmethod
+  def build_query(query_string):
+    category_groups = ProblemCategoryHandler.my_split(query_string, ' ')
+    if not category_groups:
+      return {}
+    query = {'$or': []}
+    for g in category_groups:
+      categories = ProblemCategoryHandler.my_split(g, ',')
+      if not categories:
+        continue
+      sub_query = {'$and': []}
+      for c in categories:
+        if c in builtin.PROBLEM_CATEGORIES \
+           or c in builtin.PROBLEM_SUB_CATEGORIES:
+          sub_query['$and'].append({'category': c})
+        else:
+          sub_query['$and'].append({'tag': c})
+      query['$or'].append(sub_query)
+    return query
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.get_argument
@@ -80,14 +128,7 @@ class ProblemCategoryHandler(base.OperationHandler):
       f = {'hidden': False}
     else:
       f = {}
-    categories = category.split(' ')
-    query = {'$and': []}
-    for c in categories:
-      if c in builtin.PROBLEM_CATEGORIES \
-         or c in builtin.PROBLEM_SUB_CATEGORIES:
-        query['$and'].append({'category': c})
-      else:
-        query['$and'].append({'tag': c})
+    query = ProblemCategoryHandler.build_query(category)
     pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
                                                                          **query,
                                                                          **f) \
@@ -100,12 +141,13 @@ class ProblemCategoryHandler(base.OperationHandler):
                                              (pdoc['doc_id'] for pdoc in pdocs))
     else:
       psdict = None
+    page_title = category or self.translate('(All Problems)')
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
-        (category, None))
-    self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
-                psdict=psdict, categories=problem.get_categories(),
-                page_title=category, path_components=path_components)
+        (page_title, None))
+    await render_or_json_problem_list(self, page=page, ppcount=ppcount, pcount=pcount,
+                                      pdocs=pdocs, category=category, psdict=psdict,
+                                      page_title=page_title, path_components=path_components)
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
@@ -149,7 +191,8 @@ class ProblemSubmitHandler(base.Handler):
       rdocs = await record \
           .get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
           .sort([('_id', -1)]) \
-          .to_list(10)
+          .limit(10) \
+          .to_list(None)
     if not self.prefer_json:
       path_components = self.build_path(
           (self.translate('problem_main'), self.reverse_url('problem_main')),
@@ -315,7 +358,8 @@ class ProblemSolutionHandler(base.OperationHandler):
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
     if not self.own(psdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION)
-    psdoc = await problem.delete_solution(self.domain_id, psdoc['doc_id'])
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_DOCUMENT, doc=psdoc)
+    await problem.delete_solution(self.domain_id, psdoc['doc_id'])
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -350,7 +394,9 @@ class ProblemSolutionHandler(base.OperationHandler):
       raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
-    await problem.delete_solution_reply(self.domain_id, psid, psrid, content)
+    await oplog.add(self.user['_id'], oplog.TYPE_DELETE_SUB_DOCUMENT, sub_doc=psrdoc,
+                    doc_type=psdoc['doc_type'], doc_id=psdoc['doc_id'])
+    await problem.delete_solution_reply(self.domain_id, psid, psrid)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -435,7 +481,8 @@ class ProblemDataHandler(base.Handler):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     fdoc = await problem.get_data(self.domain_id, pid)
     self.redirect(options.cdn_prefix.rstrip('/') + \
-                  self.reverse_url('fs_get', secret=fdoc['metadata']['secret']))
+                  self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
+                                   secret=fdoc['metadata']['secret']))
 
 
 @app.route('/p/create', 'problem_create')
@@ -592,3 +639,24 @@ class ProblemStatisticsHandler(base.Handler):
         (self.translate('problem_statistics'), None))
     self.render('problem_statistics.html', pdoc=pdoc, udoc=udoc,
                 page_title=pdoc['title'], path_components=path_components)
+
+
+@app.route('/p/search', 'problem_search')
+class ProblemSearchHandler(base.Handler):
+  @base.get_argument
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, q: str):
+    q = q.strip()
+    if not q:
+      self.json_or_redirect(self.referer_or_main)
+      return
+    try:
+      pdoc = await problem.get(self.domain_id, document.convert_doc_id(q))
+    except error.ProblemNotFoundError:
+      pdoc = None
+    if pdoc:
+      self.redirect(self.reverse_url('problem_detail', pid=pdoc['doc_id']))
+      return
+    self.redirect('http://cn.bing.com/search?q={0}+site%3A{1}' \
+                  .format(parse.quote(q), parse.quote(options.url_prefix)))

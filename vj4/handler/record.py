@@ -26,7 +26,7 @@ class RecordMainHandler(base.Handler):
   @base.sanitize
   async def get(self, *, uid_or_name: str='', pid: str='', tid: str=''):
     query = {}
-    if uid_or_name != '':
+    if uid_or_name:
       try:
         query['uid'] = int(uid_or_name)
       except ValueError:
@@ -34,17 +34,17 @@ class RecordMainHandler(base.Handler):
         if not udoc:
           raise error.UserNotFoundError(uid_or_name) from None
         query['uid'] = udoc['_id']
-    if pid != '':
+    if pid:
       pid = document.convert_doc_id(pid)
       query['domain_id'] = self.domain_id
       query['pid'] = pid
-    if tid != '':
+    if tid:
       tid = document.convert_doc_id(tid)
       query['domain_id'] = self.domain_id
       query['tid'] = tid
     # TODO(iceboy): projection, pagination.
     rdocs = await record.get_all_multi(**query,
-      get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).to_list(50)
+      get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).limit(50).to_list(None)
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
         user.get_dict(rdoc['uid'] for rdoc in rdocs),
@@ -65,7 +65,8 @@ class RecordMainHandler(base.Handler):
           record.get_count())
       statistics = {'day': day_count, 'week': week_count, 'month': month_count,
                     'year': year_count, 'total': rcount}
-    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics)
+    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
+                filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
@@ -179,4 +180,5 @@ class RecordPretestDataHandler(base.Handler):
     if not secret:
       raise error.RecordDataNotFoundError(rdoc['_id'])
     self.redirect(options.cdn_prefix.rstrip('/') + \
-                  self.reverse_url('fs_get', secret=secret))
+                  self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
+                                   secret=secret))

@@ -36,12 +36,17 @@ class HomeSecurityHandler(base.OperationHandler):
   async def get(self):
     # TODO(iceboy): pagination? or limit session count for uid?
     sessions = await token.get_session_list_by_uid(self.user['_id'])
-    for session in sessions:
-      session['update_ua'] = useragent.parse(session['update_ua'])
-      session['update_geoip'] = geoip.ip2geo(session['update_ip'], self.get_setting('view_lang'))
-      session['token_digest'] = hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest()
-      session['is_current'] = (session['_id'] == self.session['_id'])
-    self.render('home_security.html', sessions=sessions)
+    annotated_sessions = list({
+        **session,
+        'update_ua': useragent.parse(session.get('update_ua') or
+                                     session.get('create_ua') or ''),
+        'update_geoip': geoip.ip2geo(session.get('update_ip') or
+                                     session.get('create_ip'),
+                                     self.get_setting('view_lang')),
+        'token_digest': hmac.new(b'token_digest', session['_id'], 'sha256').hexdigest(),
+        'is_current': session['_id'] == self.session['_id']
+    } for session in sessions)
+    self.render('home_security.html', sessions=annotated_sessions)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
@@ -160,7 +165,7 @@ class HomeMessagesHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): projection, pagination.
-    mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).to_list(50)
+    mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).limit(50).to_list(None)
     udict = await user.get_dict(
         itertools.chain.from_iterable((mdoc['sender_uid'], mdoc['sendee_uid']) for mdoc in mdocs),
         fields=user.PROJECTION_PUBLIC)
@@ -266,7 +271,8 @@ class HomeDomainCreateHandler(base.Handler):
 class HomeFileHandler(base.OperationHandler):
   def file_url(self, fdoc):
     return options.cdn_prefix.rstrip('/') + \
-      self.reverse_url('fs_get', secret=fdoc['metadata']['secret'])
+      self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
+                       secret=fdoc['metadata']['secret'])
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):

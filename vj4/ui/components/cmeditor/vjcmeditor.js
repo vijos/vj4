@@ -6,6 +6,7 @@ import 'codemirror/mode/pascal/pascal';
 import 'codemirror/mode/python/python';
 
 import request from 'vj/utils/request';
+import i18n from 'vj/utils/i18n';
 
 export default class VjCmEditor extends SimpleMDE {
   constructor(options = {}) {
@@ -18,46 +19,53 @@ export default class VjCmEditor extends SimpleMDE {
           name: 'bold',
           action: SimpleMDE.toggleBold,
           className: 'icon icon-bold',
-          title: 'Bold',
+          title: i18n('Bold'),
         },
         {
           name: 'italic',
           action: SimpleMDE.toggleItalic,
           className: 'icon icon-italic',
-          title: 'Italic',
+          title: i18n('Italic'),
         },
         '|',
         {
           name: 'quote',
           action: SimpleMDE.toggleBlockquote,
           className: 'icon icon-quote',
-          title: 'Quote',
+          title: i18n('Quote'),
         },
         {
           name: 'unordered-list',
           action: SimpleMDE.toggleUnorderedList,
           className: 'icon icon-unordered_list',
-          title: 'Unordered List',
+          title: i18n('Unordered List'),
         },
         {
           name: 'ordered-list',
           action: SimpleMDE.toggleOrderedList,
           className: 'icon icon-ordered_list',
-          title: 'Ordered List',
+          title: i18n('Ordered List'),
         },
         '|',
+        {
+          name: 'code',
+          action: () => this.insertCodeBlock(),
+          className: 'icon icon-code',
+          title: i18n('Insert Code'),
+          default: true,
+        },
         {
           name: 'link',
           action: SimpleMDE.drawLink,
           className: 'icon icon-link',
-          title: 'Create Link',
+          title: i18n('Create Link'),
           default: true,
         },
         {
           name: 'image',
           action: SimpleMDE.drawImage,
           className: 'icon icon-insert--image',
-          title: 'Insert Image',
+          title: i18n('Insert Image'),
           default: true,
         },
         '|',
@@ -66,7 +74,7 @@ export default class VjCmEditor extends SimpleMDE {
           action: SimpleMDE.togglePreview,
           preAction: SimpleMDE.preRenderPreview,
           className: 'icon icon-preview no-disable',
-          title: 'Toggle Preview',
+          title: i18n('Toggle Preview'),
           default: true,
         },
       ],
@@ -82,7 +90,8 @@ export default class VjCmEditor extends SimpleMDE {
       url: '/preview',
       method: 'post',
       data: $.param({ text }, true),
-    }, 'html');
+      dataType: 'text',
+    });
     _.defer(this.preparePreview.bind(this));
     return data;
   }
@@ -92,6 +101,24 @@ export default class VjCmEditor extends SimpleMDE {
     $preview.addClass('typo');
     $preview.attr('data-emoji-enabled', 'true');
     $preview.trigger('vjContentNew');
+  }
+
+  insertCodeBlock() {
+    const text = this.codemirror.getSelection();
+    const startPoint = this.codemirror.getCursor('start');
+    const endPoint = this.codemirror.getCursor('end');
+    const leadingLines = (startPoint.line === 0 && startPoint.ch === 0) ? 0 : 2;
+    // eslint-disable-next-line prefer-template
+    const startText = _.repeat('\n', leadingLines) + '```c++\n';
+    const endText = '\n```\n';
+    this.codemirror.replaceSelection(`${startText}${text}${endText}`);
+    startPoint.line += leadingLines + 1;
+    startPoint.ch = 0;
+    if (startPoint !== endPoint) {
+      endPoint.line += leadingLines + 1;
+    }
+    this.codemirror.setSelection(startPoint, endPoint);
+    this.codemirror.focus();
   }
 
 }

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default function mapUrlPrefix(mapList) {
+export default function mapWebpackUrlPrefix(mapList) {
   const rules = mapList.map(mappingRule => {
     const regex = mappingRule.prefix.split('/').map(s => _.escapeRegExp(s)).join('[\\/\\\\]');
     return {

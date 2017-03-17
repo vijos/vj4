@@ -5,7 +5,31 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62)
 [![GitHub license](https://img.shields.io/badge/license-AGPLv3-blue.svg?style=flat-square)](https://raw.githubusercontent.com/vijos/vj4/master/LICENSE)
 
-Next generation of Vijos, built with asyncio on Python 3.5.
+Next generation of [Vijos](https://vijos.org), built with asyncio on Python 3.5.
+
+## Functionality
+
+- Problem Categories and Tags
+- Solution Sharing & Voting
+- Online Coding and Testing (a.k.a. Scratchpad Mode)
+- Discussions & Comments
+- Trainings
+- Contests (ACM & OI)
+- Dynamic Ranking System
+- Real-time Status Updates
+- Online Judge as a Service (a.k.a. Domain): create your own OJ website without dev-ops!
+- Management UI
+
+## Features
+
+- Sandboxed & Distributed Judging: see [jd4](https://github.com/vijos/jd4), [winjudge](https://github.com/iceb0y/winjudge) and [windows-container](https://github.com/iceb0y/windows-container)
+- High Performance Web Server
+- Cross Platform (both Judge and Web Server can be run on Linux & Windows)
+- Secure (we are also CTF players)
+- Modern Architecture
+- Modern User Interface
+- SEO Optimized
+- CDN Friendly
 
 ## Prerequisites
 
@@ -28,6 +52,14 @@ You don't need root privilege to run `npm install`. It installs stuffs in the pr
 You may want to use [cnpm](https://npm.taobao.org/) and [tuna](https://pypi.tuna.tsinghua.edu.cn/)
 if you are in China. Make sure to use `cnpm` by adding `alias` to `npm` instead of installing cnpm cli-tool.
 
+Some requirements may need `Python.h`. In Ubuntu/Debian simply use
+
+```bash
+apt install python3-dev
+```
+
+to resolve the problem.
+
 ### IP Geo-Location
 
 To enable IP geo-location translation, you need to obtain a [MaxMind GeoLite City DB](http://dev.maxmind.com/geoip/geoip2/geolite2/) and put it in the project root directory:
@@ -43,8 +75,7 @@ You may also want to install [libmaxminddb](https://github.com/maxmind/libmaxmin
 In the root of the repository:
 
 ```bash
-npm run generate
-npm run build  # to watch modifications: npm run watch
+npm run build   # or: npm run build:watch
 python3.5 -m vj4.server --debug
 ```
 
@@ -56,33 +87,29 @@ As an intuitive example, you may want to add a super administator and a problem 
 alias pm="python3.5 -m"
 pm vj4.model.user add -1 icebox 12345 icebox@iceboy.org
 pm vj4.model.user set_superadmin -1
-pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 1000
+pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 1000   # you can also use web UI
 ```
 
-You need to run rank script on a regular basis to maintain correct ranks for all users:
+You need to run these scripts on a regular basis to maintain correct RP and ranks for all users:
 
 ```bash
+pm vj4.job.rp recalc_all
 pm vj4.job.rank run_all
 ```
 
-### After Modifying Icons (`vj4/ui/misc/icons`)
+### Watch and Restart
 
-1. `npm run generate:icon`
+Frontend source codes can be recompiled automatically by running:
 
-### After Modifying Constants (`vj4/ui/constant`)
+```bash
+npm run build:watch
+```
 
-1. `npm run generate:constant`
-2. Restart server
-
-### After Modifying Locales (`vj4/locale`)
-
-1. `npm run generate:locale`
-2. Restart server
+However you need to manually restart the server for server-side code to take effect.
 
 ## Production
 
 ```bash
-npm run generate
 npm run build:production
 python3.5 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
 ```
