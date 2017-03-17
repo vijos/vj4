@@ -351,7 +351,7 @@ Domain ID cannot be changed once the domain is created.: 在创建后不能更�
 Unique: 唯一
 Not wrapped with space: 两侧不含空格
 Not started with a number: 不以数字开头
-Without slashes or backslashes: 不含斜杠和反斜杠
+Only A-Z, a-z, 0-9 and _ are accepted: 只接受 A-Z, a-z, 0-9 和 _
 Username / UID: 用户名或 UID
 Last Submit At: 最后递交于
 Start at: 开始于
