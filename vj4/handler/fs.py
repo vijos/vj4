@@ -118,7 +118,7 @@ class FsGetHandler(base.Handler):
         or ('"{0}"'.format(grid_out.md5) == self.request.headers.get('If-None-Match', ''))
 
     if not_modified:
-      self.response.set_status(304, None) # Not Modified
+      self.response.status = 304  # Not Modified
       return
 
     if not headers_only:

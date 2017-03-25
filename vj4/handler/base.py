@@ -210,7 +210,7 @@ class Handler(HandlerBase):
       return self.response
     except error.UserFacingError as e:
       _logger.warning("User facing error: %s", repr(e))
-      self.response.set_status(e.http_status, None)
+      self.response.status = e.http_status
       if self.prefer_json:
         self.response.content_type = 'application/json'
         message = self.translate(e.message).format(*e.args)
@@ -261,7 +261,7 @@ class Handler(HandlerBase):
     return self.request.headers.get('referer') or self.reverse_url('domain_main')
 
   def redirect(self, redirect_url):
-    self.response.set_status(web.HTTPFound.status_code, None)
+    self.response.status = web.HTTPFound.status_code
     self.response.headers['Location'] = redirect_url
 
   def json_or_redirect(self, redirect_url, **kwargs):
