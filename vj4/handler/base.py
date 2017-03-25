@@ -206,7 +206,6 @@ class Handler(HandlerBase):
   async def handle(self):
     try:
       await HandlerBase.prepare(self)
-      # TODO(iceboy): Filter by allowed methods?
       await getattr(self, self.request.method.lower())()
       return self.response
     except error.UserFacingError as e:
