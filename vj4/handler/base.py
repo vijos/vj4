@@ -129,17 +129,20 @@ class HandlerBase(setting.SettingMixin):
                                         'create_ip': self.remote_ip,
                                         'create_ua': self.request.headers.get('User-Agent')})
     if session:
-      cookie_kwargs = {'domain': options.cookie_domain,
-                       'secure': options.cookie_secure,
-                       'httponly': True}
+      cookie_props = {'domain': options.cookie_domain,
+                      'secure': options.cookie_secure,
+                      'httponly': True}
       if save:
         timestamp = calendar.timegm(session['expire_at'].utctimetuple())
-        cookie_kwargs['expires'] = utils.formatdate(timestamp, usegmt=True)
-        cookie_kwargs['max_age'] = session_expire_seconds
-        self.response.set_cookie('save', '1', **cookie_kwargs)
-      self.response.set_cookie('sid', sid, **cookie_kwargs)
+        cookie_props['expires'] = utils.formatdate(timestamp, usegmt=True)
+        cookie_props['max-age'] = session_expire_seconds
+        self.response.cookies['save'] = '1'
+        self.response.cookies['save'].update(cookie_props)
+      self.response.cookies['sid'] = sid
+      self.response.cookies['sid'].update(cookie_props)
     else:
-      self.clear_cookies('sid', 'save')
+      del self.response.cookies['sid']
+      del self.response.cookies['save']
     return session or {}
 
   async def delete_session(self):
@@ -150,16 +153,8 @@ class HandlerBase(setting.SettingMixin):
       else:
         token_type = token.TYPE_UNSAVED_SESSION
       await token.delete(sid, token_type)
-    self.clear_cookies('sid', 'save')
-
-  def clear_cookies(self, *names):
-    for name in names:
-      if name in self.request.cookies:
-        self.response.set_cookie(name, '',
-                                 expires=utils.formatdate(0, usegmt=True),
-                                 domain=options.cookie_domain,
-                                 secure=options.cookie_secure,
-                                 httponly=True)
+    del self.response.cookies['sid']
+    del self.response.cookies['save']
 
   @property
   def remote_ip(self):
@@ -211,6 +206,7 @@ class Handler(HandlerBase):
   async def handle(self):
     try:
       await HandlerBase.prepare(self)
+      # TODO(iceboy): Use actual HTTP method.
       await self.get()
       return self.response
     except error.UserFacingError as e:
