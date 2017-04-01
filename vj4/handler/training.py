@@ -98,7 +98,7 @@ class TrainingMainHandler(base.Handler, TrainingMixin):
                 tsdict=tsdict, tdict=tdict)
 
 
-@app.route('/training/{tid:\w{24}}', 'training_detail')
+@app.route('/training/<tid:\w{24}>', 'training_detail')
 class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.route_argument
@@ -196,7 +196,7 @@ class TrainingCreateHandler(base.Handler, TrainingMixin):
     self.json_or_redirect(self.reverse_url('training_detail', tid=tid))
 
 
-@app.route('/training/{tid}/edit', 'training_edit')
+@app.route('/training/<tid>/edit', 'training_edit')
 class TrainingEditHandler(base.Handler, TrainingMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument

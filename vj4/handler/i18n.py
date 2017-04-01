@@ -2,7 +2,7 @@ from vj4 import app
 from vj4.handler import base
 
 
-@app.route('/lang/{lang}', 'language_set')
+@app.route('/lang/<lang>', 'language_set')
 class LanguageHandler(base.Handler):
   @base.route_argument
   @base.sanitize

@@ -92,7 +92,7 @@ async def handle_file_upload(self, form_fields=None, raise_error=True):
       return None
 
 
-@app.route('/fs/{secret:\w{40}}', 'fs_get')
+@app.route('/fs/<secret:\w{40}>', 'fs_get')
 class FsGetHandler(base.Handler):
   @base.route_argument
   @base.sanitize

@@ -90,7 +90,7 @@ class ProblemMainHandler(base.OperationHandler):
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
 
-@app.route('/p/category/{category:.*}', 'problem_category')
+@app.route('/p/category/<category>', 'problem_category')
 class ProblemCategoryHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 
@@ -150,7 +150,7 @@ class ProblemCategoryHandler(base.OperationHandler):
                                       page_title=page_title, path_components=path_components)
 
 
-@app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
+@app.route('/p/<pid:-?\d+|\w{24}>', 'problem_detail')
 class ProblemDetailHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
@@ -172,7 +172,7 @@ class ProblemDetailHandler(base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
 
-@app.route('/p/{pid}/submit', 'problem_submit')
+@app.route('/p/<pid>/submit', 'problem_submit')
 class ProblemSubmitHandler(base.Handler):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
@@ -220,7 +220,7 @@ class ProblemSubmitHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.route('/p/{pid}/pretest', 'problem_pretest')
+@app.route('/p/<pid>/pretest', 'problem_pretest')
 class ProblemPretestHandler(base.Handler):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
@@ -256,7 +256,7 @@ class ProblemPretestHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
+@app.connection_route('/p/<pid>/pretest-conn', 'problem_pretest-conn')
 class ProblemPretestConnection(base.Connection):
   async def on_open(self):
     await super(ProblemPretestConnection, self).on_open()
@@ -283,7 +283,7 @@ class ProblemPretestConnection(base.Connection):
     bus.unsubscribe(self.on_record_change)
 
 
-@app.route('/p/{pid}/solution', 'problem_solution')
+@app.route('/p/<pid>/solution', 'problem_solution')
 class ProblemSolutionHandler(base.OperationHandler):
   SOLUTIONS_PER_PAGE = 20
 
@@ -436,7 +436,7 @@ class ProblemSolutionHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/p/{pid}/solution/{psid:\w{24}}/raw', 'problem_solution_raw')
+@app.route('/p/<pid>/solution/<psid:\w{24}>/raw', 'problem_solution_raw')
 class ProblemSolutionRawHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
   @base.route_argument
@@ -450,7 +450,7 @@ class ProblemSolutionRawHandler(base.Handler):
     self.response.text = psdoc['content']
 
 
-@app.route('/p/{pid}/solution/{psid:\w{24}}/{psrid:\w{24}}/raw', 'problem_solution_reply_raw')
+@app.route('/p/<pid>/solution/<psid:\w{24}>/<psrid:\w{24}>/raw', 'problem_solution_reply_raw')
 class ProblemSolutionReplyRawHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
   @base.route_argument
@@ -462,12 +462,12 @@ class ProblemSolutionReplyRawHandler(base.Handler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
     if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
-      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+      raise error.DocumentNotFoundError(self.domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     self.response.content_type = 'text/markdown'
     self.response.text = psrdoc['content']
 
 
-@app.route('/p/{pid}/data', 'problem_data')
+@app.route('/p/<pid>/data', 'problem_data')
 class ProblemDataHandler(base.Handler):
   @base.route_argument
   @base.sanitize
@@ -503,7 +503,7 @@ class ProblemCreateHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
 
 
-@app.route('/p/{pid}/edit', 'problem_edit')
+@app.route('/p/<pid>/edit', 'problem_edit')
 class ProblemEditHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
@@ -534,7 +534,7 @@ class ProblemEditHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
-@app.route('/p/{pid}/settings', 'problem_settings')
+@app.route('/p/<pid>/settings', 'problem_settings')
 class ProblemSettingsHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
@@ -589,7 +589,7 @@ class ProblemSettingsHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 
 
-@app.route('/p/{pid}/upload', 'problem_upload')
+@app.route('/p/<pid>/upload', 'problem_upload')
 class ProblemSettingsHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
@@ -622,7 +622,7 @@ class ProblemSettingsHandler(base.Handler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/p/{pid}/statistics', 'problem_statistics')
+@app.route('/p/<pid>/statistics', 'problem_statistics')
 class ProblemStatisticsHandler(base.Handler):
   @base.route_argument
   @base.sanitize

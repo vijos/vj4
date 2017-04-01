@@ -105,7 +105,7 @@ class JudgeDataListHandler(base.Handler):
                'time': calendar.timegm(datetime.datetime.utcnow().utctimetuple())})
 
 
-@app.route('/judge/{rid}/score', 'judge_score')
+@app.route('/judge/<rid>/score', 'judge_score')
 class RecordRejudgeHandler(base.Handler):
   @base.route_argument
   @base.post_argument
