@@ -90,7 +90,7 @@ class ProblemMainHandler(base.OperationHandler):
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
 
-@app.route('/p/category/{category:.*}', 'problem_category')
+@app.route('/p/category/{category}', 'problem_category')
 class ProblemCategoryHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 
@@ -462,7 +462,7 @@ class ProblemSolutionReplyRawHandler(base.Handler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
     if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
-      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+      raise error.DocumentNotFoundError(self.domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     self.response.content_type = 'text/markdown'
     self.response.text = psrdoc['content']
 
