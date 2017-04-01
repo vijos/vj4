@@ -1,10 +1,8 @@
-import asyncio
-import functools
 import logging
 from os import path
 
-import sockjs
-from aiohttp import web
+import sanic
+import sanic.response
 
 from vj4 import error
 from vj4.service import bus
@@ -36,9 +34,9 @@ options.define('cdn_prefix', default='/', help='CDN prefix.')
 _logger = logging.getLogger(__name__)
 
 
-class Application(web.Application):
+class Application(sanic.Sanic):
   def __init__(self):
-    super(Application, self).__init__(debug=options.debug)
+    super(Application, self).__init__()
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     static_path = path.join(path.dirname(__file__), '.uibuild')
@@ -47,38 +45,54 @@ class Application(web.Application):
     # Initialize components.
     staticmanifest.init(static_path)
     locale.load_translations(translation_path)
-    self.loop.run_until_complete(asyncio.gather(tools.ensure_all_indexes(), bus.init()))
+    self.add_task(tools.ensure_all_indexes())
+    self.add_task(bus.init())
     smallcache.init()
 
     # Load views.
+    # TODO(iceboy): Restore commented modules after supporting sockjs and multipart.
     from vj4.handler import contest
     from vj4.handler import discussion
     from vj4.handler import domain
-    from vj4.handler import fs
-    from vj4.handler import home
-    from vj4.handler import judge
+    #from vj4.handler import fs
+    #from vj4.handler import home
+    #from vj4.handler import judge
     from vj4.handler import misc
-    from vj4.handler import problem
-    from vj4.handler import record
+    #from vj4.handler import problem
+    #from vj4.handler import record
     from vj4.handler import training
     from vj4.handler import user
     from vj4.handler import i18n
     if options.static:
-      self.router.add_static('/', static_path, name='static')
+      self.static('/', static_path)
 
 
 def route(url, name):
-  def decorate(handler):
-    handler.NAME = handler.NAME or name
-    handler.TITLE = handler.TITLE or name
-    Application().router.add_route('*', url, handler, name=name)
-    Application().router.add_route('*', '/d/{domain_id}' + url, handler,
-                                   name=name + '_with_domain_id')
-    return handler
+  def decorate(handler_type):
+    handler_type.NAME = handler_type.NAME or name
+    handler_type.TITLE = handler_type.TITLE or name
+
+    class Handler(object):
+      view_class = handler_type
+
+      def __init__(self, name):
+        self.__name__ = name
+
+      async def __call__(self, request, **kwargs):
+        handler = handler_type()
+        handler.request = request
+        handler.response = sanic.response.HTTPResponse()
+        handler.route_args = kwargs
+        await handler.handle()
+        return handler.response
+
+    Application().add_route(Handler(name), url)
+    Application().add_route(Handler(name + '_with_domain_id'), '/d/<domain_id>' + url)
+    return handler_type
 
   return decorate
 
-
+"""
 def connection_route(prefix, name):
   def decorate(conn):
     async def handler(msg, session):
@@ -110,3 +124,4 @@ def connection_route(prefix, name):
     return conn
 
   return decorate
+"""

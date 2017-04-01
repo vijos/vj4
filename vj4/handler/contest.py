@@ -78,7 +78,7 @@ class ContestMainHandler(base.Handler, ContestStatusMixin):
                 tdocs=tdocs, tsdict=tsdict)
 
 
-@app.route('/contest/{tid:\w{24}}', 'contest_detail')
+@app.route('/contest/<tid:\w{24}>', 'contest_detail')
 class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
   DISCUSSIONS_PER_PAGE = 15
 
@@ -136,7 +136,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
     self.json_or_redirect(self.url)
 
 
-@app.route('/contest/{tid:\w{24}}/code', 'contest_code')
+@app.route('/contest/<tid:\w{24}>/code', 'contest_code')
 class ContestCodeHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_READ_RECORD_CODE)
@@ -162,7 +162,7 @@ class ContestCodeHandler(base.OperationHandler):
     await self.binary(output_buffer.getvalue(), 'application/zip')
 
 
-@app.route('/contest/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
+@app.route('/contest/<tid>/<pid:-?\d+|\w{24}>', 'contest_detail_problem')
 class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
@@ -193,7 +193,7 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
                 page_title=pdoc['title'], path_components=path_components)
 
 
-@app.route('/contest/{tid}/{pid}/submit', 'contest_detail_problem_submit')
+@app.route('/contest/<tid>/<pid>/submit', 'contest_detail_problem_submit')
 class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
@@ -265,7 +265,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.route('/contest/{tid}/status', 'contest_status')
+@app.route('/contest/<tid>/status', 'contest_status')
 class ContestStatusHandler(base.Handler, ContestStatusMixin):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)

@@ -59,7 +59,7 @@ class UserRegisterHandler(base.Handler):
     self.render('user_register_mail_sent.html')
 
 
-@app.route('/register/{code}', 'user_register_with_code')
+@app.route('/register/<code>', 'user_register_with_code')
 class UserRegisterWithCodeHandler(base.Handler):
   TITLE = 'user_register'
 
@@ -113,7 +113,7 @@ class UserLostpassHandler(base.Handler):
     self.render('user_lostpass_mail_sent.html')
 
 
-@app.route('/lostpass/{code}', 'user_lostpass_with_code')
+@app.route('/lostpass/<code>', 'user_lostpass_with_code')
 class UserLostpassWithCodeHandler(base.Handler):
   TITLE = 'user_lostpass'
 
@@ -177,7 +177,7 @@ class UserLogoutHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/user/{uid:-?\d+}', 'user_detail')
+@app.route('/user/<uid:-?\d+>', 'user_detail')
 class UserDetailHandler(base.Handler, UserSettingsMixin):
   @base.route_argument
   @base.sanitize

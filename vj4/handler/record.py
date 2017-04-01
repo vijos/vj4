@@ -99,7 +99,7 @@ class RecordMainConnection(base.Connection):
     bus.unsubscribe(self.on_record_change)
 
 
-@app.route('/records/{rid}', 'record_detail')
+@app.route('/records/<rid>', 'record_detail')
 class RecordDetailHandler(base.Handler):
   @base.route_argument
   @base.sanitize
@@ -148,7 +148,7 @@ class RecordDetailHandler(base.Handler):
                 judge_udoc=judge_udoc, show_status=show_status)
 
 
-@app.route('/records/{rid}/rejudge', 'record_rejudge')
+@app.route('/records/<rid>/rejudge', 'record_rejudge')
 class RecordRejudgeHandler(base.Handler):
   @base.route_argument
   @base.post_argument
@@ -164,7 +164,7 @@ class RecordRejudgeHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/records/{rid}/data', 'record_pretest_data')
+@app.route('/records/<rid>/data', 'record_pretest_data')
 class RecordPretestDataHandler(base.Handler):
   @base.route_argument
   @base.sanitize

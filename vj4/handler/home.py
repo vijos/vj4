@@ -104,7 +104,7 @@ class HomeSecurityHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/home/security/changemail/{code}', 'user_changemail_with_code')
+@app.route('/home/security/changemail/<code>', 'user_changemail_with_code')
 class UserChangemailWithCodeHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument

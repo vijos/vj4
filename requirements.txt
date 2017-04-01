@@ -1,6 +1,5 @@
-aiohttp>=1.2.0
+sanic
 jinja2>=2.9.0
-sockjs>=0.5.0
 motor
 hoedown
 accept

@@ -1,9 +1,6 @@
-import asyncio
-import atexit
 import logging
 import logging.config
 import os
-import signal
 import socket
 import sys
 import urllib.parse
@@ -59,18 +56,8 @@ def main():
   else:
     _logger.error('Invalid listening scheme %s', url.scheme)
     return 1
-  for i in range(1, options.prefork):
-    pid = os.fork()
-    if not pid:
-      break
-    else:
-      atexit.register(lambda: os.kill(pid, signal.SIGTERM))
-  loop = asyncio.get_event_loop()
-  loop.run_until_complete(loop.create_server(app.Application().make_handler(access_log=None,
-                                                                            lingering_time=0.0),
-                                             sock=sock))
   _logger.info('Server listening on %s', options.listen)
-  loop.run_forever()
+  app.Application().run(host=None, port=None, sock=sock, workers=options.prefork)
 
 if __name__ == '__main__':
   sys.exit(main())

@@ -3,7 +3,6 @@ import collections
 import functools
 import hashlib
 import mimetypes
-from aiohttp import multipart
 
 from vj4 import app
 from vj4 import error
@@ -93,7 +92,7 @@ async def handle_file_upload(self, form_fields=None, raise_error=True):
       return None
 
 
-@app.route('/fs/{secret:\w{40}}', 'fs_get')
+@app.route('/fs/<secret:\w{40}>', 'fs_get')
 class FsGetHandler(base.Handler):
   @base.route_argument
   @base.sanitize
@@ -119,7 +118,7 @@ class FsGetHandler(base.Handler):
         or ('"{0}"'.format(grid_out.md5) == self.request.headers.get('If-None-Match', ''))
 
     if not_modified:
-      self.response.set_status(304, None) # Not Modified
+      self.response.status = 304  # Not Modified
       return
 
     if not headers_only:

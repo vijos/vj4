@@ -45,8 +45,8 @@ class DiscussionMainHandler(base.Handler):
                 datetime_stamp=self.datetime_stamp)
 
 
-@app.route('/discuss/{doc_type:-?\d+}/{doc_id}', 'discussion_node_document_as_node')
-@app.route('/discuss/{doc_id:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
+@app.route('/discuss/<doc_type:-?\d+>/<doc_id>', 'discussion_node_document_as_node')
+@app.route('/discuss/<doc_id:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*>', 'discussion_node')
 class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
   DISCUSSIONS_PER_PAGE = 15
 
@@ -84,8 +84,8 @@ class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
                 path_components=path_components)
 
 
-@app.route('/discuss/{doc_type:-?\d+}/{doc_id}/create', 'discussion_create_document_as_node')
-@app.route('/discuss/{doc_id}/create', 'discussion_create')
+@app.route('/discuss/<doc_type:-?\d+>/<doc_id>/create', 'discussion_create_document_as_node')
+@app.route('/discuss/<doc_id>/create', 'discussion_create')
 class DiscussionCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_DISCUSSION)
@@ -126,7 +126,7 @@ class DiscussionCreateHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('discussion_detail', did=did), did=did)
 
 
-@app.route('/discuss/{did:\w{24}}', 'discussion_detail')
+@app.route('/discuss/<did:\w{24}>', 'discussion_detail')
 class DiscussionDetailHandler(base.OperationHandler):
   REPLIES_PER_PAGE = 50
 
@@ -262,7 +262,7 @@ class DiscussionDetailHandler(base.OperationHandler):
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
 
-@app.route('/discuss/{did:\w{24}}/raw', 'discussion_detail_raw')
+@app.route('/discuss/<did:\w{24}>/raw', 'discussion_detail_raw')
 class DiscussionDetailRawHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
@@ -273,7 +273,7 @@ class DiscussionDetailRawHandler(base.Handler):
     self.response.text = ddoc['content']
 
 
-@app.route('/discuss/{did:\w{24}}/{drid:\w{24}}/raw', 'discussion_reply_raw')
+@app.route('/discuss/<did:\w{24}>/<drid:\w{24}>/raw', 'discussion_reply_raw')
 class DiscussionReplyRawHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
@@ -285,7 +285,7 @@ class DiscussionReplyRawHandler(base.Handler):
     self.response.text = drdoc['content']
 
 
-@app.route('/discuss/{did:\w{24}}/{drid:\w{24}}/{drrid:\w{24}}/raw', 'discussion_tail_reply_raw')
+@app.route('/discuss/<did:\w{24}>/<drid:\w{24}>/<drrid:\w{24}>/raw', 'discussion_tail_reply_raw')
 class DiscussionTailReplyRawHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
   @base.route_argument
@@ -298,7 +298,7 @@ class DiscussionTailReplyRawHandler(base.Handler):
     self.response.text = drrdoc['content']
 
 
-@app.route('/discuss/{did:\w{24}}/edit', 'discussion_edit')
+@app.route('/discuss/<did:\w{24}>/edit', 'discussion_edit')
 class DiscussionEditHandler(base.OperationHandler):
   DEFAULT_OPERATION = 'update'
 
