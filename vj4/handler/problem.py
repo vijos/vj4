@@ -233,8 +233,8 @@ class ProblemPretestHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid)
     # don't need to check hidden status
     # create zip file, TODO(twd2): check file size
-    content = list(zip(self.request.POST.getall('data_input'),
-                       self.request.POST.getall('data_output')))
+    post = await self.request.post()
+    content = list(zip(post.getall('data_input'), post.getall('data_output')))
     output_buffer = io.BytesIO()
     zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
     config_content = str(len(content)) + '\n'
