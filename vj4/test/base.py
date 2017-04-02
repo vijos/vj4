@@ -7,6 +7,7 @@ import pymongo
 
 from vj4 import db
 from vj4.service import bus
+from vj4.model import queue
 from vj4.service import event
 from vj4.service import smallcache
 from vj4.util import options
@@ -40,6 +41,23 @@ class BusTestCase(DatabaseTestCase):
     bus.subscribe = self.old_subscribe
     bus.unsubscribe = self.old_unsubscribe
     super(BusTestCase, self).tearDown()
+
+
+class QueueTestCase(DatabaseTestCase):
+  async def noop(*args, **kwargs):
+    pass
+
+  def setUp(self):
+    super(QueueTestCase, self).setUp()
+    self.old_publish = queue.publish
+    queue.publish = QueueTestCase.noop
+    self.old_consume = queue.consume
+    queue.consume = QueueTestCase.noop
+
+  def tearDown(self):
+    queue.publish = self.old_publish
+    queue.consume = self.old_consume
+    super(QueueTestCase, self).tearDown()
 
 
 class SmallcacheTestCase(BusTestCase):

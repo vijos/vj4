@@ -19,7 +19,7 @@ JUDGE_TOKEN = 'token'
 EPS = 10 ** (-5)
 
 
-class RecordTestCase(base.DatabaseTestCase):
+class RecordTestCase(base.QueueTestCase):
   async def init_record(self):
     self.pid1 = await problem.add(DOMAIN_ID, 'a+b', 'calc a+b', OWNER_UID)
     self.pid2 = await problem.add(DOMAIN_ID, 'a-b', 'calc a-b', OWNER_UID)
