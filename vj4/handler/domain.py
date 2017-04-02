@@ -119,9 +119,9 @@ class DomainUserHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
   @base.sanitize
-  async def post_set_users(self, *, uid: int, role: str):
+  async def post_set_users(self, *, uid: int, role: str=None):
     try:
-      uids = map(int, self.request.POST.getall('uid'))
+      uids = map(int, (await self.request.post()).getall('uid'))
     except ValueError:
       raise error.ValidationError('uid')
     if role:
@@ -148,7 +148,7 @@ class DomainPermissionHandler(base.Handler):
     new_roles = dict()
     for role in self.domain['roles']:
       perms = 0
-      for perm in self.request.POST.getall(role, []):
+      for perm in (await self.request.post()).getall(role, []):
        perm = int(perm)
        if perm in builtin.PERMS_BY_KEY:
           perms |= perm
@@ -181,5 +181,5 @@ class DomainRoleHandler(base.OperationHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post_delete(self, *, role: str):
-    await domain.delete_roles(self.domain_id, self.request.POST.getall('role'))
+    await domain.delete_roles(self.domain_id, (await self.request.post()).getall('role'))
     self.json_or_redirect(self.url)
