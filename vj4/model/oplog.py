@@ -1,6 +1,4 @@
-import itertools
 from bson import objectid
-from pymongo import ReturnDocument
 
 from vj4 import db
 from vj4.util import argmethod
