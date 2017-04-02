@@ -15,7 +15,6 @@ import vj4.job
 from vj4.service import staticmanifest
 from vj4.util import json
 from vj4.util import options
-from vj4.util import version
 
 
 class Undefined(jinja2.runtime.Undefined):

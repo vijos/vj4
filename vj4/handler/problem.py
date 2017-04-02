@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import functools
-import hashlib
 import io
 import zipfile
 from bson import objectid
@@ -374,7 +373,7 @@ class ProblemSolutionHandler(base.OperationHandler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
     if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
-      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+      raise error.DocumentNotFoundError(self.domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     if not self.own(psrdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY)
     await problem.edit_solution_reply(self.domain_id, psid, psrid, content)
@@ -391,7 +390,7 @@ class ProblemSolutionHandler(base.OperationHandler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
     if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
-      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+      raise error.DocumentNotFoundError(self.domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
     await oplog.add(self.user['_id'], oplog.TYPE_DELETE_SUB_DOCUMENT, sub_doc=psrdoc,
@@ -462,7 +461,7 @@ class ProblemSolutionReplyRawHandler(base.Handler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
     if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
-      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+      raise error.DocumentNotFoundError(self.domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     self.response.content_type = 'text/markdown'
     self.response.text = psrdoc['content']
 
@@ -570,7 +569,7 @@ class ProblemSettingsHandler(base.Handler):
     category = self.split_tags(category)
     tag = self.split_tags(tag)
     for c in category:
-      if not (c in builtin.PROBLEM_CATEGORIES \
+      if not (c in builtin.PROBLEM_CATEGORIES
               or c in builtin.PROBLEM_SUB_CATEGORIES):
         raise error.ValidationError('category')
     if difficulty_setting not in problem.SETTING_DIFFICULTY_RANGE:

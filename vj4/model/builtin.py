@@ -4,7 +4,6 @@ import functools
 import itertools
 
 from vj4 import constant
-from vj4 import error
 from vj4.util import version
 
 # Permissions.
