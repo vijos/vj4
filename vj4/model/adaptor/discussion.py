@@ -6,7 +6,6 @@ from pymongo import errors
 
 from vj4 import error
 from vj4.model import document
-from vj4.model.adaptor import problem
 from vj4.service import smallcache
 from vj4.util import argmethod
 from vj4.util import validator

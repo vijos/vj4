@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import functools
-import hashlib
 import io
 import zipfile
 from bson import objectid

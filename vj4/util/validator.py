@@ -2,7 +2,6 @@ import re
 
 from vj4 import constant
 from vj4 import error
-from vj4.model import builtin
 
 
 def is_uid(s):
