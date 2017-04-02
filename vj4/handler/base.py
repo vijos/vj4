@@ -413,7 +413,7 @@ def route_argument(func):
 def get_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
-    return func(self, **kwargs, **self.request.GET)
+    return func(self, **kwargs, **self.request.query)
 
   return wrapped
 

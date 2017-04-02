@@ -1,5 +1,4 @@
 import asyncio
-import functools
 import logging
 from os import path
 
@@ -47,7 +46,8 @@ class Application(web.Application):
     # Initialize components.
     staticmanifest.init(static_path)
     locale.load_translations(translation_path)
-    self.loop.run_until_complete(asyncio.gather(tools.ensure_all_indexes(), bus.init()))
+    asyncio.get_event_loop().run_until_complete(
+        asyncio.gather(tools.ensure_all_indexes(), bus.init()))
     smallcache.init()
 
     # Load views.
@@ -101,12 +101,12 @@ def connection_route(prefix, name):
                                     timeout=self.timeout, loop=self.loop, debug=self.debug))
         return self[id]
 
+    loop = asyncio.get_event_loop()
     sockjs.add_endpoint(Application(), handler, name=name, prefix=prefix,
-                        manager=Manager(name, Application(), handler, Application().loop))
-    sockjs.add_endpoint(Application(), handler,
-                        name=name + '_with_domain_id', prefix='/d/{domain_id}' + prefix,
-                        manager=Manager(name + '_with_domain_id', Application(), handler,
-                                        Application().loop))
+                        manager=Manager(name, Application(), handler, loop))
+    sockjs.add_endpoint(
+        Application(), handler, name=name + '_with_domain_id', prefix='/d/{domain_id}' + prefix,
+        manager=Manager(name + '_with_domain_id', Application(), handler, loop))
     return conn
 
   return decorate

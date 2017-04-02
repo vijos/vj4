@@ -1,5 +1,3 @@
-import time
-
 from os import path
 from vj4.util import json
 
@@ -18,7 +16,7 @@ def init(static_dir):
     with open(_manifest_path, 'r') as manifest_file:
       data = json.decode(manifest_file.read())
     _manifest = data
-  except Exception as e:
+  except Exception:
     pass
 
 
