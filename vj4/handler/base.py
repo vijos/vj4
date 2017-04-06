@@ -211,12 +211,12 @@ class HandlerBase(setting.SettingMixin):
 class Handler(web.View, HandlerBase):
   @asyncio.coroutine
   def __iter__(self):
+    self.response = web.Response()
+    yield from HandlerBase.prepare(self)
     try:
-      self.response = web.Response()
-      yield from HandlerBase.prepare(self)
       yield from super(Handler, self).__iter__()
     except error.UserFacingError as e:
-      _logger.warning("User facing error: %s", repr(e))
+      _logger.warning('User facing error by %s %s %s: %s', self.url, self.remote_ip, self.user['_id'], repr(e))
       self.response.set_status(e.http_status, None)
       if self.prefer_json:
         self.response.content_type = 'application/json'
@@ -226,9 +226,8 @@ class Handler(web.View, HandlerBase):
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
-    except Exception as e:
-      _logger.error("Unexpected exception occurred when handling %s (IP = %s, UID = %d): %s",
-                    self.url, self.remote_ip, (self.user and self.user['_id']) or None, repr(e))
+    except Exception:
+      _logger.error('System error by %s %s %s', self.url, self.remote_ip, self.user['_id'])
       raise
     return self.response
 
