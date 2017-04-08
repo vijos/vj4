@@ -1,9 +1,7 @@
 import asyncio
-import collections
 import functools
-import hashlib
 import mimetypes
-from aiohttp import multipart
+from bson import objectid
 
 from vj4 import app
 from vj4 import error
@@ -12,85 +10,9 @@ from vj4.model import builtin
 from vj4.model import fs
 from vj4.model.adaptor import userfile
 
-
-TEXT_FIELD_MAX_LENGTH = 2 ** 10
 FILE_MAX_LENGTH = 2 ** 27 # 128 MiB
 USER_QUOTA = 2 ** 27 # 128 MiB
 ALLOWED_MIMETYPE_PREFIX = ['image/', 'text/', 'application/zip']
-HASHER = hashlib.md5
-
-
-def check_type_and_name(field, name):
-  if not isinstance(field, multipart.BodyPartReader):
-    raise error.ValidationError(name)
-  disptype, parts = multipart.parse_content_disposition(
-    field.headers.get('Content-Disposition'))
-  if disptype != 'form-data' or parts.get('name') != name:
-    raise error.ValidationError(name)
-
-
-async def handle_file_upload(self, form_fields=None, raise_error=True):
-  """Handles file upload, fills form fields and returns file_id whose metadata.link is already increased."""
-  reader = await self.request.multipart()
-  try:
-    # Check csrf token.
-    if self.csrf_token:
-      field = await reader.next()
-      check_type_and_name(field, 'csrf_token')
-      post_csrf_token = await field.read_chunk(len(self.csrf_token.encode()))
-      if self.csrf_token.encode() != post_csrf_token:
-        raise error.CsrfTokenError()
-
-    # Read form fields.
-    if form_fields:
-      for k in form_fields:
-        field = await reader.next()
-        check_type_and_name(field, k)
-        form_fields[k] = (await field.read_chunk(TEXT_FIELD_MAX_LENGTH)).decode()
-
-    # Read file data.
-    field = await reader.next()
-    check_type_and_name(field, 'file')
-    file_type = mimetypes.guess_type(field.filename)[0]
-    if not file_type or not any(file_type.startswith(allowed_type)
-                                for allowed_type in ALLOWED_MIMETYPE_PREFIX):
-      raise error.FileTypeNotAllowedError('file', file_type)
-    grid_in = None
-    finally_delete = True
-    try:
-      grid_in = await fs.add(file_type)
-      # Copy file data and check file length.
-      size = 0
-      chunk_size = max(field.chunk_size, 8192)
-      chunk = await field.read_chunk(chunk_size)
-      while chunk:
-        size += len(chunk)
-        if size > FILE_MAX_LENGTH:
-          raise error.FileTooLongError('file')
-        _, chunk = await asyncio.gather(grid_in.write(chunk), field.read_chunk(chunk_size))
-      if chunk: # remaining
-        await grid_in.write(chunk)
-      if not size: # empty file
-        raise error.ValidationError('file')
-      await grid_in.close()
-      # Deduplicate.
-      file_id = await fs.link_by_md5(grid_in.md5, except_id=grid_in._id)
-      if file_id:
-        return file_id
-      finally_delete = False
-      return grid_in._id
-    except:
-      raise
-    finally:
-      if grid_in:
-        await grid_in.close()
-        if finally_delete:
-          await fs.unlink(grid_in._id)
-  except Exception:
-    if raise_error:
-      raise
-    else:
-      return None
 
 
 @app.route('/fs/{secret:\w{40}}', 'fs_get')
@@ -101,7 +23,7 @@ class FsGetHandler(base.Handler):
     grid_out = await fs.get_by_secret(secret)
 
     self.response.content_type = grid_out.content_type or 'application/octet-stream'
-    # FIXME(iceboy): For some reason setting response.content_length doesn't work in aiohttp 2.0.5.
+    # FIXME(iceboy): For some reason setting response.content_length doesn't work in aiohttp 2.0.6.
     self.response.headers['Content-Length'] = str(grid_out.length)
 
     # Cache control.
@@ -150,32 +72,51 @@ class FsUploadHandler(base.Handler):
     return quota
 
   @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_FILE)
-  @base.sanitize
   async def get(self):
     self.render('fs_upload.html', fdoc=None,
                 usage=await userfile.get_usage(self.user['_id']),
                 quota=self.get_quota())
 
   @base.require_priv(builtin.PRIV_USER_PROFILE | builtin.PRIV_CREATE_FILE)
+  @base.multipart_argument
+  @base.require_csrf_token
   @base.sanitize
-  async def post(self):
-    # Check usage before handle upload.
-    quota = self.get_quota()
-    usage = await userfile.get_usage(self.user['_id'])
-    if usage >= quota:
-      raise error.UsageExceededError('system', self.user['_id'], 'usage_userfile', usage, quota)
-    fields = collections.OrderedDict([('desc', '')])
-    file_id = await handle_file_upload(self, fields)
-    fdoc = await fs.get_meta(file_id) # TODO(twd2): join from handle_file_upload
-    # Check usage after handled upload.
-    dudoc = None
-    try:
-      dudoc = await userfile.inc_usage(self.user['_id'], fdoc['length'], quota)
-    except:
-      await fs.unlink(file_id)
-      raise
-    usage = dudoc['usage_userfile']
-    ufid = await userfile.add(fields['desc'], file_id, self.user['_id'], fdoc['length'])
+  async def post(self, *, desc: str, file: objectid.ObjectId):
+    fdoc = await fs.get_meta(file)  # TODO(twd2): join from handle_part
+    ufid = await userfile.add(desc, file, self.user['_id'], fdoc['length'])
     self.render('fs_upload.html', fdoc=fdoc, ufid=ufid,
-                usage=usage,
-                quota=quota)
+                usage=await userfile.get_usage(self.user['_id']),
+                quota=self.get_quota())
+
+  async def handle_part(self, part):
+    if part.name != 'file':
+      return (await part.read()).decode()
+
+    content_type = mimetypes.guess_type(part.filename)[0]
+    if not content_type or not any(content_type.startswith(allowed_type)
+                                   for allowed_type in ALLOWED_MIMETYPE_PREFIX):
+      raise error.FileTypeNotAllowedError('file', content_type)
+    usage = await userfile.get_usage(self.user['_id'])
+    length = 0
+    quota = self.get_quota()
+
+    grid_in = await fs.add(content_type)
+    try:
+      chunk = await part.read_chunk()
+      while chunk:
+        length += len(chunk)
+        if usage + length >= quota:
+          raise error.UsageExceededError('system', self.user['_id'], 'usage_userfile', usage, quota)
+        _, chunk = await asyncio.gather(grid_in.write(chunk), part.read_chunk())
+      await userfile.inc_usage(self.user['_id'], length, quota)
+      await grid_in.close()
+    except:
+      await grid_in.abort()
+      raise
+
+    file_id = await fs.link_by_md5(grid_in.md5, grid_in._id)
+    if file_id:
+      await fs.unlink(grid_in._id)
+      return file_id
+    else:
+      return grid_in._id

@@ -425,6 +425,18 @@ def post_argument(coro):
   return wrapped
 
 
+def multipart_argument(coro):
+  @functools.wraps(coro)
+  async def wrapped(self, **kwargs):
+    multipart = await self.request.multipart()
+    part = await multipart.next()
+    while part:
+      kwargs[part.name] = await self.handle_part(part)
+      part = await multipart.next()
+    return await coro(self, **kwargs)
+
+  return wrapped
+
 def limit_rate(op):
   def decorate(coro):
     @functools.wraps(coro)
