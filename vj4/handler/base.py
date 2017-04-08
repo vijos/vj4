@@ -15,6 +15,7 @@ from vj4 import error
 from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import fs
 from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
@@ -306,6 +307,30 @@ class OperationHandler(Handler):
     except AttributeError:
       raise error.InvalidOperationError(operation) from None
     await method(**arguments)
+
+
+class FileUploadHandler(Handler):
+  async def handle_part(self, part):
+    if not part.filename:
+      return (await part.read()).decode()
+
+    content_type = self.get_content_type(part.filename)
+    grid_in = await fs.add(content_type)
+    try:
+      chunk = await part.read_chunk()
+      while chunk:
+        _, chunk = await asyncio.gather(grid_in.write(chunk), part.read_chunk())
+      await grid_in.close()
+    except:
+      await grid_in.abort()
+      raise
+
+    file_id = await fs.link_by_md5(grid_in.md5, grid_in._id)
+    if file_id:
+      await fs.unlink(grid_in._id)
+      return file_id
+    else:
+      return grid_in._id
 
 
 class Connection(sockjs.Session, HandlerBase):

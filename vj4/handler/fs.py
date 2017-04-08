@@ -64,7 +64,14 @@ class FsGetHandler(base.Handler):
 
 
 @app.route('/fs/upload', 'fs_upload')
-class FsUploadHandler(base.Handler):
+class FsUploadHandler(base.FileUploadHandler):
+  def get_content_type(self, filename):
+    content_type = mimetypes.guess_type(filename)[0]
+    if not content_type or not any(content_type.startswith(allowed_type)
+                                   for allowed_type in ALLOWED_MIMETYPE_PREFIX):
+      raise error.FileTypeNotAllowedError(filename, content_type)
+    return content_type
+
   def get_quota(self):
     quota = USER_QUOTA
     if self.has_priv(builtin.PRIV_UNLIMITED_QUOTA):
@@ -82,41 +89,17 @@ class FsUploadHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, desc: str, file: objectid.ObjectId):
-    fdoc = await fs.get_meta(file)  # TODO(twd2): join from handle_part
-    ufid = await userfile.add(desc, file, self.user['_id'], fdoc['length'])
-    self.render('fs_upload.html', fdoc=fdoc, ufid=ufid,
-                usage=await userfile.get_usage(self.user['_id']),
-                quota=self.get_quota())
-
-  async def handle_part(self, part):
-    if part.name != 'file':
-      return (await part.read()).decode()
-
-    content_type = mimetypes.guess_type(part.filename)[0]
-    if not content_type or not any(content_type.startswith(allowed_type)
-                                   for allowed_type in ALLOWED_MIMETYPE_PREFIX):
-      raise error.FileTypeNotAllowedError('file', content_type)
-    usage = await userfile.get_usage(self.user['_id'])
-    length = 0
-    quota = self.get_quota()
-
-    grid_in = await fs.add(content_type)
     try:
-      chunk = await part.read_chunk()
-      while chunk:
-        length += len(chunk)
-        if usage + length >= quota:
-          raise error.UsageExceededError('system', self.user['_id'], 'usage_userfile', usage, quota)
-        _, chunk = await asyncio.gather(grid_in.write(chunk), part.read_chunk())
-      await userfile.inc_usage(self.user['_id'], length, quota)
-      await grid_in.close()
+      quota = self.get_quota()
+      fdoc = await fs.get_meta(file)
+      ufdoc = await userfile.inc_usage(self.user['_id'], fdoc['length'], quota)
+      try:
+        ufid = await userfile.add(desc, file, self.user['_id'], fdoc['length'])
+      except:
+        await userfile.dec_usage(self.user['_id'], fdoc['length'])
+        raise
     except:
-      await grid_in.abort()
+      await fs.unlink(file)
       raise
-
-    file_id = await fs.link_by_md5(grid_in.md5, grid_in._id)
-    if file_id:
-      await fs.unlink(grid_in._id)
-      return file_id
-    else:
-      return grid_in._id
+    self.render('fs_upload.html', fdoc=fdoc, ufid=ufid,
+                usage=ufdoc['usage_userfile'], quota=quota)
