@@ -1,4 +1,4 @@
-aiohttp>=2.0.5
+aiohttp>=2.0.6
 jinja2>=2.9.0
 # sockjs at head supports aiohttp 2.0, but not released yet.
 git+https://github.com/aio-libs/sockjs.git

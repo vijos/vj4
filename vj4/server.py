@@ -1,4 +1,3 @@
-import asyncio
 import atexit
 import logging
 import logging.config
@@ -8,6 +7,7 @@ import socket
 import sys
 import urllib.parse
 
+from aiohttp import web
 from vj4 import app
 from vj4.util import options
 
@@ -65,12 +65,7 @@ def main():
       break
     else:
       atexit.register(lambda: os.kill(pid, signal.SIGTERM))
-  loop = asyncio.get_event_loop()
-  loop.run_until_complete(loop.create_server(app.Application().make_handler(access_log=None,
-                                                                            lingering_time=0.0),
-                                             sock=sock))
-  _logger.info('Server listening on %s', options.listen)
-  loop.run_forever()
+  web.run_app(app.Application(), sock=sock, access_log=None)
 
 if __name__ == '__main__':
   sys.exit(main())
