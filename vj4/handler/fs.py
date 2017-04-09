@@ -101,7 +101,8 @@ class FsGetHandler(base.Handler):
     grid_out = await fs.get_by_secret(secret)
 
     self.response.content_type = grid_out.content_type or 'application/octet-stream'
-    self.response.content_length = grid_out.length
+    # FIXME(iceboy): For some reason setting response.content_length doesn't work in aiohttp 2.0.5.
+    self.response.headers['Content-Length'] = str(grid_out.length)
 
     # Cache control.
     self.response.last_modified = grid_out.upload_date

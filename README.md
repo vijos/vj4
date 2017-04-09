@@ -123,6 +123,8 @@ python3.5 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
 * Set `--db-host` (default: localhost) and/or `--db-name` (default: test) to use a different
   database.
 
+Better to use a reverse proxy like Nginx or h2o.
+
 ## Notes
 
 Have fun!
