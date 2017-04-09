@@ -589,7 +589,7 @@ class ProblemSettingsHandler(base.Handler):
 
 
 @app.route('/p/{pid}/upload', 'problem_upload')
-class ProblemSettingsHandler(base.Handler):
+class ProblemUploadHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
   @base.sanitize
