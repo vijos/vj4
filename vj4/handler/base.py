@@ -15,6 +15,7 @@ from vj4 import error
 from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import fs
 from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
@@ -211,12 +212,13 @@ class HandlerBase(setting.SettingMixin):
 class Handler(web.View, HandlerBase):
   @asyncio.coroutine
   def __iter__(self):
-    self.response = web.Response()
-    yield from HandlerBase.prepare(self)
     try:
+      self.response = web.Response()
+      yield from HandlerBase.prepare(self)
       yield from super(Handler, self).__iter__()
+    except asyncio.CancelledError:
+      raise
     except error.UserFacingError as e:
-      _logger.warning('User facing error by %s %s %s: %s', self.url, self.remote_ip, self.user['_id'], repr(e))
       self.response.set_status(e.http_status, None)
       if self.prefer_json:
         self.response.content_type = 'application/json'
@@ -226,8 +228,11 @@ class Handler(web.View, HandlerBase):
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
-    except Exception:
-      _logger.error('System error by %s %s %s', self.url, self.remote_ip, self.user['_id'])
+      uid = self.user['_id'] if hasattr(self, 'user') else None
+      _logger.warning('User facing error by %s %s %s: %s', self.url, self.remote_ip, uid, repr(e))
+    except:
+      uid = self.user['_id'] if hasattr(self, 'user') else None
+      _logger.error('System error by %s %s %s', self.url, self.remote_ip, uid)
       raise
     return self.response
 
@@ -424,6 +429,39 @@ def post_argument(coro):
 
   return wrapped
 
+
+def multipart_argument(coro):
+  @functools.wraps(coro)
+  async def wrapped(self, **kwargs):
+    file_ids = list()
+    try:
+      async for part in await self.request.multipart():
+        if not part.filename:
+          kwargs[part.name] = (await part.read()).decode()
+        else:
+          grid_in = await fs.add(self.get_content_type(part.filename))
+          try:
+            chunk = await part.read_chunk()
+            while chunk:
+              _, chunk = await asyncio.gather(grid_in.write(chunk), part.read_chunk())
+            await grid_in.close()
+          except:
+            await grid_in.abort()
+            raise
+          file_id = await fs.link_by_md5(grid_in.md5, grid_in._id)
+          if file_id:
+            await fs.unlink(grid_in._id)
+          else:
+            file_id = grid_in._id
+          file_ids.append(file_id)
+          kwargs[part.name] = file_id
+      return await coro(self, **kwargs)
+    except:
+      await asyncio.gather(*[fs.unlink(file_id) for file_id in file_ids])
+      # TODO(iceboy): call self.response.force_close() after aiohttp supports it.
+      raise
+
+  return wrapped
 
 def limit_rate(op):
   def decorate(coro):
