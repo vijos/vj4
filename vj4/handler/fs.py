@@ -64,7 +64,7 @@ class FsGetHandler(base.Handler):
 
 
 @app.route('/fs/upload', 'fs_upload')
-class FsUploadHandler(base.FileUploadHandler):
+class FsUploadHandler(base.Handler):
   def get_content_type(self, filename):
     content_type = mimetypes.guess_type(filename)[0]
     if not content_type or not any(content_type.startswith(allowed_type)
@@ -89,17 +89,13 @@ class FsUploadHandler(base.FileUploadHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, desc: str, file: objectid.ObjectId):
+    quota = self.get_quota()
+    fdoc = await fs.get_meta(file)
+    ufdoc = await userfile.inc_usage(self.user['_id'], fdoc['length'], quota)
     try:
-      quota = self.get_quota()
-      fdoc = await fs.get_meta(file)
-      ufdoc = await userfile.inc_usage(self.user['_id'], fdoc['length'], quota)
-      try:
-        ufid = await userfile.add(desc, file, self.user['_id'], fdoc['length'])
-      except:
-        await userfile.dec_usage(self.user['_id'], fdoc['length'])
-        raise
+      ufid = await userfile.add(desc, file, self.user['_id'], fdoc['length'])
     except:
-      await fs.unlink(file)
+      await userfile.dec_usage(self.user['_id'], fdoc['length'])
       raise
     self.render('fs_upload.html', fdoc=fdoc, ufid=ufid,
                 usage=ufdoc['usage_userfile'], quota=quota)

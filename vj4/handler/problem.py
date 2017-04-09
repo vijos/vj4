@@ -591,7 +591,7 @@ class ProblemSettingsHandler(base.Handler):
 
 
 @app.route('/p/{pid}/upload', 'problem_upload')
-class ProblemUploadHandler(base.FileUploadHandler):
+class ProblemUploadHandler(base.Handler):
   def get_content_type(self, filename):
     if os.path.splitext(filename)[1].lower() != '.zip':
       raise error.FileTypeNotAllowedError(filename)
@@ -616,19 +616,15 @@ class ProblemUploadHandler(base.FileUploadHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, file: objectid.ObjectId):
-    try:
-      pdoc = await problem.get(self.domain_id, pid)
-      if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
-        self.check_perm(builtin.PERM_EDIT_PROBLEM)
-      if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
-          and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
-        self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-      await problem.set_data(self.domain_id, pid, file)
-    except:
-      await fs.unlink(file)
-      raise
+    pdoc = await problem.get(self.domain_id, pid)
+    if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
+      self.check_perm(builtin.PERM_EDIT_PROBLEM)
+    if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
+        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
+      self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     if pdoc.get('data'):
       await fs.unlink(pdoc['data'])
+    await problem.set_data(self.domain_id, pid, file)
     self.json_or_redirect(self.url)
 
 

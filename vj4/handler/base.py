@@ -309,30 +309,6 @@ class OperationHandler(Handler):
     await method(**arguments)
 
 
-class FileUploadHandler(Handler):
-  async def handle_part(self, part):
-    if not part.filename:
-      return (await part.read()).decode()
-
-    content_type = self.get_content_type(part.filename)
-    grid_in = await fs.add(content_type)
-    try:
-      chunk = await part.read_chunk()
-      while chunk:
-        _, chunk = await asyncio.gather(grid_in.write(chunk), part.read_chunk())
-      await grid_in.close()
-    except:
-      await grid_in.abort()
-      raise
-
-    file_id = await fs.link_by_md5(grid_in.md5, grid_in._id)
-    if file_id:
-      await fs.unlink(grid_in._id)
-      return file_id
-    else:
-      return grid_in._id
-
-
 class Connection(sockjs.Session, HandlerBase):
   def __init__(self, request, *args, **kwargs):
     super(Connection, self).__init__(*args, **kwargs)
@@ -455,10 +431,33 @@ def multipart_argument(coro):
   async def wrapped(self, **kwargs):
     multipart = await self.request.multipart()
     part = await multipart.next()
-    while part:
-      kwargs[part.name] = await self.handle_part(part)
-      part = await multipart.next()
-    return await coro(self, **kwargs)
+    file_ids = list()
+    try:
+      while part:
+        if not part.filename:
+          kwargs[part.name] = (await part.read()).decode()
+        else:
+          grid_in = await fs.add(self.get_content_type(part.filename))
+          try:
+            chunk = await part.read_chunk()
+            while chunk:
+              _, chunk = await asyncio.gather(grid_in.write(chunk), part.read_chunk())
+            await grid_in.close()
+          except:
+            await grid_in.abort()
+            raise
+          file_id = await fs.link_by_md5(grid_in.md5, grid_in._id)
+          if file_id:
+            await fs.unlink(grid_in._id)
+          else:
+            file_id = grid_in._id
+          file_ids.append(file_id)
+          kwargs[part.name] = file_id
+        part = await multipart.next()
+      return await coro(self, **kwargs)
+    except:
+      await asyncio.gather(*[fs.unlink(file_id) for file_id in file_ids])
+      raise
 
   return wrapped
 
