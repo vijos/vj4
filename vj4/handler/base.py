@@ -216,6 +216,8 @@ class Handler(web.View, HandlerBase):
     yield from HandlerBase.prepare(self)
     try:
       yield from super(Handler, self).__iter__()
+    except asyncio.CancelledError:
+      raise
     except error.UserFacingError as e:
       _logger.warning('User facing error by %s %s %s: %s', self.url, self.remote_ip, self.user['_id'], repr(e))
       self.response.set_status(e.http_status, None)
@@ -429,11 +431,9 @@ def post_argument(coro):
 def multipart_argument(coro):
   @functools.wraps(coro)
   async def wrapped(self, **kwargs):
-    multipart = await self.request.multipart()
-    part = await multipart.next()
     file_ids = list()
     try:
-      while part:
+      async for part in await self.request.multipart():
         if not part.filename:
           kwargs[part.name] = (await part.read()).decode()
         else:
@@ -453,7 +453,6 @@ def multipart_argument(coro):
             file_id = grid_in._id
           file_ids.append(file_id)
           kwargs[part.name] = file_id
-        part = await multipart.next()
       return await coro(self, **kwargs)
     except:
       await asyncio.gather(*[fs.unlink(file_id) for file_id in file_ids])
