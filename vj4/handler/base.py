@@ -458,6 +458,7 @@ def multipart_argument(coro):
       return await coro(self, **kwargs)
     except:
       await asyncio.gather(*[fs.unlink(file_id) for file_id in file_ids])
+      # TODO(iceboy): call self.response.force_close() after aiohttp supports it.
       raise
 
   return wrapped
