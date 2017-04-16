@@ -89,7 +89,7 @@ class ProblemMainHandler(base.OperationHandler):
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
 
-@app.route('/p/category/{category:.*}', 'problem_category')
+@app.route('/p/category/{category}', 'problem_category')
 class ProblemCategoryHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 

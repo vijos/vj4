@@ -1,3 +1,4 @@
+import aiohttp_r3
 import asyncio
 import logging
 from os import path
@@ -37,7 +38,7 @@ _logger = logging.getLogger(__name__)
 
 class Application(web.Application):
   def __init__(self):
-    super(Application, self).__init__(debug=options.debug)
+    super(Application, self).__init__(router=aiohttp_r3.R3Router(), debug=options.debug)
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     static_path = path.join(path.dirname(__file__), '.uibuild')

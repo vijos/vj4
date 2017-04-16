@@ -12,3 +12,4 @@ httpagentparser
 geoip2
 GitPython
 PyYAML
+aiohttp-r3
