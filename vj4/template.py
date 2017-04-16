@@ -53,7 +53,8 @@ MARKDOWN_EXTENSIONS = (hoedown.EXT_TABLES |  # Parse PHP-Markdown style tables.
                        hoedown.EXT_NO_INTRA_EMPHASIS |  # Disable emphasis_between_words.
                        hoedown.EXT_MATH |  # Parse TeX $$math$$ syntax, Kramdown style.
                        hoedown.EXT_SPACE_HEADERS |  # Require a space after '#' in headers.
-                       hoedown.EXT_MATH_EXPLICIT )  # Instead of guessing by context, parse $inline math$ and $$always block math$$ (requires EXT_MATH).
+                       hoedown.EXT_MATH_EXPLICIT |  # Instead of guessing by context, parse $inline math$ and $$always block math$$ (requires EXT_MATH).
+                       hoedown.EXT_DISABLE_INDENTED_CODE)  # Don't parse indented code blocks.
 MARKDOWN_RENDER_FLAGS = (hoedown.HTML_ESCAPE |  # Escape all HTML.
                          hoedown.HTML_HARD_WRAP)  # Render each linebreak as <br>.
 
