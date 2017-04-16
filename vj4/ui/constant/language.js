@@ -6,6 +6,7 @@ export const LANG_TEXTS = {
   pas: 'Pascal',
   java: 'Java',
   py: 'Python',
+  py3: 'Python 3',
   php: 'PHP',
 };
 
@@ -15,6 +16,7 @@ export const LANG_CODEMIRROR_MODES = {
   pas: 'text/x-pascal',
   java: 'text/x-java',
   py: 'text/x-python',
+  py3: 'text/x-python',
   php: 'text/x-php',
 };
 attachObjectMeta(LANG_CODEMIRROR_MODES, 'exportToPython', false);
