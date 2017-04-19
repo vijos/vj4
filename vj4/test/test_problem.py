@@ -63,11 +63,11 @@ class ProblemSolutionTest(base.DatabaseTestCase):
     self.assertEqual(psdoc['content'], CONTENT2)
     self.assertEqual(psdoc['owner_uid'], UID2)
     self.assertEqual(psdoc['doc_id'], psid)
-    psdocs = await problem.get_list_solution(DOMAIN_ID, PID, fields=['doc_id', 'content'])
+    psdocs = await problem.get_list_solution(DOMAIN_ID, PID, fields=['owner_uid', 'content'])
     self.assertEqual(len(psdocs), 1)
-    self.assertEqual(psdocs[0]['doc_id'], psid)
+    self.assertEqual(psdocs[0]['owner_uid'], UID2)
     self.assertEqual(psdocs[0]['content'], CONTENT2)
-    self.assertFalse('owner_uid' in psdocs[0])
+    self.assertFalse('doc_id' in psdocs[0])
 
   @base.wrap_coro
   async def test_vote(self):
