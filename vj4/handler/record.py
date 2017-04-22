@@ -19,6 +19,9 @@ from vj4.model.adaptor import problem
 from vj4.service import bus
 from vj4.util import options
 
+getuid = 0
+getpid = 0
+gettid = 0
 
 @app.route('/records', 'record_main')
 class RecordMainHandler(base.Handler):
@@ -34,14 +37,20 @@ class RecordMainHandler(base.Handler):
         if not udoc:
           raise error.UserNotFoundError(uid_or_name) from None
         query['uid'] = udoc['_id']
+      global getuid
+      getuid = query['uid']
     if pid:
       pid = document.convert_doc_id(pid)
       query['domain_id'] = self.domain_id
       query['pid'] = pid
+      global getpid
+      getpid = pid
     if tid:
       tid = document.convert_doc_id(tid)
       query['domain_id'] = self.domain_id
       query['tid'] = tid
+      global gettid
+      gettid = tid
     # TODO(iceboy): projection, pagination.
     rdocs = await record.get_all_multi(**query,
       get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).limit(50).to_list(None)
@@ -81,10 +90,16 @@ class RecordMainConnection(base.Connection):
     if rdoc['tid']:
       now = datetime.datetime.utcnow()
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      if (gettid and gettid != rdoc['tid']):
+        return
       if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
           and (self.domain_id != tdoc['domain_id']
                or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
         return
+    if (getuid and rdoc['uid'] != getuid):
+      return
+    if (getpid and rdoc['pid'] != getpid):
+      return
     # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
     udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
