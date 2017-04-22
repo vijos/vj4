@@ -8,6 +8,8 @@ export const LANG_TEXTS = {
   py: 'Python',
   py3: 'Python 3',
   php: 'PHP',
+  rs: 'Rust',
+  hs: 'Haskell',
 };
 
 export const LANG_CODEMIRROR_MODES = {
@@ -18,5 +20,7 @@ export const LANG_CODEMIRROR_MODES = {
   py: 'text/x-python',
   py3: 'text/x-python',
   php: 'text/x-php',
+  rs: 'text/x-rustsrc',
+  hs: 'text/x-haskell',
 };
 attachObjectMeta(LANG_CODEMIRROR_MODES, 'exportToPython', false);
