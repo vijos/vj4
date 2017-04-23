@@ -18,14 +18,18 @@
       </div>
       <div class="section__body typo">
         {{ _('no_translation_warn')|safe }}
-        <p>Vijos采用分布式评测架构，因此各个评测机的编译器版本不能够保证完全相同。我们会在配置、更新和维护评测机时尽力确保编译器版本为其官方网站所发布最新稳定版本。</p>
-		    <blockquote><ul>
-		    <li>Free Pascal <pre>fpc -O2 -Xs -Sgic -vw -ofoo.exe foo.pas</pre></li>
-		    <li>GCC <pre>gcc -O2 -s -Wall -std=c99 -o foo.exe foo.c -lm</pre></li>
-		    <li>G++ <pre>g++ -O2 -s -Wall -std=gnu++11 -o foo.exe foo.cpp -lm</pre></li>
-		    <li>Python 2.x <pre>pypy -E compile.pyc foo.py foo.pyc</pre></li>
-		    <li>Java <pre>javac Main.java </li>
-		    </ul></blockquote>
+        <p>Vijos使用<a href="https://github.com/vijos/jd4">jd4</a>进行评测，以docker镜像的形式安装至评测机。所使用的编译器均为创建镜像时<a href="https://wiki.debian.org/DebianTesting">debian testing</a>分支的最新版。编译参数如下：</p>
+        <blockquote><ul>
+          <li>Free Pascal <pre>fpc -O2 -o/out/foo /in/foo.pas</pre></li>
+          <li>C <pre>gcc -O2 -Wall -std=c99 -o /out/foo /in/foo.c -lm</pre></li>
+          <li>C++ <pre>g++ -O2 -Wall -std=c++11 -o /out/foo /in/foo.cc -lm</pre></li>
+          <li>Java <pre>javac Main.java</pre></li>
+          <li>Python <pre>python foo.py</pre></li>
+          <li>Python 3 <pre>python3 foo.py</pre></li>
+          <li>PHP <pre>php foo.php</pre></li>
+          <li>Rust <pre>rustc -O -o /out/foo /in/foo.rs</pre></li>
+          <li>Haskell <pre>ghc -O -outputdir /tmp -o /out/foo /in/foo.hs</pre></li>
+        </ul></blockquote>
       </div>
     </div>
     <div class="section" data-heading-extract-to="#menu-item-wiki_help">
@@ -34,10 +38,7 @@
       </div>
       <div class="section__body typo">
         {{ _('no_translation_warn')|safe }}
-        <p>Vijos 评测机使用进程的CPU时间计算时间消耗，时间的限定为题目中评测点所指定的时间。</p><p>Vijos 评测机使用进程虚拟内存与物理内存总和计算内存空间消耗。内存空间默认限定为512MiB，题目中特别指明的，限定为题目中评测点所指定的内存空间。</p>
-        <blockquote class="note">
-          <p>当程序需要过多I/O的情况下，以程序运行时间的2倍为最大限制。</p>
-        </blockquote>
+        <p>Vijos 评测机使用进程的CPU时间计算时间消耗，时间的限定为题目中评测点所指定的时间。</p><p>Vijos 评测机使用进程虚拟内存与物理内存总和计算内存空间消耗。内存空间默认限定为256MiB，题目中特别指明的，限定为题目中评测点所指定的内存空间。</p>
       </div>
     </div>
     <div class="section" data-heading-extract-to="#menu-item-wiki_help">
@@ -181,7 +182,7 @@
         <p>第一行包含一个整数n，表示总共有n组数据(即Input目录中文件总数等于Output目录中文件总数等于n)；</p>
         <p>接下来n行，第k行代表第k个测试点，格式为：<pre>[输入文件名]|[输出文件名]|[时限(单位为秒)]|[得分]|[内存限制(单位为KiB)]</pre><br>
         其中，输入和输出文件名为 Input 或者 Output 目录中的文件名（不包含Input或者Output目录），且所有数据点得分之和必须为100，如：<br>
-        <pre>input0.txt|output0.txt|1|10|</pre></p>
+        <pre>input0.txt|output0.txt|1|10|</pre></blockquote>
       </div>
     </div>
     <div class="section" data-heading-extract-to="#menu-item-wiki_help">
