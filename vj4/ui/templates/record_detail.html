@@ -67,7 +67,7 @@
         <h1 class="section__title">{{ _('Code') }}</h1>
       </div>
       <div class="section__body">
-        <pre><code class="language-{{ rdoc['lang'] }}">{{ rdoc['code'] }}</code></pre>
+        <pre><code class="{{ vj4.constant.language.LANG_CLASSES[rdoc['lang']] }}">{{ rdoc['code'] }}</code></pre>
       </div>
     </div>
   {% endif %}
