@@ -56,6 +56,7 @@
   "dependencies": {
     "babel-runtime": "^6.23.0",
     "classnames": "^2.2.5",
+    "clipboard": "^1.6.1",
     "codemirror": "^5.24.2",
     "diff-dom": "^2.1.0",
     "emojify.js": "^1.1.0",

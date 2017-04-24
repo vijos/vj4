@@ -12,16 +12,16 @@ export const LANG_TEXTS = {
   hs: 'Haskell',
 };
 
-export const LANG_CLASSES = {
-  c: 'language-c',
-  cc: 'language-cpp',
-  pas: 'language-pascal',
-  java: 'language-java',
-  py: 'language-python',
-  py3: 'language-python',
-  php: 'language-php',
-  rs: 'language-rust',
-  hs: 'language-haskell',
+export const LANG_HIGHLIGHT_ID = {
+  c: 'c',
+  cc: 'cpp',
+  pas: 'pascal',
+  java: 'java',
+  py: 'python',
+  py3: 'python',
+  php: 'php',
+  rs: 'rust',
+  hs: 'haskell',
 };
 
 export const LANG_CODEMIRROR_MODES = {
