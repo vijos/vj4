@@ -1,8 +1,8 @@
 import { AutoloadPage } from 'vj/misc/PageLoader';
-import hljs from 'vj/components/highlighter/prismjs';
+import prismjs from 'vj/components/highlighter/prismjs';
 
 function runHighlight($container) {
-  hljs.highlightBlocks($container);
+  prismjs.highlightBlocks($container);
 }
 
 const highlighterPage = new AutoloadPage('highlighterPage', () => {
