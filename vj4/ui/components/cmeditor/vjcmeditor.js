@@ -4,6 +4,9 @@ import SimpleMDE from 'vj-simplemde';
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/pascal/pascal';
 import 'codemirror/mode/python/python';
+import 'codemirror/mode/php/php';
+import 'codemirror/mode/rust/rust';
+import 'codemirror/mode/haskell/haskell';
 
 import request from 'vj/utils/request';
 import i18n from 'vj/utils/i18n';
