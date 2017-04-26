@@ -66,8 +66,8 @@
       <div class="section__header">
         <h1 class="section__title">{{ _('Code') }}</h1>
       </div>
-      <div class="section__body">
-        <pre><code class="language-{{ rdoc['lang'] }}">{{ rdoc['code'] }}</code></pre>
+      <div class="section__body" data-syntax-hl-show-line-number>
+        <pre><code class="language-{{ vj4.constant.language.LANG_HIGHLIGHT_ID[rdoc['lang']] }}">{{ rdoc['code'] }}</code></pre>
       </div>
     </div>
   {% endif %}
