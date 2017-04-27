@@ -11,6 +11,9 @@ __pycache__/
 *.pyc
 *.egg-info/
 
+# Python virtualenv
+ENV
+
 # UI stuffs.
 node_modules/
 npm-debug.log
