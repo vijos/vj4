@@ -20,6 +20,16 @@ from vj4.service import bus
 from vj4.util import options
 
 
+class RecordMixin:
+  def tdoc_visible(self, tdoc):
+    now = datetime.datetime.utcnow()
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+        and (self.domain_id != tdoc['domain_id']
+             or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+      return False
+    return True
+
+
 @app.route('/records', 'record_main')
 class RecordMainHandler(base.Handler):
   @base.get_argument
@@ -70,20 +80,16 @@ class RecordMainHandler(base.Handler):
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
-class RecordMainConnection(base.Connection):
+class RecordMainConnection(base.Connection, RecordMixin):
   async def on_open(self):
     await super(RecordMainConnection, self).on_open()
     bus.subscribe(self.on_record_change, ['record_change'])
 
   async def on_record_change(self, e):
-    rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
-    # check permission for visibility: contest
+    rdoc = await record.get(e['value'], record.PROJECTION_PUBLIC)
     if rdoc['tid']:
-      now = datetime.datetime.utcnow()
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
-          and (self.domain_id != tdoc['domain_id']
-               or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+      if not self.tdoc_visible(tdoc):
         return
     # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
@@ -100,7 +106,7 @@ class RecordMainConnection(base.Connection):
 
 
 @app.route('/records/{rid}', 'record_detail')
-class RecordDetailHandler(base.Handler):
+class RecordDetailHandler(base.Handler, RecordMixin):
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):
@@ -111,16 +117,10 @@ class RecordDetailHandler(base.Handler):
     if rdoc['domain_id'] != self.domain_id:
       self.redirect(self.reverse_url('record_detail', rid=rid, domain_id=rdoc['domain_id']))
       return
-    # check permission for visibility: contest
     show_status = True
     if rdoc['tid']:
-      now = datetime.datetime.utcnow()
-      try:
-        tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-        show_status = contest.RULES[tdoc['rule']].show_func(tdoc, now) \
-                      or self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
-      except error.DocumentNotFoundError:
-        tdoc = None
+      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      show_status = self.tdoc_visible(tdoc)
     else:
       tdoc = None
     # TODO(twd2): futher check permission for visibility.
@@ -146,6 +146,36 @@ class RecordDetailHandler(base.Handler):
       pdoc = None
     self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc, tdoc=tdoc,
                 judge_udoc=judge_udoc, show_status=show_status)
+
+
+@app.connection_route('/records/{rid}/conn', 'record_detail-conn')
+class RecordDetailConnection(base.Connection, RecordMixin):
+  async def on_open(self):
+    await super(RecordDetailConnection, self).on_open()
+    self.rid = objectid.ObjectId(self.request.match_info['rid'])
+    rdoc = await record.get(self.rid, record.PROJECTION_PUBLIC)
+    if rdoc['tid']:
+      self.tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+    else:
+      self.tdoc = None
+    bus.subscribe(self.on_record_change, ['record_change'])
+    await self.try_send_record(rdoc)
+
+  async def on_record_change(self, e):
+    if e['value'] != self.rid:
+      return
+    rdoc = await record.get(self.rid, record.PROJECTION_PUBLIC)
+    await self.try_send_record(rdoc)
+
+  async def try_send_record(self, rdoc):
+    if self.tdoc:
+      if not self.tdoc_visible(self.tdoc):
+        return
+    self.send(status_html=self.render_html('record_detail_status.html', rdoc=rdoc),
+              summary_html=self.render_html('record_detail_summary.html', rdoc=rdoc))
+
+  async def on_close(self):
+    bus.unsubscribe(self.on_record_change)
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')
