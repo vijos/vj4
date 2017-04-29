@@ -1,0 +1,18 @@
+<dl class="large horizontal" id="summary">
+  {% if rdoc['judge_at'] %}
+  <dt>{{ _('Judged At') }}</dt>
+  <dd>{{ datetime_span(rdoc['judge_at']) }}</dd>
+  {% endif %}
+  {% if judge_udoc %}
+  <dt>{{ _('Judged By') }}</dt>
+  <dd>{{ user.render_inline(judge_udoc, badge=false) }}</dd>
+  {% endif %}
+  {% if rdoc['score'] is defined %}
+  <dt>{{ _('Score') }}</dt>
+  <dd>{{ rdoc['score'] }}</dd>
+  {% endif %}
+  <dt>{{ _('Total Time') }}</dt>
+  <dd>{{ rdoc['time_ms'] }}ms</dd>
+  <dt>{{ _('Peak Memory') }}</dt>
+  <dd>{{ rdoc['memory_kb']|format_size(1024) }}</dd>
+</dl>

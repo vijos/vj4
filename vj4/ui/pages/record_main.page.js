@@ -10,7 +10,6 @@ const page = new NamedPage('record_main', async () => {
 
   sock.onmessage = (message) => {
     const msg = JSON.parse(message.data);
-    // TODO(iceboy): swx template.
     const newTr = $(msg.html);
     const oldTr = $(`.record_main__table tr[data-rid="${newTr.attr('data-rid')}"]`);
     if (oldTr.length) {
