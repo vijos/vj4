@@ -10,6 +10,8 @@ export const LANG_TEXTS = {
   php: 'PHP',
   rs: 'Rust',
   hs: 'Haskell',
+  js: 'Javascript',
+  go: 'Go',
 };
 
 export const LANG_HIGHLIGHT_ID = {
@@ -22,6 +24,8 @@ export const LANG_HIGHLIGHT_ID = {
   php: 'php',
   rs: 'rust',
   hs: 'haskell',
+  js: 'javascript',
+  go: 'go',
 };
 
 export const LANG_CODEMIRROR_MODES = {
@@ -34,5 +38,7 @@ export const LANG_CODEMIRROR_MODES = {
   php: 'text/x-php',
   rs: 'text/x-rustsrc',
   hs: 'text/x-haskell',
+  js: 'text/javascript',
+  go: 'text/x-go',
 };
 attachObjectMeta(LANG_CODEMIRROR_MODES, 'exportToPython', false);

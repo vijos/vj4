@@ -9,6 +9,8 @@ import 'codemirror/mode/python/python';
 import 'codemirror/mode/php/php';
 import 'codemirror/mode/rust/rust';
 import 'codemirror/mode/haskell/haskell';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/go/go';
 
 import * as languageEnum from 'vj/constant/language';
 
