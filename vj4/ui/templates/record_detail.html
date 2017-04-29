@@ -1,5 +1,10 @@
 {% extends "layout/basic.html" %}
 {% block content %}
+<script>
+  var Context = {{ {
+    'socketUrl': '{}/conn'.format(reverse_url('record_detail', rid=rdoc['_id'])),
+  }|json|safe }};
+</script>
 <div class="row">
   <div class="medium-9 columns">
     {% if show_status %}
