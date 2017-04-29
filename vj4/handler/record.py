@@ -76,7 +76,7 @@ class RecordMainConnection(base.Connection):
     bus.subscribe(self.on_record_change, ['record_change'])
 
   async def on_record_change(self, e):
-    rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
+    rdoc = await record.get(e['value'], record.PROJECTION_PUBLIC)
     # check permission for visibility: contest
     if rdoc['tid']:
       now = datetime.datetime.utcnow()
@@ -146,6 +146,32 @@ class RecordDetailHandler(base.Handler):
       pdoc = None
     self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc, tdoc=tdoc,
                 judge_udoc=judge_udoc, show_status=show_status)
+
+
+@app.connection_route('/records/{rid}/conn', 'record_detail-conn')
+class RecordDetailConnection(base.Connection):
+  async def on_open(self):
+    await super(RecordDetailConnection, self).on_open()
+    self.rid = objectid.ObjectId(self.request.match_info['rid'])
+    bus.subscribe(self.on_record_change, ['record_change'])
+
+  async def on_record_change(self, e):
+    if e['value'] != self.rid:
+      return
+    rdoc = await record.get(self.rid, record.PROJECTION_PUBLIC)
+    # check permission for visibility: contest
+    if rdoc['tid']:
+      now = datetime.datetime.utcnow()
+      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+          and (self.domain_id != tdoc['domain_id']
+               or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+        return
+    self.send(status_html=self.render_html('record_detail_status.html', rdoc=rdoc),
+              summary_html=self.render_html('record_detail_summary.html', rdoc=rdoc))
+
+  async def on_close(self):
+    bus.unsubscribe(self.on_record_change)
 
 
 @app.route('/records/{rid}/rejudge', 'record_rejudge')
