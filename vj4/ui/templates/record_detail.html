@@ -80,6 +80,14 @@
           <dd>
             {{ datetime_span(rdoc['_id'].generation_time) }}
           </dd>
+          {% if rdoc['judge_at'] %}
+          <dt>{{ _('Judged At') }}</dt>
+          <dd>{{ datetime_span(rdoc['judge_at']) }}</dd>
+          {% endif %}
+          {% if judge_udoc %}
+          <dt>{{ _('Judged By') }}</dt>
+          <dd>{{ user.render_inline(judge_udoc, badge=false) }}</dd>
+          {% endif %}
         </dl>
         {% if show_status %}
         {% include 'record_detail_summary.html' %}

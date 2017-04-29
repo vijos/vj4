@@ -1,12 +1,4 @@
 <dl class="large horizontal" id="summary">
-  {% if rdoc['judge_at'] %}
-  <dt>{{ _('Judged At') }}</dt>
-  <dd>{{ datetime_span(rdoc['judge_at']) }}</dd>
-  {% endif %}
-  {% if judge_udoc %}
-  <dt>{{ _('Judged By') }}</dt>
-  <dd>{{ user.render_inline(judge_udoc, badge=false) }}</dd>
-  {% endif %}
   {% if rdoc['score'] is defined %}
   <dt>{{ _('Score') }}</dt>
   <dd>{{ rdoc['score'] }}</dd>
