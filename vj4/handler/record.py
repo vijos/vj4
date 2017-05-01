@@ -95,12 +95,12 @@ class RecordMainConnection(base.Connection, RecordMixin):
 
   async def on_record_change(self, e):
     rdoc = await record.get(e['value'], record.PROJECTION_PUBLIC)
+    for key, value in self.query.items():
+      if rdoc[key] != value:
+        return
     if rdoc['tid']:
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
       if not self.tdoc_visible(tdoc):
-        return
-    for key, value in self.query.items():
-      if rdoc[key] != value:
         return
     # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
