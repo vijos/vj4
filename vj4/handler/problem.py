@@ -171,6 +171,16 @@ class ProblemDetailHandler(base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
 
+@app.route('/p/random', 'problem_random')
+class ProblemRandomHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.route_argument
+  @base.sanitize
+  async def get(self):
+    self.json_or_redirect(self.reverse_url('problem_detail',
+                                           pid=await problem.get_random_id(self.domain_id)))
+
+
 @app.route('/p/{pid}/submit', 'problem_submit')
 class ProblemSubmitHandler(base.Handler):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)

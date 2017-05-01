@@ -1,6 +1,7 @@
 import collections
 import datetime
 import itertools
+import random
 from bson import objectid
 from pymongo import errors
 
@@ -79,6 +80,15 @@ async def count(domain_id: str, **kwargs):
 
 def get_multi(*, fields=None, **kwargs):
   return document.get_multi(doc_type=document.TYPE_PROBLEM, fields=fields, **kwargs)
+
+
+@argmethod.wrap
+async def get_random_id(domain_id: str, **kwargs):
+  pdocs = document.get_multi(domain_id=domain_id, doc_type=document.TYPE_PROBLEM, **kwargs)
+  pcount = await pdocs.count()
+  pdoc = await pdocs.limit(1).skip(random.randint(0, pcount - 1)).to_list(None)
+  if pdoc:
+    return pdoc[0]['doc_id']
 
 
 async def get_dict(domain_id, pids, *, fields=None, **kwargs):
