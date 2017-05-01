@@ -38,7 +38,7 @@ class RecordMixin:
       except ValueError:
         udoc = await user.get_by_uname(uid_or_name)
         if not udoc:
-          raise error.UserNotFoundError(uid_or_name)
+          raise error.UserNotFoundError(uid_or_name) from None
         query['uid'] = udoc['_id']
     if pid or tid:
       query['domain_id'] = self.domain_id
