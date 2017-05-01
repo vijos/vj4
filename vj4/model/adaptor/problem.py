@@ -86,6 +86,8 @@ def get_multi(*, fields=None, **kwargs):
 async def get_random_id(domain_id: str, **kwargs):
   pdocs = document.get_multi(domain_id=domain_id, doc_type=document.TYPE_PROBLEM, **kwargs)
   pcount = await pdocs.count()
+  if not pcount:
+    return None
   pdoc = await pdocs.limit(1).skip(random.randint(0, pcount - 1)).to_list(None)
   if pdoc:
     return pdoc[0]['doc_id']
