@@ -74,7 +74,7 @@ def check_role(s):
 
 
 def is_title(s):
-  return bool(re.fullmatch(r'.{1,64}', s))
+  return bool(re.fullmatch(r'.{1,64}', s.strip()))
 
 
 def check_title(s):
@@ -91,7 +91,7 @@ def check_name(s):
 
 
 def is_content(s):
-  return isinstance(s, str) and len(str(s)) >= 2 and len(str(s)) <= 65536
+  return isinstance(s, str) and len(s.strip()) >= 2 and len(s.strip()) <= 65536
 
 
 def check_content(s):
@@ -100,7 +100,7 @@ def check_content(s):
 
 
 def is_description(s):
-  return isinstance(s, str) and len(str(s)) >= 1 and len(str(s)) <= 65536
+  return isinstance(s, str) and len(s.strip()) >= 1 and len(s.strip()) <= 65536
 
 
 def check_description(s):

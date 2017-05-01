@@ -39,10 +39,12 @@ async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
     list_html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
                                  pcount=pcount, pdocs=pdocs, psdict=psdict)
     stat_html = self.render_html('partials/problem_stat.html', pcount=pcount)
+    lucky_html = self.render_html('partials/problem_lucky.html', category=category)
     path_html = self.render_html('partials/path.html', path_components=kwargs['path_components'])
     self.json({'title': self.render_title(kwargs['page_title']),
                'fragments': [{'html': list_html},
                              {'html': stat_html},
+                             {'html': lucky_html},
                              {'html': path_html}]})
   else:
     self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
@@ -89,7 +91,24 @@ class ProblemMainHandler(base.OperationHandler):
   post_unstar = functools.partialmethod(star_unstar, star=False)
 
 
-@app.route('/p/category/{category:.*}', 'problem_category')
+@app.route('/p/random', 'problem_random')
+class ProblemRandomHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.route_argument
+  @base.sanitize
+  async def get(self):
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    pid = await problem.get_random_id(self.domain_id, **f)
+    if pid:
+      self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
+    else:
+      self.json_or_redirect(self.referer_or_main)
+
+
+@app.route('/p/category/{category:[^/]*}', 'problem_category')
 class ProblemCategoryHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 
@@ -147,6 +166,25 @@ class ProblemCategoryHandler(base.OperationHandler):
     await render_or_json_problem_list(self, page=page, ppcount=ppcount, pcount=pcount,
                                       pdocs=pdocs, category=category, psdict=psdict,
                                       page_title=page_title, path_components=path_components)
+
+
+@app.route('/p/category/{category:[^/]*}/random', 'problem_category_random')
+class ProblemCategoryRandomHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.get_argument
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, category: str):
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    query = ProblemCategoryHandler.build_query(category)
+    pid = await problem.get_random_id(self.domain_id, **query, **f)
+    if pid:
+      self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
+    else:
+      self.json_or_redirect(self.referer_or_main)
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
