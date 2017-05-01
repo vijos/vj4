@@ -2,6 +2,7 @@ import asyncio
 import calendar
 import datetime
 import struct
+import urllib.parse
 from bson import objectid
 
 from vj4 import app
@@ -29,29 +30,31 @@ class RecordMixin:
       return False
     return True
 
-
-@app.route('/records', 'record_main')
-class RecordMainHandler(base.Handler):
-  @base.get_argument
-  @base.sanitize
-  async def get(self, *, uid_or_name: str='', pid: str='', tid: str=''):
-    query = {}
+  async def get_filter_query(self, uid_or_name, pid, tid):
+    query = dict()
     if uid_or_name:
       try:
         query['uid'] = int(uid_or_name)
       except ValueError:
         udoc = await user.get_by_uname(uid_or_name)
         if not udoc:
-          raise error.UserNotFoundError(uid_or_name) from None
+          raise error.UserNotFoundError(uid_or_name)
         query['uid'] = udoc['_id']
-    if pid:
-      pid = document.convert_doc_id(pid)
+    if pid or tid:
       query['domain_id'] = self.domain_id
-      query['pid'] = pid
-    if tid:
-      tid = document.convert_doc_id(tid)
-      query['domain_id'] = self.domain_id
-      query['tid'] = tid
+      if pid:
+        query['pid'] = document.convert_doc_id(pid)
+      if tid:
+        query['tid'] = document.convert_doc_id(tid)
+    return query
+
+
+@app.route('/records', 'record_main')
+class RecordMainHandler(base.Handler, RecordMixin):
+  @base.get_argument
+  @base.sanitize
+  async def get(self, *, uid_or_name: str='', pid: str='', tid: str=''):
+    query = await self.get_filter_query(uid_or_name, pid, tid)
     # TODO(iceboy): projection, pagination.
     rdocs = await record.get_all_multi(**query,
       get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).limit(50).to_list(None)
@@ -76,13 +79,18 @@ class RecordMainHandler(base.Handler):
       statistics = {'day': day_count, 'week': week_count, 'month': month_count,
                     'year': year_count, 'total': rcount}
     self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
-                filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid)
+                filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid,
+                socket_url='/records-conn?' + urllib.parse.urlencode(
+                    [('uid_or_name', uid_or_name), ('pid', pid), ('tid', tid)]))
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
 class RecordMainConnection(base.Connection, RecordMixin):
-  async def on_open(self):
+  @base.get_argument
+  @base.sanitize
+  async def on_open(self, *, uid_or_name: str='', pid: str='', tid: str=''):
     await super(RecordMainConnection, self).on_open()
+    self.query = await self.get_filter_query(uid_or_name, pid, tid)
     bus.subscribe(self.on_record_change, ['record_change'])
 
   async def on_record_change(self, e):
@@ -90,6 +98,9 @@ class RecordMainConnection(base.Connection, RecordMixin):
     if rdoc['tid']:
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
       if not self.tdoc_visible(tdoc):
+        return
+    for key, value in self.query.items():
+      if rdoc[key] != value:
         return
     # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
@@ -145,7 +156,8 @@ class RecordDetailHandler(base.Handler, RecordMixin):
     if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
       pdoc = None
     self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc, tdoc=tdoc,
-                judge_udoc=judge_udoc, show_status=show_status)
+                judge_udoc=judge_udoc, show_status=show_status,
+                socket_url='/records/{}/conn'.format(rid))
 
 
 @app.connection_route('/records/{rid}/conn', 'record_detail-conn')
