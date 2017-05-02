@@ -181,7 +181,7 @@ class TrainingCreateHandler(base.Handler, TrainingMixin):
     pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
                                     fields={'doc_id': 1, 'hidden': 1}) \
                          .sort('doc_id', 1) \
-                         .to_list(None)
+                         .to_list()
     exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
     if len(pids) != len(exist_pids):
       for pid in pids:
@@ -229,7 +229,7 @@ class TrainingEditHandler(base.Handler, TrainingMixin):
     pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
                                     fields={'doc_id': 1, 'hidden': 1}) \
                          .sort('doc_id', 1) \
-                         .to_list(None)
+                         .to_list()
     exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
     if len(pids) != len(exist_pids):
       for pid in pids:

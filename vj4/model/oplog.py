@@ -12,7 +12,7 @@ TYPE_REJUDGE = 3 # TODO(twd2)
 async def add(uid: int, type: int, **kwargs):
   """Add an operation log. Returns the document id."""
   obj_id = objectid.ObjectId()
-  coll = db.Collection('oplog')
+  coll = db.db2.oplog
   doc = {'_id': obj_id,
          'uid': uid,
          'type': type,
@@ -23,7 +23,7 @@ async def add(uid: int, type: int, **kwargs):
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.Collection('oplog')
+  coll = db.db2.oplog
   await coll.create_index('uid')
   # type delete document
   await coll.create_index([('doc.domain_id', 1),

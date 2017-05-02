@@ -11,6 +11,7 @@ import collections
 import logging
 import logging.config
 
+from vj4 import db
 from vj4.util import options
 
 options.define('pretty', default=False, help='Pretty print the result.')
@@ -73,6 +74,7 @@ def invoke_by_args():
     parser.print_help()
   else:
     loop = asyncio.get_event_loop()
+    loop.run_until_complete(db.init_db2())
     try:
       result = _methods[name](**vars(args))
       if inspect.iscoroutine(result):

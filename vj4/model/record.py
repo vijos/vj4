@@ -22,7 +22,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
               lang: str, code: str, data_id: objectid.ObjectId=None, tid: objectid.ObjectId=None,
               hidden=False):
   validator.check_lang(lang)
-  coll = db.Collection('record')
+  coll = db.db2.record
   rid = (await coll.insert_one({'hidden': hidden,
                                 'status': constant.record.STATUS_WAITING,
                                 'score': 0,
@@ -48,13 +48,13 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
 
 @argmethod.wrap
 async def get(record_id: objectid.ObjectId, fields=PROJECTION_ALL):
-  coll = db.Collection('record')
+  coll = db.db2.record
   return await coll.find_one(record_id, fields)
 
 
 @argmethod.wrap
 async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
-  coll = db.Collection('record')
+  coll = db.db2.record
   doc = await coll.find_one_and_update(filter={'_id': record_id},
                                        update={'$unset': {'judge_uid': '',
                                                           'judge_token': '',
@@ -77,7 +77,7 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
 @argmethod.wrap
 def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fields=None,
                   **kwargs):
-  coll = db.Collection('record')
+  coll = db.db2.record
   query = {**kwargs, 'hidden': False if not get_hidden else {'$gte': False}}
   if end_id:
     query['_id'] = {'$lt': end_id}
@@ -86,14 +86,14 @@ def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fie
 
 @argmethod.wrap
 def get_multi(get_hidden: bool=False, fields=None, **kwargs):
-  coll = db.Collection('record')
+  coll = db.db2.record
   kwargs['hidden'] = False if not get_hidden else {'$gte': False}
   return coll.find(kwargs, projection=fields)
 
 
 @argmethod.wrap
 async def get_count(begin_id: objectid.ObjectId=None):
-  coll = db.Collection('record')
+  coll = db.db2.record
   query = {}
   if begin_id:
     query['_id'] = {'$gte': begin_id}
@@ -103,7 +103,7 @@ async def get_count(begin_id: objectid.ObjectId=None):
 @argmethod.wrap
 def get_problem_multi(domain_id: str, pid: document.convert_doc_id,
                       get_hidden: bool=False, type: int=None, *, fields=None):
-  coll = db.Collection('record')
+  coll = db.db2.record
   query = {'hidden': False if not get_hidden else {'$gte': False},
            'domain_id': domain_id, 'pid': pid}
   if type != None:
@@ -114,7 +114,7 @@ def get_problem_multi(domain_id: str, pid: document.convert_doc_id,
 @argmethod.wrap
 def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_doc_id,
                               get_hidden: bool=False, type: int=None, *, fields=None):
-  coll = db.Collection('record')
+  coll = db.db2.record
   query = {'hidden': False if not get_hidden else {'$gte': False},
            'domain_id': domain_id, 'pid': pid, 'uid': uid}
   if type != None:
@@ -133,7 +133,7 @@ async def get_dict(rids, *, get_hidden=False, fields=None):
 @argmethod.wrap
 async def begin_judge(record_id: objectid.ObjectId,
                       judge_uid: int, judge_token: str, status: int):
-  coll = db.Collection('record')
+  coll = db.db2.record
   doc = await coll.find_one_and_update(filter={'_id': record_id},
                                        update={'$set': {'status': status,
                                                         'judge_uid': judge_uid,
@@ -148,7 +148,7 @@ async def begin_judge(record_id: objectid.ObjectId,
 
 
 async def next_judge(record_id, judge_uid, judge_token, **kwargs):
-  coll = db.Collection('record')
+  coll = db.db2.record
   doc = await coll.find_one_and_update(filter={'_id': record_id,
                                                'judge_uid': judge_uid,
                                                'judge_token': judge_token},
@@ -160,7 +160,7 @@ async def next_judge(record_id, judge_uid, judge_token, **kwargs):
 @argmethod.wrap
 async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: str,
                     status: int, score: int, time_ms: int, memory_kb: int):
-  coll = db.Collection('record')
+  coll = db.db2.record
   doc = await coll.find_one_and_update(filter={'_id': record_id,
                                                'judge_uid': judge_uid,
                                                'judge_token': judge_token},
@@ -176,7 +176,7 @@ async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: s
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.Collection('record')
+  coll = db.db2.record
   await coll.create_index([('hidden', 1),
                            ('_id', -1)])
   await coll.create_index([('hidden', 1),

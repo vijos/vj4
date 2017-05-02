@@ -88,7 +88,7 @@ async def get_random_id(domain_id: str, **kwargs):
   pcount = await pdocs.count()
   if not pcount:
     return None
-  pdoc = await pdocs.limit(1).skip(random.randint(0, pcount - 1)).to_list(None)
+  pdoc = await pdocs.limit(1).skip(random.randint(0, pcount - 1)).to_list()
   if pdoc:
     return pdoc[0]['doc_id']
 
@@ -207,7 +207,7 @@ async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
                        .sort([('vote', -1), ('doc_id', -1)]) \
                        .skip(skip) \
                        .limit(limit) \
-                       .to_list(None)
+                       .to_list()
 
 
 @argmethod.wrap

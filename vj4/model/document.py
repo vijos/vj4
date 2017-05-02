@@ -44,7 +44,7 @@ async def add(domain_id: str, content: str, owner_uid: int,
               parent_doc_type: int = None, parent_doc_id: convert_doc_id = None, **kwargs):
   """Add a document. Returns the document id."""
   obj_id = objectid.ObjectId()
-  coll = db.Collection('document')
+  coll = db.db2.document
   doc = {'_id': obj_id,
          'content': content,
          'owner_uid': owner_uid,
@@ -61,14 +61,14 @@ async def add(domain_id: str, content: str, owner_uid: int,
 
 @argmethod.wrap
 async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id, fields=None):
-  coll = db.Collection('document')
+  coll = db.db2.document
   return await coll.find_one({'domain_id': domain_id,
                               'doc_type': doc_type,
                               'doc_id': doc_id}, projection=fields)
 
 
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
-  coll = db.Collection('document')
+  coll = db.db2.document
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
@@ -79,7 +79,7 @@ async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
 
 async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
   # TODO(twd2): delete status?
-  coll = db.Collection('document')
+  coll = db.db2.document
   return await coll.delete_one({'domain_id': domain_id,
                                 'doc_type': doc_type,
                                 'doc_id': doc_id})
@@ -87,14 +87,14 @@ async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
 
 async def delete_multi(domain_id: str, doc_type: int, **kwargs):
   # TODO(twd2): delete status?
-  coll = db.Collection('document')
+  coll = db.db2.document
   return await coll.delete_many({'domain_id': domain_id,
                                  'doc_type': doc_type,
                                  **kwargs})
 
 
 def get_multi(*, fields=None, **kwargs):
-  coll = db.Collection('document')
+  coll = db.db2.document
   return coll.find(kwargs, projection=fields)
 
 
@@ -115,7 +115,7 @@ async def get_dict(domain_id: str, dtuples, *, fields=None):
 
 @argmethod.wrap
 async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, value: int):
-  coll = db.Collection('document')
+  coll = db.db2.document
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
@@ -127,7 +127,7 @@ async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, v
 @argmethod.wrap
 async def inc_and_set(domain_id: str, doc_type: int, doc_id: convert_doc_id,
                       inc_key: str, inc_value: int, set_key: str, set_value: lambda _: _):
-  coll = db.Collection('document')
+  coll = db.db2.document
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
@@ -140,7 +140,7 @@ async def inc_and_set(domain_id: str, doc_type: int, doc_id: convert_doc_id,
 @argmethod.wrap
 async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                content: str, owner_uid: int, **kwargs):
-  coll = db.Collection('document')
+  coll = db.db2.document
   obj_id = objectid.ObjectId()
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
@@ -156,7 +156,7 @@ async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
 @argmethod.wrap
 async def delete_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                      sub_id: objectid.ObjectId):
-  coll = db.Collection('document')
+  coll = db.db2.document
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
@@ -168,7 +168,7 @@ async def delete_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key:
 @argmethod.wrap
 async def get_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                   sub_id: objectid.ObjectId):
-  coll = db.Collection('document')
+  coll = db.db2.document
   doc = await coll.find_one({'domain_id': domain_id,
                              'doc_type': doc_type,
                              'doc_id': doc_id,
@@ -184,7 +184,7 @@ async def get_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: st
 @argmethod.wrap
 async def set_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
                   sub_id: objectid.ObjectId, **kwargs):
-  coll = db.Collection('document')
+  coll = db.db2.document
   mod = dict(('{0}.$.{1}'.format(key, k), v) for k, v in kwargs.items())
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
@@ -198,7 +198,7 @@ async def set_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: st
 @argmethod.wrap
 async def add_to_set(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: str,
                      content):
-  coll = db.Collection('document')
+  coll = db.db2.document
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
@@ -210,7 +210,7 @@ async def add_to_set(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_
 @argmethod.wrap
 async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: str,
                contents):
-  coll = db.Collection('document')
+  coll = db.db2.document
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id},
@@ -222,19 +222,19 @@ async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: s
 @argmethod.wrap
 async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int,
                      *, fields=None):
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   return await coll.find_one({'domain_id': domain_id, 'doc_type': doc_type,
                               'doc_id': doc_id, 'uid': uid},
                              projection=fields)
 
 
 def get_multi_status(*, fields=None, **kwargs):
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   return coll.find(kwargs, projection=fields)
 
 
 async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id,
@@ -248,7 +248,7 @@ async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
 @argmethod.wrap
 async def set_if_not_status(domain_id: str, doc_type: int, doc_id: convert_doc_id,
                             uid: int, key: str, value: int, if_not: int, **kwargs):
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   return await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                 'doc_type': doc_type,
                                                 'doc_id': doc_id,
@@ -273,7 +273,7 @@ async def capped_inc_status(domain_id: str,
     not_expr = {'$gte': max_value}
   else:
     not_expr = {'$lte': min_value}
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id,
@@ -288,7 +288,7 @@ async def capped_inc_status(domain_id: str,
 @argmethod.wrap
 async def inc_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int,
                      key: str, value: int):
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id,
@@ -300,7 +300,7 @@ async def inc_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid:
 
 
 async def rev_push_status(domain_id, doc_type, doc_id, uid, key, value):
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id,
@@ -313,7 +313,7 @@ async def rev_push_status(domain_id, doc_type, doc_id, uid, key, value):
 
 
 async def rev_init_status(domain_id, doc_type, doc_id, uid):
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id,
@@ -325,7 +325,7 @@ async def rev_init_status(domain_id, doc_type, doc_id, uid):
 
 
 async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, **kwargs):
-  coll = db.Collection('document.status')
+  coll = db.db2.document.status
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
                                                'doc_id': doc_id,
@@ -339,7 +339,7 @@ async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, **kwargs):
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.Collection('document')
+  coll = db.db2.document
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('doc_id', 1)], unique=True)
@@ -400,7 +400,7 @@ async def ensure_indexes():
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('dag.pids', 1)], sparse=True)
-  status_coll = db.Collection('document.status')
+  status_coll = db.db2.document.status
   await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),
                                   ('uid', 1),

@@ -5,6 +5,7 @@ from os import path
 import sockjs
 from aiohttp import web
 
+from vj4 import db
 from vj4 import error
 from vj4.service import bus
 from vj4.service import smallcache
@@ -46,8 +47,9 @@ class Application(web.Application):
     # Initialize components.
     staticmanifest.init(static_path)
     locale.load_translations(translation_path)
-    asyncio.get_event_loop().run_until_complete(
-        asyncio.gather(tools.ensure_all_indexes(), bus.init()))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(db.init_db2())
+    loop.run_until_complete(asyncio.gather(tools.ensure_all_indexes(), bus.init()))
     smallcache.init()
 
     # Load views.

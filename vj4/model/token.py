@@ -39,7 +39,7 @@ async def add(token_type: int, expire_seconds: int, **kwargs):
          'create_at': now,
          'update_at': now,
          'expire_at': now + datetime.timedelta(seconds=expire_seconds)}
-  coll = db.Collection('token')
+  coll = db.db2.token
   await coll.insert_one(doc)
   return binascii.hexlify(id_binary).decode(), doc
 
@@ -56,7 +56,7 @@ async def get(token_id: str, token_type: int):
     The token document, or None.
   """
   id_binary = binascii.unhexlify(token_id)
-  coll = db.Collection('token')
+  coll = db.db2.token
   doc = await coll.find_one({'_id': _get_id(id_binary), 'token_type': token_type})
   return doc
 
@@ -64,7 +64,7 @@ async def get(token_id: str, token_type: int):
 @argmethod.wrap
 async def get_most_recent_session_by_uid(uid: int):
   """Get the most recent session by uid."""
-  coll = db.Collection('token')
+  coll = db.db2.token
   doc = await coll.find_one({'uid': uid,
                              'token_type': {'$in': [TYPE_SAVED_SESSION, TYPE_UNSAVED_SESSION]}},
                             sort=[('update_at', -1)])
@@ -74,10 +74,10 @@ async def get_most_recent_session_by_uid(uid: int):
 @argmethod.wrap
 async def get_session_list_by_uid(uid: int):
   """Get the session list by uid."""
-  coll = db.Collection('token')
+  coll = db.db2.token
   return await coll.find({'uid': uid,
                           'token_type': {'$in': [TYPE_SAVED_SESSION, TYPE_UNSAVED_SESSION]}},
-                         sort=[('create_at', 1)]).to_list(None)
+                         sort=[('create_at', 1)]).to_list()
 
 
 @argmethod.wrap
@@ -94,7 +94,7 @@ async def update(token_id: str, token_type: int, expire_seconds: int, **kwargs):
     The token document, or None.
   """
   id_binary = binascii.unhexlify(token_id)
-  coll = db.Collection('token')
+  coll = db.db2.token
   assert 'token_type' not in kwargs
   now = datetime.datetime.utcnow()
   doc = await coll.find_one_and_update(
@@ -123,7 +123,7 @@ async def delete(token_id: str, token_type: int):
 @argmethod.wrap
 async def delete_by_hashed_id(hashed_id: str, token_type: int):
   """Delete a token by the hashed ID."""
-  coll = db.Collection('token')
+  coll = db.db2.token
   result = await coll.delete_one({'_id': hashed_id, 'token_type': token_type})
   return bool(result.deleted_count)
 
@@ -131,7 +131,7 @@ async def delete_by_hashed_id(hashed_id: str, token_type: int):
 @argmethod.wrap
 async def delete_by_uid(uid: int):
   """Delete all tokens by uid."""
-  coll = db.Collection('token')
+  coll = db.db2.token
   result = await coll.delete_many({'uid': uid,
                                    'token_type': {'$in': [TYPE_SAVED_SESSION,
                                                           TYPE_UNSAVED_SESSION]}})
@@ -140,7 +140,7 @@ async def delete_by_uid(uid: int):
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.Collection('token')
+  coll = db.db2.token
   await coll.create_index([('uid', 1), ('token_type', 1), ('update_at', -1)], sparse=True)
   await coll.create_index('expire_at', expireAfterSeconds=0)
 

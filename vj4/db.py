@@ -1,3 +1,4 @@
+import aiomongo
 from motor import motor_asyncio
 
 from vj4.util import options
@@ -16,15 +17,6 @@ class Database(object):
     return cls._instance
 
 
-class Collection(object):
-  _instances = {}
-
-  def __new__(cls, name):
-    if name not in cls._instances:
-      cls._instances[name] = motor_asyncio.AsyncIOMotorCollection(Database(), name)
-    return cls._instances[name]
-
-
 class GridFS(object):
   _instances = {}
 
@@ -32,3 +24,9 @@ class GridFS(object):
     if name not in cls._instances:
       cls._instances[name] = motor_asyncio.AsyncIOMotorGridFS(Database(), name)
     return cls._instances[name]
+
+
+async def init_db2():
+  client = await aiomongo.create_client('mongodb://' + options.db_host)
+  global db2
+  db2 = client.get_database(options.db_name)

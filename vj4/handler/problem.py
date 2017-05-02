@@ -198,9 +198,9 @@ class ProblemDetailHandler(base.Handler):
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     udoc = await user.get_by_uid(pdoc['owner_uid'])
-    tdocs = await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list(None) \
+    tdocs = await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list() \
             if self.has_perm(builtin.PERM_VIEW_TRAINING) else None
-    ctdocs = await contest.get_multi(self.domain_id, pids=pid).to_list(None) \
+    ctdocs = await contest.get_multi(self.domain_id, pids=pid).to_list() \
              if self.has_perm(builtin.PERM_VIEW_CONTEST) else None
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
@@ -229,7 +229,7 @@ class ProblemSubmitHandler(base.Handler):
           .get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
           .sort([('_id', -1)]) \
           .limit(10) \
-          .to_list(None)
+          .to_list()
     if not self.prefer_json:
       path_components = self.build_path(
           (self.translate('problem_main'), self.reverse_url('problem_main')),

@@ -24,7 +24,7 @@ class ProblemTest(base.DatabaseTestCase):
     self.assertEqual(pdoc['content'], CONTENT)
     self.assertEqual(pdoc['owner_uid'], UID)
     self.assertEqual(pdoc['doc_id'], pid)
-    pdocs = await problem.get_multi(domain_id=DOMAIN_ID, fields=['doc_id', 'title']).to_list(None)
+    pdocs = await problem.get_multi(domain_id=DOMAIN_ID, fields=['doc_id', 'title']).to_list()
     self.assertEqual(len(pdocs), 1)
     self.assertEqual(pdocs[0]['doc_id'], pid)
     self.assertEqual(pdocs[0]['title'], TITLE)
