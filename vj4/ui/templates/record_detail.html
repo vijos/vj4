@@ -2,7 +2,7 @@
 {% block content %}
 <script>
   var Context = {{ {
-    'socketUrl': '{}/conn'.format(reverse_url('record_detail', rid=rdoc['_id'])),
+    'socketUrl': socket_url,
   }|json|safe }};
 </script>
 <div class="row">
