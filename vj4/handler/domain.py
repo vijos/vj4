@@ -22,7 +22,7 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
     if self.has_perm(builtin.PERM_VIEW_CONTEST):
       tdocs = await contest.get_multi(self.domain_id) \
                            .limit(self.CONTESTS_ON_MAIN) \
-                           .to_list(None)
+                           .to_list()
       tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                              (tdoc['doc_id'] for tdoc in tdocs))
     else:
@@ -35,7 +35,7 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
       tdocs = await training.get_multi(self.domain_id) \
                             .sort('doc_id', 1) \
                             .limit(self.TRAININGS_ON_MAIN) \
-                            .to_list(None)
+                            .to_list()
       tsdict = await training.get_dict_status(self.domain_id, self.user['_id'],
                                               (tdoc['doc_id'] for tdoc in tdocs))
     else:
@@ -47,7 +47,7 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
     if self.has_perm(builtin.PERM_VIEW_DISCUSSION):
       ddocs = await discussion.get_multi(self.domain_id) \
                               .limit(self.DISCUSSIONS_ON_MAIN) \
-                              .to_list(None)
+                              .to_list()
       vndict = await discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs))
     else:
       ddocs = []

@@ -376,6 +376,10 @@ async def ensure_indexes():
   # for discussion
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
+                           ('update_at', -1),
+                           ('doc_id', -1)], sparse=True)
+  await coll.create_index([('domain_id', 1),
+                           ('doc_type', 1),
                            ('parent_doc_type', 1),
                            ('parent_doc_id', 1),
                            ('update_at', -1),
