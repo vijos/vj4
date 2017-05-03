@@ -107,7 +107,7 @@
       </dd>
     {% endif %}
       <dt>{{ _('Difficulty') }}</dt>
-      <dd>{{ pdoc['difficulty'] }}</dd>
+      <dd>{{ pdoc['difficulty'] or _('(None)') }}</dd>
       <dt>{{ _('Category') }}</dt>
       <dd>
         {% if pdoc['category'] %}
