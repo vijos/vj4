@@ -102,10 +102,9 @@ class ProblemRandomHandler(base.Handler):
     else:
       f = {}
     pid = await problem.get_random_id(self.domain_id, **f)
-    if pid:
-      self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
-    else:
-      self.json_or_redirect(self.referer_or_main)
+    if not pid:
+      raise error.NotFoundError()
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid), pid=pid)
 
 
 @app.route('/p/category/{category:[^/]*}', 'problem_category')
