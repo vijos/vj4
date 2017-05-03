@@ -35,7 +35,7 @@ Next generation of [Vijos](https://vijos.org), built with asyncio on Python 3.5.
 
 * [Python 3.5+](https://www.python.org/downloads/)
 * [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
-* [Node.js 0.11.15+](https://nodejs.org/en/download/) - better use a modern version ;)
+* [Node.js 4.0+](https://nodejs.org/en/download/)
 * [RabbitMQ](http://www.rabbitmq.com/)
 
 ## Install requirements
