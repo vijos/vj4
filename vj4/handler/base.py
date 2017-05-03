@@ -33,6 +33,7 @@ class HandlerBase(setting.SettingMixin):
   TITLE = None
 
   async def prepare(self):
+    self.translate = locale.get_translate(options.default_locale)  # Default translate for errors.
     self.session = await self.update_session()
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     if 'uid' in self.session:
