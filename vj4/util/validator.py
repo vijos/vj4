@@ -4,8 +4,17 @@ from vj4 import constant
 from vj4 import error
 
 
+UID_RE = re.compile(r'-?\d+')
+UNAME_RE = re.compile(r'[^\s\u3000](.{,254}[^\s\u3000])?')
+MAIL_RE = re.compile(r'\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*')
+# TODO(twd2): unicode char
+DOMAIN_ID_RE = re.compile(r'[_A-Za-z][_0-9A-Za-z]{3,255}')
+ID_RE = re.compile(r'[^\\/\s\u3000]([^\\/\n\r]*[^\\/\s\u3000])?')
+ROLE_RE = re.compile(r'[_0-9A-Za-z]{1,256}')
+
+
 def is_uid(s):
-  return bool(re.fullmatch(r'-?\d+', s))
+  return bool(UID_RE.fullmatch(s))
 
 
 def check_uid(s):
@@ -14,7 +23,7 @@ def check_uid(s):
 
 
 def is_uname(s):
-  return bool(re.fullmatch(r'[^\s\u3000](.{,254}[^\s\u3000])?', s))
+  return bool(UNAME_RE.fullmatch(s))
 
 
 def check_uname(s):
@@ -23,7 +32,7 @@ def check_uname(s):
 
 
 def is_password(s):
-  return bool(re.fullmatch(r'.{5,}', s))
+  return len(s) >= 5
 
 
 def check_password(s):
@@ -32,7 +41,7 @@ def check_password(s):
 
 
 def is_mail(s):
-  return bool(re.fullmatch(r'\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*', s))
+  return bool(MAIL_RE.fullmatch(s))
 
 
 def check_mail(s):
@@ -41,8 +50,7 @@ def check_mail(s):
 
 
 def is_domain_id(s):
-  # TODO(twd2): unicode char
-  return bool(re.fullmatch(r'[_A-Za-z][_0-9A-Za-z]{3,255}', s))
+  return bool(DOMAIN_ID_RE.fullmatch(s))
 
 
 def check_domain_id(s):
@@ -51,7 +59,7 @@ def check_domain_id(s):
 
 
 def is_id(s):
-  return bool(re.fullmatch(r'[^\\/\s\u3000]([^\\/\n\r]*[^\\/\s\u3000])?', s))
+  return bool(ID_RE.fullmatch(s))
 
 
 def check_category_name(s):
@@ -65,7 +73,7 @@ def check_node_name(s):
 
 
 def is_role(s):
-  return bool(re.fullmatch(r'[_0-9A-Za-z]{1,256}', s))
+  return bool(ROLE_RE.fullmatch(s))
 
 
 def check_role(s):
@@ -74,15 +82,16 @@ def check_role(s):
 
 
 def is_title(s):
-  return bool(re.fullmatch(r'.{1,64}', s.strip()))
+  return 0 < len(s.strip()) <= 64
 
 
 def check_title(s):
   if not is_title(s):
     raise error.ValidationError('title')
 
+
 def is_name(s):
-  return bool(re.fullmatch(r'.{1,256}', s))
+  return 0 < len(s.strip()) <= 256
 
 
 def check_name(s):
@@ -91,7 +100,7 @@ def check_name(s):
 
 
 def is_content(s):
-  return isinstance(s, str) and len(s.strip()) >= 2 and len(s.strip()) <= 65536
+  return isinstance(s, str) and 0 < len(s.strip()) < 65536
 
 
 def check_content(s):
@@ -100,7 +109,7 @@ def check_content(s):
 
 
 def is_description(s):
-  return isinstance(s, str) and len(s.strip()) >= 1 and len(s.strip()) <= 65536
+  return isinstance(s, str) and 0 < len(s.strip()) < 65536
 
 
 def check_description(s):
