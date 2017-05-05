@@ -435,3 +435,6 @@ for category, sub_categories in PROBLEM_CATEGORIES.items():
     assert ',' not in sub_category
     assert sub_category not in PROBLEM_SUB_CATEGORIES
     PROBLEM_SUB_CATEGORIES[sub_category] = category
+
+
+VNODE_MISSING = {'title': '(missing)'}

@@ -1,6 +1,6 @@
 # VJ4
 
-[![Build Status](https://img.shields.io/travis/vijos/vj4.svg?branch=master&style=flat-square)](https://travis-ci.org/vijos/vj4)
+[![Build Status](https://img.shields.io/travis/vijos/vj4/master.svg?style=flat-square)](https://travis-ci.org/vijos/vj4)
 [![Code Climate](https://img.shields.io/codeclimate/github/vijos/vj4.svg?style=flat-square)](https://codeclimate.com/github/vijos/vj4)
 [![Dependency Status](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62)
 [![GitHub license](https://img.shields.io/badge/license-AGPLv3-blue.svg?style=flat-square)](https://raw.githubusercontent.com/vijos/vj4/master/LICENSE)
@@ -35,7 +35,7 @@ Next generation of [Vijos](https://vijos.org), built with asyncio on Python 3.5.
 
 * [Python 3.5+](https://www.python.org/downloads/)
 * [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
-* [Node.js 0.11.15+](https://nodejs.org/en/download/) - better use a modern version ;)
+* [Node.js 4.0+](https://nodejs.org/en/download/)
 * [RabbitMQ](http://www.rabbitmq.com/)
 
 ## Install requirements

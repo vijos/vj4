@@ -1,5 +1,10 @@
 {% extends "layout/basic.html" %}
 {% block content %}
+<script>
+  var Context = {{ {
+    'socketUrl': socket_url,
+  }|json|safe }};
+</script>
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">

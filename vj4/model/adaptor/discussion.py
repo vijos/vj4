@@ -136,6 +136,10 @@ async def get(domain_id: str, did: document.convert_doc_id):
 
 
 async def edit(domain_id: str, did: document.convert_doc_id, **kwargs):
+  if 'title' in kwargs:
+      validator.check_title(kwargs['title'])
+  if 'content' in kwargs:
+      validator.check_content(kwargs['content'])
   return await document.set(domain_id, document.TYPE_DISCUSSION, did, **kwargs)
 
 
