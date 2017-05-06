@@ -94,7 +94,7 @@ class RecordMainConnection(base.Connection, RecordMixin):
     bus.subscribe(self.on_record_change, ['record_change'])
 
   async def on_record_change(self, e):
-    rdoc = await record.get(e['value'], record.PROJECTION_PUBLIC)
+    rdoc = e['value']
     for key, value in self.query.items():
       if rdoc[key] != value:
         return
@@ -102,7 +102,6 @@ class RecordMainConnection(base.Connection, RecordMixin):
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
       if not self.tdoc_visible(tdoc):
         return
-    # TODO(iceboy): join from event to improve performance?
     # TODO(iceboy): projection.
     udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
                                       problem.get(rdoc['domain_id'], rdoc['pid']))
@@ -167,22 +166,20 @@ class RecordDetailConnection(base.Connection, RecordMixin):
     self.rid = objectid.ObjectId(self.request.match_info['rid'])
     rdoc = await record.get(self.rid, record.PROJECTION_PUBLIC)
     if rdoc['tid']:
-      self.tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-    else:
-      self.tdoc = None
+      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      if not self.tdoc_visible(tdoc):
+        self.close()
+        return
     bus.subscribe(self.on_record_change, ['record_change'])
-    await self.try_send_record(rdoc)
+    self.send_record(rdoc)
 
   async def on_record_change(self, e):
-    if e['value'] != self.rid:
+    rdoc = e['value']
+    if rdoc['_id'] != self.rid:
       return
-    rdoc = await record.get(self.rid, record.PROJECTION_PUBLIC)
-    await self.try_send_record(rdoc)
+    self.send_record(rdoc)
 
-  async def try_send_record(self, rdoc):
-    if self.tdoc:
-      if not self.tdoc_visible(self.tdoc):
-        return
+  def send_record(self, rdoc):
     self.send(status_html=self.render_html('record_detail_status.html', rdoc=rdoc),
               summary_html=self.render_html('record_detail_summary.html', rdoc=rdoc))
 

@@ -23,21 +23,22 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
               hidden=False):
   validator.check_lang(lang)
   coll = db.db2.record
-  rid = (await coll.insert_one({'hidden': hidden,
-                                'status': constant.record.STATUS_WAITING,
-                                'score': 0,
-                                'time_ms': 0,
-                                'memory_kb': 0,
-                                'domain_id': domain_id,
-                                'pid': pid,
-                                'uid': uid,
-                                'lang': lang,
-                                'code': code,
-                                'tid': tid,
-                                'data_id': data_id,
-                                'type': type})).inserted_id
+  doc = {'hidden': hidden,
+         'status': constant.record.STATUS_WAITING,
+         'score': 0,
+         'time_ms': 0,
+         'memory_kb': 0,
+         'domain_id': domain_id,
+         'pid': pid,
+         'uid': uid,
+         'lang': lang,
+         'code': code,
+         'tid': tid,
+         'data_id': data_id,
+         'type': type}
+  rid = (await coll.insert_one(doc)).inserted_id
   post_coros = [queue.publish('judge', rid=rid),
-                bus.publish('record_change', rid)]
+                bus.publish('record_change', doc)]
   if type == constant.record.TYPE_SUBMISSION:
     post_coros.extend([problem.inc_status(domain_id, pid, uid, 'num_submit', 1),
                        problem.inc(domain_id, pid, 'num_submit', 1),
@@ -67,8 +68,8 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
                                                         'time_ms': 0,
                                                         'memory_kb': 0,
                                                         'rejudged': True}},
-                                       return_document=ReturnDocument.BEFORE)
-  post_coros = [bus.publish('record_change', doc['_id'])]
+                                       return_document=ReturnDocument.AFTER)
+  post_coros = [bus.publish('record_change', doc)]
   if enqueue:
     post_coros.append(queue.publish('judge', rid=doc['_id']))
   await asyncio.gather(*post_coros)
