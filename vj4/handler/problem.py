@@ -300,7 +300,7 @@ class ProblemPretestConnection(base.Connection):
     bus.subscribe(self.on_record_change, ['record_change'])
 
   async def on_record_change(self, e):
-    rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
+    rdoc = e['value']
     if rdoc['uid'] != self.user['_id'] or \
        rdoc['domain_id'] != self.domain_id or rdoc['pid'] != self.pid:
       return
@@ -312,7 +312,6 @@ class ProblemPretestConnection(base.Connection):
           and (self.domain_id != tdoc['domain_id']
                or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
         return
-    # TODO(iceboy): join from event to improve performance?
     self.send(rdoc=rdoc)
 
   async def on_close(self):
