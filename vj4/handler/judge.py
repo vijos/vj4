@@ -49,7 +49,7 @@ async def _post_judge(handler, rdoc):
   await opcount.force_inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(rdoc['uid']),
                           operations=rdoc['time_ms'])
   accept = rdoc['status'] == constant.record.STATUS_ACCEPTED
-  post_coros = [bus.publish('record_change', rdoc['_id'])]
+  post_coros = [bus.publish('record_change', rdoc)]
   # TODO(twd2): ignore no effect statuses like system error, ...
   if rdoc['type'] == constant.record.TYPE_SUBMISSION:
     if accept:
@@ -104,8 +104,9 @@ class JudgeDataListHandler(base.Handler):
                'time': calendar.timegm(datetime.datetime.utcnow().utctimetuple())})
 
 
+# TODO(iceboy): Move this to RecordCancelHandler.
 @app.route('/judge/{rid}/score', 'judge_score')
-class RecordRejudgeHandler(base.Handler):
+class JudgeScoreHandler(base.Handler):
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
@@ -157,16 +158,16 @@ class JudgeNotifyConnection(base.Connection):
       used_time = await opcount.get(**opcount.OPS['run_code'],
                                     ident=opcount.PREFIX_USER + str(rdoc['uid']))
       if used_time >= opcount.OPS['run_code']['max_operations']:
-        await asyncio.gather(
+        rdoc, _ = await asyncio.gather(
             record.end_judge(rid, self.user['_id'], self.id,
                              constant.record.STATUS_CANCELED, 0, 0, 0),
             self.channel.basic_client_ack(tag))
-        await bus.publish('record_change', rid)
+        await bus.publish('record_change', rdoc)
         return
       self.rids[tag] = rdoc['_id']
       self.send(rid=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
                 lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])
-      await bus.publish('record_change', rdoc['_id'])
+      await bus.publish('record_change', rdoc)
     else:
       # Record not found, eat it.
       await self.channel.basic_client_ack(tag)
@@ -191,8 +192,8 @@ class JudgeNotifyConnection(base.Connection):
         }
       if 'progress' in kwargs:
         update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
-      await record.next_judge(rid, self.user['_id'], self.id, **update)
-      await bus.publish('record_change', rid)
+      rdoc = await record.next_judge(rid, self.user['_id'], self.id, **update)
+      await bus.publish('record_change', rdoc)
     elif key == 'end':
       rid = self.rids.pop(tag)
       rdoc, _ = await asyncio.gather(record.end_judge(rid, self.user['_id'], self.id,
@@ -208,9 +209,9 @@ class JudgeNotifyConnection(base.Connection):
   async def on_close(self):
     async def close():
       async def reset_record(rid):
-        await record.end_judge(rid, self.user['_id'], self.id,
-                               constant.record.STATUS_WAITING, 0, 0, 0)
-        await bus.publish('record_change', rid)
+        rdoc = await record.end_judge(rid, self.user['_id'], self.id,
+                                      constant.record.STATUS_WAITING, 0, 0, 0)
+        await bus.publish('record_change', rdoc)
 
       await asyncio.gather(*[reset_record(rid) for rid in self.rids.values()])
       await self.channel.close()
