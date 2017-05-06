@@ -8,7 +8,7 @@
 
 Next generation of [Vijos](https://vijos.org), built with asyncio on Python 3.5.
 
-## Functionality
+## Overview
 
 - Problem Categories and Tags
 - Solution Sharing & Voting
@@ -20,17 +20,9 @@ Next generation of [Vijos](https://vijos.org), built with asyncio on Python 3.5.
 - Real-time Status Updates
 - Online Judge as a Service (a.k.a. Domain): create your own OJ website without dev-ops!
 - Management UI
-
-## Features
-
 - Sandboxed & Distributed Judging: see [jd4](https://github.com/vijos/jd4), [winjudge](https://github.com/iceb0y/winjudge) and [windows-container](https://github.com/iceb0y/windows-container)
-- High Performance Web Server
-- Cross Platform (both Judge and Web Server can be run on Linux & Windows)
 - Secure (we are also CTF players)
-- Modern Architecture
-- Modern User Interface
-- SEO Optimized
-- CDN Friendly
+- Modern Architecture & User Interface
 
 ## Prerequisites
 
@@ -141,4 +133,4 @@ Indentation: 2 spaces
 * [aiohttp](http://aiohttp.readthedocs.org/en/stable/)
 * [Jinja2 Documentation](http://jinja.pocoo.org/docs/)
 * [Motor: Asynchronous Python driver for MongoDB](http://motor.readthedocs.org/en/stable/)
-* [Webpack Module Bundler](http://webpack.github.io/docs/)
+* [Webpack Module Bundler](https://webpack.js.org/)
