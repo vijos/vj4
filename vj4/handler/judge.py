@@ -7,19 +7,18 @@ from bson import objectid
 from vj4 import app
 from vj4 import constant
 from vj4 import job
+from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import opcount
-from vj4.model import queue
 from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
 from vj4.service import bus
-from vj4.handler import base
+from vj4.service import queue
 from vj4.util import locale
-
 
 _logger = logging.getLogger(__name__)
 

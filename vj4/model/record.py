@@ -3,13 +3,13 @@ import datetime
 from bson import objectid
 from pymongo import ReturnDocument
 
-from vj4 import db
 from vj4 import constant
+from vj4 import db
 from vj4.model import document
 from vj4.model import domain
-from vj4.model import queue
 from vj4.model.adaptor import problem
 from vj4.service import bus
+from vj4.service import queue
 from vj4.util import argmethod
 from vj4.util import validator
 

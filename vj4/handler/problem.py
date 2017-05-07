@@ -28,7 +28,6 @@ from vj4.util import pagination
 from vj4.util import options
 
 
-
 async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
                                       category, psdict, **kwargs):
   if 'page_title' not in kwargs:
