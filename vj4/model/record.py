@@ -3,13 +3,13 @@ import datetime
 from bson import objectid
 from pymongo import ReturnDocument
 
-from vj4 import db
 from vj4 import constant
+from vj4 import db
 from vj4.model import document
 from vj4.model import domain
-from vj4.model import queue
 from vj4.model.adaptor import problem
 from vj4.service import bus
+from vj4.service import queue
 from vj4.util import argmethod
 from vj4.util import validator
 
@@ -37,8 +37,8 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
          'data_id': data_id,
          'type': type}
   rid = (await coll.insert_one(doc)).inserted_id
-  post_coros = [queue.publish('judge', rid=rid),
-                bus.publish('record_change', doc)]
+  bus.publish_throttle('record_change', doc, rid)
+  post_coros = [queue.publish('judge', rid=rid)]
   if type == constant.record.TYPE_SUBMISSION:
     post_coros.extend([problem.inc_status(domain_id, pid, uid, 'num_submit', 1),
                        problem.inc(domain_id, pid, 'num_submit', 1),
@@ -69,10 +69,9 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
                                                         'memory_kb': 0,
                                                         'rejudged': True}},
                                        return_document=ReturnDocument.AFTER)
-  post_coros = [bus.publish('record_change', doc)]
+  bus.publish_throttle('record_change', doc, doc['_id'])
   if enqueue:
-    post_coros.append(queue.publish('judge', rid=doc['_id']))
-  await asyncio.gather(*post_coros)
+    await queue.publish('judge', rid=doc['_id'])
 
 
 @argmethod.wrap

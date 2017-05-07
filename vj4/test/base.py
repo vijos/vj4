@@ -7,8 +7,8 @@ import pymongo
 
 from vj4 import db
 from vj4.service import bus
-from vj4.model import queue
 from vj4.service import event
+from vj4.service import queue
 from vj4.service import smallcache
 from vj4.util import options
 from vj4.util import tools
