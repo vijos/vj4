@@ -120,7 +120,7 @@ class Test(unittest.TestCase):
     self.assertTrue(validator.is_content('dummy_name'))
     self.assertTrue(validator.is_content('x' * 300))
     self.assertFalse(validator.is_content(''))
-    self.assertFalse(validator.is_content('c'))
+    self.assertTrue(validator.is_content('c'))
     self.assertFalse(validator.is_content('x' * 700000))
 
   def test_description(self):

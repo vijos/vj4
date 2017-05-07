@@ -6,6 +6,26 @@ export const LANG_TEXTS = {
   pas: 'Pascal',
   java: 'Java',
   py: 'Python',
+  py3: 'Python 3',
+  php: 'PHP',
+  rs: 'Rust',
+  hs: 'Haskell',
+  js: 'Javascript',
+  go: 'Go',
+};
+
+export const LANG_HIGHLIGHT_ID = {
+  c: 'c',
+  cc: 'cpp',
+  pas: 'pascal',
+  java: 'java',
+  py: 'python',
+  py3: 'python',
+  php: 'php',
+  rs: 'rust',
+  hs: 'haskell',
+  js: 'javascript',
+  go: 'go',
 };
 
 export const LANG_CODEMIRROR_MODES = {
@@ -14,5 +34,11 @@ export const LANG_CODEMIRROR_MODES = {
   pas: 'text/x-pascal',
   java: 'text/x-java',
   py: 'text/x-python',
+  py3: 'text/x-python',
+  php: 'text/x-php',
+  rs: 'text/x-rustsrc',
+  hs: 'text/x-haskell',
+  js: 'text/javascript',
+  go: 'text/x-go',
 };
 attachObjectMeta(LANG_CODEMIRROR_MODES, 'exportToPython', false);

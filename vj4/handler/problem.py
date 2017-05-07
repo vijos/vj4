@@ -1,8 +1,8 @@
 import asyncio
 import datetime
 import functools
-import hashlib
 import io
+import os.path
 import zipfile
 from bson import objectid
 from urllib import parse
@@ -11,7 +11,6 @@ from vj4 import app
 from vj4 import constant
 from vj4 import error
 from vj4 import job
-from vj4 import handler
 from vj4.handler import base
 from vj4.model import builtin
 from vj4.model import user
@@ -29,7 +28,6 @@ from vj4.util import pagination
 from vj4.util import options
 
 
-
 async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
                                       category, psdict, **kwargs):
   if 'page_title' not in kwargs:
@@ -40,10 +38,12 @@ async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
     list_html = self.render_html('partials/problem_list.html', page=page, ppcount=ppcount,
                                  pcount=pcount, pdocs=pdocs, psdict=psdict)
     stat_html = self.render_html('partials/problem_stat.html', pcount=pcount)
+    lucky_html = self.render_html('partials/problem_lucky.html', category=category)
     path_html = self.render_html('partials/path.html', path_components=kwargs['path_components'])
     self.json({'title': self.render_title(kwargs['page_title']),
                'fragments': [{'html': list_html},
                              {'html': stat_html},
+                             {'html': lucky_html},
                              {'html': path_html}]})
   else:
     self.render('problem_main.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs,
@@ -88,6 +88,22 @@ class ProblemMainHandler(base.OperationHandler):
 
   post_star = functools.partialmethod(star_unstar, star=True)
   post_unstar = functools.partialmethod(star_unstar, star=False)
+
+
+@app.route('/p/random', 'problem_random')
+class ProblemRandomHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.route_argument
+  @base.sanitize
+  async def get(self):
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    pid = await problem.get_random_id(self.domain_id, **f)
+    if not pid:
+      raise error.NotFoundError()
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid), pid=pid)
 
 
 @app.route('/p/category/<category>', 'problem_category')
@@ -148,6 +164,25 @@ class ProblemCategoryHandler(base.OperationHandler):
     await render_or_json_problem_list(self, page=page, ppcount=ppcount, pcount=pcount,
                                       pdocs=pdocs, category=category, psdict=psdict,
                                       page_title=page_title, path_components=path_components)
+
+
+@app.route('/p/category/<category:[^/]*>/random', 'problem_category_random')
+class ProblemCategoryRandomHandler(base.Handler):
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.get_argument
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, category: str):
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    query = ProblemCategoryHandler.build_query(category)
+    pid = await problem.get_random_id(self.domain_id, **query, **f)
+    if pid:
+      self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
+    else:
+      self.json_or_redirect(self.referer_or_main)
 
 
 @app.route('/p/<pid:-?\d+|\w{24}>', 'problem_detail')
@@ -233,8 +268,8 @@ class ProblemPretestHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid)
     # don't need to check hidden status
     # create zip file, TODO(twd2): check file size
-    content = list(zip(self.request.POST.getall('data_input'),
-                       self.request.POST.getall('data_output')))
+    post = await self.request.post()
+    content = list(zip(post.getall('data_input'), post.getall('data_output')))
     output_buffer = io.BytesIO()
     zip_file = zipfile.ZipFile(output_buffer, 'a', zipfile.ZIP_DEFLATED)
     config_content = str(len(content)) + '\n'
@@ -264,7 +299,7 @@ class ProblemPretestConnection(base.Connection):
     bus.subscribe(self.on_record_change, ['record_change'])
 
   async def on_record_change(self, e):
-    rdoc = await record.get(objectid.ObjectId(e['value']), record.PROJECTION_PUBLIC)
+    rdoc = e['value']
     if rdoc['uid'] != self.user['_id'] or \
        rdoc['domain_id'] != self.domain_id or rdoc['pid'] != self.pid:
       return
@@ -276,7 +311,6 @@ class ProblemPretestConnection(base.Connection):
           and (self.domain_id != tdoc['domain_id']
                or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
         return
-    # TODO(iceboy): join from event to improve performance?
     self.send(rdoc=rdoc)
 
   async def on_close(self):
@@ -374,7 +408,7 @@ class ProblemSolutionHandler(base.OperationHandler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
     if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
-      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+      raise error.DocumentNotFoundError(self.domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     if not self.own(psrdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION_REPLY)
     await problem.edit_solution_reply(self.domain_id, psid, psrid, content)
@@ -391,7 +425,7 @@ class ProblemSolutionHandler(base.OperationHandler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     psdoc, psrdoc = await problem.get_solution_reply(self.domain_id, psid, psrid)
     if not psdoc or psdoc['parent_doc_id'] != pdoc['doc_id']:
-      raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
+      raise error.DocumentNotFoundError(self.domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
     if not self.own(psrdoc, builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF):
       self.check_perm(builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY)
     await oplog.add(self.user['_id'], oplog.TYPE_DELETE_SUB_DOCUMENT, sub_doc=psrdoc,
@@ -480,6 +514,8 @@ class ProblemDataHandler(base.Handler):
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     fdoc = await problem.get_data(self.domain_id, pid)
+    if not fdoc:
+      raise error.ProblemDataNotFoundError(self.domain_id, pid)
     self.redirect(options.cdn_prefix.rstrip('/') + \
                   self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
                                    secret=fdoc['metadata']['secret']))
@@ -570,7 +606,7 @@ class ProblemSettingsHandler(base.Handler):
     category = self.split_tags(category)
     tag = self.split_tags(tag)
     for c in category:
-      if not (c in builtin.PROBLEM_CATEGORIES \
+      if not (c in builtin.PROBLEM_CATEGORIES
               or c in builtin.PROBLEM_SUB_CATEGORIES):
         raise error.ValidationError('category')
     if difficulty_setting not in problem.SETTING_DIFFICULTY_RANGE:
@@ -590,7 +626,12 @@ class ProblemSettingsHandler(base.Handler):
 
 
 @app.route('/p/<pid>/upload', 'problem_upload')
-class ProblemSettingsHandler(base.Handler):
+class ProblemUploadHandler(base.Handler):
+  def get_content_type(self, filename):
+    if os.path.splitext(filename)[1].lower() != '.zip':
+      raise error.FileTypeNotAllowedError(filename)
+    return 'application/zip'
+
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
   @base.sanitize
@@ -606,19 +647,19 @@ class ProblemSettingsHandler(base.Handler):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
+  @base.multipart_argument
+  @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id):
+  async def post(self, *, pid: document.convert_doc_id, file: objectid.ObjectId):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    file_id = await handler.fs.handle_file_upload(self, raise_error=False)
-    if file_id:
-      if pdoc.get('data'):
-        await fs.unlink(pdoc['data'])
-      await problem.set_data(self.domain_id, pid, file_id)
+    if pdoc.get('data'):
+      await fs.unlink(pdoc['data'])
+    await problem.set_data(self.domain_id, pid, file)
     self.json_or_redirect(self.url)
 
 

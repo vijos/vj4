@@ -532,6 +532,7 @@ Edit training plans: 修改训练计划
 Edit own training plans: 修改自己的训练计划
 Click here to chat with me: 点击这里与我聊天
 Terms of Service: 服务条款
+Copyright Complaint: 版权申诉
 wiki_help: 帮助
 Discussion: 讨论
 Manager: 管理
@@ -634,3 +635,5 @@ Network error: 网络错误
 page.training_detail.invalid_when_not_enrolled: 未参加训练计划时您不能查看题目详情。
 page.problem_detail.sidebar.show_category: 点击显示
 Argument {0} is unknown.: 未知的参数 {0} 。
+Lucky: 手气不错
+Pick a problem randomly.: 随机挑选一道题目。

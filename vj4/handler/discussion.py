@@ -144,6 +144,8 @@ class DiscussionDetailHandler(base.OperationHandler):
         discussion.get_vnode(self.domain_id, discussion.node_id(ddoc)),
         pagination.paginate(discussion.get_multi_reply(self.domain_id, ddoc['doc_id']),
                             page, self.REPLIES_PER_PAGE))
+    if not vnode:
+      vnode = builtin.VNODE_MISSING
     uids = {ddoc['owner_uid']}
     uids.update(drdoc['owner_uid'] for drdoc in drdocs)
     for drdoc in drdocs:

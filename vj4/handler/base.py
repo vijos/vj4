@@ -14,6 +14,7 @@ from vj4 import error
 from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
+from vj4.model import fs
 from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
@@ -31,6 +32,7 @@ class HandlerBase(setting.SettingMixin):
   TITLE = None
 
   async def prepare(self):
+    self.translate = locale.get_translate(options.default_locale)  # Default translate for errors.
     self.session = await self.update_session()
     self.domain_id = self.route_args.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     if 'uid' in self.session:
@@ -208,8 +210,9 @@ class Handler(HandlerBase):
       await HandlerBase.prepare(self)
       await getattr(self, self.request.method.lower())()
       return self.response
+    except asyncio.CancelledError:
+      raise
     except error.UserFacingError as e:
-      _logger.warning("User facing error: %s", repr(e))
       self.response.status = e.http_status
       if self.prefer_json:
         self.response.content_type = 'application/json'
@@ -219,9 +222,11 @@ class Handler(HandlerBase):
         self.render(e.template_name, error=e,
                     page_name='error', page_title=self.translate('error'),
                     path_components=self.build_path((self.translate('error'), None)))
-    except Exception as e:
-      _logger.error("Unexpected exception occurred when handling %s (IP = %s, UID = %d): %s",
-                    self.url, self.remote_ip, (self.user and self.user['_id']) or None, repr(e))
+      uid = self.user['_id'] if hasattr(self, 'user') else None
+      _logger.warning('User facing error by %s %s %s: %s', self.url, self.remote_ip, uid, repr(e))
+    except:
+      uid = self.user['_id'] if hasattr(self, 'user') else None
+      _logger.error('System error by %s %s %s', self.url, self.remote_ip, uid)
       raise
 
   def render(self, template_name, **kwargs):
@@ -419,6 +424,39 @@ def post_argument(coro):
 
   return wrapped
 
+
+def multipart_argument(coro):
+  @functools.wraps(coro)
+  async def wrapped(self, **kwargs):
+    file_ids = list()
+    try:
+      async for part in await self.request.multipart():
+        if not part.filename:
+          kwargs[part.name] = (await part.read()).decode()
+        else:
+          grid_in = await fs.add(self.get_content_type(part.filename))
+          try:
+            chunk = await part.read_chunk()
+            while chunk:
+              _, chunk = await asyncio.gather(grid_in.write(chunk), part.read_chunk())
+            await grid_in.close()
+          except:
+            await grid_in.abort()
+            raise
+          file_id = await fs.link_by_md5(grid_in.md5, grid_in._id)
+          if file_id:
+            await fs.unlink(grid_in._id)
+          else:
+            file_id = grid_in._id
+          file_ids.append(file_id)
+          kwargs[part.name] = file_id
+      return await coro(self, **kwargs)
+    except:
+      await asyncio.gather(*[fs.unlink(file_id) for file_id in file_ids])
+      # TODO(iceboy): call self.response.force_close() after aiohttp supports it.
+      raise
+
+  return wrapped
 
 def limit_rate(op):
   def decorate(coro):

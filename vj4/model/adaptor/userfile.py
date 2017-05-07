@@ -1,8 +1,5 @@
-import asyncio
 from bson import objectid
-from pymongo import errors
 
-from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document

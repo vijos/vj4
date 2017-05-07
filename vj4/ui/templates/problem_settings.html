@@ -24,11 +24,11 @@
           {{ form.form_text(columns=12, label='Tags', help_text='Splitted by \', \'.', name='tag', value=pdoc['tag']|join(', ')) }}
           <div class="row">
             {{ form.form_select(columns=4, label='Difficulty', name='difficulty_setting', options=vj4.model.adaptor.problem.SETTING_DIFFICULTY_RANGE.items(), value=pdoc['difficulty_setting']|default(0), row=false) }}
-            {{ form.form_text(columns=4, label='Evaluated difficulty', help_text='Effects only when Difficulty is not \'Use algorithm calculated\'.', name='difficulty_admin', placeholder='9', value=pdoc['difficulty_admin']|default('') or '', row=False) }}
+            {{ form.form_text(columns=4, label='Evaluated difficulty', help_text='Effects only when Difficulty is not \'Use algorithm calculated\'.', name='difficulty_admin', placeholder='9', value=pdoc['difficulty_admin'] or '', row=False) }}
             <div class="medium-4 columns">
-              <p class="help-text">{{ _('Difficulty displayed') }}: {{ pdoc['difficulty']|default(_('(None)')) or _('(None)') }}</p>
-              <p class="help-text">{{ _('Difficulty by algorithm') }}: {{ pdoc['difficulty_algo']|default(_('(None)')) or _('(None)') }}</p>
-              <p class="help-text">{{ _('Difficulty by admin') }}: {{ pdoc['difficulty_admin']|default(_('(None)')) or _('(None)') }}</p>
+              <p class="help-text">{{ _('Difficulty displayed') }}: {{ pdoc['difficulty'] or _('(None)') }}</p>
+              <p class="help-text">{{ _('Difficulty by algorithm') }}: {{ pdoc['difficulty_algo'] or _('(None)') }}</p>
+              <p class="help-text">{{ _('Difficulty by admin') }}: {{ pdoc['difficulty_admin'] or _('(None)') }}</p>
             </div>
           </div>
           <div class="row"><div class="columns">

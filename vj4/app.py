@@ -15,12 +15,12 @@ from vj4.util import tools
 
 options.define('debug', default=False, help='Enable debug mode.')
 options.define('static', default=True, help='Serve static files.')
-options.define('ip_header', default='X-Forwarded-For', help='Header name for remote IP.')
+options.define('ip_header', default='', help='Header name for remote IP.')
 options.define('unsaved_session_expire_seconds', default=43200,
                help='Expire time for unsaved session, in seconds.')
 options.define('saved_session_expire_seconds', default=2592000,
                help='Expire time for saved session, in seconds.')
-options.define('cookie_domain', default=None, help='Cookie domain.')
+options.define('cookie_domain', default='', help='Cookie domain.')
 options.define('cookie_secure', default=False, help='Enable secure cookie flag.')
 options.define('registration_token_expire_seconds', default=86400,
                help='Expire time for registration token, in seconds.')
@@ -115,12 +115,12 @@ def connection_route(prefix, name):
                                     timeout=self.timeout, loop=self.loop, debug=self.debug))
         return self[id]
 
+    loop = asyncio.get_event_loop()
     sockjs.add_endpoint(Application(), handler, name=name, prefix=prefix,
-                        manager=Manager(name, Application(), handler, Application().loop))
-    sockjs.add_endpoint(Application(), handler,
-                        name=name + '_with_domain_id', prefix='/d/{domain_id}' + prefix,
-                        manager=Manager(name + '_with_domain_id', Application(), handler,
-                                        Application().loop))
+                        manager=Manager(name, Application(), handler, loop))
+    sockjs.add_endpoint(
+        Application(), handler, name=name + '_with_domain_id', prefix='/d/{domain_id}' + prefix,
+        manager=Manager(name + '_with_domain_id', Application(), handler, loop))
     return conn
 
   return decorate
