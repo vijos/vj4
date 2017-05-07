@@ -194,7 +194,6 @@ class JudgeNotifyConnection(base.Connection):
         update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
       rdoc = await record.next_judge(rid, self.user['_id'], self.id, **update)
       if not rdoc:
-        await self.channel.basic_client_ack(tag)
         return
       bus.publish_throttle('record_change', rdoc, rdoc['_id'])
     elif key == 'end':
@@ -206,7 +205,6 @@ class JudgeNotifyConnection(base.Connection):
                                                       int(kwargs['memory_kb'])),
                                      self.channel.basic_client_ack(tag))
       if not rdoc:
-        await self.channel.basic_client_ack(tag)
         return
       await _post_judge(self, rdoc)
     elif key == 'nack':
