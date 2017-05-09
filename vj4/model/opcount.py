@@ -35,7 +35,7 @@ MAX_OP_REGISTER = 60
 
 @argmethod.wrap
 async def inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int=1):
-  coll = coll = db.coll('opcount')
+  coll = db.coll('opcount')
   cur_time = int(time.time())
   begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)
   expire_at = begin_at + datetime.timedelta(seconds=period_secs)
@@ -54,7 +54,7 @@ async def inc(op: str, ident: str, period_secs: int, max_operations: int, operat
 
 @argmethod.wrap
 async def force_inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int=1):
-  coll = coll = db.coll('opcount')
+  coll = db.coll('opcount')
   cur_time = int(time.time())
   begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)
   expire_at = begin_at + datetime.timedelta(seconds=period_secs)
@@ -69,7 +69,7 @@ async def force_inc(op: str, ident: str, period_secs: int, max_operations: int, 
 
 @argmethod.wrap
 async def get(op: str, ident: str, period_secs: int, max_operations: int):
-  coll = coll = db.coll('opcount')
+  coll = db.coll('opcount')
   cur_time = int(time.time())
   begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)
   expire_at = begin_at + datetime.timedelta(seconds=period_secs)
@@ -84,7 +84,7 @@ async def get(op: str, ident: str, period_secs: int, max_operations: int):
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = coll = db.coll('opcount')
+  coll = db.coll('opcount')
   await coll.create_index([('ident', 1),
                            ('begin_at', 1),
                            ('expire_at', 1)], unique=True)
