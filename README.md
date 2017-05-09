@@ -36,7 +36,7 @@ Next generation of [Vijos](https://vijos.org), built with asyncio on Python 3.5.
 In the root of the repository, where `requirements.txt` and `package.json` locates:
 
 ```bash
-python3.5 -m pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 npm install   # cnpm install
 ```
 
@@ -69,7 +69,7 @@ In the root of the repository:
 
 ```bash
 npm run build   # or: npm run build:watch
-python3.5 -m vj4.server --debug
+python3 -m vj4.server --debug
 ```
 
 > Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
@@ -77,7 +77,7 @@ python3.5 -m vj4.server --debug
 As an intuitive example, you may want to add a super administator and a problem to start:
 
 ```bash
-alias pm="python3.5 -m"
+alias pm="python3 -m"
 pm vj4.model.user add -1 icebox 12345 icebox@iceboy.org
 pm vj4.model.user set_superadmin -1
 pm vj4.model.adaptor.problem add system "Dummy Problem" "# It *works*" -1 1000   # you can also use web UI
@@ -104,7 +104,7 @@ However you need to manually restart the server for server-side code to take eff
 
 ```bash
 npm run build:production
-python3.5 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
+python3 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
 ```
 
 * Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
