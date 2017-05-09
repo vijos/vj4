@@ -74,7 +74,7 @@ def invoke_by_args():
     parser.print_help()
   else:
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(db.init_db2())
+    loop.run_until_complete(db.init())
     try:
       result = _methods[name](**vars(args))
       if inspect.iscoroutine(result):

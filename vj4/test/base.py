@@ -18,8 +18,11 @@ wait = asyncio.get_event_loop().run_until_complete
 
 class DatabaseTestCase(unittest.TestCase):
   def setUp(self):
-    db.Database._instance, db.Collection._instances, db.GridFS._instances = None, {}, {}
+    db._db = None
+    db.coll.cache_clear()
+    db.fs.cache_clear()
     options.db_name = 'unittest_' + str(os.getpid())
+    wait(db.init())
     wait(tools.ensure_all_indexes())
 
   def tearDown(self):
