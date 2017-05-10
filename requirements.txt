@@ -11,4 +11,4 @@ httpagentparser
 geoip2
 GitPython
 PyYAML
-git+https://github.com/ZeoAlliance/aiomongo
+git+https://github.com/iceb0y/aiomongo
