@@ -233,7 +233,7 @@ class Handler(web.View, HandlerBase):
       _logger.warning('User facing error by %s %s %s: %s', self.url, self.remote_ip, uid, repr(e))
     except:
       uid = self.user['_id'] if hasattr(self, 'user') else None
-      _logger.error('System error by %s %s %s', self.url, self.remote_ip, uid)
+      _logger.error('System error by %s %s %s: %s', self.url, self.remote_ip, uid, repr(e))
       raise
     return self.response
 
