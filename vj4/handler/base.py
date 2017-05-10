@@ -231,7 +231,7 @@ class Handler(web.View, HandlerBase):
                     path_components=self.build_path((self.translate('error'), None)))
       uid = self.user['_id'] if hasattr(self, 'user') else None
       _logger.warning('User facing error by %s %s %s: %s', self.url, self.remote_ip, uid, repr(e))
-    except:
+    except Exception as e:
       uid = self.user['_id'] if hasattr(self, 'user') else None
       _logger.error('System error by %s %s %s: %s', self.url, self.remote_ip, uid, repr(e))
       raise
