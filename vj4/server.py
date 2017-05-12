@@ -41,6 +41,11 @@ def main():
       'level': 'DEBUG' if options.debug else 'INFO',
       'handlers': ['console'],
     },
+    'loggers': {
+      'sockjs': {
+        'level': 'WARNING',
+      },
+    },
     'disable_existing_loggers': False,
   })
   url = urllib.parse.urlparse(options.listen)
