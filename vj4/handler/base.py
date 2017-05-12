@@ -231,9 +231,9 @@ class Handler(web.View, HandlerBase):
                     path_components=self.build_path((self.translate('error'), None)))
       uid = self.user['_id'] if hasattr(self, 'user') else None
       _logger.warning('User facing error by %s %s %s: %s', self.url, self.remote_ip, uid, repr(e))
-    except:
+    except Exception as e:
       uid = self.user['_id'] if hasattr(self, 'user') else None
-      _logger.error('System error by %s %s %s', self.url, self.remote_ip, uid)
+      _logger.error('System error by %s %s %s: %s', self.url, self.remote_ip, uid, repr(e))
       raise
     return self.response
 
@@ -483,6 +483,8 @@ def sanitize(func):
         kwargs[key] = func.__annotations__[key](value)
       except KeyError:
         raise error.UnknownArgumentError(key)
+      except Exception:
+        raise error.InvalidArgumentError(key)
     return func(self, **kwargs)
 
   return wrapped

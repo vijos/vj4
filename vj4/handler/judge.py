@@ -207,8 +207,6 @@ class JudgeNotifyConnection(base.Connection):
       if not rdoc:
         return
       await _post_judge(self, rdoc)
-    elif key == 'nack':
-      await self.channel.basic_client_nack(tag)
 
   async def on_close(self):
     async def close():

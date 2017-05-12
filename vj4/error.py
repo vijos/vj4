@@ -290,3 +290,9 @@ class UnknownArgumentError(BadRequestError):
   @property
   def message(self):
     return 'Argument {0} is unknown.'
+
+
+class InvalidArgumentError(BadRequestError):
+  @property
+  def message(self):
+    return 'Argument {0} is invalid.'
