@@ -1,9 +1,11 @@
+import asyncio
 import logging
 from os import path
 
 import sanic
 import sanic.response
 
+from vj4 import db
 from vj4 import error
 from vj4.service import bus
 from vj4.service import smallcache
@@ -45,8 +47,7 @@ class Application(sanic.Sanic):
     # Initialize components.
     staticmanifest.init(static_path)
     locale.load_translations(translation_path)
-    self.add_task(tools.ensure_all_indexes())
-    self.add_task(bus.init())
+    self.add_task(self.deferred_init())
     smallcache.init()
 
     # Load views.
@@ -65,6 +66,10 @@ class Application(sanic.Sanic):
     from vj4.handler import i18n
     if options.static:
       self.static('/', static_path)
+
+  async def deferred_init(self):
+    await db.init()
+    await asyncio.gather(tools.ensure_all_indexes(), bus.init())
 
 
 def route(url, name):

@@ -165,7 +165,7 @@ class HomeMessagesHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     # TODO(iceboy): projection, pagination.
-    mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).limit(50).to_list(None)
+    mdocs = await message.get_multi(self.user['_id']).sort([('_id', -1)]).limit(50).to_list()
     udict = await user.get_dict(
         itertools.chain.from_iterable((mdoc['sender_uid'], mdoc['sendee_uid']) for mdoc in mdocs),
         fields=user.PROJECTION_PUBLIC)
@@ -240,7 +240,7 @@ class HomeDomainHandler(base.Handler):
     dids = list(dudict.keys())
     ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
                                               {'owner_uid': self.user['_id']}]}) \
-                        .to_list(None)
+                        .to_list()
     can_manage = {}
     for ddoc in builtin.DOMAINS + ddocs:
       role = dudict.get(ddoc['_id'], {}).get('role', builtin.ROLE_DEFAULT)
@@ -276,7 +276,7 @@ class HomeFileHandler(base.OperationHandler):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    ufdocs = await userfile.get_multi(owner_uid=self.user['_id']).to_list(None)
+    ufdocs = await userfile.get_multi(owner_uid=self.user['_id']).to_list()
     fdict = await fs.get_meta_dict(ufdoc.get('file_id') for ufdoc in ufdocs)
     self.render('home_file.html', ufdocs=ufdocs, fdict=fdict)
 
