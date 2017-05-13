@@ -102,7 +102,7 @@ class ProblemRandomHandler(base.Handler):
       f = {}
     pid = await problem.get_random_id(self.domain_id, **f)
     if not pid:
-      raise error.NotFoundError()
+      raise error.NoProblemError()
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid), pid=pid)
 
 

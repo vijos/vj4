@@ -296,3 +296,9 @@ class InvalidArgumentError(BadRequestError):
   @property
   def message(self):
     return 'Argument {0} is invalid.'
+
+
+class NoProblemError(NotFoundError):
+  @property
+  def message(self):
+    return 'No problem.'
