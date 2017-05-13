@@ -1,7 +1,6 @@
 aiohttp>=2.0.7
 jinja2>=2.9.0
 sockjs>=0.6.0
-motor
 hoedown
 accept
 aioamqp
@@ -12,3 +11,4 @@ httpagentparser
 geoip2
 GitPython
 PyYAML
+git+https://github.com/iceb0y/aiomongo
