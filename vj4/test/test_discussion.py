@@ -95,7 +95,7 @@ class DiscussionTest(base.SmallcacheTestCase):
     vnode = await discussion.get_vnode(DOMAIN_ID_DUMMY, 'meow')
     ddocs = await discussion.get_multi(DOMAIN_ID_DUMMY,
                                        parent_doc_type=vnode['doc_type'],
-                                       parent_doc_id=vnode['doc_id']).to_list(None)
+                                       parent_doc_id=vnode['doc_id']).to_list()
     self.assertEqual(len(ddocs), 0)
     did = await discussion.add(DOMAIN_ID_DUMMY, 'meow', OWNER_UID, TITLE, CONTENT)
     ddoc = await discussion.get(DOMAIN_ID_DUMMY, did)
@@ -112,7 +112,7 @@ class DiscussionTest(base.SmallcacheTestCase):
                                        parent_doc_id=vnode['doc_id'],
                                        fields=['title',
                                                'owner_uid',
-                                               'parent_doc_id']).to_list(None)
+                                               'parent_doc_id']).to_list()
     self.assertEqual(len(ddocs), 1)
     self.assertEqual(ddocs[0]['title'], TITLE)
     self.assertFalse('content' in ddocs[0])
@@ -124,7 +124,7 @@ class DiscussionTest(base.SmallcacheTestCase):
     vnode = await discussion.get_vnode(DOMAIN_ID_DUMMY, 'meow')
     ddocs = await discussion.get_multi(DOMAIN_ID_DUMMY,
                                        parent_doc_type=vnode['doc_type'],
-                                       parent_doc_id=vnode['doc_id']).to_list(None)
+                                       parent_doc_id=vnode['doc_id']).to_list()
     self.assertEqual(len(ddocs), 0)
     did = await discussion.add(DOMAIN_ID_DUMMY, 'meow', OWNER_UID, TITLE, CONTENT)
     drid = await discussion.add_reply(DOMAIN_ID_DUMMY, did, OWNER_UID, REPLY_CONTENT)

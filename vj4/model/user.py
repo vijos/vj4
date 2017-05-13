@@ -34,7 +34,7 @@ async def add(uid: int, uname: str, password: str, mail: str, regip: str=''):
       raise error.UserAlreadyExistError(uname)
 
   salt = pwhash.gen_salt()
-  coll = db.Collection('user')
+  coll = db.coll('user')
   try:
     await coll.insert_one({'_id': uid,
                            'uname': uname,
@@ -59,7 +59,7 @@ async def get_by_uid(uid: int, fields=PROJECTION_VIEW):
   for user in builtin.USERS:
     if user['_id'] == uid:
       return user
-  coll = db.Collection('user')
+  coll = db.coll('user')
   return await coll.find_one({'_id': uid}, fields)
 
 
@@ -70,7 +70,7 @@ async def get_by_uname(uname: str, fields=PROJECTION_VIEW):
   for user in builtin.USERS:
     if user['uname_lower'] == uname_lower:
       return user
-  coll = db.Collection('user')
+  coll = db.coll('user')
   return await coll.find_one({'uname_lower': uname_lower}, fields)
 
 
@@ -81,13 +81,13 @@ async def get_by_mail(mail: str, fields=PROJECTION_VIEW):
   for user in builtin.USERS:
     if user['mail_lower'] == mail_lower:
       return user
-  coll = db.Collection('user')
+  coll = db.coll('user')
   return await coll.find_one({'mail_lower': mail_lower}, fields)
 
 
 def get_multi(*, fields=PROJECTION_VIEW, **kwargs):
   """Get multiple users."""
-  coll = db.Collection('user')
+  coll = db.coll('user')
   return coll.find(kwargs, fields)
 
 
@@ -124,7 +124,7 @@ async def set_password(uid: int, password: str):
   """Set password. Returns doc or None."""
   validator.check_password(password)
   salt = pwhash.gen_salt()
-  coll = db.Collection('user')
+  coll = db.coll('user')
   doc = await coll.find_one_and_update(filter={'_id': uid},
                                        update={'$set': {'salt': salt,
                                                         'hash': pwhash.hash_vj4(password, salt)}},
@@ -147,7 +147,7 @@ async def change_password(uid: int, current_password: str, password: str):
     return None
   validator.check_password(password)
   salt = pwhash.gen_salt()
-  coll = db.Collection('user')
+  coll = db.coll('user')
   doc = await coll.find_one_and_update(filter={'_id': doc['_id'],
                                                'salt': doc['salt'],
                                                'hash': doc['hash']},
@@ -158,7 +158,7 @@ async def change_password(uid: int, current_password: str, password: str):
 
 
 async def set_by_uid(uid, **kwargs):
-  coll = db.Collection('user')
+  coll = db.coll('user')
   doc = await coll.find_one_and_update(filter={'_id': uid}, update={'$set': kwargs}, return_document=ReturnDocument.AFTER)
   return doc
 
@@ -191,10 +191,10 @@ async def set_default(uid: int):
 async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
   prefix = prefix.lower()
   regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))
-  coll = db.Collection('user')
+  coll = db.coll('user')
   udocs = await coll.find({'uname_lower': {'$regex': regex}}, projection=fields) \
                     .limit(limit) \
-                    .to_list(None)
+                    .to_list()
   for udoc in builtin.USERS:
     if udoc['uname_lower'].startswith(prefix):
       udocs.append(udoc)
@@ -203,13 +203,13 @@ async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
 
 @argmethod.wrap
 async def count(**kwargs):
-  coll = db.Collection('user')
+  coll = db.coll('user')
   return coll.find({**kwargs}).count()
 
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.Collection('user')
+  coll = db.coll('user')
   await coll.create_index('uname_lower', unique=True)
   await coll.create_index('mail_lower', sparse=True)
 

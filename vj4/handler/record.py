@@ -57,7 +57,7 @@ class RecordMainHandler(base.Handler, RecordMixin):
     query = await self.get_filter_query(uid_or_name, pid, tid)
     # TODO(iceboy): projection, pagination.
     rdocs = await record.get_all_multi(**query,
-      get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).limit(50).to_list(None)
+      get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).limit(50).to_list()
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
         user.get_dict(rdoc['uid'] for rdoc in rdocs),
