@@ -1,5 +1,4 @@
 import logging
-import logging.config
 import os
 import socket
 import sys
@@ -10,41 +9,11 @@ from vj4.util import options
 
 options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
 options.define('prefork', default=1, help='Number of prefork workers.')
-options.define('log_format',
-               default=('%(log_color)s[%(levelname).1s '
-                        '%(asctime)s %(module)s:%(lineno)d]%(reset)s %(message)s'),
-               help='Log format.')
 
 _logger = logging.getLogger(__name__)
 
 
 def main():
-  logging.config.dictConfig({
-    'version': 1,
-    'handlers': {
-      'console': {
-        'class': 'logging.StreamHandler',
-        'formatter': 'colored',
-      },
-    },
-    'formatters': {
-      'colored': {
-        '()': 'colorlog.ColoredFormatter',
-        'format': options.log_format,
-        'datefmt': '%y%m%d %H:%M:%S'
-      }
-    },
-    'root': {
-      'level': 'DEBUG' if options.debug else 'INFO',
-      'handlers': ['console'],
-    },
-    'loggers': {
-      'sockjs': {
-        'level': 'WARNING',
-      },
-    },
-    'disable_existing_loggers': False,
-  })
   url = urllib.parse.urlparse(options.listen)
   if url.scheme == 'http':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,7 +31,7 @@ def main():
     _logger.error('Invalid listening scheme %s', url.scheme)
     return 1
   _logger.info('Server listening on %s', options.listen)
-  app.Application().run(host=None, port=None, sock=sock, workers=options.prefork)
+  app.Application().run(host=None, port=None, sock=sock, workers=options.prefork, log_config=None)
 
 if __name__ == '__main__':
   sys.exit(main())
