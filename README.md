@@ -104,7 +104,7 @@ However you need to manually restart the server for server-side code to take eff
 
 ```bash
 npm run build:production
-python3 -OO -m vj4.server --listen=unix:/var/run/vj4.sock
+python3 -m vj4.server --listen=unix:/var/run/vj4.sock
 ```
 
 * Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
