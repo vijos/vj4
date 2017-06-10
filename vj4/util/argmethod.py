@@ -93,4 +93,5 @@ def invoke_by_args():
         print_func(result)
     except KeyboardInterrupt:
       pass
-    loop.set_exception_handler(lambda loop, context: None)
+    finally:
+      loop.set_exception_handler(lambda loop, context: None)
