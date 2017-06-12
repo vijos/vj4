@@ -106,7 +106,7 @@ class ProblemRandomHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid), pid=pid)
 
 
-@app.route('/p/category/{category:[^/]*}', 'problem_category')
+@app.route('/p/category/{category}', 'problem_category')
 class ProblemCategoryHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 
@@ -166,7 +166,7 @@ class ProblemCategoryHandler(base.OperationHandler):
                                       page_title=page_title, path_components=path_components)
 
 
-@app.route('/p/category/{category:[^/]*}/random', 'problem_category_random')
+@app.route('/p/category/{category}/random', 'problem_category_random')
 class ProblemCategoryRandomHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.get_argument
