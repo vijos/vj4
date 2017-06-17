@@ -128,7 +128,7 @@ async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=Non
                                            doc_id=tdoc['doc_id'],
                                            fields=fields) \
                          .sort(RULES[tdoc['rule']].status_sort) \
-                         .to_list(None)
+                         .to_list()
   return tdoc, tsdocs
 
 

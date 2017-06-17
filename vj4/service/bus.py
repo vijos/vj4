@@ -8,7 +8,8 @@ from vj4 import mq
 from vj4.util import argmethod
 
 _logger = logging.getLogger(__name__)
-_subscribers = {}
+_subscribers = dict()
+_throttles = dict()
 
 
 async def init():
@@ -49,6 +50,13 @@ async def _work(channel):
 async def publish(key: str, value: str):
   channel = await mq.channel('bus')
   await channel.basic_publish(bson.BSON.encode({'key': key, 'value': value}), 'bus', '')
+
+
+def publish_throttle(key, value, throttle_id, delay=.016):
+  loop = asyncio.get_event_loop()
+  if throttle_id not in _throttles:
+    loop.call_later(delay, lambda: loop.create_task(publish(key, _throttles.pop(throttle_id))))
+  _throttles[throttle_id] = value
 
 
 def subscribe(callback, keys):

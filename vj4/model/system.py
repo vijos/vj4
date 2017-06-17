@@ -11,7 +11,7 @@ async def inc_user_counter():
   Returns:
     Integer value after increment.
   """
-  coll = db.Collection('system')
+  coll = db.coll('system')
   doc = await coll.find_one_and_update(filter={'_id': 'user_counter'},
                                        update={'$inc': {'value': 1}},
                                        upsert=True,
@@ -21,7 +21,7 @@ async def inc_user_counter():
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.Collection('system')
+  coll = db.coll('system')
   await coll.find_one_and_update(filter={'_id': 'user_counter'},
                                  update={'$setOnInsert': {'value': 1}},
                                  upsert=True)

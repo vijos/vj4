@@ -18,7 +18,7 @@ async def run(domain_id: str, keyword: str='rp', rank_field: str='rank', level_f
   last_dudoc = {keyword: None}
   rank = 0
   count = 0
-  user_coll = db.Collection('domain.user')
+  user_coll = db.coll('domain.user')
   user_bulk = user_coll.initialize_unordered_bulk_op()
   async for dudoc in dudocs:
     count += 1

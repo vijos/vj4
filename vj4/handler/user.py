@@ -194,17 +194,17 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     bg = random.randint(1, 21)
     rdocs = record.get_multi(get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD),
                              uid=uid).sort([('_id', -1)])
-    rdocs = await rdocs.limit(10).to_list(None)
+    rdocs = await rdocs.limit(10).to_list()
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid).sort([('_id', -1)])
     pcount = await pdocs.count()
-    pdocs = await pdocs.limit(10).to_list(None)
+    pdocs = await pdocs.limit(10).to_list()
     psdocs = problem.get_multi_solution_by_uid(self.domain_id, uid)
     pscount = await psdocs.count()
-    psdocs = await psdocs.limit(10).to_list(None)
+    psdocs = await psdocs.limit(10).to_list()
     ddocs = discussion.get_multi(self.domain_id, owner_uid=uid)
     dcount = await ddocs.count()
-    ddocs = await ddocs.limit(10).to_list(None)
+    ddocs = await ddocs.limit(10).to_list()
     self.render('user_detail.html', is_self_profile=is_self_profile,
                 udoc=udoc, dudoc=dudoc, sdoc=sdoc, email=email, bg=bg,
                 rdocs=rdocs, pdocs=pdocs, pcount=pcount, psdocs=psdocs, pscount=pscount,

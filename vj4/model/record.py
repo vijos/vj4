@@ -3,13 +3,13 @@ import datetime
 from bson import objectid
 from pymongo import ReturnDocument
 
-from vj4 import db
 from vj4 import constant
+from vj4 import db
 from vj4.model import document
 from vj4.model import domain
-from vj4.model import queue
 from vj4.model.adaptor import problem
 from vj4.service import bus
+from vj4.service import queue
 from vj4.util import argmethod
 from vj4.util import validator
 
@@ -22,7 +22,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
               lang: str, code: str, data_id: objectid.ObjectId=None, tid: objectid.ObjectId=None,
               hidden=False):
   validator.check_lang(lang)
-  coll = db.Collection('record')
+  coll = db.coll('record')
   doc = {'hidden': hidden,
          'status': constant.record.STATUS_WAITING,
          'score': 0,
@@ -37,8 +37,8 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
          'data_id': data_id,
          'type': type}
   rid = (await coll.insert_one(doc)).inserted_id
-  post_coros = [queue.publish('judge', rid=rid),
-                bus.publish('record_change', doc)]
+  bus.publish_throttle('record_change', doc, rid)
+  post_coros = [queue.publish('judge', rid=rid)]
   if type == constant.record.TYPE_SUBMISSION:
     post_coros.extend([problem.inc_status(domain_id, pid, uid, 'num_submit', 1),
                        problem.inc(domain_id, pid, 'num_submit', 1),
@@ -49,13 +49,13 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
 
 @argmethod.wrap
 async def get(record_id: objectid.ObjectId, fields=PROJECTION_ALL):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   return await coll.find_one(record_id, fields)
 
 
 @argmethod.wrap
 async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   doc = await coll.find_one_and_update(filter={'_id': record_id},
                                        update={'$unset': {'judge_uid': '',
                                                           'judge_token': '',
@@ -69,16 +69,15 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
                                                         'memory_kb': 0,
                                                         'rejudged': True}},
                                        return_document=ReturnDocument.AFTER)
-  post_coros = [bus.publish('record_change', doc)]
+  bus.publish_throttle('record_change', doc, doc['_id'])
   if enqueue:
-    post_coros.append(queue.publish('judge', rid=doc['_id']))
-  await asyncio.gather(*post_coros)
+    await queue.publish('judge', rid=doc['_id'])
 
 
 @argmethod.wrap
 def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fields=None,
                   **kwargs):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   query = {**kwargs, 'hidden': False if not get_hidden else {'$gte': False}}
   if end_id:
     query['_id'] = {'$lt': end_id}
@@ -87,14 +86,14 @@ def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fie
 
 @argmethod.wrap
 def get_multi(get_hidden: bool=False, fields=None, **kwargs):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   kwargs['hidden'] = False if not get_hidden else {'$gte': False}
   return coll.find(kwargs, projection=fields)
 
 
 @argmethod.wrap
 async def get_count(begin_id: objectid.ObjectId=None):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   query = {}
   if begin_id:
     query['_id'] = {'$gte': begin_id}
@@ -104,7 +103,7 @@ async def get_count(begin_id: objectid.ObjectId=None):
 @argmethod.wrap
 def get_problem_multi(domain_id: str, pid: document.convert_doc_id,
                       get_hidden: bool=False, type: int=None, *, fields=None):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   query = {'hidden': False if not get_hidden else {'$gte': False},
            'domain_id': domain_id, 'pid': pid}
   if type != None:
@@ -115,7 +114,7 @@ def get_problem_multi(domain_id: str, pid: document.convert_doc_id,
 @argmethod.wrap
 def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_doc_id,
                               get_hidden: bool=False, type: int=None, *, fields=None):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   query = {'hidden': False if not get_hidden else {'$gte': False},
            'domain_id': domain_id, 'pid': pid, 'uid': uid}
   if type != None:
@@ -134,7 +133,7 @@ async def get_dict(rids, *, get_hidden=False, fields=None):
 @argmethod.wrap
 async def begin_judge(record_id: objectid.ObjectId,
                       judge_uid: int, judge_token: str, status: int):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   doc = await coll.find_one_and_update(filter={'_id': record_id},
                                        update={'$set': {'status': status,
                                                         'judge_uid': judge_uid,
@@ -149,7 +148,7 @@ async def begin_judge(record_id: objectid.ObjectId,
 
 
 async def next_judge(record_id, judge_uid, judge_token, **kwargs):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   doc = await coll.find_one_and_update(filter={'_id': record_id,
                                                'judge_uid': judge_uid,
                                                'judge_token': judge_token},
@@ -161,7 +160,7 @@ async def next_judge(record_id, judge_uid, judge_token, **kwargs):
 @argmethod.wrap
 async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: str,
                     status: int, score: int, time_ms: int, memory_kb: int):
-  coll = db.Collection('record')
+  coll = db.coll('record')
   doc = await coll.find_one_and_update(filter={'_id': record_id,
                                                'judge_uid': judge_uid,
                                                'judge_token': judge_token},
@@ -177,7 +176,7 @@ async def end_judge(record_id: objectid.ObjectId, judge_uid: int, judge_token: s
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.Collection('record')
+  coll = db.coll('record')
   await coll.create_index([('hidden', 1),
                            ('_id', -1)])
   await coll.create_index([('hidden', 1),

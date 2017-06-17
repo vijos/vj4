@@ -17,7 +17,7 @@ _logger = logging.getLogger(__name__)
 @argmethod.wrap
 async def sync_length():
   _logger.info('Userfile length')
-  coll = db.Collection('document')
+  coll = db.coll('document')
   ufdocs = userfile.get_multi()
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
@@ -51,13 +51,13 @@ async def sync_usage():
       }
     }
   ]
-  coll = db.Collection('domain.user')
+  coll = db.coll('domain.user')
   await coll.update_many({'domain_id': userfile.STORE_DOMAIN_ID},
                          {'$set': {'usage_userfile': 0}})
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
-  async for adoc in db.Collection('document').aggregate(pipeline):
+  async for adoc in db.coll('document').aggregate(pipeline):
     bulk.find({'domain_id': userfile.STORE_DOMAIN_ID,
                'uid': adoc['_id']}) \
         .update_one({'$set': {'usage_userfile': adoc['usage_userfile']}})
