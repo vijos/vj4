@@ -47,7 +47,7 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
   dudoc_incs = {}
   pdoc = await problem.get(domain_id, pid)
   _logger.info('Domain {0} Problem {1}'.format(domain_id, pdoc['doc_id']))
-  status_coll = db.Collection('document.status')
+  status_coll = db.coll('document.status')
   status_bulk = status_coll.initialize_unordered_bulk_op()
   # Accepteds adjustment
   psdocs = problem.get_multi_status(domain_id=domain_id,
@@ -85,7 +85,7 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
     _logger.info('Committing')
     await status_bulk.execute()
   # users' rp
-  user_coll = db.Collection('domain.user')
+  user_coll = db.coll('domain.user')
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Updating users')
@@ -99,12 +99,12 @@ async def update_problem(domain_id: str, pid: document.convert_doc_id):
 
 @domainjob.wrap
 async def recalc(domain_id: str):
-  user_coll = db.Collection('domain.user')
+  user_coll = db.coll('domain.user')
   await user_coll.update_many({'domain_id': domain_id}, {'$set': {'rp': 0.0}})
   pdocs = problem.get_multi(domain_id=domain_id,
                             fields={'_id': 1, 'doc_id': 1, 'num_accept': 1}).sort('doc_id', 1)
   dudoc_updates = {}
-  status_coll = db.Collection('document.status')
+  status_coll = db.coll('document.status')
   async for pdoc in pdocs:
     _logger.info('Problem {0}'.format(pdoc['doc_id']))
     psdocs = problem.get_multi_status(domain_id=domain_id,

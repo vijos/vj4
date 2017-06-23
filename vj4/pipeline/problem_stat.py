@@ -31,8 +31,8 @@ async def main():
     },
   ]
 
-  bulk = db.Collection('document').initialize_unordered_bulk_op()
-  async for adoc in db.Collection('record').aggregate(pipeline):
+  bulk = db.coll('document').initialize_unordered_bulk_op()
+  async for adoc in db.coll('record').aggregate(pipeline):
     bulk.find({'domain_id': adoc['_id']['domain_id'],
                'doc_type': document.TYPE_PROBLEM,
                'doc_id': adoc['_id']['pid']}) \

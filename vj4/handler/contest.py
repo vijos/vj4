@@ -219,7 +219,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
       rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
                           .sort([('_id', -1)]) \
                           .limit(10) \
-                          .to_list(None)
+                          .to_list()
     else:
       rdocs = []
     if not self.prefer_json:
@@ -326,7 +326,7 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
     pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
                                     fields={'doc_id': 1}) \
                          .sort('doc_id', 1) \
-                         .to_list(None)
+                         .to_list()
     exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
     if len(pids) != len(exist_pids):
       for pid in pids:
