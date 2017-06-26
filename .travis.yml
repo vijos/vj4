@@ -1,5 +1,5 @@
-sudo: required
 dist: trusty
+sudo: false
 services:
 - rabbitmq
 - mongodb
@@ -14,9 +14,9 @@ install:
 script:
 - npm run build:production
 - python -m unittest
+before_cache:
+- rm -f $HOME/.cache/pip/log/debug.log
 cache:
   directories:
   - $HOME/.cache/pip
   - node_modules
-before_cache:
-- rm -f $HOME/.cache/pip/log/debug.log
