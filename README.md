@@ -1,4 +1,4 @@
-# VJ4
+![](.github_banner.png)
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/vijos/vj4.svg?style=flat-square)](https://greenkeeper.io/)
 [![Build Status](https://img.shields.io/travis/vijos/vj4/master.svg?style=flat-square)](https://travis-ci.org/vijos/vj4)
