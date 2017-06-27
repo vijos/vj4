@@ -26,6 +26,7 @@ deploy:
   provider: releases
   api_key:
     secure: D/b1u3F0/B+7kiIAXjwrc6nY/Mrf7y2M506nXnDGDWBGGKCTgzKfqTeM+8AtzWsRYkMq2pEOOcogwyQe3x7ZykgGyEv4AzJxqVYQt0L7CaZUWNuSvG9B8i/KNQCv9fy5AQ9puwl45L1NMi+G9Mi8Vb7wYSkUIDNOG1WFzOcusJddnuIXj8xtdQQY0kmp4helA/KwMzDb0jGYruJGigA/1yc4PL0BF5ZpchbxBkCtfwv5S3UPMiaIc98q3Ch3vQHZa+1F5tM8V3J4cihXJNzpO8pCtvjxm2hK2Bay1GLnK1n11C65lS19iGcjD83+T7w288FF6fZxW/Of/iK0hi02VGLaIu+nsJGzQ5DlaravgN1xQsi67T83daQsHAAd4+9ojqnpok+XZgzNSOC4TkGEfbtvPH2pvPJCuq0AspVcNn2PhIkG6tC/LjRWkbbKg5STBhMht/iRP9Kfvyw5DHHkXzgEpFsbpQOu4sXg5IvLd042TKO3mAJsAvl7VvTBUhqKdxdb5mkVBljYent2z0DtNh0TH/c++dUUOvaHWvdRN4KIqib3iDCLyybLjI3PEhAGonVOQ42KmV5mhGK95fCrrtfOfpawtGuPu+Vdbxf2b4z2KreJbYYM2bJB6NJEes4Cod5ZiWAu+6J5bHhpln8wS2pi9ehUTQdFCNjJ3ZbWHGQ=
+  name: uibuild-$(git rev-parse --short HEAD)
   file: uibuild.tar.xz
   skip_cleanup: true
   on:
