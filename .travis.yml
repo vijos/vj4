@@ -31,3 +31,4 @@ deploy:
   on:
     repo: vijos/vj4
     branch: master
+    python: 3.5
