@@ -114,7 +114,7 @@ export default class VjCmEditor extends SimpleMDE {
     const endPoint = this.codemirror.getCursor('end');
     const leadingLines = (startPoint.line === 0 && startPoint.ch === 0) ? 0 : 2;
     // eslint-disable-next-line prefer-template
-    const startText = _.repeat('\n', leadingLines) + '```c++\n';
+    const startText = _.repeat('\n', leadingLines) + '```cpp\n';
     const endText = '\n```\n';
     this.codemirror.replaceSelection(`${startText}${text}${endText}`);
     startPoint.line += leadingLines + 1;
