@@ -8,7 +8,9 @@
 <nav class="nav slideout-menu" id="menu">
   <div class="row"><div class="columns clearfix">
     <ol class="nav__list nav__list--main clearfix">
+    {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
       <li class="nav__list-item"><a href="{{ reverse_url('domain_main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
+    {% endif %}
       {{ nav_item('domain_main', 'domain_main') }}
       {{ nav_item('problem_main', 'problem') }}
       {{ nav_item('training_main', 'training') }}
