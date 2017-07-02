@@ -30,7 +30,6 @@ const signinDialogPage = new AutoloadPage('signinDialogPage', null, () => {
   window.showSignInDialog = () => {
     signInDialog.show();
   };
-
 });
 
 export default signinDialogPage;

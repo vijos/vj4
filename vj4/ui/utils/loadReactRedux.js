@@ -1,6 +1,6 @@
 export default async function loadReactRedux(storeReducer) {
   const React = await System.import('react');
-  const { render } = await System.import('react-dom');
+  const { render, unmountComponentAtNode } = await System.import('react-dom');
   const { Provider } = await System.import('react-redux');
   const { createStore, applyMiddleware } = await System.import('redux');
   const { default: reduxThunk } = await System.import('redux-thunk');
@@ -23,6 +23,7 @@ export default async function loadReactRedux(storeReducer) {
   return {
     React,
     render,
+    unmountComponentAtNode,
     Provider,
     store,
   };
