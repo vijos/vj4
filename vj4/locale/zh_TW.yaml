@@ -2,14 +2,16 @@
 ---
 (None): (無)
 API: API
+about: 關於
 About: 關於
+About Vijos: 關於 Vijos
 Accepted: 已通過
 Accepted Ratio: 通過率
 Active Sessions: 活動會話
 Arguments: 參數
 Attend Contest: 參加比賽
 Attended: 已參加
-Login to Attend Contest: 請登入後參加比賽
+Login to Attend Contest: 請登入后參加比賽
 No Permission to Attend Contest: 您沒有許可權參加比賽
 Begin Date: 開始日期
 Begin Time: 開始時間
@@ -20,7 +22,7 @@ Blog: 部落格
 Boom!: 炸了！
 Browser: 瀏覽器
 ? By signing up a Vijos universal account, you can submit code and join discussions in all online
-  judging services provided by us.
+  judging services provided by us.
 : 註冊一個 Vijos 通用賬戶，您就可以在我們提供的所有線上評測服務上提交程式碼、參與討論。
 CLOSE: 關閉
 Cancel: 取消
@@ -40,7 +42,7 @@ Create Discussion in {0}: 在 {0} 下創建討論
 Create Problem: 創建題目
 Create a contest: 創建一個比賽
 Create a discussion: 創建一個討論
-Login to Create a discussion: 請登入後創建討論
+Login to Create a discussion: 請登入后創建討論
 No Permission to Create a discussion: 您沒有許可權創建討論
 Create a problem: 創建一個題目
 Current Email: 當前電子郵件
@@ -69,24 +71,24 @@ Forgot password or username?: 忘記密碼或者使用者名？
 Gender: 性別
 Gender Visibility: 性別可見性
 Gravatar Email: Gravatar Email 地址
-'Hello! You can click following link to sign up your Vijos account:': 您好！您可以點選以下連結來註冊您的 Vijos 賬戶：
-'Hello, {0}! You can click following link to reset the password of your Vijos account:': 您好，{0}！您可以點選以下連結來重置您
-  Vijos 賬戶的密碼：
-'Hello, {0}! You can click following link to active your new email of your Vijos account:': 您好，{0}！您可以點選以下連結來啟用您
-  Vijos 賬戶的新電子郵件地址：
-Confirmation mail has been sent to your new email.: 確認郵件已經發送到您的新電子郵箱。
+'Hello! You can click following link to sign up your Vijos account:': 您好！您可以點擊以下連結來註冊您的 Vijos 賬戶：
+'Hello, {0}! You can click following link to reset the password of your Vijos account:': 您好，{0}！您可以點擊以下連結來重置您
+  Vijos 賬戶的密碼：
+'Hello, {0}! You can click following link to active your new email of your Vijos account:': 您好，{0}！您可以點擊以下連結來激活您
+  Vijos 賬戶的新電子郵件地址：
+Confirmation mail has been sent to your new email.: 確認郵件已經傳送到您的新電子郵箱。
 Help: 幫助
 Hide all tags: 隱藏所有標籤
 Hide categorical tags: 隱藏分類標籤
-If enabled, source code will be emailed to you after the submission is accepted.: 如果啟用，在您通過題目後，原始碼會以
-  Email 的形式傳送給您。
+If enabled, source code will be emailed to you after the submission is accepted.: 如果啟用，在您通過題目后，源程式碼會以
+  Email 的形式傳送給您。
 In following training plans: 在下列訓練計劃中
 Information: 資訊
 It works!: 它成了！
 Judged At: 評測時間
 Judging Queue: 評測佇列
 Language: 語言
-Last Update At: 最後活動時間
+Last Update At: 最后活動時間
 Location: 位置
 Login: 登入
 Logout: 登出
@@ -103,7 +105,7 @@ Not available: 不可用
 Oh, there is no task in the queue!: 喔，佇列中目前沒有任務。
 Oops!: Oops!
 Open Scratchpad: 進入線上程式設計模式
-Login to Use Scratchpad: 請登入後使用線上程式設計功能
+Login to Use Scratchpad: 請登入后使用線上程式設計功能
 No Permission to Use Scratchpad: 您沒有許可權使用線上程式設計功能
 Open Source: 開源
 Operating System: 作業系統
@@ -145,7 +147,7 @@ Secret (visible to admins): 保密（對管理員可見）
 Security: 安全
 Select a node to create discussion.: 選擇一個節點來發表討論。
 Send: 傳送
-Send Code after acceptance: 通過題目後傳送原始碼
+Send Code after acceptance: 通過題目后傳送源程式碼
 Send Password Reset Email: 傳送密碼重置郵件
 Send Verification Email: 傳送驗證郵件
 Service Status: 服務狀態
@@ -154,7 +156,7 @@ Show all tags: 顯示所有標籤
 Sign In: 登入
 Sign Up: 註冊
 Sign Up Now: 現在註冊
-Sign up mail has been sent to your email.: 註冊郵件已經發送到您的電子郵箱。
+Sign up mail has been sent to your email.: 註冊郵件已經傳送到您的電子郵箱。
 Solutions: 題解
 'Solved {0} problems, RP: {1} (No. {2})': '解決了 {0} 道題目，RP: {1} (No. {2})'
 Sorry: 對不起
@@ -174,7 +176,7 @@ Submissions: 遞交
 Submit: 遞交
 '# Submissions': '遞交數'
 '# My Submissions': '我的遞交數'
-Login to Submit: 請登入後遞交
+Login to Submit: 請登入后遞交
 No Permission to Submit: 您沒有許可權遞交
 Submit At: 遞交時間
 Submit By: 遞交者
@@ -182,13 +184,13 @@ Submit Time: 遞交時間
 Support: 支援
 Technical Information: 技術資訊
 Temporary session: 臨時會話
-This email was sent by {0} automatically, and please do not reply directly.: 這封郵件由 {0} 自動傳送，請勿直接回復。
+This email was sent by {0} automatically, and please do not reply directly.: 這封郵件由 {0} 自動傳送，請勿直接回覆。
 This is the current session: 這是當前的會話
 Time Cost: 耗時
 Title: 標題
 Total Time: 總耗時
 Type: 類型
-UI Language: 使用者介面語言
+UI Language: 使用者界面語言
 Timezone: 時區
 Unknown: 未知
 Update: 更新
@@ -205,10 +207,10 @@ Vote: 投票
 We use Gravatar to present your avatar icon.: 我們使用 Gravatar 服務來呈現您的頭像。
 Whether to show tags in the problem list.: 是否在題目列表中顯示題目的標籤。
 Write Your Comment: 發表您的評論
-Login to Write Your Comment: 請登入後發表您的評論
+Login to Write Your Comment: 請登入后發表您的評論
 No Permission to Write Your Comment: 您沒有許可權發表評論
 Write Your Solution: 發表您的題解
-Login to Write Your Solution: 請登入後發表您的題解
+Login to Write Your Solution: 請登入后發表您的題解
 No Permission to Write Your Solution: 您沒有許可權發表題解
 author: 作者
 content: 內容
@@ -227,8 +229,8 @@ home_messages: 站內訊息
 home_security: 安全設定
 home_domain: 我的域
 judge_playground: 評測遊樂場
-last active at: 最後活動於
-last login at: 最後登入於
+last active at: 最后活動於
+last login at: 最后登入於
 no discussion yet...: 目前沒有討論…
 pager_first: « 第一頁
 pager_last: 末頁 »
@@ -240,6 +242,7 @@ problem_main: 題庫
 problem_solution: 題解
 problem_submit: 遞交程式碼
 problem_settings: 題目設定
+problem_statistics: 題目統計
 record_detail: 記錄詳情
 record_main: 評測佇列
 reply: 回覆
@@ -249,6 +252,8 @@ setting_display: 顯示偏好
 setting_privacy: 隱私
 title: 標題
 training_main: 訓練
+training_edit: 編輯訓練
+training_create: 創建訓練
 user_detail: 使用者
 user_login: 登入
 user_logout: 登出
@@ -317,8 +322,8 @@ Field {0} validation failed.: 欄位 {0} 驗證失敗。
 Unknown field {0}.: 未知欄位 {0}。
 Passwords don't match.: 驗證密碼不匹配。
 User {0} already exists.: 使用者 {0} 已存在。
-Invalid user {0} or password.: 使用者 {0} 不存在或密碼錯誤。
-Document {2} not found.: 文件 {2} 不存在。
+Invalid password for user {0}.: 使用者 {0} 的密碼錯誤。
+Document {2} not found.: 文檔 {2} 不存在。
 Data of Problem {0} not found.: 題目 {0} 的資料缺失。
 You're not logged in.: 您沒有登入。
 You don't have the required privilege.: 您沒有相應的特權。
@@ -340,15 +345,15 @@ Contest status is hidden.: 當前比賽狀態隱藏，暫不可顯示。
 Problem {1} not found.: 題目 {1} 不存在。
 Training requirement is not satisfied.: 不滿足訓練條件。
 Record {0} not found.: 記錄 {0} 不存在。
-'{0} limit exceeded (limit: {2} operations in {1} seconds).': '{0} 超過頻率限制。限制：{1} 秒內最多 {2} 次操作。'
-Domain ID cannot be changed once the domain is created.: 在創建後不能更改 ID。
-'A domain ID cannot be changed after creation. It is supposed to be:': '創建後將無法更改 ID。ID 必須滿足以下條件：'
+'{0} limit exceeded (limit: {2} operations in {1} seconds).': '{0} 超過頻率限制。限制：{1} 秒內最多 {2} 次作業。 '
+Domain ID cannot be changed once the domain is created.: 在創建后不能更改 ID。
+'A domain ID cannot be changed after creation. It is supposed to be:': '創建后將無法更改 ID。 ID 必須滿足以下條件：'
 Unique: 唯一
 Not wrapped with space: 兩側不含空格
 Not started with a number: 不以數字開頭
-Without slashes or backslashes: 不含斜槓和反斜槓
+Only A-Z, a-z, 0-9 and _ are accepted: 只接受 A-Z, a-z, 0-9 和 _
 Username / UID: 使用者名或 UID
-Last Submit At: 最後遞交於
+Last Submit At: 最后遞交於
 Start at: 開始於
 Duration: 持續時間
 hour(s): 小時
@@ -440,7 +445,7 @@ View contest status: 檢視比賽狀態
 View hidden contest status: 檢視隱藏的比賽狀態
 Create contests: 創建比賽
 Attend contests: 參加比賽
-View training: 檢視訓練
+View training plans: 檢視訓練計劃
 Have ALL PERMISSIONS in this domain: 在此域中擁有全部許可權
 Select User: 選擇使用者
 Submitted: 已遞交
@@ -461,7 +466,7 @@ Learn More: 瞭解更多
 CommonMark Syntax: CommonMark 語法
 LaTeX Expressions: LaTeX 表示式
 Hidden: 隱藏
-We will check code similarity after this contest.: 我們會在賽後檢查程式碼相似度。
+We will check code similarity after this contest.: 我們會在賽后檢查程式碼相似度。
 Dataset: 測試資料
 'Current dataset: {0}': '當前測試資料: {0}'
 Upload: 上傳
@@ -486,19 +491,18 @@ Create Training Plan: 創建訓練計劃
 New Training Plan: 新訓練計劃
 View Owned Training Plans: 檢視自己的訓練計劃
 You can create your own training plans and share with others.: 您可以創建您自己的訓練計劃並且與他人分享。
-no_translation_warn: <blockquote class="warn">這部分內容正在翻譯。</blockquote>
 Set Role: 設定角色
 Set Roles for selected users: 為所選使用者設定角色
-Please select at least one user to perform this operation.: 請選擇至少一個使用者來進行操作。
+Please select at least one user to perform this operation.: 請選擇至少一個使用者來進行作業。
 Confirm removing the selected users from this domain?: 您確定將所選使用者從此域中移除嗎？
-Their account will not be deleted and they will be with the default role when visiting this domain.: 他們的賬號不會被刪除，並且之後將以 default 角色訪問此域。
+Their account will not be deleted and they will be with the default role when visiting this domain.: 他們的賬號不會被刪除，並且之后將以 default 角色訪問此域。
 Selected users have been removed from the domain.: 所選使用者已從此域中移除。
 Role has been updated to {0} for selected users.: 所選使用者角色已更新為 {0}。
 Role has been updated to {0}.: 角色已更新為 {0}。
 Confirm deleting the selected roles?: 您確定刪除所選角色嗎？
 Users with those roles will be removed from the domain.: 擁有這些角色的使用者將從此域中移除。
 Selected roles have been deleted.: 所選角色已刪除。
-Please select at least one role to perform this operation.: 請選擇至少一個角色來進行操作。
+Please select at least one role to perform this operation.: 請選擇至少一個角色來進行作業。
 Domain {0} is bulit-in and cannot be modified.: 域 {0} 為內建，不可修改。
 perm_general: 一般
 perm_problem: 題庫
@@ -510,6 +514,123 @@ perm_training: 訓練
 discussion_edit: 編輯討論
 At least 4 characters: 至少 4 個字元
 Contact: 聯絡
-Click here to chat with me: 點選這裡與我聊天
+'{0} sections': '{0} 小節'
+'{0} problems': '{0} 道題'
+All Training Plans: 所有訓練計劃
+Section: 章節
+Complete: 完成
+Progress: 進度
+In Progress: 進行中
+Open: 開放
+Invalid: 無效
+expand: 展開
+collapse: 收縮
+'Note: Problem title may not be hidden.': 注意：題目標題可能不會被隱藏。
 Partic.: 參賽人數
+Create training plans: 創建訓練計劃
+Edit training plans: 修改訓練計劃
+Edit own training plans: 修改自己的訓練計劃
+Click here to chat with me: 點擊這裡與我聊天
+Terms of Service: 服務條款
+wiki_help: 幫助
+Discussion: 討論
+Manager: 管理
+Ops: 運維
+Feedback: 反饋
+'Discussion: Terms Of Service': 討論區服務條款
+no_translation_warn: ''
+Domain: 域
+Compilers' Version and Parameters: 編譯器版本及參數
+Limitations: 限制
+IO: 輸入輸出
+Judge Status: 評測狀態
+Compile Error: 編譯錯誤
+Training: 訓練
+Contest: 比賽
+RP Algorithm: RP 算法
+Difficulty Algorithm: 難度算法
+Dataset Format: 測試資料集格式
+Forgot Password and/or Username: 忘記密碼和/或使用者名
+Reset Password or Find Username: 重置密碼或找回使用者名
 '{0} discussions': '{0} 條討論'
+In following contests: 在下列比賽中
+View Owned Problems: 檢視自己的題目
+Completed: 已完成
+Enrollees: 參加人數
+Monthly Popular: 月度最受歡迎
+Enroll Training: 參加訓練
+Plan: 計劃
+Not Enrolled: 未參加
+Upvote: 好評
+Downvote: 差評
+View hidden problems: 檢視隱藏的題目
+Sorry, there is no training plan.: 目前沒有訓練計劃。
+Created By: 創建人
+Judged By: 評測機
+Categories: 分類
+Tags: 標籤
+problem-category-delim: '|'
+problem-subcategory-delim: 、
+Download Dataset: 下載資料集
+Use algorithm calculated: 使用算法計算
+Use admin specificed: 由管理員指定
+Use average of above: 使用上面的平均值
+New dataset: 新測試資料
+Evaluated difficulty: 估計的難度
+"Effects only when Difficulty is not 'Use algorithm calculated'.": 僅當難度不為“使用算法計算”時才起效。
+Difficulty displayed: 顯示的難度
+Difficulty by algorithm: 算法計算的難度
+Difficulty by admin: 管理員設定的難度
+Recommanded: 推薦
+Chinese: 中文
+English: 英文
+click to add: 點擊新增
+'Format: category 1, sub category 1.1, sub category 1.2, ..., sub category 1.x, ..., category n, sub category n.1, sub category n.2, ..., sub category nm , ...': 格式：分類1, 子分類1.1, 子分類1.2, ..., 子分類1.x, ..., 分類n, 子分類n.1, 子分類n.2, .. ., 子分類nm, ...
+"Splitted by ', '.": 由“, ”或“，”分隔。
+This section cannot be challenged at present, so please complete the following sections first: 該章節目前不可挑戰，請先完成以下章節
+Day: 日
+Week: 週
+Month: 月
+Year: 年
+Total: 總計
+Filter: 過濾
+By Username / UID: 由使用者名或 UID
+By Problem: 由題目
+By Contest: 由比賽
+Reset: 重置
+Data of problem {1} not found.: 題目 {1} 的資料未找到。
+Data of record {0} not found.: 記錄 {0} 的資料未找到。
+All Submissions: 所有遞交
+My Files: 我的文檔
+home_file: 我的文檔
+"What's file?": 什麼是文檔？
+Upload File: 上傳文檔
+fs_upload: 上傳文檔
+New file: 新文檔
+Size: 大小
+Hash: 散列
+This type of files are not allowed to be uploaded.: 不允許上傳這種文檔。
+Usage exceeded.: 用量超限。
+The uploaded file is too long.: 上傳的文檔太長。
+Congratulations! Your submission is accepted.: 恭喜！您的遞交已評測通過。
+Search: 搜索
+Mark Yellow: 標黃
+Mark Green: 標綠
+Clear Marks: 清除標記
+Bold: 加粗
+Italic: 斜體
+Quote: 引用
+Unordered List: 無序列表
+Ordered List: 有序列表
+Insert Code: 插入程式碼
+Create Link: 創建連結
+Insert Image: 插入圖像
+Toggle Preview: 切換預覽
+(All Problems): (所有題目)
+Confirm deleting this comment? Its replies will be deleted as well.: 確認刪除這個評論嗎？回覆會被同時刪除。
+Confirm deleting this reply?: 確認刪除這個回覆嗎？
+Aborted: 已放棄
+Network error: 網絡錯誤
+page.training_detail.invalid_when_not_enrolled: 未參加訓練計劃時您不能檢視題目詳情。
+page.problem_detail.sidebar.show_category: 點擊顯示
+Argument {0} is unknown.: 未知的參數 {0} 。
