@@ -1,6 +1,7 @@
 $stripe-width = 2px
 
 .messagepad__list-item
+  display: block
   padding: rem(20px $section-gap-h 20px ($section-gap-h - $stripe-width))
   border-left: $stripe-width solid transparent
   cursor: pointer
@@ -11,6 +12,7 @@ $stripe-width = 2px
   &:hover
     border-color: #DDD
     background: #F4F4F4
+    text-decoration: none
 
   &.active
     border-color: $secondary-color
