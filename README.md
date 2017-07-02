@@ -1,12 +1,21 @@
-![](.github_banner.png)
+<p align="center">
+  <a href="https://github.com/vijos/vj4">
+    <img src="https://rawgit.com/vijos/vj4/master/.github_banner.png" alt="Vanipack" width="850" align="middle" />
+  </a>
+</p>
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/vijos/vj4.svg?style=flat-square)](https://greenkeeper.io/)
-[![Build Status](https://img.shields.io/travis/vijos/vj4/master.svg?style=flat-square)](https://travis-ci.org/vijos/vj4)
-[![Code Climate](https://img.shields.io/codeclimate/github/vijos/vj4.svg?style=flat-square)](https://codeclimate.com/github/vijos/vj4)
-[![Dependency Status](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62)
-[![GitHub license](https://img.shields.io/badge/license-AGPLv3-blue.svg?style=flat-square)](https://raw.githubusercontent.com/vijos/vj4/master/LICENSE)
+<p align="center">
+  <a href="https://travis-ci.org/vijos/vj4" target="_blank"><img src="https://img.shields.io/travis/vijos/vj4/master.svg?style=flat-square"></a>
+  <a href="https://codeclimate.com/github/vijos/vj4" target="_blank"><img src="https://img.shields.io/codeclimate/github/vijos/vj4.svg?style=flat-square"></a>
+  <a href="https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62" target="_blank"><img src="https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62/badge.svg?style=flat-square"></a>
+  <a href="https://raw.githubusercontent.com/vijos/vj4/master/LICENSE" target="_blank"><img src="https://img.shields.io/badge/license-AGPLv3-blue.svg?style=flat-square"></a>
+</p>
 
-Next generation of [Vijos](https://vijos.org), built with asyncio on Python 3.5.
+<p align="center">
+  Next generation of <a href="https://vijos.org" target="_blank">Vijos</a>, built with asyncio on Python 3.5.
+</p>
+
+***
 
 ## Overview
 
