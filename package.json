@@ -71,7 +71,7 @@
     "nprogress": "^0.2.0",
     "pickadate": "^3.5.6",
     "prismjs": "^1.6.0",
-    "rc-tabs": "^7.3.1",
+    "rc-tabs": "^8.0.0",
     "react": "^15.4.2",
     "react-codemirror": "^0.3.0",
     "react-dom": "^15.4.2",
