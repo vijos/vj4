@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/vijos/vj4">
-    <img src="https://rawgit.com/vijos/vj4/master/.github_banner.png" alt="Vanipack" width="850" align="middle" />
+    <img src="https://rawgit.com/vijos/vj4/master/.github_banner.png" alt="vj4" width="100%" align="middle" />
   </a>
 </p>
 
