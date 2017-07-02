@@ -21,10 +21,10 @@
     font-size: rem($font-size)
     color: #FFF
 
-  .rc-tabs-tab-prev-icon:before
+  &.rc-tabs-top .rc-tabs-tab-prev-icon:before
     content: $icon-chevron_left
 
-  .rc-tabs-tab-next-icon:before
+  &.rc-tabs-top .rc-tabs-tab-next-icon:before
     content: $icon-chevron_right
 
   .rc-tabs-content
@@ -34,15 +34,16 @@
     display: flex
     flex-direction: column
 
-  .rc-tabs-tab
+  &.rc-tabs-top .rc-tabs-tab
     padding: rem(0 5px)
     line-height: rem($panel-header-height)
     margin: 0
     margin-right: rem(5px)
     color: rgba(#FFF, 0.8)
 
-  .rc-tabs-tab-active, .rc-tabs-tab-active:hover
-    color: #FFF
+  &.rc-tabs-top .rc-tabs-tab-active
+    &, &:hover
+      color: #FFF
 
   .rc-tabs-bar, .rc-tabs-nav-container
     line-height: 1

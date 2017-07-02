@@ -9,7 +9,7 @@ Active Sessions: 活動會話
 Arguments: 參數
 Attend Contest: 參加比賽
 Attended: 已參加
-Login to Attend Contest: 請登入後參加比賽
+Login to Attend Contest: 登入後參加比賽
 No Permission to Attend Contest: 您沒有許可權參加比賽
 Begin Date: 開始日期
 Begin Time: 開始時間
@@ -39,9 +39,9 @@ Create Discussion: 創建討論
 Create Discussion in {0}: 在 {0} 下創建討論
 Create Problem: 創建題目
 Create a contest: 創建一個比賽
-Create a discussion: 創建一個討論
-Login to Create a discussion: 請登入後創建討論
-No Permission to Create a discussion: 您沒有許可權創建討論
+Create a Discussion: 創建一個討論
+Login to Create a Discussion: 登入後創建討論
+No Permission to Create a Discussion: 您沒有許可權創建討論
 Create a problem: 創建一個題目
 Current Email: 當前電子郵件
 Current Location: 當前位置
@@ -103,8 +103,6 @@ Not available: 不可用
 Oh, there is no task in the queue!: 喔，佇列中目前沒有任務。
 Oops!: Oops!
 Open Scratchpad: 進入線上程式設計模式
-Login to Use Scratchpad: 請登入後使用線上程式設計功能
-No Permission to Use Scratchpad: 您沒有許可權使用線上程式設計功能
 Open Source: 開源
 Operating System: 作業系統
 Password: 密碼
@@ -174,7 +172,7 @@ Submissions: 遞交
 Submit: 遞交
 '# Submissions': '遞交數'
 '# My Submissions': '我的遞交數'
-Login to Submit: 請登入後遞交
+Login to Submit: 登入後遞交
 No Permission to Submit: 您沒有許可權遞交
 Submit At: 遞交時間
 Submit By: 遞交者
@@ -205,11 +203,7 @@ Vote: 投票
 We use Gravatar to present your avatar icon.: 我們使用 Gravatar 服務來呈現您的頭像。
 Whether to show tags in the problem list.: 是否在題目列表中顯示題目的標籤。
 Write Your Comment: 發表您的評論
-Login to Write Your Comment: 請登入後發表您的評論
-No Permission to Write Your Comment: 您沒有許可權發表評論
 Write Your Solution: 發表您的題解
-Login to Write Your Solution: 請登入後發表您的題解
-No Permission to Write Your Solution: 您沒有許可權發表題解
 author: 作者
 content: 內容
 contest_create: 創建比賽

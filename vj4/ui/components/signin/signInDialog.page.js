@@ -26,6 +26,11 @@ const signinDialogPage = new AutoloadPage('signinDialogPage', null, () => {
       signInDialog.hide();
     });
   }
+
+  window.showSignInDialog = () => {
+    signInDialog.show();
+  };
+
 });
 
 export default signinDialogPage;
