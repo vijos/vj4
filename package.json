@@ -73,7 +73,7 @@
     "prismjs": "^1.6.0",
     "rc-tabs": "^7.3.1",
     "react": "^15.4.2",
-    "react-codemirror": "^0.3.0",
+    "react-codemirror": "^1.0.0",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.3",
     "react-split-pane": "^0.1.59",
