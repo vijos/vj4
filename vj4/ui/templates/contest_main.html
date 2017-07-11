@@ -61,7 +61,7 @@
           <form method="get" name="filter-form">
             {{ _('Show') }}:
             <select class="inline compact select" name="rule">
-              <option value=""{% if not rule %} selected{% endif %}>{{ _('All') }}</option>
+              <option value="0"{% if not rule %} selected{% endif %}>{{ _('All') }}</option>
             {% for k, v in vj4.constant.contest.RULE_TEXTS.items() %}
               <option value="{{ k }}"{% if rule == k %} selected{% endif %}>{{ _('All {0} Contests').format(_(v)) }}</option>
             {% endfor %}
