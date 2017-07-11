@@ -46,8 +46,8 @@
             <span>{{ rcdoc['judge_text'] }}</span>
             <a class="tool-button" href="{{ reverse_url('wiki_help') }}#status"><span class="icon icon-help"></span></a>
           </td>
-          <td class="col--time">{{ rcdoc['time_ms'] }}ms</td>
-          <td class="col--memory">{{ rcdoc['memory_kb']|format_size(1024) }}</td>
+          <td class="col--time">{% if rcdoc['status'] == vj4.constant.record.STATUS_TIME_LIMIT_EXCEEDED or rcdoc['status'] == vj4.constant.record.STATUS_MEMORY_LIMIT_EXCEEDED or rcdoc['status'] == vj4.constant.record.STATUS_OUTPUT_LIMIT_EXCEEDED %}&ge;{% endif %}{{ rcdoc['time_ms'] }}ms</td>
+          <td class="col--memory">{% if rcdoc['status'] == vj4.constant.record.STATUS_TIME_LIMIT_EXCEEDED or rcdoc['status'] == vj4.constant.record.STATUS_MEMORY_LIMIT_EXCEEDED or rcdoc['status'] == vj4.constant.record.STATUS_OUTPUT_LIMIT_EXCEEDED %}&ge;{% endif %}{{ rcdoc['memory_kb']|format_size(1024) }}</td>
         </tr>
       {% endfor %}
       </tbody>
