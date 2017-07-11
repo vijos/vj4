@@ -3,7 +3,7 @@ import SplitPane from 'react-split-pane';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import SplitPaneFillOverlay from 'vj/components/react-splitpane/SplitPaneFillOverlayComponent';
-import MarkerReactive from 'vj/components/react/MarkerReactiveComponent';
+import Dom from 'vj/components/react/DomComponent';
 import ScratchpadToolbar from './ScratchpadToolbarContainer';
 import ScratchpadEditor from './ScratchpadEditorContainer';
 import ScratchpadPretest from './ScratchpadPretestContainer';
@@ -45,7 +45,6 @@ function buildNestedPane([a, ...panes]) {
 
 const mapStateToProps = state => ({
   ui: state.ui,
-  problem: state.problem,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -76,13 +75,7 @@ export default class ScratchpadContainer extends React.PureComponent {
         primary="second"
         onChange={size => this.handleChangeSize('main', size)}
       >
-        <MarkerReactive>
-          <div
-            className="scratchpad__problem"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: this.props.problem.html }}
-          ></div>
-        </MarkerReactive>
+        <Dom className="scratchpad__problem" childDom={$('.problem-content').get(0)} />
         {buildNestedPane([
           <SplitPaneFillOverlay key="editor" className="flex-col">
             <ScratchpadToolbar />

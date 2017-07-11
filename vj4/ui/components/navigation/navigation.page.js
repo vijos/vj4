@@ -4,7 +4,7 @@ import Slideout from 'slideout';
 import { AutoloadPage } from 'vj/misc/PageLoader';
 import request from 'vj/utils/request';
 import responsiveCutoff from 'vj/breakpoints.json';
-import Navigation from './navigation.js';
+import Navigation from '.';
 
 const nav = Navigation.instance;
 const $nav = nav.$nav;

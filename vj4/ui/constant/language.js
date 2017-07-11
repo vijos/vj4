@@ -10,7 +10,7 @@ export const LANG_TEXTS = {
   php: 'PHP',
   rs: 'Rust',
   hs: 'Haskell',
-  js: 'Javascript',
+  js: 'JavaScript',
   go: 'Go',
 };
 

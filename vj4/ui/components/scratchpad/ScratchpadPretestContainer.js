@@ -56,7 +56,7 @@ export default class ScratchpadPretestContainer extends React.PureComponent {
           activeKey={this.props.current}
           onChange={tabId => this.props.handleSwitchData(tabId)}
           animation="slide-horizontal"
-          renderTabBar={() => <ScrollableInkTabBar
+          renderTabBar={() => (<ScrollableInkTabBar
             extraContent={
               <span>
                 <PanelButton
@@ -78,7 +78,7 @@ export default class ScratchpadPretestContainer extends React.PureComponent {
                 </PanelButton>
               </span>
             }
-          />}
+          />)}
           renderTabContent={() => <TabContent />}
         >
           {this.props.tabs.map(tabId => (

@@ -15,14 +15,16 @@ export default function DialogueListItemComponent(props) {
     active,
   });
   return (
-    <li {...rest} className={cn} onClick={onClick}>
-      <div className="media__left middle">
-        <img src={faceUrl} alt="avatar" width="50" height="50" className="medium user-profile-avatar" />
-      </div>
-      <div className="media__body middle">
-        <h3 className="messagepad__username">{userName}</h3>
-        <div className="messagepad__desc">{summary}</div>
-      </div>
+    <li {...rest}>
+      <a className={cn} onClick={onClick}>
+        <div className="media__left middle">
+          <img src={faceUrl} alt="avatar" width="50" height="50" className="medium user-profile-avatar" />
+        </div>
+        <div className="media__body middle">
+          <h3 className="messagepad__username">{userName}</h3>
+          <div className="messagepad__desc">{summary}</div>
+        </div>
+      </a>
     </li>
   );
 }

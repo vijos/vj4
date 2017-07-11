@@ -1,20 +1,48 @@
-import Prism from 'prismjs/components/prism-core.js';
-import 'prismjs/components/prism-clike.js';
-import 'prismjs/components/prism-c.js';
-import 'prismjs/components/prism-cpp.js';
-import 'prismjs/components/prism-pascal.js';
-import 'prismjs/components/prism-java.js';
-import 'prismjs/components/prism-python.js';
-import 'prismjs/components/prism-php.js';
-import 'prismjs/components/prism-rust.js';
-import 'prismjs/components/prism-haskell.js';
-import 'prismjs/components/prism-javascript.js';
-import 'prismjs/components/prism-go.js';
-import 'prismjs/plugins/toolbar/prism-toolbar.js';
-import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
+/*
+
+To add a new language to highlight:
+1. Add new import statement in this file
+2. Add new import statement in `components/cmeditor/vjcmeditor.js`
+3. Add new import statement in `components/scratchpad/ScratchpadEditorContainer.js`
+4. Add new meta data in `components/highlighter/meta.js`
+
+ */
+
+import Prism from 'prismjs/components/prism-core';
+import 'prismjs/components/prism-clike';
+import 'prismjs/components/prism-c';
+import 'prismjs/components/prism-cpp';
+import 'prismjs/components/prism-pascal';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-php';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-haskell';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-go';
+import 'prismjs/plugins/toolbar/prism-toolbar';
+import 'prismjs/plugins/line-numbers/prism-line-numbers';
 
 import Clipboard from 'clipboard';
 import Notification from 'vj/components/notification';
+
+import languageMeta from './meta';
+
+const languageExtMap = {};
+
+// Map possible language names to Prism language name
+languageMeta.forEach((meta) => {
+  for (let i = 0; i < meta.ext.length; ++i) {
+    if (Prism.languages[meta.ext[i]] !== undefined) {
+      // eslint-disable-next-line no-param-reassign
+      meta.target = meta.ext[i];
+      break;
+    }
+  }
+  meta.ext.forEach((ext) => {
+    languageExtMap[ext] = meta.target;
+  });
+});
 
 // Copy to Clipboard
 Prism.plugins.toolbar.registerButton('copy-to-clipboard', (env) => {
@@ -38,6 +66,15 @@ const prismjsApiWrap = {
       $pre.addClass('syntax-hl');
       if ($pre.closest('[data-syntax-hl-show-line-number]')) {
         $pre.addClass('line-numbers');
+      }
+      // try to map the language name
+      const language = $(code).attr('class');
+      const m = (language || '').trim().match(/^language-(.+)$/);
+      if (m && m[1]) {
+        const languageName = m[1].toLowerCase();
+        if (languageExtMap[languageName]) {
+          $(code).attr('class', `language-${languageExtMap[languageName]}`);
+        }
       }
       Prism.highlightElement(code);
     });

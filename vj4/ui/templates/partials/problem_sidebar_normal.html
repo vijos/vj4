@@ -11,15 +11,18 @@
     {% if page_name == 'discussion_node' %}
     {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type=pdoc['doc_type'], doc_id=pdoc['doc_id']) }}">
-        <span class="icon icon-add"></span> {{ _('Create a discussion') }}
+        <span class="icon icon-add"></span> {{ _('Create a Discussion') }}
       </a></li>
-      <li class="menu__seperator"></li>
     {% else %}
-      <li class="menu__item"><a class="menu__link highlight" href="javascript:;">
-        <span class="icon icon-add"></span> {{ _('Login to Create a discussion' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Create a discussion') }}
-      </a></li>
-      <li class="menu__seperator"></li>
+      {% if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+        <li class="menu__item"><a class="menu__link" href="javascript:showSignInDialog();">
+        <span class="icon icon-add"></span> {{ _('Login to Create a Discussion') }}</a></li>
+      {% else %}
+        <li class="menu__item"><a class="menu__link disabled" href="javascript:;">
+        <span class="icon icon-add"></span> {{ _('No Permission to Create a Discussion') }}</a></li>
+      {% endif %}
     {% endif %}
+      <li class="menu__seperator"></li>
     {% endif %}
     {% if page_name == 'problem_detail' %}
     {% if handler.has_perm(vj4.model.builtin.PERM_SUBMIT_PROBLEM) %}
@@ -29,31 +32,22 @@
       <li class="menu__item non-scratchpad--hide"><a class="menu__link" name="problem-sidebar__quit-scratchpad" href="javascript:;" data-global-hotkey="alt+q">
         <span class="icon icon-enlarge"></span> {{ _('Quit Scratchpad') }} (Alt+Q)
       </a></li>
-    {% elif not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
-      <li class="menu__item scratchpad--hide"><a class="menu__link highlight" href="javascript:;">
-        <span class="icon icon-enlarge"></span> {{ _('Login to Use Scratchpad') }}
-      </a></li>
-    {% else %}
-      <li class="menu__item scratchpad--hide"><a class="menu__link highlight" href="javascript:;">
-        <span class="icon icon-enlarge"></span> {{ _('No Permission to Use Scratchpad') }}
-      </a></li>
     {% endif %}
     {% else %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
         <span class="icon icon-flag"></span> {{ _('View Problem') }}
       </a></li>
     {% endif %}
-      <li class="menu__seperator"></li>
     {% if handler.has_perm(vj4.model.builtin.PERM_SUBMIT_PROBLEM) %}
       <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ reverse_url('problem_submit', pid=pdoc['doc_id']) }}">
         <span class="icon icon-send"></span> {{ _('Submit') }}
       </a></li>
     {% elif not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
-      <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="javascript:;">
+      <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="javascript:showSignInDialog();">
         <span class="icon icon-send"></span> {{ _('Login to Submit') }}
       </a></li>
     {% else %}
-      <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="javascript:;">
+      <li class="menu__item scratchpad--hide"><a class="menu__link disabled{% if page_name == 'problem_submit' %} active{% endif %}" href="javascript:;">
         <span class="icon icon-send"></span> {{ _('No Permission to Submit') }}
       </a></li>
     {% endif %}

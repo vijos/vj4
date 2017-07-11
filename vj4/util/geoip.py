@@ -38,5 +38,5 @@ def ip2geo(ip: str, locale: str='en'):
       return 'Unknown'
     else:
       return ', '.join(geo)
-  except ValueError:
+  except geoip2.errors.AddressNotFoundError:
     return 'Unknown'

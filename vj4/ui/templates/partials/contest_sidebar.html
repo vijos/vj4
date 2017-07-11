@@ -20,15 +20,18 @@
     {% if page_name == 'discussion_node' %}
     {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type=tdoc['doc_type'], doc_id=tdoc['doc_id']) }}">
-        <span class="icon icon-add"></span> {{ _('Create a discussion') }}
+        <span class="icon icon-add"></span> {{ _('Create a Discussion') }}
       </a></li>
-      <li class="menu__seperator"></li>
     {% else %}
-      <li class="menu__item"><a class="menu__link highlight" href="javascript:;">
-        <span class="icon icon-add"></span> {{ _('Login to Create a discussion' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Create a discussion') }}
-      </a></li>
-      <li class="menu__seperator"></li>
+      {% if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+        <li class="menu__item"><a class="menu__link" href="javascript:showSignInDialog();">
+        <span class="icon icon-add"></span> {{ _('Login to Create a Discussion') }}</a></li>
+      {% else %}
+        <li class="menu__item"><a class="menu__link disabled" href="javascript:;">
+        <span class="icon icon-add"></span> {{ _('No Permission to Create a Discussion') }}</a></li>
+      {% endif %}
     {% endif %}
+      <li class="menu__seperator"></li>
     {% endif %}
     {% if page_name != 'contest_detail' %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">
@@ -46,13 +49,13 @@
           </button>
         </form>
     {% elif not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
-        <button class="menu__link" type="submit">
+        <a class="menu__link" href="javascript:showSignInDialog()">
           <span class="icon icon-add"></span> {{ _('Login to Attend Contest') }}
-        </button>
+        </a>
     {% else %}
-        <button class="menu__link" type="submit">
+        <a class="menu__link disabled" href="javascript:;">
           <span class="icon icon-add"></span> {{ _('No Permission to Attend Contest') }}
-        </button>
+        </a>
     {% endif %}
       </li>
     {% endif %}

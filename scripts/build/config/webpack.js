@@ -19,7 +19,7 @@ function eslintLoader() {
   return {
     loader: 'eslint-loader',
     options: {
-      configFile: root('vj4/ui/.eslintrc.yml'),
+      configFile: root('vj4/ui/.eslintrc.js'),
     },
   };
 }
@@ -272,8 +272,6 @@ export default function (env = {}) {
       new webpack.LoaderOptionsPlugin({
         options: {
           context: root(),
-
-          postcss: [require('autoprefixer')],
 
           // Beautify the output path of assets
           customInterpolateName: (url, name, options) => beautifyOutputUrl(url),

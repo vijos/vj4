@@ -8,7 +8,7 @@ class ProblemPageExtender {
   constructor() {
     this.isExtended = false;
     this.inProgress = false;
-    this.$content = $('.problem-content');
+    this.$content = $('.problem-content-container');
     this.$contentBound = this.$content.closest('.section');
     this.$scratchpadContainer = $('.scratchpad-container');
   }
@@ -113,9 +113,10 @@ class ProblemPageExtender {
 }
 
 const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
-  let componentMounted = false;
+  let reactLoaded = false;
   let $floatingSidebar = null;
-  let reduxStore = null;
+  let renderReact = null;
+  let unmountReact = null;
   const extender = new ProblemPageExtender();
 
   async function scratchpadFadeIn() {
@@ -167,8 +168,8 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
     $floatingSidebar = null;
   }
 
-  async function mountComponent() {
-    if (componentMounted) {
+  async function loadReact() {
+    if (reactLoaded) {
       return;
     }
 
@@ -177,7 +178,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
     const SockJs = await System.import('sockjs-client');
     const { default: ScratchpadApp } = await System.import('../components/scratchpad');
     const { default: ScratchpadReducer } = await System.import('../components/scratchpad/reducers');
-    const { React, render, Provider, store } = await loadReactRedux(ScratchpadReducer);
+    const { React, render, unmountComponentAtNode, Provider, store } = await loadReactRedux(ScratchpadReducer);
 
     const sock = new SockJs(Context.socketUrl);
     sock.onmessage = (message) => {
@@ -188,45 +189,38 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
       });
     };
 
-    reduxStore = store;
+    renderReact = () => {
+      render(
+        <Provider store={store}>
+          <ScratchpadApp />
+        </Provider>,
+        $('#scratchpad').get(0),
+      );
+    };
 
-    render(
-      <Provider store={store}>
-        <ScratchpadApp />
-      </Provider>,
-      $('#scratchpad').get(0),
-    );
-    componentMounted = true;
+    unmountReact = () => {
+      unmountComponentAtNode($('#scratchpad').get(0));
+    };
+
+    reactLoaded = true;
 
     $('.loader-container').hide();
   }
 
-  // Sync markers
-  function syncHtmlFromDomToReact() {
-    const html = $('.problem-content').html();
-    reduxStore.dispatch({
-      type: 'SCRATCHPAD_PROBLEM_SET_HTML',
-      payload: html,
-    });
-  }
-  function syncHtmlFromReactToDom() {
-    const html = $('.scratchpad__problem').html();
-    $('.problem-content').html(html);
-  }
-
   async function enterScratchpadMode() {
     await extender.extend();
-    await mountComponent();
-    syncHtmlFromDomToReact();
+    await loadReact();
+    renderReact();
     await scratchpadFadeIn();
     await createSidebar();
   }
 
   async function leaveScratchpadMode() {
-    syncHtmlFromReactToDom();
     await removeSidebar();
     await scratchpadFadeOut();
+    $('.problem-content-container').append($('.problem-content'));
     await extender.collapse();
+    unmountReact();
   }
 
   $(document).on('vjScratchpadRelayout', updateFloatingSidebar);

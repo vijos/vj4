@@ -24,9 +24,13 @@
       <div class="section__body">
       {% if vnode %}
       {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
-        <p><a href="{{ reverse_url('discussion_create', doc_id=vnode['doc_id']) }}" class="expanded primary button">{{ _('Create a discussion') }}</a></p>
+        <p><a href="{{ reverse_url('discussion_create', doc_id=vnode['doc_id']) }}" class="expanded primary button">{{ _('Create a Discussion') }}</a></p>
       {% else %}
-        <p><a href="javascript:;" class="expanded primary button">{{ _('Login to Create a discussion' if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) else 'No Permission to Create a discussion') }}</a></p>
+        {% if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+          <p><a href="javascript:showSignInDialog();" class="expanded primary button">{{ _('Login to Create a Discussion') }}</a></p>
+        {% else %}
+          <p><a href="javascript:;" class="disabled expanded primary button">{{ _('No Permission to Create a Discussion') }}</a></p>
+        {% endif %}
       {% endif %}
       {% else %}
         <p>{{ _('Select a node to create discussion.') }}</p>

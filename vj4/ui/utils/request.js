@@ -13,7 +13,7 @@ request.ajax = async function (options) {
         const err = new Error(i18n('Aborted'));
         err.aborted = true;
         reject(err);
-      } if (jqXHR.readyState === 0) {
+      } else if (jqXHR.readyState === 0) {
         reject(new Error(i18n('Network error')));
       } else if (errorThrown instanceof Error) {
         reject(errorThrown);

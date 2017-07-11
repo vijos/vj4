@@ -1,15 +1,15 @@
 import { PluginError } from 'gulp-util';
 import through from 'through2';
-import fsp from 'fs-promise';
+import fs from 'fs-extra';
 
 export default function touch(mtime) {
 
   async function touchFile(file) {
-    const fd = await fsp.open(file.path, 'a');
+    const fd = await fs.open(file.path, 'a');
     try {
-      await fsp.futimes(fd, mtime, mtime);
+      await fs.futimes(fd, mtime, mtime);
     } finally {
-      await fsp.close(fd);
+      await fs.close(fd);
     }
   }
 

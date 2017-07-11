@@ -1,4 +1,5 @@
 $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-height) / 2
+$header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-logo-domain-lh - $header-logo-system-lh) / 2
 
 .header
   position: relative
@@ -43,6 +44,35 @@ $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-hei
     background-image: url(./header-logo@2x.png)
   +mobile()
     display: inline-block
+
+.header__logo--domain
+  font-size: rem(40px)
+  margin-top: rem($header-gap-mini-domain + $nav-item-height)
+  height: rem($header-logo-domain-lh)
+  line-height: rem($header-logo-domain-lh)
+
+  a
+    text-shadow: 1px 1px 5px rgba(#000, 0.4)
+
+    &, &:hover, &:visited, &:link
+      color: #FFF
+      text-decoration: none
+
+.header__logo--system
+  line-height: rem($header-logo-system-lh)
+  color: #FFF
+  font-size: rem($font-size-small)
+
+  a
+    opacity: 0.8
+
+    &, &:hover, &:visited, &:link
+      text-decoration: none
+      color: #FFF
+
+    &:hover
+      opacity: 1
+      text-decoration: underline
 
 .location-path
   color: rgba(#FFF, 0.3)

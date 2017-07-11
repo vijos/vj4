@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import DOMAttachedObject from 'vj/components/DOMAttachedObject';
-import CmEditor from './cmeditor';
+import CmEditor from '.';
 
 export default class TextareaHandler extends DOMAttachedObject {
 

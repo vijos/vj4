@@ -46,7 +46,7 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
           className="scratchpad__panel-tab flex-col flex-fill"
           activeKey={'all'}
           animation="slide-horizontal"
-          renderTabBar={() => <ScrollableInkTabBar
+          renderTabBar={() => (<ScrollableInkTabBar
             extraContent={
               <span>
                 <PanelButton
@@ -63,7 +63,7 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
                 </PanelButton>
               </span>
             }
-          />}
+          />)}
           renderTabContent={() => <TabContent />}
         >
           <TabPane tab={<span>{i18n('All')}</span>} key="all">

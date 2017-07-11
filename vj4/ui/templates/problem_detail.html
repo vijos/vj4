@@ -14,7 +14,7 @@
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
-      <div class="problem-content" data-marker-enabled>
+      <div class="problem-content-container"><div class="problem-content" data-marker-enabled>
         <div class="section__header non-scratchpad--hide">
           <h1>{{ pdoc['title'] }}</h1>
         </div>
@@ -26,7 +26,7 @@
         {% endif %}
           {{ pdoc['content']|markdown }}
         </div>
-      </div>
+      </div></div>
     </div>
   </div>
   <div class="medium-3 columns">

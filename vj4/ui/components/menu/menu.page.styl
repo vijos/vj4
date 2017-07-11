@@ -42,14 +42,16 @@
     opacity: 0.85
 
 a.menu__link, button.menu__link
+  &.disabled
+    cursor: default
+    opacity: 0.5
   &:hover
-    animation: none
-    color: $text-1-color
     text-decoration: none
+  &:not(.disabled):hover
+    color: $text-1-color
     background: $menu-item-bg-color-hover
     border-color: darken($primary-color, 10%)
-  &.active
-    animation: none
+  &.active, &.active:hover
     border-color: darken($secondary-color, 30%)
     background: $secondary-color
     color: #FFF
