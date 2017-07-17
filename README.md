@@ -127,6 +127,20 @@ python3 -m vj4.server --listen=unix:/var/run/vj4.sock
 
 Better to use a reverse proxy like Nginx or h2o.
 
+## Judging
+
+To enable vj4 to judge, at least one judge user and one judge daemon instance are needed.
+
+* Use following commands to create a judge user:
+
+```bash
+alias pm="python3 -m"
+pm vj4.model.user add -2 judge 123456 judge@example.org
+pm vj4.model.user set_judge -2
+```
+
+* See https://github.com/vijos/jd4 for more details about the judge daemon.
+
 ## Notes
 
 Have fun!
