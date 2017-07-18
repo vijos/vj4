@@ -3,6 +3,20 @@
 {% import "components/contest.html" as contest with context %}
 {% block content %}
 <div class="row">
+  <div class="large-12 columns">
+    <div class="section">
+      <div class="section__body">
+      {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
+        <p>\[E=mc^2\]</p>
+      {% else %}
+        <h3>Domain {{ domain_id }}'s Main Page</h3>
+        <p>\[e^{i\pi}+1=0\]</p>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
   <div class="large-9 columns">
   {% if not tdocs %}
     <!-- no contest -->

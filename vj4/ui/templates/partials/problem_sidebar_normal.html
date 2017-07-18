@@ -51,6 +51,9 @@
         <span class="icon icon-send"></span> {{ _('No Permission to Submit') }}
       </a></li>
     {% endif %}
+      <li class="menu__item"><a class="menu__link{% if page_name == 'problem_statistics' %} active{% endif %}" href="{{ reverse_url('problem_statistics', pid=pdoc['doc_id']) }}">
+        <span class="icon icon-statistics"></span> {{ _('Submission Statistics') }}
+      </a></li>
     {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) or handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM_SOLUTION) %}
       <li class="menu__seperator"></li>
     {% endif %}

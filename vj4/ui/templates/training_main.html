@@ -83,6 +83,10 @@
         <li class="menu__item">
           <a href="{{ reverse_url('training_create') }}" class="menu__link"><span class="icon icon-add"></span> {{ _('New Training Plan') }}</a>
         </li>
+        <!-- TODO(twd2) -->
+        <li class="menu__item">
+          <a href="#" class="menu__link"><span class="icon icon-crown"></span> {{ _('View Owned Training Plans') }}</a>
+        </li>
       </ol>
       <div class="section__body">
         <div class="typo supplementary">
@@ -91,6 +95,44 @@
       </div>
     </div>
   {% endif %}
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Monthly Popular') }}</h1>
+      </div>
+      <div class="section__body">
+        <ol class="popular secondary training__list">
+        {% for tdoc in mp_tdocs %}
+          <li class="training__item">
+            <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+            <ul class="supplementary list">
+              <li>
+                <span class="icon icon-user--multiple"></span> {{ tdoc['enroll'] }}
+              </li>
+            {% if tsdict[tdoc['doc_id']]['enroll'] %}
+              {% if not tsdict[tdoc['doc_id']]['done'] %}
+              <li class="training-status--text progress">
+                <span class="icon training-status--icon progress"></span>
+                <span class="training-status--text progress">{{ _('Completed') }} {{ (100 * tsdict[tdoc['doc_id']]['done_pids']|length / handler.get_pids(tdoc)|length)|round|int }}%</span>
+              </li>
+              {% else %}
+              <li class="training-status--text done">
+                <span class="icon training-status--icon done"></span>
+                <span class="training-status--text done">{{ _('Completed') }} 100%</span>
+              </li>
+              {% endif %}
+            {% elif handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+              <li class="training-status--text outside">
+                <span class="icon training-status--icon outside"></span> {{ _('Not Enrolled') }}
+              <li class="training-status--text outside">
+            {% endif %}
+            </ul>
+          </li>
+        {% else %}
+          <li class="training__item">{{ _('Not Available') }}</li>
+        {% endfor %}
+        </ol>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
