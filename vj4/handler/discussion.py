@@ -60,9 +60,11 @@ class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
     else:
       node_or_dtuple = (doc_type, document.convert_doc_id(doc_id))
     nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_dtuple)
-    # TODO(twd2): check visibility eg. hidden problem
     if not vnode:
       raise error.DiscussionNodeNotFoundError(self.domain_id, node_or_dtuple)
+    if vnode['doc_type'] == document.TYPE_PROBLEM and vnode.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    # TODO(twd2): do more visibility check eg. contest
     # TODO(iceboy): continuation based pagination.
     ddocs, dpcount, _ = await pagination.paginate(
         discussion.get_multi(self.domain_id,
@@ -99,6 +101,9 @@ class DiscussionCreateHandler(base.Handler):
     nodes, vnode = await discussion.get_nodes_and_vnode(self.domain_id, node_or_dtuple)
     if not vnode:
       raise error.DiscussionNodeNotFoundError(self.domain_id, node_or_dtuple)
+    if vnode['doc_type'] == document.TYPE_PROBLEM and vnode.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    # TODO(twd2): do more visibility check eg. contest
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], node_url(self, 'discussion_node', node_or_dtuple)),
@@ -117,6 +122,12 @@ class DiscussionCreateHandler(base.Handler):
       node_or_dtuple = doc_id
     else:
       node_or_dtuple = (doc_type, document.convert_doc_id(doc_id))
+    vnode = await discussion.get_vnode(self.domain_id, node_or_dtuple)
+    if not vnode:
+      raise error.DiscussionNodeNotFoundError(self.domain_id, node_or_dtuple)
+    if vnode['doc_type'] == document.TYPE_PROBLEM and vnode.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    # TODO(twd2): do more visibility check eg. contest
     flags = {}
     if highlight:
       self.check_perm(builtin.PERM_HIGHLIGHT_DISCUSSION)
@@ -146,11 +157,16 @@ class DiscussionDetailHandler(base.OperationHandler):
                             page, self.REPLIES_PER_PAGE))
     if not vnode:
       vnode = builtin.VNODE_MISSING
+    elif vnode['doc_type'] == document.TYPE_PROBLEM and vnode.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    # TODO(twd2): do more visibility check eg. contest
     uids = {ddoc['owner_uid']}
     uids.update(drdoc['owner_uid'] for drdoc in drdocs)
     for drdoc in drdocs:
       if 'reply' in drdoc:
         uids.update(drrdoc['owner_uid'] for drrdoc in drdoc['reply'])
+    if 'owner_uid' in vnode:
+      uids.add(vnode['owner_uid'])
     udict, dudict = await asyncio.gather(user.get_dict(uids),
                                          domain.get_dict_user_by_uid(self.domain_id, uids))
     path_components = self.build_path(

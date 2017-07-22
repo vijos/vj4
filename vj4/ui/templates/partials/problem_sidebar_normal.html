@@ -8,7 +8,7 @@
 {% endif %}
   <div>
     <ol class="menu">
-    {% if page_name == 'discussion_node' %}
+    {% if page_name == 'discussion_node' or page_name == 'discussion_detail' %}
     {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
       <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type=pdoc['doc_type'], doc_id=pdoc['doc_id']) }}">
         <span class="icon icon-add"></span> {{ _('Create a Discussion') }}
@@ -55,7 +55,7 @@
       <li class="menu__seperator"></li>
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) %}
-      <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' %} active{% endif %}" href="{{ reverse_url('discussion_node_document_as_node', doc_type=pdoc['doc_type'], doc_id=pdoc['doc_id']) }}">
+      <li class="menu__item"><a class="menu__link{% if page_name == 'discussion_node' or page_name == 'discussion_detail' %} active{% endif %}" href="{{ reverse_url('discussion_node_document_as_node', doc_type=pdoc['doc_type'], doc_id=pdoc['doc_id']) }}">
         <span class="icon icon-comment--text"></span> {{ _('Discussions') }}
       </a></li>
     {% endif %}
@@ -87,6 +87,7 @@
       <dt>{{ _('ID') }}</dt>
       <dd>{{ pdoc['doc_id'] }}</dd>
     {% endif %}
+    {% if page_name != 'discussion_node' and page_name != 'discussion_detail' %}
     {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
       <dt>{{ _('Submission') }}</dt>
       <dd>
@@ -99,6 +100,7 @@
         {{ _('(None)') }}
       {% endif %}
       </dd>
+    {% endif %}
     {% endif %}
       <dt>{{ _('Difficulty') }}</dt>
       <dd>{{ pdoc['difficulty'] or _('(None)') }}</dd>
@@ -130,8 +132,12 @@
       </dd>
       <dt>{{ _('# Submissions') }}</dt>
       <dd><a href="{{ reverse_url('record_main') }}?pid={{ pdoc['doc_id'] }}">{{ pdoc['num_submit'] }}</a></dd>
+      {% if page_name != 'discussion_node' and page_name != 'discussion_detail' %}
+      {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
       <dt>{{ _('# My Submissions') }}</dt>
       <dd><a href="{{ reverse_url('record_main') }}?pid={{ pdoc['doc_id'] }}&uid_or_name={{ handler.user['_id'] }}">{{ pdoc['psdoc']['num_submit']|default(0) }}</a></dd>
+      {% endif %}
+      {% endif %}
       <dt>{{ _('Accepted') }}</dt>
       <dd>{{ pdoc['num_accept'] }}</dd>
       <dt>{{ _('Accepted Ratio') }}</dt>
