@@ -5,6 +5,7 @@ from bson import objectid
 from pymongo import errors
 
 from vj4 import error
+from vj4.model import builtin
 from vj4.model import document
 from vj4.service import smallcache
 from vj4.util import argmethod
@@ -20,6 +21,18 @@ def node_id(ddoc):
     return ddoc['parent_doc_id']
   else:
     return (ddoc['parent_doc_type'], ddoc['parent_doc_id'])
+
+
+@argmethod.wrap
+async def is_initialized(domain_id: str):
+  doc = await document.get(domain_id, document.TYPE_DISCUSSION_NODE,
+                           document.DOC_ID_DISCUSSION_NODES)
+  return bool(doc)
+
+
+@argmethod.wrap
+async def initialize(domain_id: str):
+  await _update_nodes(domain_id, builtin.DEFAULT_VNODES)
 
 
 @argmethod.wrap

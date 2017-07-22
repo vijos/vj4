@@ -87,6 +87,22 @@ class DomainEditHandler(base.Handler):
     self.json_or_redirect(self.url)
 
 
+@app.route('/domain/discussion', 'domain_manage_discussion')
+class DomainEditHandler(base.Handler):
+  @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
+  async def get(self):
+    self.render('domain_manage_discussion.html',
+                discussion_nodes=await discussion.get_nodes(self.domain_id))
+
+  @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *kwargs):
+    await discussion.initialize(self.domain_id)
+    self.json_or_redirect(self.url)
+
+
 @app.route('/domain/user', 'domain_manage_user')
 class DomainUserHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)

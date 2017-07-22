@@ -41,6 +41,7 @@ user_register: Register
 home_domain_create: Create Domain
 domain_main: Main
 domain_manage: Domain Manage
+domain_manage_discussion: Discussion Nodes
 domain_manage_edit: Domain Edit
 domain_manage_role: Domain Role
 domain_manage_user: Domain User

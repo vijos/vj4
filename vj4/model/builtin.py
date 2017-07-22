@@ -438,3 +438,58 @@ for category, sub_categories in PROBLEM_CATEGORIES.items():
 
 
 VNODE_MISSING = {'title': '(missing)'}
+DEFAULT_VNODES = collections.OrderedDict([
+  ('探索', [
+    {'pic': 'qa', 'name': '问答'},
+    {'pic': 'share', 'name': '分享'},
+    {'pic': 'solution', 'name': '题解'}
+  ]),
+  ('Vijos', [
+    {'pic': 'vijos', 'name': 'Vijos'},
+    {'pic': None, 'name': '团队'},
+    {'pic': None, 'name': '月赛'},
+    {'pic': 'advice', 'name': '建议'}
+  ]),
+  ('数据结构', [
+    {'pic': None, 'name': '散列表'},
+    {'pic': None, 'name': '搜索树'},
+    {'pic': None, 'name': '栈和队列'},
+    {'pic': None, 'name': '图'},
+    {'pic': None, 'name': '堆'}
+  ]),
+  ('算法', [
+    {'pic': None, 'name': '数论'},
+    {'pic': None, 'name': '几何'},
+    {'pic': None, 'name': '图论'},
+    {'pic': None, 'name': '网络流'},
+    {'pic': None, 'name': '动态规划'},
+    {'pic': None, 'name': '背包'},
+    {'pic': None, 'name': '排序'},
+    {'pic': None, 'name': '搜索'},
+    {'pic': None, 'name': '并查集'},
+    {'pic': None, 'name': '贪心'},
+    {'pic': None, 'name': '博弈论'}
+  ]),
+  ('在线题库', [
+    {'pic': None, 'name': 'CodeForces'},
+    {'pic': None, 'name': 'TopCoder'},
+    {'pic': None, 'name': 'POJ'},
+    {'pic': None, 'name': 'BZOJ'},
+    {'pic': None, 'name': 'USACO'},
+    {'pic': None, 'name': 'RQNOJ'}
+  ]),
+  ('泛', [
+    {'pic': None, 'name': '数学'},
+    {'pic': None, 'name': '编程'},
+    {'pic': None, 'name': '数据库'},
+    {'pic': None, 'name': 'C'},
+    {'pic': None, 'name': 'C++'},
+    {'pic': None, 'name': 'Pascal'},
+    {'pic': None, 'name': 'Java'},
+    {'pic': None, 'name': 'PHP'},
+    {'pic': None, 'name': 'Python'},
+    {'pic': None, 'name': '游戏'},
+    {'pic': None, 'name': '保送'},
+    {'pic': None, 'name': 'ACM'}
+  ])
+])
