@@ -53,10 +53,16 @@ class RecordMixin:
 class RecordMainHandler(base.Handler, RecordMixin):
   @base.get_argument
   @base.sanitize
-  async def get(self, *, uid_or_name: str='', pid: str='', tid: str=''):
+  async def get(self, *, start: str='', uid_or_name: str='', pid: str='', tid: str=''):
+    if not self.has_priv(builtin.PRIV_VIEW_JUDGE_STATISTICS):
+      start = ''
+    if start:
+      start = objectid.ObjectId(start)
+    else:
+      start = None
     query = await self.get_filter_query(uid_or_name, pid, tid)
     # TODO(iceboy): projection, pagination.
-    rdocs = await record.get_all_multi(**query,
+    rdocs = await record.get_all_multi(**query, end_id=start,
       get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).limit(50).to_list()
     # TODO(iceboy): projection.
     udict, pdict = await asyncio.gather(
@@ -78,10 +84,12 @@ class RecordMainHandler(base.Handler, RecordMixin):
           record.get_count())
       statistics = {'day': day_count, 'week': week_count, 'month': month_count,
                     'year': year_count, 'total': rcount}
+    query_string = urllib.parse.urlencode(
+      [('uid_or_name', uid_or_name), ('pid', pid), ('tid', tid)])
     self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
                 filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid,
-                socket_url='/records-conn?' + urllib.parse.urlencode(
-                    [('uid_or_name', uid_or_name), ('pid', pid), ('tid', tid)]))
+                socket_url='/records-conn?' + query_string,
+                query_string=query_string)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
