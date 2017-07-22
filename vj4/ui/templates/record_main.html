@@ -6,11 +6,51 @@
   }|json|safe }};
 </script>
 <div class="row">
-  <div class="medium-9 columns">
+  <div class="medium-12 columns">
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Filter') }}</h1>
+      </div>
+      <form method="get">
+        <div class="section__body">
+          <div class="row">
+            <!-- TODO: replace with form_builder -->
+            <div class="medium-3 columns">
+              <label class="filter-user">
+                {{ _('By Username / UID') }}
+                <input name="uid_or_name" type="text" class="textbox" value="{{ filter_uid_or_name }}" autocomplete="off" data-autofocus>
+              </label>
+            </div>
+            <div class="medium-3 columns">
+              <label>
+                {{ _('By Problem') }}
+                <input name="pid" type="text" class="textbox" value="{{ filter_pid }}">
+              </label>
+            </div>
+            <div class="medium-3 columns">
+              <label>
+                {{ _('By Contest') }}
+                <input name="tid" type="text" class="textbox" value="{{ filter_tid }}">
+              </label>
+            </div>
+            <div class="medium-3 columns">
+              <label>
+                <button type="submit" class="primary button"><span class="icon icon-filter"></span> {{ _('Filter') }}</button>
+                <a href="{{ reverse_url('record_main') }}" class="button">{{ _('Reset') }}</a>
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
     <div class="section">
       <div class="section__body no-padding">
       {% if not rdocs %}
+        {% if not filter_uid_or_name and not filter_pid and not filter_tid %}
         {{ nothing.render('Oh, there is no task in the queue!') }}
+        {% else %}
+        {{ nothing.render('Oh, there is no task that matches the filter!') }}
+        {% endif%}
       {% else %}
         <table class="data-table record_main__table">
           <colgroup>
@@ -44,33 +84,7 @@
       {% endif %}
       </div>
     </div>
-  </div>
-  <div class="medium-3 columns">
-    <div class="section">
-      <div class="section__header">
-        <h1 class="section__title">{{ _('Filter') }}</h1>
-      </div>
-      <form method="get">
-        <div class="section__body">
-          <!-- TODO: replace with form_builder -->
-          <label class="filter-user">
-            {{ _('By Username / UID') }}
-            <input name="uid_or_name" type="text" class="textbox" value="{{ filter_uid_or_name }}" autocomplete="off" data-autofocus>
-          </label>
-          <label>
-            {{ _('By Problem') }}
-            <input name="pid" type="text" class="textbox" value="{{ filter_pid }}">
-          </label>
-          <label>
-            {{ _('By Contest') }}
-            <input name="tid" type="text" class="textbox" value="{{ filter_tid }}">
-          </label>
-          <button type="submit" class="primary button"><span class="icon icon-filter"></span> {{ _('Filter') }}</button>
-          <a href="{{ reverse_url('record_main') }}" class="button">{{ _('Reset') }}</a>
-        </div>
-      </form>
-    </div>
-  {% if statistics %}
+    {% if statistics %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Statistics') }}</h1>
@@ -85,7 +99,7 @@
         </dl>
       </div>
     </div>
-  {% endif %}
+    {% endif %}
   </div>
 </div>
 {% endblock %}
