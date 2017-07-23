@@ -117,6 +117,15 @@ def check_description(s):
     raise error.ValidationError('description')
 
 
+def is_bulletin(s):
+  return isinstance(s, str) and len(s) < 65536
+
+
+def check_bulletin(s):
+  if not is_bulletin(s):
+    raise error.ValidationError('bulletin')
+
+
 def is_lang(i):
   return i in constant.language.LANG_TEXTS
 

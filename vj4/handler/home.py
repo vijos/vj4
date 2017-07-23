@@ -262,8 +262,9 @@ class HomeDomainCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, id: str, name: str, gravatar: str):
-    domain_id = await domain.add(id, self.user['_id'], name=name, gravatar=gravatar)
+  async def post(self, *, id: str, name: str, gravatar: str, bulletin: str):
+    domain_id = await domain.add(id, self.user['_id'], name=name,
+                                 gravatar=gravatar, bulletin=bulletin)
     self.json_or_redirect(self.reverse_url('domain_manage', domain_id=domain_id))
 
 

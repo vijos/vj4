@@ -219,7 +219,8 @@ DOMAIN_SYSTEM = {
               ROLE_DEFAULT: DEFAULT_PERMISSIONS,
               ROLE_ADMIN: ADMIN_PERMISSIONS},
     'gravatar': '',
-    'name': 'Vijos'
+    'name': 'Vijos',
+    'bulletin': ''
 }
 DOMAINS = [DOMAIN_SYSTEM]
 

@@ -13,9 +13,10 @@ PROJECTION_PUBLIC = {'uid': 1}
 @argmethod.wrap
 async def add(domain_id: str, owner_uid: int,
               roles=builtin.DOMAIN_SYSTEM['roles'],
-              name: str=None, gravatar: str=None):
+              name: str=None, gravatar: str=None, bulletin: str=''):
   validator.check_domain_id(domain_id)
   validator.check_name(name)
+  validator.check_bulletin(bulletin)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.DomainAlreadyExistError(domain_id)
@@ -23,7 +24,7 @@ async def add(domain_id: str, owner_uid: int,
   try:
     return (await coll.insert_one({'_id': domain_id, 'owner_uid': owner_uid,
                                    'roles': roles, 'name': name,
-                                   'gravatar': gravatar})).inserted_id
+                                   'gravatar': gravatar, 'bulletin': bulletin})).inserted_id
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
 

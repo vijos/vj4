@@ -2,6 +2,17 @@
 {% extends "layout/basic.html" %}
 {% import "components/contest.html" as contest with context %}
 {% block content %}
+{% if handler.domain['bulletin'] %}
+<div class="row">
+  <div class="large-12 columns">
+    <div class="section">
+      <div class="section__body typo">
+        {{ handler.domain['bulletin']|markdown }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 <div class="row">
   <div class="large-9 columns">
   {% if not tdocs %}
