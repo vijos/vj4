@@ -69,3 +69,22 @@ $checkbox-size = 16px
     input
       margin: ((@line-height * @font-size - rem($checkbox-size)) / 2) 0
       margin-right: rem(5px)
+
+label.checkbox.inverse
+  color: rgba($immersive-text-color, 0.8)
+
+  input
+    color: $immersive-text-color
+    border-color: rgba($immersive-text-color, 0.4)
+
+    &:disabled, &:read-only
+      color: rgba($immersive-text-color, 0.6)
+
+    &:enabled:read-write:hover
+      border-color: rgba($immersive-text-color, 0.8)
+
+    &:enabled:read-write:focus
+      border-color: $immersive-primary-color
+
+  &.focus
+    color: $immersive-primary-color
