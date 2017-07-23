@@ -93,3 +93,12 @@ class SettingMixin(object):
       return defaults.DEFAULT_CODE_TEMPLATES[code_lang].strip()
     else:
       return ''
+
+
+class UserSetting(SettingMixin):
+  def __init__(self, udoc):
+    self.session = None
+    self.user = udoc
+
+  def has_priv(self, p):
+    return True

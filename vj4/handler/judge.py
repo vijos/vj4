@@ -27,14 +27,7 @@ async def _send_ac_mail(handler, rdoc):
   udoc = await user.get_by_uid(rdoc['uid'])
   if not udoc:
     return
-  class User(setting.SettingMixin):
-    def __init__(self, udoc):
-      self.session = None
-      self.user = udoc
-
-    def has_priv(self, p):
-      return True
-  u = User(udoc)
+  u = setting.UserSetting(udoc)
   if not u.get_setting('send_code'):
     return
   translate = locale.get_translate(u.get_setting('view_lang'))
