@@ -4,7 +4,7 @@
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
-      <div class="profile-header user-profile-bg--{{ bg }}">
+      <div class="profile-header user-profile-bg--{{ vj4.model.adaptor.setting.UserSetting(udoc).get_setting('background_img') }}">
         <div class="profile-header__content clearfix">
           <div class="media">
             <div class="media__left">
@@ -22,6 +22,9 @@
               {% endif %}
               </p>
               <p>{{ _('Solved {0} problems, RP: {1} (No. {2})').format(dudoc['num_accept']|default(0), dudoc['rp']|default(0.0)|round(2), dudoc['rank']|default('?')) }}</p>
+              {% if handler.dudoc_has_perm(udoc, dudoc, vj4.model.builtin.PERM_MOD_BADGE) %}
+              <p>{{ _('{} is a moderator of this domain.').format(_('She' if handler.get_udoc_setting(udoc, 'gender') == 1 else 'He')) }}</p>
+              {% endif %}
             </div>
           </div>
         </div>

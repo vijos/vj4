@@ -32,6 +32,8 @@ PREFERENCE_SETTINGS = [
             desc='If left blank, the built-in template of the corresponding language will be used.')]
 
 ACCOUNT_SETTINGS = [
+    Setting('setting_info', 'background_img', int, range=constant.setting.BACKGROUND_RANGE,
+            ui='select', name='Background Image'),
     Setting('setting_info', 'gravatar', str,
             name='Gravatar Email', desc='We use Gravatar to present your avatar icon.'),
     Setting('setting_info', 'qq', str,

@@ -39,7 +39,7 @@
         </form></li>
       {% endif %}
         <li>
-          <a href="#"><span class="icon icon-warning"></span> {{ _('Report') }}</a>
+          <a href="{{ reverse_url('about') }}#contact"><span class="icon icon-warning"></span> {{ _('Report') }}</a>
         </li>
       </ul>
     </div>
@@ -70,16 +70,17 @@
     </div>
   </div>
   <div class="medium-3 columns">
+    {% with udoc = udict[ddoc['owner_uid']] %}
     <div class="section side">
-      <div class="profile__bg user-profile-bg--12"></div>
+      <div class="profile__bg user-profile-bg--{{ vj4.model.adaptor.setting.UserSetting(udoc).get_setting('background_img') }}"></div>
       <div class="section__body">
         <div class="media sidebar-user-profile">
           <div class="media__left">
-            <img src="{{ udict[ddoc['owner_uid']]['gravatar']|gravatar_url }}" width="80" height="80" class="medium user-profile-avatar">
+            <img src="{{ udoc['gravatar']|gravatar_url }}" width="80" height="80" class="medium user-profile-avatar">
           </div>
           <div class="media__body">
             <p>
-              {{ user.render_inline(udict[ddoc['owner_uid']], dudict[ddoc['owner_uid']], avatar=false, modbadge=false) }}
+              {{ user.render_inline(udoc, dudict[ddoc['owner_uid']], avatar=false, modbadge=false) }}
             </p>
           </div>
         </div>
@@ -106,6 +107,7 @@
           </div>
         </div>
       </div>
+      {% endwith %}
     </div>
     {% if vnode['doc_type'] == vj4.model.document.TYPE_PROBLEM %}
       {% with pdoc=vnode, owner_udoc=udict[vnode['owner_uid']] %}
