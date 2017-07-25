@@ -89,7 +89,7 @@ class RecordMainHandler(base.Handler, RecordMixin):
       [('uid_or_name', uid_or_name), ('pid', pid), ('tid', tid)])
     self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
                 filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid,
-                socket_url=url_prefix + '/records-conn?' + query_string,
+                socket_url=url_prefix + '/records-conn?' + query_string, # FIXME(twd2): magic
                 query_string=query_string)
 
 
@@ -163,9 +163,10 @@ class RecordDetailHandler(base.Handler, RecordMixin):
     # check permission for visibility: hidden problem
     if pdoc.get('hidden', False) and not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
       pdoc = None
+    url_prefix = '/d/{}'.format(urllib.parse.quote(self.domain_id))
     self.render('record_detail.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc, tdoc=tdoc,
                 judge_udoc=judge_udoc, show_status=show_status,
-                socket_url='/records/{}/conn'.format(rid))
+                socket_url=url_prefix + '/records/{}/conn'.format(rid)) # FIXME(twd2): magic
 
 
 @app.connection_route('/records/{rid}/conn', 'record_detail-conn')
