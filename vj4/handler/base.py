@@ -48,14 +48,20 @@ class HandlerBase(setting.SettingMixin):
       self.user = builtin.USER_GUEST
       self.domain = await domain.get(self.domain_id)
       self.domain_user = builtin.DOMAIN_USER_GUEST
-    if not self.domain:
-      raise error.DomainNotFoundError(self.domain_id)
     self.view_lang = self.get_setting('view_lang')
     # TODO(iceboy): UnknownTimeZoneError
     self.timezone = pytz.timezone(self.get_setting('timezone'))
     self.translate = locale.get_translate(self.view_lang)
     self.datetime_span = functools.partial(_datetime_span, timezone=self.timezone)
     self.datetime_stamp = _datetime_stamp
+    if not self.domain:
+      not_found_domain_id = self.domain_id
+      self.domain_id = builtin.DOMAIN_ID_SYSTEM
+      self.domain = builtin.DOMAIN_SYSTEM
+      self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
+      self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
+                                          domain_name=self.domain['name'])
+      raise error.DomainNotFoundError(not_found_domain_id)
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                         domain_name=self.domain['name'])
