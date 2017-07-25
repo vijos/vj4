@@ -84,11 +84,12 @@ class RecordMainHandler(base.Handler, RecordMixin):
           record.get_count())
       statistics = {'day': day_count, 'week': week_count, 'month': month_count,
                     'year': year_count, 'total': rcount}
+    url_prefix = '/d/{}'.format(urllib.parse.quote(self.domain_id))
     query_string = urllib.parse.urlencode(
       [('uid_or_name', uid_or_name), ('pid', pid), ('tid', tid)])
     self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
                 filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid,
-                socket_url='/records-conn?' + query_string,
+                socket_url=url_prefix + '/records-conn?' + query_string,
                 query_string=query_string)
 
 
