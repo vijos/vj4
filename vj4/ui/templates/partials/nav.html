@@ -12,10 +12,18 @@
       <li class="nav__list-item"><a href="{{ reverse_url('domain_main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" class="nav__logo">&nbsp;</a></li>
     {% endif %}
       {{ nav_item('domain_main', 'domain_main') }}
+    {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_PROBLEM) %}
       {{ nav_item('problem_main', 'problem') }}
+    {% endif %}
+    {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_TRAINING) %}
       {{ nav_item('training_main', 'training') }}
+    {% endif %}
+    {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) %}
       {{ nav_item('discussion_main', 'discussion') }}
+    {% endif %}
+    {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST) %}
       {{ nav_item('contest_main', 'contest') }}
+    {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) or handler.has_perm(vj4.model.builtin.PERM_EDIT_PERM) %}
       {{ nav_item('domain_manage', 'domain_manage') }}
     {% endif %}
