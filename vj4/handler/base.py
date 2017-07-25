@@ -228,6 +228,8 @@ class Handler(web.View, HandlerBase):
       raise
     except error.UserFacingError as e:
       self.response.set_status(e.http_status, None)
+      if isinstance(e, error.PermissionError):
+        e.args = (self.translate(e.args[0]), *e.args[1:])
       if self.prefer_json:
         self.response.content_type = 'application/json'
         message = self.translate(e.message).format(*e.args)

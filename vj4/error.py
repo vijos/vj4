@@ -129,14 +129,18 @@ class RecordDataNotFoundError(NotFoundError):
 
 
 class PermissionError(ForbiddenError):
-  @property
-  def message(self):
+  def __init__(self, *args):
+    super().__init__(*args)
     if any((p | builtin.PERM_VIEW) == builtin.PERM_VIEW for p in self.args):
-      return 'You cannot visit this domain.'
+      self.__message = 'You cannot visit this domain.'
     else:
+      self.__message = "You don't have the required permission ({0}) in this domain."
       if len(self.args) > 0 and self.args[0] in builtin.PERMS_BY_KEY:
         self.args = (builtin.PERMS_BY_KEY[self.args[0]].desc, self.args[0], *self.args[1:])
-      return "You don't have the required permission ({0}) in this domain."
+
+  @property
+  def message(self):
+    return self.__message
 
 
 class PrivilegeError(ForbiddenError):
