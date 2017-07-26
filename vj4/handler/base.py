@@ -65,7 +65,7 @@ class HandlerBase(setting.SettingMixin):
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                         domain_name=self.domain['name'])
-    if not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
+    if not self.GLOBAL and not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
       self.check_perm(builtin.PERM_VIEW)
 
   def has_perm(self, perm):
