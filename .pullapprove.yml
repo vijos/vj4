@@ -1,0 +1,19 @@
+version: 2
+groups:
+  code-review:
+    required: 1
+    approve_by_comment:
+      approve_regex: ^[Aa]pproved?
+      enabled: true
+      reject_regex: ^[Rr]eject(ed)?
+    reset_on_push:
+      enabled: true
+    users:
+      - breeswish
+      - iceb0y
+      - twd2
+    conditions:
+      branches:
+        - master
+    author_approval:
+      ignored: true
