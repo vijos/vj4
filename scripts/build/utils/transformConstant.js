@@ -80,6 +80,8 @@ function printLiteralOrObject(v) {
 
 export default function transformConstant(filePath) {
   newContent = '';
+  // Invalidate require cache
+  delete require.cache[require.resolve(filePath)]
   const content = require(filePath);
   processBody(content);
   return newContent;
