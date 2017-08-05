@@ -5,10 +5,21 @@ export const PRIVACY_REGISTERED_ONLY = 1;
 export const PRIVACY_SECRET = 2;
 export const PRIVACY_RANGE = {
   [PRIVACY_PUBLIC]: 'Public',
-  [PRIVACY_REGISTERED_ONLY]: 'Visible to registered users',
+  [PRIVACY_REGISTERED_ONLY]: 'Public to registered users',
   [PRIVACY_SECRET]: 'Secret',
 };
 attachObjectMeta(PRIVACY_RANGE, 'intKey', true);
+
+export const SUBMISSION_PUBLICITY_USE_SETTINGS = 3;
+export const SUBMISSION_PUBLICITY_RANGE = {
+  [PRIVACY_PUBLIC]: 'Public',
+  [PRIVACY_REGISTERED_ONLY]: 'Public to registered users',
+  [PRIVACY_SECRET]: 'Secret',
+  [SUBMISSION_PUBLICITY_USE_SETTINGS]: 'Use account settings',
+};
+attachObjectMeta(SUBMISSION_PUBLICITY_RANGE, 'intKey', true);
+
+export const SUBMISSION_PUBLICITY_DEFAULT = SUBMISSION_PUBLICITY_USE_SETTINGS;
 
 export const FUNCTION_RANGE = {
   0: 'Disabled',

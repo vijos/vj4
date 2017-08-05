@@ -75,6 +75,16 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
 
 
 @argmethod.wrap
+async def set_publicity(record_id: objectid.ObjectId, publicity: int):
+  if publicity not in constant.setting.SUBMISSION_PUBLICITY_RANGE:
+    raise error.ValidationError('publicity')
+  coll = db.coll('record')
+  doc = await coll.find_one_and_update(filter={'_id': record_id},
+                                       update={'$set': {'settings.publicity': publicity}},
+                                       return_document=ReturnDocument.AFTER)
+
+
+@argmethod.wrap
 def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fields=None,
                   **kwargs):
   coll = db.coll('record')

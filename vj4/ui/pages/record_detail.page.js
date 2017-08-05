@@ -1,6 +1,12 @@
 import { NamedPage } from 'vj/misc/PageLoader';
 
 const page = new NamedPage('record_detail', async () => {
+  // Update publicity
+  $('[name="publicity-form"] [name="publicity"]').change(() => {
+    $('[name="publicity-form"]').submit();
+  });
+
+  // Realtime update
   const SockJs = await System.import('sockjs-client');
   const DiffDOM = await System.import('diff-dom');
 

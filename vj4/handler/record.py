@@ -213,6 +213,20 @@ class RecordRejudgeHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
+@app.route('/records/{rid}/publicity', 'record_set_publicity')
+class RecordSetPublicityHandler(base.Handler):
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, rid: objectid.ObjectId, publicity: int):
+    rdoc = await record.get(rid)
+    if (not self.own(rdoc, field='uid', perm=builtin.PERM_MODIFY_RECORD_VISIBILITY_SELF)):
+      self.check_perm(builtin.PERM_MODIFY_RECORD_VISIBILITY)
+    await record.set_publicity(rdoc['_id'], publicity)
+    self.json_or_redirect(self.referer_or_main)
+
+
 @app.route('/records/{rid}/data', 'record_pretest_data')
 class RecordPretestDataHandler(base.Handler):
   @base.route_argument

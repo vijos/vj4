@@ -53,7 +53,10 @@ ACCOUNT_SETTINGS = [
     Setting('setting_privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE,
             ui='select', name='Gender Visibility'),
     Setting('setting_privacy', 'show_bio', int, range=constant.setting.PRIVACY_RANGE,
-            ui='select', name='Bio Visibility')]
+            ui='select', name='Bio Visibility'),
+    Setting('setting_privacy', 'show_submission_code', int, range=constant.setting.PRIVACY_RANGE,
+            ui='select', name='Submission Code Visibility', default=constant.setting.PRIVACY_SECRET,
+            desc='Sets whether your source code is public to others. This option may be overridden by submission options.')]
 
 SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))

@@ -198,7 +198,7 @@ Using your Vijos universal account: 使用您的 Vijos 通用賬戶
 View Problem: 檢視題目
 View or create discussion: 檢視與發表討論
 View or submit solution: 檢視與發表題解
-Visible to registered users: 對註冊使用者可見
+Public to registered users: 對註冊使用者可見
 Vote: 投票
 We use Gravatar to present your avatar icon.: 我們使用 Gravatar 服務來呈現您的頭像。
 Whether to show tags in the problem list.: 是否在題目列表中顯示題目的標籤。
@@ -400,33 +400,33 @@ View problems: 檢視題目
 Submit problem: 遞交題目
 Read data of problem: 讀取題目資料
 Read data of own problems: 讀取自己題目的資料
-Read record codes: 讀取記錄的程式碼
+Read any record codes: 讀取記錄的程式碼
 Rejudge problems: 重測題目
 Rejudge records: 重測記錄
 View problem solutions: 檢視題解
 Create problem solutions: 創建題解
 Vote problem solutions: 為題解投票
-Edit problem solutions: 修改題解
+Edit any problem solutions: 修改題解
 Edit own problem solutions: 修改自己的題解
-Delete problem solutions: 刪除題解
+Delete any problem solutions: 刪除題解
 Delete own problem solutions: 刪除自己的題解
 Reply problem solutions: 回覆題解
-Edit problem solution replies: 修改題解的回覆
+Edit any problem solution replies: 修改題解的回覆
 Edit own problem solution replies: 修改題解中自己的回覆
-Delete problem solution replies: 刪除題解的回覆
+Delete any problem solution replies: 刪除題解的回覆
 Delete own problem solution replies: 刪除題解中自己的回覆
 View discussions: 檢視討論
 Create discussions: 創建討論
 Highlight discussions: 高亮討論
-Edit discussions: 修改討論
+Edit any discussions: 修改討論
 Edit own discussions: 修改自己的討論
-Delete discussions: 刪除討論
+Delete any discussions: 刪除討論
 Delete own discussions: 刪除自己的討論
 Reply discussions: 回覆討論
-Edit discussion replies: 修改討論的回覆
+Edit any discussion replies: 修改討論的回覆
 Edit own discussion replies: 修改討論中自己的回覆
 Edit discussion replies of own discussion: 修改自己討論中的回覆
-Delete discussion replies: 刪除討論回覆
+Delete any discussion replies: 刪除討論回覆
 Delete own discussion replies: 刪除討論中自己的回覆
 Delete discussion replies of own discussion: 刪除自己討論中的回覆
 View contests: 檢視比賽
