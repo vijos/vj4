@@ -71,6 +71,50 @@
 {{ form_end(columns=columns, **kwargs) }}
 {% endmacro %}
 
+{% macro radio(options, name='', value='') %}
+<div class="radiogroup">
+{% for k, v in options %}
+  <label class="radiobox">
+    <input
+      value="{{ k }}"
+      type="radio"
+      name="{{ name }}"
+      {{ form_attr('radiobox__input', **kwargs) }}
+      {% if value == k %} checked{% endif %}
+    /> {{ _(v) }}
+  </label>
+{% endfor %}
+</div>
+{% endmacro %}
+
+{% macro form_radio(columns=5) %}
+{{ form_begin(columns=columns, **kwargs) }}
+{{ radio(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, **kwargs) }}
+{% endmacro %}
+
+{% macro image_radio(options, name='', value='') %}
+<div class="radiogroup">
+{% for k, v in options %}
+  <label class="radiobox">
+    <input
+      value="{{ k }}"
+      type="radio"
+      name="{{ name }}"
+      {{ form_attr('radiobox__input', **kwargs) }}
+      {% if value == k %} checked{% endif %}
+    /> {{ _(v) }}
+  </label>
+{% endfor %}
+</div>
+{% endmacro %}
+
+{% macro form_image_radio(columns=5) %}
+{{ form_begin(columns=columns, **kwargs) }}
+{{ image_radio(columns=columns, **kwargs) }}
+{{ form_end(columns=columns, **kwargs) }}
+{% endmacro %}
+
 {% macro text(name='', value='', placeholder='', type='text') %}
 <input
   type="{{ type }}"

@@ -1,0 +1,23 @@
+@import './var.inc.styl'
+
+$radiobox-size = 16px
+
+.radiobox
+  font-size: rem($font-size-secondary)
+  line-height: 1.4
+  border: 0
+  display: inline-block
+  vertical-align: middle
+  cursor: pointer
+  user-select: none
+  color: lighten($text-1-color, 30%)
+  margin: $input-multi-line-margin
+
+  &:hover
+    color: $text-1-color
+
+  input
+    display: inline-block
+
+.radiogroup
+  margin: $input-margin

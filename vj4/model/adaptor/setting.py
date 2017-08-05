@@ -33,7 +33,7 @@ PREFERENCE_SETTINGS = [
 
 ACCOUNT_SETTINGS = [
     Setting('setting_info', 'background_img', int, range=constant.setting.BACKGROUND_RANGE,
-            ui='select', name='Background Image'),
+            ui='image_radio', name='Profile Background Image', desc='Choose the background image in your profile page.'),
     Setting('setting_info', 'gravatar', str,
             name='Gravatar Email', desc='We use Gravatar to present your avatar icon.'),
     Setting('setting_info', 'qq', str,
