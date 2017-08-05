@@ -12,8 +12,8 @@ from vj4.util import locale
 
 Setting = functools.partial(
     collections.namedtuple('Setting',
-                           ['family', 'key', 'factory', 'range', 'default', 'ui', 'name', 'desc']),
-    range=None, default=None, ui='text', name='', desc='')
+                           ['family', 'key', 'factory', 'range', 'default', 'ui', 'name', 'desc', 'image_class']),
+    range=None, default=None, ui='text', name='', desc='', image_class='')
 
 # Setting keys should not duplicate with user keys or session keys.
 PREFERENCE_SETTINGS = [
@@ -32,8 +32,6 @@ PREFERENCE_SETTINGS = [
             desc='If left blank, the built-in template of the corresponding language will be used.')]
 
 ACCOUNT_SETTINGS = [
-    Setting('setting_info', 'background_img', int, range=constant.setting.BACKGROUND_RANGE,
-            ui='image_radio', name='Profile Background Image', desc='Choose the background image in your profile page.'),
     Setting('setting_info', 'gravatar', str,
             name='Gravatar Email', desc='We use Gravatar to present your avatar icon.'),
     Setting('setting_info', 'qq', str,
@@ -53,7 +51,10 @@ ACCOUNT_SETTINGS = [
     Setting('setting_privacy', 'show_gender', int, range=constant.setting.PRIVACY_RANGE,
             ui='select', name='Gender Visibility'),
     Setting('setting_privacy', 'show_bio', int, range=constant.setting.PRIVACY_RANGE,
-            ui='select', name='Bio Visibility')]
+            ui='select', name='Bio Visibility'),
+    Setting('setting_customize', 'background_img', int, range=constant.setting.BACKGROUND_RANGE,
+            ui='image_radio', name='Profile Background Image', desc='Choose the background image in your profile page.',
+            image_class='user-profile-bg--thumbnail-{0}')]
 
 SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
