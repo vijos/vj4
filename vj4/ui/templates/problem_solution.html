@@ -34,6 +34,9 @@
           reply_delete_self_perm = vj4.model.builtin.PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF
         ) }}
         {{ paginator.render(page, pcount) }}
+      {% if drcount == 0 %}
+        {{ nothing.render('No solutions so far...') }}
+      {% endif %}
       </div>
     </div>
   </div>
