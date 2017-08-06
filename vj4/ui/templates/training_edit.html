@@ -6,7 +6,7 @@
       <div class="section__body">
         <form method="post">
           <div class="row">
-            <div class="medium-8 columns">
+            <div class="medium-5 columns">
               <label>
                 {{ _('Title') }}
                 <input name="title" placeholder="{{ _('title') }}" value="{{ tdoc['title']|default('') }}" class="textbox" autofocus>
@@ -15,8 +15,15 @@
           </div>
           <div class="row"><div class="columns">
             <label>
+              {{ _('Introduce') }}
+              <textarea name="intro" class="textbox">{{ tdoc['intro']|default('') }}</textarea>
+              <p class="help-text">{{ _('Introduce must not exceed 500 characters and it will be shown in the list view.') }}</p>
+            </label>
+          </div></div>
+          <div class="row"><div class="columns">
+            <label>
               {{ _('Description') }}
-              <textarea name="content" class="textbox" data-markdown style="height: 150px">{{ tdoc['content']|default('') }}</textarea>
+              <textarea name="content" class="textbox" data-markdown style="height: 200px">{{ tdoc['content']|default('') }}</textarea>
             </label>
           </div></div>
           <div class="row"><div class="columns">

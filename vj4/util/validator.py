@@ -108,6 +108,15 @@ def check_content(s):
     raise error.ValidationError('content')
 
 
+def is_intro(s):
+  return isinstance(s, str) and 0 < len(s.strip()) < 500
+
+
+def check_intro(s):
+  if not is_intro(s):
+    raise error.ValidationError('intro')
+
+
 def is_description(s):
   return isinstance(s, str) and 0 < len(s.strip()) < 65536
 

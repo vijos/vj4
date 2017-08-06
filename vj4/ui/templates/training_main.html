@@ -21,7 +21,9 @@
             </div>
             <div class="media__body middle">
               <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
-              <div class="typo">{{ tdoc['content']|markdown }}</div>
+              <div class="training__intro typo">
+                <p>{{ tdoc['intro']|default('') }}</p>
+              </div>
               <ul class="supplementary list training__progress">
                 <li>
                   <span class="icon icon-flag text-blue"></span> {{ _('{0} sections').format(tdoc['dag']|length) }}, {{ _('{0} problems').format(handler.get_pids(tdoc)|length) }}

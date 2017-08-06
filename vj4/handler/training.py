@@ -172,7 +172,7 @@ class TrainingCreateHandler(base.Handler, TrainingMixin):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, title: str, content: str, dag: str):
+  async def post(self, *, title: str, intro: str, content: str, dag: str):
     dag = _parse_dag_json(dag)
     pids = self.get_pids({'dag': dag})
     if not pids:
@@ -190,7 +190,7 @@ class TrainingCreateHandler(base.Handler, TrainingMixin):
     for pdoc in pdocs:
       if pdoc.get('hidden', False):
         self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    tid = await training.add(self.domain_id, title, content, self.user['_id'],
+    tid = await training.add(self.domain_id, title, intro, content, self.user['_id'],
                              dag=dag)
     self.json_or_redirect(self.reverse_url('training_detail', tid=tid))
 
@@ -217,7 +217,7 @@ class TrainingEditHandler(base.Handler, TrainingMixin):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, tid: objectid.ObjectId, title: str, content: str, dag: str):
+  async def post(self, *, tid: objectid.ObjectId, title: str, intro: str, content: str, dag: str):
     tdoc = await training.get(self.domain_id, tid)
     if not self.own(tdoc, builtin.PERM_EDIT_TRAINING_SELF):
       self.check_perm(builtin.PERM_EDIT_TRAINING)
@@ -238,5 +238,5 @@ class TrainingEditHandler(base.Handler, TrainingMixin):
     for pdoc in pdocs:
       if pdoc.get('hidden', False):
         self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    await training.edit(self.domain_id, tdoc['doc_id'], title=title, content=content, dag=dag)
+    await training.edit(self.domain_id, tdoc['doc_id'], title=title, intro=intro, content=content, dag=dag)
     self.json_or_redirect(self.reverse_url('training_detail', tid=tid))
