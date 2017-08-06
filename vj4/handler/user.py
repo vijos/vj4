@@ -37,7 +37,7 @@ class UserSettingsMixin(object):
       return None
 
 
-@app.route('/register', 'user_register')
+@app.route('/register', 'user_register', global_route=True)
 class UserRegisterHandler(base.Handler):
   @base.require_priv(builtin.PRIV_REGISTER_USER)
   async def get(self):
@@ -59,7 +59,7 @@ class UserRegisterHandler(base.Handler):
     self.render('user_register_mail_sent.html')
 
 
-@app.route('/register/{code}', 'user_register_with_code')
+@app.route('/register/{code}', 'user_register_with_code', global_route=True)
 class UserRegisterWithCodeHandler(base.Handler):
   TITLE = 'user_register'
 
@@ -89,7 +89,7 @@ class UserRegisterWithCodeHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('domain_main'))
 
 
-@app.route('/lostpass', 'user_lostpass')
+@app.route('/lostpass', 'user_lostpass', global_route=True)
 class UserLostpassHandler(base.Handler):
   @base.require_priv(builtin.PRIV_REGISTER_USER)
   async def get(self):
@@ -113,7 +113,7 @@ class UserLostpassHandler(base.Handler):
     self.render('user_lostpass_mail_sent.html')
 
 
-@app.route('/lostpass/{code}', 'user_lostpass_with_code')
+@app.route('/lostpass/{code}', 'user_lostpass_with_code', global_route=True)
 class UserLostpassWithCodeHandler(base.Handler):
   TITLE = 'user_lostpass'
 
@@ -142,7 +142,7 @@ class UserLostpassWithCodeHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('domain_main'))
 
 
-@app.route('/login', 'user_login')
+@app.route('/login', 'user_login', global_route=True)
 class UserLoginHandler(base.Handler):
   async def get(self):
     if self.has_priv(builtin.PRIV_USER_PROFILE):
@@ -163,7 +163,7 @@ class UserLoginHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/logout', 'user_logout')
+@app.route('/logout', 'user_logout', global_route=True)
 class UserLogoutHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):

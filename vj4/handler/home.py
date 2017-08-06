@@ -30,7 +30,7 @@ TOKEN_TYPE_TEXTS = {
 }
 
 
-@app.route('/home/security', 'home_security')
+@app.route('/home/security', 'home_security', global_route=True)
 class HomeSecurityHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
@@ -104,7 +104,7 @@ class HomeSecurityHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/home/security/changemail/{code}', 'user_changemail_with_code')
+@app.route('/home/security/changemail/{code}', 'user_changemail_with_code', global_route=True)
 class UserChangemailWithCodeHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
@@ -122,7 +122,7 @@ class UserChangemailWithCodeHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('home_security'))
 
 
-@app.route('/home/account', 'home_account')
+@app.route('/home/account', 'home_account', global_route=True)
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
@@ -136,7 +136,7 @@ class HomeAccountHandler(base.Handler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/home/preference', 'home_preference')
+@app.route('/home/preference', 'home_preference', global_route=True)
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
@@ -150,7 +150,7 @@ class HomeAccountHandler(base.Handler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/home/messages', 'home_messages')
+@app.route('/home/messages', 'home_messages', global_route=True)
 class HomeMessagesHandler(base.OperationHandler):
   def modify_udoc(self, udict, key):
     udoc = udict.get(key)
@@ -218,7 +218,7 @@ class HomeMessagesHandler(base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
-@app.connection_route('/home/messages-conn', 'home_messages-conn')
+@app.connection_route('/home/messages-conn', 'home_messages-conn', global_route=True)
 class HomeMessagesConnection(base.Connection):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def on_open(self):
@@ -232,7 +232,7 @@ class HomeMessagesConnection(base.Connection):
     bus.unsubscribe(self.on_message_received)
 
 
-@app.route('/home/domain', 'home_domain')
+@app.route('/home/domain', 'home_domain', global_route=True)
 class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
@@ -252,7 +252,7 @@ class HomeDomainHandler(base.Handler):
     self.render('home_domain.html', ddocs=ddocs, dudict=dudict, can_manage=can_manage)
 
 
-@app.route('/home/domain/create', 'home_domain_create')
+@app.route('/home/domain/create', 'home_domain_create', global_route=True)
 class HomeDomainCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
   async def get(self):
@@ -268,7 +268,7 @@ class HomeDomainCreateHandler(base.Handler):
     self.json_or_redirect(self.reverse_url('domain_manage', domain_id=domain_id))
 
 
-@app.route('/home/file', 'home_file')
+@app.route('/home/file', 'home_file', global_route=True)
 class HomeFileHandler(base.OperationHandler):
   def file_url(self, fdoc):
     return options.cdn_prefix.rstrip('/') + \

@@ -25,6 +25,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers';
 
 import Clipboard from 'clipboard';
 import Notification from 'vj/components/notification';
+import i18n from 'vj/utils/i18n';
 
 import languageMeta from './meta';
 
@@ -51,10 +52,10 @@ Prism.plugins.toolbar.registerButton('copy-to-clipboard', (env) => {
   linkCopy.textContent = 'Copy';
   const clip = new Clipboard(linkCopy, { text: () => env.code });
   clip.on('success', () => {
-    Notification.success('Code copied to clipboard!', 1000);
+    Notification.success(i18n('Code copied to clipboard!'), 1000);
   });
   clip.on('error', () => {
-    Notification.error('Copy failed :(');
+    Notification.error(i18n('Copy failed :('));
   });
   return linkCopy;
 });

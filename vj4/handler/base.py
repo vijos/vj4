@@ -65,7 +65,7 @@ class HandlerBase(setting.SettingMixin):
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                         domain_name=self.domain['name'])
-    if not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
+    if not self.GLOBAL and not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
       self.check_perm(builtin.PERM_VIEW)
 
   def has_perm(self, perm):
@@ -228,6 +228,8 @@ class Handler(web.View, HandlerBase):
       raise
     except error.UserFacingError as e:
       self.response.set_status(e.http_status, None)
+      if isinstance(e, error.PermissionError):
+        e.args = (self.translate(e.args[0]), *e.args[1:])
       if self.prefer_json:
         self.response.content_type = 'application/json'
         message = self.translate(e.message).format(*e.args)

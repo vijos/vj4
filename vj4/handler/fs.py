@@ -15,7 +15,7 @@ USER_QUOTA = 2 ** 27 # 128 MiB
 ALLOWED_MIMETYPE_PREFIX = ['image/', 'text/', 'application/zip']
 
 
-@app.route('/fs/{secret:\w{40}}', 'fs_get')
+@app.route('/fs/{secret:\w{40}}', 'fs_get', global_route=True)
 class FsGetHandler(base.Handler):
   @base.route_argument
   @base.sanitize
@@ -63,7 +63,7 @@ class FsGetHandler(base.Handler):
   get = stream_data
 
 
-@app.route('/fs/upload', 'fs_upload')
+@app.route('/fs/upload', 'fs_upload', global_route=True)
 class FsUploadHandler(base.Handler):
   def get_content_type(self, filename):
     content_type = mimetypes.guess_type(filename)[0]

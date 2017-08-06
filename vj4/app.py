@@ -69,10 +69,11 @@ class Application(web.Application):
       self.router.add_static('/', static_path, name='static')
 
 
-def route(url, name):
+def route(url, name, global_route=False):
   def decorate(handler):
     handler.NAME = handler.NAME or name
     handler.TITLE = handler.TITLE or name
+    handler.GLOBAL = global_route
     Application().router.add_route('*', url, handler, name=name)
     Application().router.add_route('*', '/d/{domain_id}' + url, handler,
                                    name=name + '_with_domain_id')
@@ -81,8 +82,9 @@ def route(url, name):
   return decorate
 
 
-def connection_route(prefix, name):
+def connection_route(prefix, name, global_route=False):
   def decorate(conn):
+    conn.GLOBAL = global_route
     async def handler(msg, session):
       try:
         if msg.tp == sockjs.MSG_OPEN:
