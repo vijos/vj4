@@ -9,7 +9,6 @@ import tpl from 'vj/utils/tpl';
 import zIndexManager from 'vj/utils/zIndexManager';
 
 export default class AutoComplete extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjAutoCompleteInstance';
 
   constructor($dom, options = {}) {
@@ -97,7 +96,7 @@ export default class AutoComplete extends DOMAttachedObject {
   }
 
   onMenuClick(ev) {
-    ev.preventDefault();  // prevent from losing focus
+    ev.preventDefault(); // prevent from losing focus
   }
 
   onItemClick(ev) {
@@ -198,7 +197,6 @@ export default class AutoComplete extends DOMAttachedObject {
   focus() {
     this.$dom.focus();
   }
-
 }
 
 _.assign(AutoComplete, DOMAttachedObject);

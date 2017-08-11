@@ -15,7 +15,6 @@ const POS_CLASSNAME = {
 };
 
 export default class Rotator extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjRotatorInstance';
 
   getItemClass(pos) {
@@ -73,7 +72,6 @@ export default class Rotator extends DOMAttachedObject {
   getValue() {
     return this.value;
   }
-
 }
 
 _.assign(Rotator, DOMAttachedObject);

@@ -55,7 +55,7 @@ async function updateSelection(sendRequest = true) {
       url = substitute(decodeURIComponent(Context.getProblemUrlWithCategory), {
         category: requestTags
           .map(tag => tag.split(',').map(encodeURIComponent).join(','))
-          .join('+'),   // build a beautiful URL
+          .join('+'), // build a beautiful URL
       });
     }
     pjax.request({ url });

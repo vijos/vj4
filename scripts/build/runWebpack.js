@@ -9,6 +9,7 @@ export default function ({ watch, production }) {
   const outputOptions = {
     colors: true,
     errorDetails: true,
+    optimizationBailout: production,
   };
 
   function compilerCallback(err, stats) {

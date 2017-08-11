@@ -2,7 +2,6 @@ import _ from 'lodash';
 import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
 export default class CmEditor extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjCmEditorInstance';
 
   constructor($dom, options = {}) {
@@ -62,7 +61,6 @@ export default class CmEditor extends DOMAttachedObject {
     const cm = this.editor.codemirror;
     cm.setCursor(cm.lineCount(), 0);
   }
-
 }
 
 _.assign(CmEditor, DOMAttachedObject);

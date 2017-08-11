@@ -4,26 +4,27 @@ const request = {};
 
 request.ajax = async function (options) {
   return new Promise((resolve, reject) => {
-    $.ajax({
-      dataType: 'json',
-      ...options,
-    })
-    .fail((jqXHR, textStatus, errorThrown) => {
-      if (textStatus === 'abort') {
-        const err = new Error(i18n('Aborted'));
-        err.aborted = true;
-        reject(err);
-      } else if (jqXHR.readyState === 0) {
-        reject(new Error(i18n('Network error')));
-      } else if (errorThrown instanceof Error) {
-        reject(errorThrown);
-      } else if (typeof jqXHR.responseJSON === 'object' && jqXHR.responseJSON.error) {
-        reject(new Error(jqXHR.responseJSON.error.message));
-      } else {
-        reject(new Error(textStatus));
-      }
-    })
-    .done(resolve);
+    $
+      .ajax({
+        dataType: 'json',
+        ...options,
+      })
+      .fail((jqXHR, textStatus, errorThrown) => {
+        if (textStatus === 'abort') {
+          const err = new Error(i18n('Aborted'));
+          err.aborted = true;
+          reject(err);
+        } else if (jqXHR.readyState === 0) {
+          reject(new Error(i18n('Network error')));
+        } else if (errorThrown instanceof Error) {
+          reject(errorThrown);
+        } else if (typeof jqXHR.responseJSON === 'object' && jqXHR.responseJSON.error) {
+          reject(new Error(jqXHR.responseJSON.error.message));
+        } else {
+          reject(new Error(textStatus));
+        }
+      })
+      .done(resolve);
   });
 };
 
