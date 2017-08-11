@@ -30,6 +30,7 @@ setting_function: Function
 setting_info: Personal Info
 setting_preference: Preference
 setting_privacy: Privacy
+setting_customize: Customize
 training_main: Training
 training_edit: Training Edit
 training_create: Training Create
