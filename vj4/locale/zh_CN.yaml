@@ -577,7 +577,7 @@ Evaluated difficulty: 估计的难度
 Difficulty displayed: 显示的难度
 Difficulty by algorithm: 算法计算的难度
 Difficulty by admin: 管理员设定的难度
-Recommanded: 推荐
+Recommended: 推荐
 Chinese: 中文
 English: 英文
 click to add: 点击添加
@@ -639,7 +639,6 @@ Background Image: 背景图片
 '{} is a moderator of this domain.': '{}是这个域的管理者之一。'
 He: 他
 She: 她
-(unsafe): (不安全)
 Bulletin: 公告
 You cannot visit this domain.: 您不能访问此域。
 Menu: 菜单
