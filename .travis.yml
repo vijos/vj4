@@ -31,5 +31,5 @@ deploy:
   skip_cleanup: true
   on:
     repo: vijos/vj4
-    branch: master
+    tags: true
     python: 3.5

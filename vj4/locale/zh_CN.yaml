@@ -248,6 +248,7 @@ setting_usage: 使用偏好
 setting_info: 个人信息
 setting_display: 显示偏好
 setting_privacy: 隐私
+setting_customize: 个性化
 title: 标题
 training_main: 训练
 training_edit: 编辑训练
@@ -580,7 +581,7 @@ Evaluated difficulty: 估计的难度
 Difficulty displayed: 显示的难度
 Difficulty by algorithm: 算法计算的难度
 Difficulty by admin: 管理员设定的难度
-Recommanded: 推荐
+Recommended: 推荐
 Chinese: 中文
 English: 英文
 click to add: 点击添加
@@ -638,11 +639,11 @@ Lucky: 手气不错
 Pick a problem randomly based on current filter: 根据当前过滤条件随机选择一道题
 No problem.: 没有题目。
 Initialize: 初始化
-Background Image: 背景图片
+Profile Background Image: 背景图片
+Choose the background image in your profile page.: 选择您资料页面的背景图片。
 '{} is a moderator of this domain.': '{}是这个域的管理者之一。'
 He: 他
 She: 她
-(unsafe): (不安全)
 Bulletin: 公告
 You cannot visit this domain.: 您不能访问此域。
 Menu: 菜单
@@ -650,3 +651,5 @@ Menu: 菜单
 Code copied to clipboard!: 代码已复制到剪贴板！
 Set any records' code visibility: 设置任意记录中代码的可见性
 Set own records' code visibility: 设置自己记录中代码的可见性
+No comments so far...: 目前还没有评论...
+No solutions so far...: 目前还没有题解...
