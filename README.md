@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://travis-ci.org/vijos/vj4" target="_blank"><img src="https://img.shields.io/travis/vijos/vj4/master.svg?style=flat-square"></a>
   <a href="https://codeclimate.com/github/vijos/vj4" target="_blank"><img src="https://img.shields.io/codeclimate/github/vijos/vj4.svg?style=flat-square"></a>
-  <a href="https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62" target="_blank"><img src="https://www.versioneye.com/user/projects/575c163d7757a0004a1ded62/badge.svg?style=flat-square"></a>
+  <a href="https://www.versioneye.com/user/projects/598d6f846725bd005228a0e4" target="_blank"><img src="https://www.versioneye.com/user/projects/598d6f846725bd005228a0e4/badge.svg?style=flat-square"></a>
   <a href="https://raw.githubusercontent.com/vijos/vj4/master/LICENSE" target="_blank"><img src="https://img.shields.io/badge/license-AGPLv3-blue.svg?style=flat-square"></a>
 </p>
 
