@@ -1,18 +1,21 @@
 .page--record_main
   .col--status
-    width: rem(150px)
+    width: rem(170px)
     position: relative
 
   .col--submit-at
-    width: rem(160px)
+    width: rem(100px)
     text-align: center
+
+  &.nojs .col--submit-at
+    width: rem(160px)
 
   .col--submit-by
     width: rem(120px)
     text-align: right
 
   .col--time, .col--memory, .col--lang
-    width: rem(70px)
+    width: rem(100px)
     text-align: center
 
   .col--status, .col--submit-by, .col--lang
