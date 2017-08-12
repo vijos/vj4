@@ -118,7 +118,7 @@ def check_intro(s):
 
 
 def is_description(s):
-  return isinstance(s, str) and 0 < len(s.strip()) < 65536
+  return isinstance(s, str) and len(s) < 65536
 
 
 def check_description(s):

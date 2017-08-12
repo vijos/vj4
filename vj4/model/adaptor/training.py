@@ -8,10 +8,10 @@ from vj4.util import validator
 
 
 @argmethod.wrap
-async def add(domain_id: str, title: str, intro: str, content: str, owner_uid: int, dag=[]):
+async def add(domain_id: str, title: str, content: str, owner_uid: int, dag=[], desc=''):
   validator.check_title(title)
-  validator.check_intro(intro)
-  validator.check_content(content)
+  validator.check_intro(content)
+  validator.check_description(desc)
   dag = list(dag)
   for node in dag:
     for nid in node['require_nids']:
@@ -32,10 +32,10 @@ async def get(domain_id: str, tid: objectid.ObjectId):
 async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
   if 'title' in kwargs:
       validator.check_title(kwargs['title'])
-  if 'intro' in kwargs:
-      validator.check_intro(kwargs['intro'])
   if 'content' in kwargs:
-      validator.check_content(kwargs['content'])
+      validator.check_intro(kwargs['content'])
+  if 'desc' in kwargs:
+      validator.check_description(kwargs['desc'])
   if 'dag' in kwargs:
     kwargs['dag'] = list(kwargs['dag'])
     for node in kwargs['dag']:

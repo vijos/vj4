@@ -6,7 +6,10 @@
   <div class="medium-9 columns">
     <div class="section">
       <div class="section__body typo">
-        {{ tdoc['content']|markdown }}
+        {{ tdoc['content'] }}
+      </div>
+      <div class="section__body typo">
+        {{ tdoc['desc']|default('')|markdown }}
       </div>
     </div>
     <div class="section">

@@ -84,7 +84,7 @@
             <div class="media__body middle">
               <h1 class="training__title"><a href="{{ reverse_url('training_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
               <div class="training__intro typo">
-                <p>{{ tdoc['intro']|default('') }}</p>
+                <p>{{ tdoc['content']|default('') }}</p>
               </div>
               <ul class="supplementary list training__progress">
                 <li>
