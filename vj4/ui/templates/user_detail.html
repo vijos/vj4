@@ -24,25 +24,25 @@
               <p>{{ _('Solved {0} problems, RP: {1} (No. {2})').format(dudoc['num_accept']|default(0), dudoc['rp']|default(0.0)|round(2), dudoc['rank']|default('?')) }}</p>
               <div class="profile-header__contact-bar">
               {% if is_self_profile %}
-                <a class="profile-header__contact-item" href="{{ reverse_url('home_account') }}#setting_info" data-tooltip="Edit Profile">
+                <a class="profile-header__contact-item" href="{{ reverse_url('home_account') }}#setting_info" data-tooltip="{{ _('Edit Profile') }}">
                   <span class="icon icon-edit"></span>
                 </a>
               {% endif %}
-                <a class="profile-header__contact-item" href="{{ reverse_url('home_messages') }}?target_uid={{ udoc['_id'] }}" target="_blank" data-tooltip="Send Message">
+                <a class="profile-header__contact-item" href="{{ reverse_url('home_messages') }}?target_uid={{ udoc['_id'] }}" target="_blank" data-tooltip="{{ _('Send Message') }}">
                   <span class="icon icon-comment--multiple"></span>
                 </a>
               {% if handler.can_view(udoc, 'mail') and udoc['mail'] %}
-                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['mail'] | base64_encode }}" data-tooltip="Copy Email">
+                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['mail'] | base64_encode }}" data-tooltip="{{ _('Copy Email') }}">
                   <span class="icon icon-mail"></span>
                 </a>
               {% endif %}
               {% if handler.can_view(udoc, 'qq') and udoc['qq'] %}
-                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['qq'] | base64_encode }}" data-tooltip="Copy QQ Number">
+                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['qq'] | base64_encode }}" data-tooltip="{{ _('Copy QQ Number') }}">
                   <span class="icon icon-qq"></span>
                 </a>
               {% endif %}
               {% if handler.can_view(udoc, 'wechat') and udoc['wechat'] %}
-                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['wechat'] | base64_encode }}" data-tooltip="Copy WeChat Account">
+                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['wechat'] | base64_encode }}" data-tooltip="{{ _('Copy WeChat Account') }}">
                   <span class="icon icon-wechat"></span>
                 </a>
               {% endif %}
