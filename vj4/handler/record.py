@@ -143,7 +143,6 @@ class RecordDetailHandler(base.Handler, RecordMixin):
       show_status = self.tdoc_visible(tdoc)
     else:
       tdoc = None
-    # TODO(twd2): futher check permission for visibility.
     udoc, dudoc = await asyncio.gather(
         user.get_by_uid(rdoc['uid']),
         domain.get_user(self.domain_id, rdoc['uid']))
