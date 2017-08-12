@@ -17,6 +17,7 @@ from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
+from vj4.model.adaptor import setting
 from vj4.service import bus
 from vj4.util import options
 
@@ -143,15 +144,24 @@ class RecordDetailHandler(base.Handler, RecordMixin):
     else:
       tdoc = None
     # TODO(twd2): futher check permission for visibility.
-    if (not self.own(rdoc, field='uid')
+    udoc, dudoc = await asyncio.gather(
+        user.get_by_uid(rdoc['uid']),
+        domain.get_user(self.domain_id, rdoc['uid']))
+    # check visibility
+    visibility = rdoc.get('visibility', constant.setting.SUBMISSION_VISIBILITY_DEFAULT)
+    if visibility == constant.setting.SUBMISSION_VISIBILITY_USE_SETTINGS:
+      u = setting.UserSetting(udoc)
+      visibility = u.get_setting('show_submission_code')
+    can_view_code = visibility == constant.setting.PRIVACY_PUBLIC \
+                    or (visibility == constant.setting.PRIVACY_REGISTERED_ONLY
+                        and self.has_priv(builtin.PRIV_USER_PROFILE))
+    if (not can_view_code
+        and not self.own(rdoc, field='uid')
         and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
         and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
       del rdoc['code']
     if not show_status and 'code' not in rdoc:
       raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
-    udoc, dudoc = await asyncio.gather(
-        user.get_by_uid(rdoc['uid']),
-        domain.get_user(self.domain_id, rdoc['uid']))
     try:
       pdoc = await problem.get(rdoc['domain_id'], rdoc['pid'])
     except error.ProblemNotFoundError:

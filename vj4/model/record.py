@@ -76,7 +76,7 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
 
 @argmethod.wrap
 async def set_visibility(rid: objectid.ObjectId, visibility: int):
-  if publicity not in constant.setting.SUBMISSION_PUBLICITY_RANGE:
+  if visibility not in constant.setting.SUBMISSION_VISIBILITY_RANGE:
     raise error.ValidationError('visibility')
   coll = db.coll('record')
   doc = await coll.find_one_and_update(filter={'_id': rid},

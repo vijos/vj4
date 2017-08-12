@@ -15,8 +15,9 @@
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Code') }}</h1>
+        {% if can_set_visibility %}
         <div class="section__tools">
-          <form action="{{ reverse_url('record_set_publicity', rid=rdoc['_id']) }}" method="POST" name="publicity-form">
+          <form action="{{ reverse_url('record_visibility', rid=rdoc['_id']) }}" method="POST" name="visibility-form">
             {{ _('Visibility') }}:
             {% set current_visibility=rdoc['visibility']|default(vj4.constant.setting.SUBMISSION_VISIBILITY_DEFAULT) %}
             <select class="inline compact select" name="visibility">
@@ -30,6 +31,7 @@
             </button>
           </form>
         </div>
+        {% endif %}
       </div>
       <div class="section__body" data-syntax-hl-show-line-number>
       {% if rdoc['code'] %}
