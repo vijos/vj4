@@ -6,26 +6,15 @@
     position: relative
     background-position: center center
     background-size: cover
-    min-height: 220px
-
-    &:after
-      padding-top: 30%
-      display: block
-      content: ''
-
-      +mobile()
-        padding-top: 0
-        padding-bottom: rem($tab-item-height)
-
-  .profile-header__content
-    position: absolute
-    left: 0
-    top: 0
-    width: 100%
-    padding: rem($section-gap-v) rem($section-gap-h) 0
+    min-height: rem(270px)
+    padding-bottom: rem($tab-item-height + 20px)
 
     +mobile()
-      position: relative
+      padding-bottom: rem($tab-item-height)
+
+  .profile-header__content
+    position: relative
+    padding: rem($section-gap-v) rem($section-gap-h) 0
 
     .media__left
       padding-right: rem(30px)
@@ -42,6 +31,37 @@
 
       .media__body
         margin-top: rem(20px)
+
+  .profile-header__contact-bar
+    position: absolute
+    right: rem($section-gap-h + 5px)
+    top: rem($section-gap-v + 20px)
+    color: #FFF
+    text-align: right
+
+    +below(rupture.hd-cutoff)
+      position: relative
+      right: 0
+      top: 0
+      text-align: left
+      margin: rem(15px 0)
+
+  .profile-header__contact-item
+    vertical-align: top
+    color: rgba(#FFF, 0.8)
+    margin-left: rem(10px)
+
+    +below(rupture.hd-cutoff)
+      margin-left: 0
+      margin-right: rem(15px)
+
+    &:hover
+      color: rgba(#FFF, 1)
+      text-decoration: none
+
+    &.badge--mod
+      background-color: rgba(#FFF, 0.8) !important
+      color: rgba(#000, 0.8) !important
 
   .profile-header__main
     h1
