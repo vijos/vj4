@@ -188,7 +188,6 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
       raise error.UserNotFoundError(uid)
     dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_id, udoc['_id']),
                                        token.get_most_recent_session_by_uid(udoc['_id']))
-    bg = random.randint(1, 21)
     rdocs = record.get_multi(get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD),
                              uid=uid).sort([('_id', -1)])
     rdocs = await rdocs.limit(10).to_list()
@@ -203,7 +202,7 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     dcount = await ddocs.count()
     ddocs = await ddocs.limit(10).to_list()
     self.render('user_detail.html', is_self_profile=is_self_profile,
-                udoc=udoc, dudoc=dudoc, sdoc=sdoc, bg=bg,
+                udoc=udoc, dudoc=dudoc, sdoc=sdoc,
                 rdocs=rdocs, pdocs=pdocs, pcount=pcount, psdocs=psdocs, pscount=pscount,
                 ddocs=ddocs, dcount=dcount)
 

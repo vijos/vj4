@@ -42,7 +42,7 @@
                 </a>
               {% endif %}
               {% if handler.can_view(udoc, 'wechat') and udoc['wechat'] %}
-                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['wechat'] | base64_encode }}" data-tooltip="Copy WeChat Number">
+                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['wechat'] | base64_encode }}" data-tooltip="Copy WeChat Account">
                   <span class="icon icon-wechat"></span>
                 </a>
               {% endif %}
