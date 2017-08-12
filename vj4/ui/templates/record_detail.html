@@ -10,7 +10,7 @@
     {% if show_status %}
     {% include 'record_detail_status.html' %}
     {% endif %}
-    {% set can_set_visibility = handler.own(rdoc, field='uid', perm=vj4.model.builtin.PERM_MODIFY_RECORD_VISIBILITY_SELF) or handler.has_perm(vj4.model.builtin.PERM_MODIFY_RECORD_VISIBILITY) %}
+    {% set can_set_visibility = handler.own(rdoc, field='uid', perm=vj4.model.builtin.PERM_EDIT_RECORD_VISIBILITY_SELF) or handler.has_perm(vj4.model.builtin.PERM_EDIT_RECORD_VISIBILITY) %}
     {% if rdoc['code'] or can_set_visibility %}
     <div class="section">
       <div class="section__header">

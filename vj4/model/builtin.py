@@ -71,9 +71,9 @@ PERM_CREATE_TRAINING = 1 << 47
 PERM_EDIT_TRAINING = 1 << 48
 PERM_EDIT_TRAINING_SELF = 1 << 49
 
-# Additional Permissions.
-PERM_MODIFY_RECORD_VISIBILITY = 1 << 50
-PERM_MODIFY_RECORD_VISIBILITY_SELF = 1 << 51
+# Record.
+PERM_EDIT_RECORD_VISIBILITY = 1 << 50
+PERM_EDIT_RECORD_VISIBILITY_SELF = 1 << 51
 
 PERM_ALL = -1
 
@@ -95,8 +95,8 @@ PERMS = [
     Permission('perm_problem', PERM_READ_PROBLEM_DATA, 'Read data of problem'),
     Permission('perm_problem', PERM_READ_PROBLEM_DATA_SELF, 'Read data of own problems'),
     Permission('perm_record', PERM_READ_RECORD_CODE, 'Read any record codes'),
-    Permission('perm_record', PERM_MODIFY_RECORD_VISIBILITY, 'Set any records\' code visibility'),
-    Permission('perm_record', PERM_MODIFY_RECORD_VISIBILITY_SELF, 'Set own records\' code visibility'),
+    Permission('perm_record', PERM_EDIT_RECORD_VISIBILITY, 'Set any records\' code visibility'),
+    Permission('perm_record', PERM_EDIT_RECORD_VISIBILITY_SELF, 'Set own records\' code visibility'),
     Permission('perm_record', PERM_REJUDGE_PROBLEM, 'Rejudge problems'),
     Permission('perm_record', PERM_REJUDGE, 'Rejudge records'),
     Permission('perm_problem_solution', PERM_VIEW_PROBLEM_SOLUTION, 'View problem solutions'),
@@ -216,7 +216,7 @@ DEFAULT_PERMISSIONS = (
     PERM_VIEW_TRAINING |
     PERM_CREATE_TRAINING |
     PERM_EDIT_TRAINING_SELF |
-    PERM_MODIFY_RECORD_VISIBILITY_SELF
+    PERM_EDIT_RECORD_VISIBILITY_SELF
 )
 ADMIN_PERMISSIONS = PERM_ALL
 DOMAIN_SYSTEM = {

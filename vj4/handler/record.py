@@ -214,6 +214,8 @@ class RecordRejudgeHandler(base.Handler):
   @base.sanitize
   async def post(self, *, rid: objectid.ObjectId):
     rdoc = await record.get(rid)
+    if not rdoc:
+      raise error.RecordNotFoundError(rid)
     if rdoc['domain_id'] == self.domain_id:
       self.check_perm(builtin.PERM_REJUDGE)
     else:
@@ -230,10 +232,10 @@ class RecordVisibilityHandler(base.Handler):
   @base.sanitize
   async def post(self, *, rid: objectid.ObjectId, visibility: int):
     rdoc = await record.get(rid)
-    if not rdoc:
+    if not rdoc or rdoc['domain_id'] != self.domain_id:
       raise error.RecordNotFoundError(rid)
-    if (not self.own(rdoc, field='uid', perm=builtin.PERM_MODIFY_RECORD_VISIBILITY_SELF)):
-      self.check_perm(builtin.PERM_MODIFY_RECORD_VISIBILITY)
+    if (not self.own(rdoc, field='uid', perm=builtin.PERM_EDIT_RECORD_VISIBILITY_SELF)):
+      self.check_perm(builtin.PERM_EDIT_RECORD_VISIBILITY)
     await record.set_visibility(rdoc['_id'], visibility)
     self.json_or_redirect(self.referer_or_main)
 
