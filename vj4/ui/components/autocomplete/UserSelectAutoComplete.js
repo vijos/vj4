@@ -27,7 +27,6 @@ function renderItem(user) {
 }
 
 export default class UserSelectAutoComplete extends AutoComplete {
-
   static DOMAttachKey = 'vjUserSelectAutoCompleteInstance';
 
   constructor($dom, options) {
@@ -39,7 +38,6 @@ export default class UserSelectAutoComplete extends AutoComplete {
       ...options,
     });
   }
-
 }
 
 _.assign(UserSelectAutoComplete, DOMAttachedObject);

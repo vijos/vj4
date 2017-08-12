@@ -3,7 +3,6 @@ import _ from 'lodash';
 import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
 export default class Tooltip extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjTooltipInstance';
 
   constructor($dom, options = {}) {
@@ -47,7 +46,6 @@ export default class Tooltip extends DOMAttachedObject {
   open() {
     this.drop.open();
   }
-
 }
 
 _.assign(Tooltip, DOMAttachedObject);

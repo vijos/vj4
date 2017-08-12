@@ -1,16 +1,37 @@
 import _ from 'lodash';
 import { NamedPage } from 'vj/misc/PageLoader';
+import request from 'vj/utils/request';
 import loadReactRedux from 'vj/utils/loadReactRedux';
+import parseQueryString from 'vj/utils/parseQueryString';
 
 import { ActionDialog } from 'vj/components/dialog';
 import UserSelectAutoComplete from 'vj/components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('home_messages', () => {
+  let reduxStore;
+
+  function createDialog(user) {
+    const id = _.uniqueId('PLACEHOLDER_');
+    reduxStore.dispatch({
+      type: 'DIALOGUES_CREATE',
+      payload: {
+        id,
+        user,
+      },
+    });
+    reduxStore.dispatch({
+      type: 'DIALOGUES_SWITCH_TO',
+      payload: id,
+    });
+  }
+
   async function mountComponent() {
     const SockJs = await System.import('sockjs-client');
     const { default: MessagePadApp } = await System.import('../components/messagepad');
     const { default: MessagePadReducer } = await System.import('../components/messagepad/reducers');
     const { React, render, Provider, store } = await loadReactRedux(MessagePadReducer);
+
+    reduxStore = store;
 
     const sock = new SockJs('/home/messages-conn');
     sock.onmessage = (message) => {
@@ -46,25 +67,38 @@ const page = new NamedPage('home_messages', () => {
               return;
             }
             const user = userSelector.value();
-            const id = _.uniqueId('PLACEHOLDER_');
-            store.dispatch({
-              type: 'DIALOGUES_CREATE',
-              payload: {
-                id,
-                user,
-              },
-            });
-            store.dispatch({
-              type: 'DIALOGUES_SWITCH_TO',
-              payload: id,
-            });
+            createDialog(user);
           }}
         />
       </Provider>,
       $('#messagePad').get(0),
     );
   }
-  mountComponent();
+
+  /**
+   * A target user id may be assigned in the query string.
+   */
+  async function loadSendTarget() {
+    const queryString = parseQueryString();
+    if (!queryString.target_uid) {
+      return;
+    }
+    const user = await request.get('/user/search', {
+      q: queryString.target_uid,
+      exact_match: true,
+    });
+    if (!user || user.length === 0) {
+      return;
+    }
+    createDialog(user[0]);
+  }
+
+  async function init() {
+    await mountComponent();
+    await loadSendTarget();
+  }
+
+  init();
 });
 
 export default page;

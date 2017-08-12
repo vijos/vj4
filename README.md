@@ -37,7 +37,7 @@
 
 * [Python 3.5+](https://www.python.org/downloads/)
 * [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
-* [Node.js 4.0+](https://nodejs.org/en/download/)
+* [Node.js 6.0+](https://nodejs.org/en/download/package-manager/)
 * [RabbitMQ](http://www.rabbitmq.com/)
 
 ## Install requirements

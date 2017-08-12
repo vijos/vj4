@@ -33,4 +33,7 @@ vj4/constant
 # Generated locales
 vj4/ui/static/locale
 
+# Webpack Stats
+.webpackStats.json
+
 !.gitkeep

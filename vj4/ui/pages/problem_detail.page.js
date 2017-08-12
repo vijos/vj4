@@ -109,7 +109,6 @@ class ProblemPageExtender {
       this.extend();
     }
   }
-
 }
 
 const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {

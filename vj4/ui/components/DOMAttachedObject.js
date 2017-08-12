@@ -24,7 +24,6 @@ function monitorResource(resource) {
 }
 
 export default class DOMAttachedObject {
-
   static uniqueIdCounter = 0;
 
   static get($obj) {
@@ -124,5 +123,4 @@ export default class DOMAttachedObject {
       monitorResource(this);
     }
   }
-
 }

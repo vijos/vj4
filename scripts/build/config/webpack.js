@@ -15,60 +15,6 @@ import ManifestPlugin from 'webpack-manifest-plugin';
 const extractProjectCSS = new ExtractTextPlugin({ filename: 'vj4.css?[sha1:contenthash:hex:10]', allChunks: true });
 const extractVendorCSS = new ExtractTextPlugin({ filename: 'vendors.css?[sha1:contenthash:hex:10]', allChunks: true });
 
-function eslintLoader() {
-  return {
-    loader: 'eslint-loader',
-    options: {
-      configFile: root('vj4/ui/.eslintrc.js'),
-    },
-  };
-}
-
-function babelLoader() {
-  let cacheDirectory = root('.cache/babel');
-  try {
-    fs.ensureDirSync(cacheDirectory);
-  } catch (ignored) {
-    cacheDirectory = false;
-  }
-  return {
-    loader: 'babel-loader',
-    options: {
-      ...require(root('package.json')).babelForProject,
-      cacheDirectory,
-    },
-  };
-}
-
-function jsonLoader() {
-  return 'json-loader';
-}
-
-function postcssLoader() {
-  return 'postcss-loader';
-}
-
-function styleLoader() {
-  return 'style-loader';
-}
-
-function cssLoader() {
-  return 'css-loader?importLoaders=1';
-}
-
-function stylusLoader() {
-  return 'stylus-loader';
-}
-
-function fileLoader() {
-  return {
-    loader: 'file-loader',
-    options: {
-      name: '[path][name].[ext]?[sha1:hash:hex:10]',
-    },
-  };
-}
-
 const beautifyOutputUrl = mapWebpackUrlPrefix([
   { prefix: 'vj4/ui/',                  replace: 'ui/' },
   { prefix: 'node_modules/katex/dist/', replace: 'katex/' },
@@ -76,8 +22,68 @@ const beautifyOutputUrl = mapWebpackUrlPrefix([
 ]);
 
 export default function (env = {}) {
+  function eslintLoader() {
+    return {
+      loader: 'eslint-loader',
+      options: {
+        configFile: root('vj4/ui/.eslintrc.js'),
+      },
+    };
+  }
+
+  function babelLoader() {
+    let cacheDirectory = root('.cache/babel');
+    try {
+      fs.ensureDirSync(cacheDirectory);
+    } catch (ignored) {
+      cacheDirectory = false;
+    }
+    return {
+      loader: 'babel-loader',
+      options: {
+        ...require(root('package.json')).babelForProject,
+        cacheDirectory,
+      },
+    };
+  }
+
+  function jsonLoader() {
+    return 'json-loader';
+  }
+
+  function postcssLoader() {
+    return {
+      loader: 'postcss-loader',
+      options: {
+        sourceMap: env.production,
+      }
+    };
+  }
+
+  function styleLoader() {
+    return 'style-loader';
+  }
+
+  function cssLoader() {
+    return 'css-loader?importLoaders=1';
+  }
+
+  function stylusLoader() {
+    return 'stylus-loader';
+  }
+
+  function fileLoader() {
+    return {
+      loader: 'file-loader',
+      options: {
+        name: '[path][name].[ext]?[sha1:hash:hex:10]',
+      },
+    };
+  }
+
   const config = {
     bail: true,
+    profile: true,
     context: root('vj4/ui'),
     devtool: env.production ? 'source-map' : false,
     entry: {
@@ -252,6 +258,10 @@ export default function (env = {}) {
         ,
       env.production
         ? new OptimizeCssAssetsPlugin()
+        : function () {}
+        ,
+      env.production
+        ? new webpack.optimize.ModuleConcatenationPlugin()
         : function () {}
         ,
       env.production
