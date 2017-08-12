@@ -10,3 +10,9 @@ export const USER_GENDER_RANGE = {
   [USER_GENDER_OTHER]: 'Other',
 };
 attachObjectMeta(USER_GENDER_RANGE, 'intKey', true);
+export const USER_GENDER_ICONS = {
+  [USER_GENDER_MALE]: '♂',
+  [USER_GENDER_FEMALE]: '♀',
+  [USER_GENDER_OTHER]: '?',
+};
+attachObjectMeta(USER_GENDER_ICONS, 'intKey', true);

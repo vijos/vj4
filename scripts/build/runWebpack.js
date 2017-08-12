@@ -1,4 +1,6 @@
+import fs from 'fs';
 import webpack from 'webpack';
+import root from './utils/root.js';
 import webpackConfig from './config/webpack.js';
 
 export default function ({ watch, production }) {
@@ -21,6 +23,7 @@ export default function ({ watch, production }) {
       return;
     }
     console.log(stats.toString(outputOptions));
+    fs.writeFileSync(root('./.webpackStats.json'), JSON.stringify(stats.toJson(), null, 2));
     if (!watch && stats.hasErrors()) {
       process.exitCode = 1;
     }

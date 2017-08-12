@@ -5,13 +5,13 @@
   <div class="medium-9 columns">
     <div class="section">
       <div class="profile-header user-profile-bg--{{ vj4.model.adaptor.setting.UserSetting(udoc).get_setting('background_img') }}">
-        <div class="profile-header__content clearfix">
+        <div class="profile-header__content">
           <div class="media">
             <div class="media__left">
               <img src="{{ udoc['gravatar']|gravatar_url }}" width="120" height="120" class="large user-profile-avatar">
             </div>
             <div class="media__body profile-header__main">
-              <h1>{{ udoc['uname'] }} <small>({{ _('UID') }}: {{ udoc['_id'] }}) {% if handler.get_udoc_setting(udoc, 'gender') != none %}{{ vj4.constant.model.USER_GENDER_RANGE[handler.get_udoc_setting(udoc, 'gender')] }}{% endif %}</small>{% if is_self_profile %} <small><a href="{{ reverse_url('home_account') }}#setting_info">[{{ _('Edit') }}]</a></small>{% endif %}</h1>
+              <h1>{{ udoc['uname'] }} <small>({{ _('UID') }}: {{ udoc['_id'] }})</small></h1>
               <p>
                 {{ _('Registered at') }} {{ datetime_span(udoc['regat']) }},
                 {{ _('last login at') }} {{ datetime_span(udoc['loginat']) }},
@@ -22,9 +22,51 @@
               {% endif %}
               </p>
               <p>{{ _('Solved {0} problems, RP: {1} (No. {2})').format(dudoc['num_accept']|default(0), dudoc['rp']|default(0.0)|round(2), dudoc['rank']|default('?')) }}</p>
-              {% if handler.dudoc_has_perm(udoc, dudoc, vj4.model.builtin.PERM_MOD_BADGE) %}
-              <p>{{ _('{} is a moderator of this domain.').format(_('She' if handler.get_udoc_setting(udoc, 'gender') == 1 else 'He')) }}</p>
+              <div class="profile-header__contact-bar">
+              {% if is_self_profile %}
+                <a class="profile-header__contact-item" href="{{ reverse_url('home_account') }}#setting_info" data-tooltip="{{ _('Edit Profile') }}">
+                  <span class="icon icon-edit"></span>
+                </a>
               {% endif %}
+                <a class="profile-header__contact-item" href="{{ reverse_url('home_messages') }}?target_uid={{ udoc['_id'] }}" target="_blank" data-tooltip="{{ _('Send Message') }}">
+                  <span class="icon icon-comment--multiple"></span>
+                </a>
+              {% if handler.can_view(udoc, 'mail') and udoc['mail'] %}
+                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['mail'] | base64_encode }}" data-tooltip="{{ _('Copy Email') }}">
+                  <span class="icon icon-mail"></span>
+                </a>
+              {% endif %}
+              {% if handler.can_view(udoc, 'qq') and udoc['qq'] %}
+                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['qq'] | base64_encode }}" data-tooltip="{{ _('Copy QQ Number') }}">
+                  <span class="icon icon-qq"></span>
+                </a>
+              {% endif %}
+              {% if handler.can_view(udoc, 'wechat') and udoc['wechat'] %}
+                <a class="profile-header__contact-item" href="javascript:;" name="profile_contact_copy" data-content="{{ udoc['wechat'] | base64_encode }}" data-tooltip="{{ _('Copy WeChat Account') }}">
+                  <span class="icon icon-wechat"></span>
+                </a>
+              {% endif %}
+              {% if
+                handler.get_udoc_setting(udoc, 'gender') != none
+                and handler.get_udoc_setting(udoc, 'gender') != vj4.constant.model.USER_GENDER_OTHER
+                and handler.can_view(udoc, 'gender')
+              %}
+                <span
+                  class="profile-header__contact-item"
+                  data-tooltip="{{ vj4.constant.model.USER_GENDER_RANGE[handler.get_udoc_setting(udoc, 'gender')] }}"
+                >
+                  {{ vj4.constant.model.USER_GENDER_ICONS[handler.get_udoc_setting(udoc, 'gender')] }}
+                </span>
+              {% endif %}
+              {% if handler.dudoc_has_perm(udoc, dudoc, vj4.model.builtin.PERM_MOD_BADGE) %}
+                <span
+                  class="profile-header__contact-item user-profile-badge badge--mod"
+                  data-tooltip="{{ _('{} is a moderator of this domain.').format(_('She' if handler.get_udoc_setting(udoc, 'gender') == 1 else 'He')) }}"
+                >
+                  MOD
+                </span>
+              {% endif %}
+              </div>
             </div>
           </div>
         </div>
@@ -108,24 +150,6 @@
       </div>
     </div>
   {% endif %}
-    <div class="section side">
-      <div class="section__header">
-        <h1 class="section__title">{{ _('Contact') }}{% if is_self_profile %} <small><a href="{{ reverse_url('home_account') }}#setting_info">[{{ _('Edit') }}]</a></small>{% endif %}</h1>
-      </div>
-      <div class="section__body typo">
-        <dl class="large horizontal">
-        {% if email != none %}
-          <dt>{{ _('Email') }}</dt><dd>{{ email }}</dd>
-        {% endif %}
-        {% if handler.can_view(udoc, 'qq') and udoc['qq'] %}
-          <dt>{{ _('QQ') }}</dt><dd><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={{ udoc['qq'] }}&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:{{ udoc['qq'] }}:52" alt="{{ _('Click here to chat with me') }}" title="{{ _('Click here to chat with me') }}"/></a> {{ udoc['qq'] }}</dd>
-        {% endif %}
-        {% if handler.can_view(udoc, 'wechat') and udoc['wechat'] %}
-          <dt>{{ _('WeChat') }}</dt><dd>{{ udoc['wechat'] }}</dd>
-        {% endif %}
-        </dl>
-      </div>
-    </div>
   </div>
 </div>
 {% endblock %}
