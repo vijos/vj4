@@ -123,11 +123,19 @@ class Test(unittest.TestCase):
     self.assertTrue(validator.is_content('c'))
     self.assertFalse(validator.is_content('x' * 700000))
 
+  def test_intro(self):
+    self.assertTrue(validator.is_intro('d'))
+    self.assertTrue(validator.is_intro('dummy_name'))
+    self.assertTrue(validator.is_intro('x' * 300))
+    self.assertFalse(validator.is_intro(''))
+    self.assertFalse(validator.is_intro('g' * 501))
+    self.assertFalse(validator.is_intro('x' * 700000))
+
   def test_description(self):
     self.assertTrue(validator.is_description('d'))
     self.assertTrue(validator.is_description('dummy_name'))
     self.assertTrue(validator.is_description('x' * 300))
-    self.assertFalse(validator.is_description(''))
+    self.assertTrue(validator.is_description(''))
     self.assertFalse(validator.is_description('x' * 700000))
 
 
