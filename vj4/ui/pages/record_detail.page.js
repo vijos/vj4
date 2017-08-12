@@ -1,9 +1,9 @@
 import { NamedPage } from 'vj/misc/PageLoader';
 
 const page = new NamedPage('record_detail', async () => {
-  // Update publicity
-  $('[name="publicity-form"] [name="publicity"]').change(() => {
-    $('[name="publicity-form"]').submit();
+  // Update visibility
+  $('[name="visibility-form"] [name="visibility"]').change(() => {
+    $('[name="visibility-form"]').submit();
   });
 
   // Realtime update

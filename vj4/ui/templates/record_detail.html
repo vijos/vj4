@@ -10,18 +10,18 @@
     {% if show_status %}
     {% include 'record_detail_status.html' %}
     {% endif %}
-    {% set can_set_publicity = handler.own(rdoc, field='uid', perm=vj4.model.builtin.PERM_MODIFY_RECORD_VISIBILITY_SELF) or handler.has_perm(vj4.model.builtin.PERM_MODIFY_RECORD_VISIBILITY) %}
-    {% if rdoc['code'] or can_set_publicity %}
+    {% set can_set_visibility = handler.own(rdoc, field='uid', perm=vj4.model.builtin.PERM_MODIFY_RECORD_VISIBILITY_SELF) or handler.has_perm(vj4.model.builtin.PERM_MODIFY_RECORD_VISIBILITY) %}
+    {% if rdoc['code'] or can_set_visibility %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Code') }}</h1>
         <div class="section__tools">
           <form action="{{ reverse_url('record_set_publicity', rid=rdoc['_id']) }}" method="POST" name="publicity-form">
-            {{ _('Publicity') }}:
-            {% set current_publicity=rdoc['settings']['publicity'] | default(vj4.constant.setting.SUBMISSION_PUBLICITY_DEFAULT) %}
-            <select class="inline compact select" name="publicity">
-            {% for k, v in vj4.constant.setting.SUBMISSION_PUBLICITY_RANGE.items() %}
-              <option value="{{ k }}"{% if current_publicity == k %} selected{% endif %}>{{ _(v) }}</option>
+            {{ _('Visibility') }}:
+            {% set current_visibility=rdoc['visibility']|default(vj4.constant.setting.SUBMISSION_VISIBILITY_DEFAULT) %}
+            <select class="inline compact select" name="visibility">
+            {% for k, v in vj4.constant.setting.SUBMISSION_VISIBILITY_RANGE.items() %}
+              <option value="{{ k }}"{% if current_visibility == k %} selected{% endif %}>{{ _(v) }}</option>
             {% endfor %}
             </select>
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
