@@ -5,7 +5,6 @@ let lastNotification = null;
 let autoHideTimer = null;
 
 export default class Notification {
-
   static success(message, duration) {
     Notification.show({ type: 'success', message, duration });
   }
@@ -48,5 +47,4 @@ export default class Notification {
     setTimeout(() => $n.remove(), 200);
     lastNotification = null;
   }
-
 }

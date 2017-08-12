@@ -2,7 +2,6 @@ import _ from 'lodash';
 import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
 export default class Tab extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjTabInstance';
 
   static initAll() {
@@ -59,7 +58,6 @@ export default class Tab extends DOMAttachedObject {
     this.$content.find('.section__tab-main').css('display', 'none');
     this.$content.find('.section__tab-main').eq(index).css('display', '');
   }
-
 }
 
 _.assign(Tab, DOMAttachedObject);

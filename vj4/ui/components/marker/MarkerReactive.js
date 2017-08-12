@@ -5,7 +5,6 @@ import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 import Marker from './Marker';
 
 export default class MarkerReactive extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjMarkerReactiveInstance';
 
   static initFromDOM($dom) {
@@ -54,7 +53,6 @@ export default class MarkerReactive extends DOMAttachedObject {
     Marker.close();
     super.detach();
   }
-
 }
 
 _.assign(MarkerReactive, DOMAttachedObject);

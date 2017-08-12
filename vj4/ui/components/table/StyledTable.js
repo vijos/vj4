@@ -5,7 +5,6 @@ import Navigation from 'vj/components/navigation';
 import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjStyledTableInstance';
   static DOMAttachSelector = '.data-table';
 
@@ -42,7 +41,6 @@ export default class StyledTable extends DOMAttachedObject {
     super.detach();
     this.$header.trigger('sticky_kit:detach');
   }
-
 }
 
 _.assign(StyledTable, DOMAttachedObject);

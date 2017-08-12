@@ -4,7 +4,6 @@ import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 import zIndexManager from 'vj/utils/zIndexManager';
 
 export default class DomDialog extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjDomDialogInstance';
 
   constructor($dom, options = {}) {
@@ -141,7 +140,6 @@ export default class DomDialog extends DOMAttachedObject {
       this.dispatchAction('cancel');
     }
   }
-
 }
 
 _.assign(DomDialog, DOMAttachedObject);

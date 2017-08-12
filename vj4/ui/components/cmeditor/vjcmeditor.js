@@ -125,5 +125,4 @@ export default class VjCmEditor extends SimpleMDE {
     this.codemirror.setSelection(startPoint, endPoint);
     this.codemirror.focus();
   }
-
 }

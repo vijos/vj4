@@ -37,7 +37,6 @@ function init() {
 }
 
 export default class CommentBox extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjCommentBoxInstance';
 
   constructor($dom, options = {}) {
@@ -109,7 +108,6 @@ export default class CommentBox extends DOMAttachedObject {
     this.$box.remove();
     this.detach();
   }
-
 }
 
 _.assign(CommentBox, DOMAttachedObject);

@@ -6,7 +6,6 @@ import responsiveCutoff from 'vj/breakpoints.json';
 import zIndexManager from 'vj/utils/zIndexManager';
 
 export default class Dropdown extends DOMAttachedObject {
-
   static DOMAttachKey = 'vjDropdownInstance';
   static DOMAttachSelector = '[data-dropdown-target]';
 
@@ -49,7 +48,6 @@ export default class Dropdown extends DOMAttachedObject {
   onDropClose() {
     this.$dom.trigger('vjDropdownHide');
   }
-
 }
 
 _.assign(Dropdown, DOMAttachedObject);
