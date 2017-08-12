@@ -18,7 +18,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, dag=[], 
       if nid >= node['_id']:
         raise error.ValidationError('dag')
   return await document.add(domain_id, content, owner_uid, document.TYPE_TRAINING,
-                            title=title, intro=intro, dag=dag, enroll=0)
+                            title=title, dag=dag, desc=desc, enroll=0)
 
 
 @argmethod.wrap
