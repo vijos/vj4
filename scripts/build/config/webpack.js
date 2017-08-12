@@ -83,6 +83,7 @@ export default function (env = {}) {
 
   const config = {
     bail: true,
+    profile: true,
     context: root('vj4/ui'),
     devtool: env.production ? 'source-map' : false,
     entry: {
