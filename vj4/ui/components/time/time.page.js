@@ -1,33 +1,33 @@
-import Timeago from 'timeago.js';
+import timeagoFactory from 'timeago.js';
 
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
 import i18n from 'vj/utils/i18n';
 
+const timeago = timeagoFactory();
+timeago.setLocale(i18n('timeago_locale'));
+
 function runRelativeTime($container) {
   $container.find('span.time.relative[data-timestamp]').get().forEach((element) => {
     const $element = $(element);
-    if ($element.data('timeago') !== undefined) {
+    if ($element.attr('data-has-timeago') !== undefined) {
       return;
     }
-    const timeago = new Timeago();
-    timeago.setLocale(i18n('timeago_locale'));
     $element.attr('data-tooltip', $element.text());
     $element.attr('datetime', ($element.attr('data-timestamp') || 0) * 1000);
+    $element.attr('data-has-timeago', '1');
     timeago.render(element);
-    $element.data('timeago', timeago);
   });
 }
 
 function cancelRelativeTime($container) {
   $container.find('span.time.relative[data-timestamp]').get().forEach((element) => {
     const $element = $(element);
-    const timeago = $element.data('timeago');
-    if (timeago === undefined) {
+    if ($element.attr('data-has-timeago') === undefined) {
       return;
     }
-    timeago.cancel();
-    $element.removeData('timeago');
+    $element.removeAttr('data-has-timeago');
+    timeagoFactory.cancel(element);
   });
 }
 
