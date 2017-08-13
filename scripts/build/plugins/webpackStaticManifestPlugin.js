@@ -9,7 +9,6 @@ export default class StaticManifestPlugin {
   }
   apply(compiler) {
     compiler.plugin('emit', (compilation, callback) => {
-
       const stats = compilation.getStats().toJson();
       const manifest = _(stats.assets)
         .map((asset) => {
