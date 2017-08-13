@@ -6,6 +6,7 @@ import fs from 'fs-extra';
 import root from '../utils/root.js';
 import mapWebpackUrlPrefix from '../utils/mapWebpackUrlPrefix.js';
 import DummyOutputPlugin from '../plugins/webpackDummyOutputPlugin.js';
+import StaticManifestPlugin from '../plugins/webpackStaticManifestPlugin.js';
 import FriendlyErrorsPlugin from 'friendly-errors-webpack-plugin';
 import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -273,11 +274,6 @@ export default function (env = {}) {
         : new webpack.NamedModulesPlugin()
         ,
 
-      // Output asset hashes
-      new ManifestPlugin({
-        fileName: 'static-manifest.json',
-      }),
-
       new webpack.LoaderOptionsPlugin({
         options: {
           context: root(),
@@ -287,6 +283,14 @@ export default function (env = {}) {
         },
       }),
 
+      // Finally, output asset hashes
+      new StaticManifestPlugin({
+        fileName: 'static-manifest.json',
+        ignore: [
+          'img/emoji/',
+          'katex/',
+        ],
+      }),
     ],
   };
 
