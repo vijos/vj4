@@ -173,7 +173,7 @@ export default function (env = {}) {
         $: 'jquery',
         jQuery: 'jquery',
         'window.jQuery': 'jquery',
-        katex: 'katex',
+        katex: 'katex/dist/katex.js',
       }),
 
       new FriendlyErrorsPlugin(),
