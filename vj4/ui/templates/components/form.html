@@ -34,7 +34,7 @@
     </label>
   {% endif %}
   {% if help_text %}
-    <p class="help-text">{{ _(help_text) }}</p>
+    <p class="help-text">{{ _(help_text)|safe }}</p>
   {% endif %}
   </div>
 {% if row %}

@@ -203,7 +203,7 @@ View or create discussion: 查看与发表讨论
 View or submit solution: 查看与发表题解
 Visible to registered users: 对注册用户可见
 Vote: 投票
-We use Gravatar to present your avatar icon.: 我们使用 Gravatar 服务来呈现您的头像。
+'We use <a href="https://en.gravatar.com/" target="_blank">Gravatar</a> to present your avatar icon.': '我们使用 <a href="https://cn.gravatar.com/" target="_blank">Gravatar</a> 服务来呈现您的头像。'
 Whether to show tags in the problem list.: 是否在题目列表中显示题目的标签。
 Write Your Comment: 发表您的评论
 Write Your Solution: 发表您的题解
