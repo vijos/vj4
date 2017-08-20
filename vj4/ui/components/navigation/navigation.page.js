@@ -6,6 +6,8 @@ import request from 'vj/utils/request';
 import responsiveCutoff from 'vj/breakpoints.json';
 import Navigation from '.';
 
+import { isAbove } from 'vj/utils/mediaQuery';
+
 const nav = Navigation.instance;
 const $nav = nav.$nav;
 
@@ -31,7 +33,7 @@ const navigationPage = new AutoloadPage('navigationPage', () => {
   }
   if ($nav.length > 0
     && document.documentElement.getAttribute('data-layout') === 'basic'
-    && window.innerWidth >= responsiveCutoff.mobile
+    && isAbove(responsiveCutoff.mobile)
   ) {
     $(window).on('scroll', _.throttle(handleScroll, 100));
     $nav.hover(

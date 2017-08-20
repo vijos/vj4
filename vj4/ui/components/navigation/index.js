@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import responsiveCutoff from 'vj/breakpoints.json';
+import { isAbove } from 'vj/utils/mediaQuery';
 
 class MultipleStateContainer {
   constructor(onStateChange, initialState = false) {
@@ -81,7 +82,7 @@ class Navigation {
     if (this.$nav.length === 0) {
       return 0;
     }
-    if (window.innerWidth > responsiveCutoff.mobile) {
+    if (isAbove(responsiveCutoff.mobile)) {
       if (!this._navHeight) {
         this._navHeight = this.$nav.height();
       }
