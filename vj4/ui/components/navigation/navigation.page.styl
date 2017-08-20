@@ -1,7 +1,7 @@
 .nav--placeholder
   height: $nav-item-height
 
-.nav, .nav--slideout-trigger
+.nav
   position: relative
   left: 0
   top: 0
@@ -22,20 +22,6 @@
 
 .nav > .row
   transition: max-width .5s ease-out-cubic
-
-.nav--slideout-trigger
-  position: absolute
-  display: none
-  background: rgba(#000, 0.5)
-  color: #FFF
-  line-height: rem($nav-item-height)
-
-  .nav__hamburger
-    background: none
-    border: 0
-    border-radius: 0
-    color: #FFF
-    outline: 0
 
 .nav--shadow
   position: fixed
@@ -137,6 +123,9 @@
   &:hover
     text-decoration: none
 
+  +mobile()
+    display: none
+
 .nav.showlogo, .layout--immersive
   .nav__logo
     width: rem($nav-logo-width + 10)
@@ -180,9 +169,6 @@
   .nav .columns
     padding: 0
 
-  .nav--slideout-trigger
-    display: block
-
   .nav--shadow
     display: none
 
@@ -194,13 +180,6 @@
 
   .nav__list-item
     float: none
-
-  .nav__logo
-    width: auto !important
-    opacity: 1 !important
-    background-position: center center
-    margin: 0
-    height: rem($nav-logo-height + 40px)
 
   .nav__item,
   .nav__item--round,

@@ -4,6 +4,7 @@ import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 import responsiveCutoff from 'vj/breakpoints.json';
 
 import zIndexManager from 'vj/utils/zIndexManager';
+import { isBelow } from 'vj/utils/mediaQuery';
 
 export default class Dropdown extends DOMAttachedObject {
   static DOMAttachKey = 'vjDropdownInstance';
@@ -11,7 +12,7 @@ export default class Dropdown extends DOMAttachedObject {
 
   constructor($dom, options = {}) {
     if ($dom.attr('data-dropdown-trigger-desktop-only') !== undefined) {
-      if (window.innerWidth < responsiveCutoff.mobile) {
+      if (isBelow(responsiveCutoff.mobile)) {
         super(null);
         return;
       }

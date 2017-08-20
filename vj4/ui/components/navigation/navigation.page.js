@@ -6,6 +6,8 @@ import request from 'vj/utils/request';
 import responsiveCutoff from 'vj/breakpoints.json';
 import Navigation from '.';
 
+import { isAbove } from 'vj/utils/mediaQuery';
+
 const nav = Navigation.instance;
 const $nav = nav.$nav;
 
@@ -31,7 +33,7 @@ const navigationPage = new AutoloadPage('navigationPage', () => {
   }
   if ($nav.length > 0
     && document.documentElement.getAttribute('data-layout') === 'basic'
-    && window.innerWidth >= responsiveCutoff.mobile
+    && isAbove(responsiveCutoff.mobile)
   ) {
     $(window).on('scroll', _.throttle(handleScroll, 100));
     $nav.hover(
@@ -50,12 +52,18 @@ const navigationPage = new AutoloadPage('navigationPage', () => {
     menu: document.getElementById('menu'),
     padding: 256,
     tolerance: 70,
+    side: 'right',
   });
   [['beforeopen', 'add'], ['beforeclose', 'remove']].forEach(([event, action]) => {
-    slideout.on(event, () => $('.nav__hamburger .hamburger')[`${action}Class`]('is-active'));
+    slideout.on(event, () => $('.header__hamburger .hamburger')[`${action}Class`]('is-active'));
   });
 
-  $('.nav__hamburger').click(() => slideout.toggle());
+  const $slideoutOverlay = $('.slideout-overlay');
+  $slideoutOverlay.click(() => slideout.close());
+  slideout.on('beforeopen', () => $slideoutOverlay.show());
+  slideout.on('beforeclose', () => $slideoutOverlay.hide());
+
+  $('.header__hamburger').click(() => slideout.toggle());
 });
 
 export default navigationPage;

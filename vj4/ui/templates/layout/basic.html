@@ -5,23 +5,12 @@
 {% include "partials/nav.html" %}
 
 <div class="slideout-panel" id="panel">
-  {% include "partials/nav_hamburger.html" %}
-  <div class="header{% if header_mini %} mini{% endif %}">
-    <div class="header-content"><div class="row"><div class="columns">
-    {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
-      <a class="header__logo" href="{{ reverse_url('domain_main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_self"></a>
-    {% else %}
-      <div class="header__logo--domain"><a href="{{ reverse_url('domain_main') }}" target="_self">{{ domain['name'] }}</a></div>
-      <div class="header__logo--system"><a href="{{ reverse_url('domain_main', domain_id=vj4.model.builtin.DOMAIN_ID_SYSTEM) }}" target="_blank">Powered by Vijos</a></div>
-    {% endif %}
-    </div></div></div>
-    {% include "partials/path.html" %}
-  </div>
-
+  <div class="slideout-overlay"></div>
+  {% include "partials/header_mobile.html" %}
+  {% include "partials/header.html" %}
   <div class="main">
     {% block content %}{% endblock %}
   </div>
-
   {% include "partials/footer.html" %}
 </div>
 

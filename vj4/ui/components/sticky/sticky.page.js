@@ -2,15 +2,14 @@ import 'sticky-kit/dist/sticky-kit';
 import _ from 'lodash';
 
 import { AutoloadPage } from 'vj/misc/PageLoader';
-
 import Navigation from 'vj/components/navigation';
+import { isAbove } from 'vj/utils/mediaQuery';
 import responsiveCutoff from 'vj/breakpoints.json';
 
 function updateStickies($stickies) {
-  const ww = window.innerWidth;
   $stickies.get().forEach((element) => {
     const $sticky = $(element);
-    const shouldEnableSticky = (ww >= $sticky.data('sticky-cutoff-min'));
+    const shouldEnableSticky = (isAbove($sticky.data('sticky-cutoff-min')));
     const stickyEnabled = $sticky.data('sticky-enabled');
     if (shouldEnableSticky && !stickyEnabled) {
       const stickyOptions = {};

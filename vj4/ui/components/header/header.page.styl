@@ -1,6 +1,13 @@
 $header-gap-mini = ($header-bg-height-mini - $nav-item-height - $header-logo-height) / 2
 $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-logo-domain-lh - $header-logo-system-lh) / 2
 
+.global-notification
+  padding: rem(20px 0)
+  background: #FFF
+
+  &.warning
+    background: #ffe1a6
+
 .header
   position: relative
   height: rem($header-bg-height)
@@ -11,23 +18,15 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
   +retina()
     background-image: url(./header-background.png)
     background-size: rem($header-bg-width $header-bg-height)
-  +mobile()
-    .header-content
-      text-align: center
 
   &.mini
     height: rem($header-bg-height-mini)
 
-.header__layer
-  position: absolute
-  left: 0
-  bottom: 0
-  width: 100%
-  height: rem($header-layer-height)
-  background: rgba(#000, 0.5)
-
-.header.mini .header__layer
-  display: none
+  +mobile()
+    background: #FFF
+    height: auto !important
+    .header__content
+      display: none
 
 .header__logo
   display: block
@@ -74,29 +73,6 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
       opacity: 1
       text-decoration: underline
 
-.location-path
-  color: rgba(#FFF, 0.3)
-  line-height: rem(30px)
-  margin-top: rem(10px)
-  a, a:visited
-    color: rgba(#FFF, 0.6)
-  a:hover
-    color: rgba(#FFF, 0.9)
-
-.location-current
-  color: #9ad4f1
-  line-height: rem(40px)
-  white-space: nowrap
-  overflow: hidden
-  text-overflow: ellipsis
-
-.global-notification
-  padding: rem(20px 0)
-  background: #FFF
-
-  &.warning
-    background: #ffe1a6
-
 .header--collapsed
 
   #panel
@@ -112,3 +88,90 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
   .header__logo
     transform: scale(0)
     opacity: 0
+
+.location
+  position: absolute
+  left: 0
+  bottom: 0
+  width: 100%
+  height: rem($header-layer-height)
+  background: rgba(#000, 0.5)
+
+  +mobile()
+    position: relative
+
+  .header__hamburger
+    display: none
+
+    +mobile()
+      margin-top: rem(28px)
+      display: block
+
+.header.mini .location
+  display: none
+
+.location-path
+  color: rgba(#FFF, 0.3)
+  line-height: rem(30px)
+  margin-top: rem(10px)
+  a, a:visited
+    color: rgba(#FFF, 0.6)
+  a:hover
+    color: rgba(#FFF, 0.9)
+
+  +mobile()
+    color: $text-3-color
+
+    a, a:visited, a:hover
+      color: $text-1-color
+
+.location-current
+  color: #9ad4f1
+  line-height: rem(40px)
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+
+  +mobile()
+    color: $primary-color
+    font-size: 1.7rem
+
+.header--mobile
+  display: none
+
+.header--mobile, .location
+  +mobile()
+    display: block
+    background: #FFF
+    color: $text-1-color
+    line-height: rem($nav-item-height)
+    font-size: rem($font-size-title)
+    padding: rem(10px 0)
+
+.layout--immersive .header--mobile
+  background: transparent
+  a, a:visited, a:hover
+    color: #FFF
+
+.header--mobile__domain.is-system
+  display: block
+  width: $nav-logo-width    // no rem
+  height: $nav-logo-height  // no rem
+  margin-top: rem(10px)
+  background: url('../navigation/nav-logo-small_dark.png') no-repeat
+  +retina()
+    background: url('../navigation/nav-logo-small@2x_dark.png') no-repeat
+    background-size: $nav-logo-width $nav-logo-height // no rem
+
+.header--mobile__system
+  margin-left: rem(10px)
+  font-size: rem($font-size-secondary)
+
+  &, &:hover, &:visited
+    color: $supplementary-color
+
+.header__hamburger
+  background: none
+  border: 0
+  border-radius: 0
+  outline: 0

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import responsiveCutoff from 'vj/breakpoints.json';
+import { isBelow } from 'vj/utils/mediaQuery';
 
 class MultipleStateContainer {
   constructor(onStateChange, initialState = false) {
@@ -78,23 +79,16 @@ class Navigation {
   }
 
   getHeight() {
+    if (isBelow(responsiveCutoff.mobile)) {
+      return 0;
+    }
     if (this.$nav.length === 0) {
       return 0;
     }
-    if (window.innerWidth > responsiveCutoff.mobile) {
-      if (!this._navHeight) {
-        this._navHeight = this.$nav.height();
-      }
-      return this._navHeight;
+    if (!this._navHeight) {
+      this._navHeight = this.$nav.height();
     }
-    const $slideoutNav = $('.nav--slideout-trigger');
-    if ($slideoutNav.length > 0) {
-      if (!this._slideoutNavHeight) {
-        this._slideoutNavHeight = $slideoutNav.height();
-      }
-      return this._slideoutNavHeight;
-    }
-    return 0;
+    return this._navHeight;
   }
 }
 

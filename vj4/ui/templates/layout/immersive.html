@@ -1,13 +1,14 @@
 {% set layout_name = "immersive" %}
+{% set no_path_section = true %}
 {% extends "layout/html5.html" %}
 {% block body %}
 
 {% include "partials/nav.html" %}
 
 <div class="slideout-panel" id="panel">
-  {% include "partials/nav_hamburger.html" %}
+  <div class="slideout-overlay"></div>
+  {% include "partials/header_mobile.html" %}
   <div class="nav--placeholder"></div>
-
   <div class="main">
     {% block content %}{% endblock %}
   </div>
