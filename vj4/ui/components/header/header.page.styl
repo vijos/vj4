@@ -153,6 +153,16 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
   a, a:visited, a:hover
     color: #FFF
 
+.header--mobile__domain.is-system
+  display: block
+  width: $nav-logo-width    // no rem
+  height: $nav-logo-height  // no rem
+  margin-top: rem(10px)
+  background: url('../navigation/nav-logo-small_dark.png') no-repeat
+  +retina()
+    background: url('../navigation/nav-logo-small@2x_dark.png') no-repeat
+    background-size: $nav-logo-width $nav-logo-height // no rem
+
 .header--mobile__system
   margin-left: rem(10px)
   font-size: rem($font-size-secondary)
