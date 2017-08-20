@@ -1,6 +1,9 @@
 .immersive-section, .section
   margin-bottom: rem($section-margin)
 
+  +mobile()
+    margin-bottom: rem(10px)
+
   &::before, &::after
     content: ' '
     display: table
@@ -14,13 +17,19 @@
   transition: transform .5s, opacity .5s
   transition-timing-function: ease-out-cubic
 
-.hasjs .section
-  transform: translateY(rem(30px))
-  opacity: 0
+  +mobile()
+    box-shadow: none
+    margin-left: - rem($grid-padding)
+    margin-right: - rem($grid-padding)
 
-  &.visible
-    transform: none
-    opacity: 1
+.hasjs .section
+  +above(rupture.mobile-cutoff)
+    transform: translateY(rem(30px))
+    opacity: 0
+
+    &.visible
+      transform: none
+      opacity: 1
 
 .section__header
   padding: rem($section-gap-v) rem($section-gap-h) 0

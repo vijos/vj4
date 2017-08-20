@@ -37,12 +37,18 @@
 .hamburger-inner::after
   width: rem(18px)
   height: rem(2px)
-  background-color: #FFF
+  background-color: $primary-color
   border-radius: 1px
   position: absolute
   transition-property: transform
   transition-duration: 0.15s
   transition-timing-function: ease
+
+.layout--immersive
+  .hamburger-inner,
+  .hamburger-inner::before,
+  .hamburger-inner::after
+    background-color: #FFF
 
 .hamburger-inner::before,
 .hamburger-inner::after

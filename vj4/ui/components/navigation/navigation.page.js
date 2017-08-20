@@ -52,12 +52,18 @@ const navigationPage = new AutoloadPage('navigationPage', () => {
     menu: document.getElementById('menu'),
     padding: 256,
     tolerance: 70,
+    side: 'right',
   });
   [['beforeopen', 'add'], ['beforeclose', 'remove']].forEach(([event, action]) => {
-    slideout.on(event, () => $('.nav__hamburger .hamburger')[`${action}Class`]('is-active'));
+    slideout.on(event, () => $('.header__hamburger .hamburger')[`${action}Class`]('is-active'));
   });
 
-  $('.nav__hamburger').click(() => slideout.toggle());
+  const $slideoutOverlay = $('.slideout-overlay');
+  $slideoutOverlay.click(() => slideout.close());
+  slideout.on('beforeopen', () => $slideoutOverlay.show());
+  slideout.on('beforeclose', () => $slideoutOverlay.hide());
+
+  $('.header__hamburger').click(() => slideout.toggle());
 });
 
 export default navigationPage;

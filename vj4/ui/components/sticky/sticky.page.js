@@ -2,10 +2,9 @@ import 'sticky-kit/dist/sticky-kit';
 import _ from 'lodash';
 
 import { AutoloadPage } from 'vj/misc/PageLoader';
-
 import Navigation from 'vj/components/navigation';
-import responsiveCutoff from 'vj/breakpoints.json';
 import { isAbove } from 'vj/utils/mediaQuery';
+import responsiveCutoff from 'vj/breakpoints.json';
 
 function updateStickies($stickies) {
   $stickies.get().forEach((element) => {
