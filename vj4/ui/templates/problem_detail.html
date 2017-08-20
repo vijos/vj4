@@ -24,6 +24,11 @@
             <p>{{ _('No dataset at present.') }}</p>
           </blockquote>
         {% endif %}
+        {% if tdoc and handler.is_done(tdoc) %}
+          <blockquote class="note">
+            <p>{{ _('You cannot submit for this problem because the contest is ended. You can click "Open in Problem Set" to view this problem in normal mode.') }}</p>
+          </blockquote>
+        {% endif %}
           {{ pdoc['content']|markdown }}
         </div>
       </div></div>

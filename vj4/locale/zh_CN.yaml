@@ -659,3 +659,5 @@ Introduce: 简介
 Introduce must not exceed 500 characters and it will be shown in the list view.: 简介不能超过 500 个字符，将显示在列表页面中。
 Hint: 提示
 An example of dataset: 测试数据集的一个例子
+Open in Problem Set: 在题库中打开
+You cannot submit for this problem because the contest is ended. You can click "Open in Problem Set" to view this problem in normal mode.: 该比赛已结束，您无法在比赛模式下递交该题目。您可以点击“在题库中打开”以普通模式查看和递交本题。
