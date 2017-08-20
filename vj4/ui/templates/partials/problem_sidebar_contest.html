@@ -25,7 +25,7 @@
       </a></li>
     {% elif handler.is_done(tdoc) %}
       <li class="menu__item scratchpad--hide"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
-        <span class="icon icon-send"></span> {{ _('Goto Problem Set') }}
+        <span class="icon icon-send"></span> {{ _('Open in Problem Set') }}
       </a></li>
     {% endif %}
     {% if handler.own(pdoc, vj4.model.builtin.PERM_EDIT_PROBLEM_SELF) or handler.has_perm(vj4.model.builtin.PERM_EDIT_PROBLEM) %}
