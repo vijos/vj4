@@ -40,7 +40,16 @@
     height: 100%
     background: #fff6d1
 
+  +tablet()
+    .col--time,
+    .col--memory,
+    .col--lang
+      display: none
+
   +mobile()
     .col--submit-by,
-    .col--submit-at
+    .col--submit-at,
+    .col--time,
+    .col--memory,
+    .col--lang
       display: none
