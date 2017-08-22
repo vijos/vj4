@@ -191,6 +191,7 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     rdocs = record.get_multi(get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD),
                              uid=uid).sort([('_id', -1)])
     rdocs = await rdocs.limit(10).to_list()
+    pdict = await problem.get_dict_multi_domain((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs)
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid).sort([('_id', -1)])
     pcount = await pdocs.count()
@@ -203,7 +204,7 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     ddocs = await ddocs.limit(10).to_list()
     self.render('user_detail.html', is_self_profile=is_self_profile,
                 udoc=udoc, dudoc=dudoc, sdoc=sdoc,
-                rdocs=rdocs, pdocs=pdocs, pcount=pcount, psdocs=psdocs, pscount=pscount,
+                rdocs=rdocs, pdict=pdict, pdocs=pdocs, pcount=pcount, psdocs=psdocs, pscount=pscount,
                 ddocs=ddocs, dcount=dcount)
 
 
