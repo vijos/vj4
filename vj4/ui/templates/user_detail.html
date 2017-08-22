@@ -77,11 +77,31 @@
             <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Submissions') }} ({{ dudoc['num_submit']|default(0) }})</h1>
               <div class="section__tab-main">
-              <p><a href="{{ reverse_url('record_main') }}?uid_or_name={{ udoc['_id'] }}">{{ _('All Submissions') }}</a></p>
-              {% for rdoc in rdocs %}
-                <p><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}">R{{ rdoc['_id'] }}</a></p>
-              {% endfor %}
+                <div class="section__header">
+                  <h1 class="section__title">{{ _('Recent Submissions') }}</h1>
+                </div>
+                <div class="section__table-container">
+                  <table class="data-table section__table-header">
+                    <thead>
+                      <tr>
+                        <th class="col--status">状态</th>
+                        <th class="col--problem">题目</th>
+                        <th class="col--submit-by">递交者</th>
+                        <th class="col--time">时间</th>
+                        <th class="col--memory">内存</th>
+                        <th class="col--lang">语言</th>
+                        <th class="col--submit-at">递交时间</th>
+                      </tr>
+                    </thead>
+                  </table>
+                  <table class="data-table record_main__table">
+                    {% for rdoc in rdocs %}
+                      <p><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=rdoc['domain_id']) }}">R{{ rdoc['_id'] }}</a></p>
+                    {% endfor %}
+                  </table>
+                </div>
               </div>
+              <p><a href="{{ reverse_url('record_main') }}?uid_or_name={{ udoc['_id'] }}">{{ _('All Submissions') }}</a></p>
             </li>
             <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Problems') }} ({{ pcount }})</h1>
