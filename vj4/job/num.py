@@ -33,7 +33,7 @@ async def discussion(domain_id: str):
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
-  async for adoc in db.coll('document').aggregate(pipeline):
+  async for adoc in await db.coll('document').aggregate(pipeline):
     bulk.find({'domain_id': domain_id,
                'doc_type': document.TYPE_DISCUSSION,
                'doc_id': adoc['_id']}) \
@@ -64,7 +64,7 @@ async def contest(domain_id: str):
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
-  async for adoc in db.coll('document.status').aggregate(pipeline):
+  async for adoc in await db.coll('document.status').aggregate(pipeline):
     bulk.find({'domain_id': domain_id,
                'doc_type': document.TYPE_CONTEST,
                'doc_id': adoc['_id']}) \
@@ -95,7 +95,7 @@ async def training(domain_id: str):
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
-  async for adoc in db.coll('document.status').aggregate(pipeline):
+  async for adoc in await db.coll('document.status').aggregate(pipeline):
     bulk.find({'domain_id': domain_id,
                'doc_type': document.TYPE_TRAINING,
                'doc_id': adoc['_id']}) \
@@ -126,7 +126,7 @@ async def problem(domain_id: str):
   user_coll = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
-  async for adoc in db.coll('document').aggregate(pipeline):
+  async for adoc in await db.coll('document').aggregate(pipeline):
     user_coll.find({'domain_id': domain_id,
                     'uid': adoc['_id']}) \
              .upsert().update_one({'$set': {'num_problems': adoc['num_problems']}})
@@ -156,7 +156,7 @@ async def problem_solution(domain_id: str):
   bulk = coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
-  async for adoc in db.coll('document.status').aggregate(pipeline):
+  async for adoc in await db.coll('document.status').aggregate(pipeline):
     bulk.find({'domain_id': domain_id,
                'doc_type': document.TYPE_PROBLEM_SOLUTION,
                'doc_id': adoc['_id']}) \
@@ -184,7 +184,7 @@ async def problem_solution(domain_id: str):
   user_bulk = user_coll.initialize_unordered_bulk_op()
   execute = False
   _logger.info('Counting')
-  async for adoc in db.coll('document').aggregate(pipeline):
+  async for adoc in await db.coll('document').aggregate(pipeline):
     user_bulk.find({'domain_id': domain_id,
                     'uid': adoc['_id']}) \
              .upsert().update_one({'$set': {'num_liked': adoc['num_liked']}})
