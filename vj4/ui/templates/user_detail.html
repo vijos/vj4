@@ -158,7 +158,7 @@
                 <div class="section__header">
                   <h1 class="section__title">{{ _('Most Upvoted Solutions') }}</h1>
                 </div>
-              {% for psdoc in psdocs %}
+              {% for psdoc in psdocs_hot %}
                 <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
               {% endfor %}
                 {% endif %}
@@ -173,9 +173,9 @@
                 <div class="section__header">
                   <h1 class="section__title">{{ _('Resent Discussions') }}</h1>
                 </div>
-                {% for ddoc in ddocs %}
-                  <p><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}">{{ ddoc['title'] }}</a></p>
-                {% endfor %}
+                {% with udict = {udoc['_id']: udoc} %}
+                  {% include "partials/discussion_list.html" %}
+                {% endwith %}
                 {% endif %}
               </div>
             </li>

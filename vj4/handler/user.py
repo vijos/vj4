@@ -188,24 +188,40 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
       raise error.UserNotFoundError(uid)
     dudoc, sdoc = await asyncio.gather(domain.get_user(self.domain_id, udoc['_id']),
                                        token.get_most_recent_session_by_uid(udoc['_id']))
+
     rdocs = record.get_multi(get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD),
                              uid=uid).sort([('_id', -1)])
     rdocs = await rdocs.limit(10).to_list()
     pdict = await problem.get_dict_multi_domain((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs)
+
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid).sort([('_id', -1)])
     pcount = await pdocs.count()
     pdocs = await pdocs.limit(10).to_list()
+
     psdocs = problem.get_multi_solution_by_uid(self.domain_id, uid)
+    psdocs_hot = problem.get_multi_solution_by_uid(self.domain_id, uid)\
+                        .sort([('vote', -1), ('doc_id', -1)])
     pscount = await psdocs.count()
     psdocs = await psdocs.limit(10).to_list()
-    ddocs = discussion.get_multi(self.domain_id, owner_uid=uid)
-    dcount = await ddocs.count()
-    ddocs = await ddocs.limit(10).to_list()
+    psdocs_hot = await psdocs_hot.limit(10).to_list()
+
+    if self.has_perm(builtin.PERM_VIEW_DISCUSSION):
+      ddocs = discussion.get_multi(self.domain_id, owner_uid=uid)
+      dcount = await ddocs.count()
+      ddocs = await ddocs.limit(10).to_list()
+      vndict = await discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs))
+    else:
+      ddocs = []
+      vndict = {}
+      dcount = 0
+
     self.render('user_detail.html', is_self_profile=is_self_profile,
                 udoc=udoc, dudoc=dudoc, sdoc=sdoc,
-                rdocs=rdocs, pdict=pdict, pdocs=pdocs, pcount=pcount, psdocs=psdocs, pscount=pscount,
-                ddocs=ddocs, dcount=dcount)
+                rdocs=rdocs, pdict=pdict, pdocs=pdocs, pcount=pcount,
+                psdocs=psdocs, pscount=pscount, psdocs_hot=psdocs_hot,
+                ddocs=ddocs, dcount=dcount, vndict=vndict,
+                datetime_stamp=self.datetime_stamp)
 
 
 @app.route('/user/search', 'user_search')
