@@ -75,6 +75,57 @@
         <div class="section__tab-container immersive">
           <ul class="section__tabs">
             <li class="section__tab-item">
+              <h1 class="section__tab-title">{{ _('Discussions') }} ({{ dcount }})</h1>
+              <div class="section__tab-main">
+                {% if not ddocs %}
+                    {{ nothing.render('Oh, the user hasn\'t provide any discussions yet!') }}
+                {% else %}
+                <div class="section__header">
+                  <h1 class="section__title">{{ _('Resent Discussions') }}</h1>
+                </div>
+                {% with udict = {udoc['_id']: udoc} %}
+                  {% include "partials/discussion_list.html" %}
+                {% endwith %}
+                {% endif %}
+              </div>
+            </li>
+            <li class="section__tab-item">
+              <h1 class="section__tab-title">{{ _('Problems') }} ({{ pcount }})</h1>
+              <div class="section__tab-main">
+                  {% if not pdocs %}
+                    {{ nothing.render('Oh, the user hasn\'t provide any problems yet!') }}
+                  {% else %}
+                <div class="section__header">
+                  <h1 class="section__title">{{ _('Problem List') }}</h1>
+                </div>
+              {% for pdoc in pdocs %}
+                <p><a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">{{ pdoc['title'] }}</a></p>
+              {% endfor %}
+                  {% endif %}
+              </div>
+            </li>
+            <li class="section__tab-item">
+              <h1 class="section__tab-title">{{ _('Solutions') }} ({{ pscount }})</h1>
+              <div class="section__tab-main">
+                {% if not psdocs %}
+                    {{ nothing.render('Oh, the user hasn\'t provide any solutions yet!') }}
+                {% else %}
+                <div class="section__header">
+                  <h1 class="section__title">{{ _('Recent Solutions') }}</h1>
+                </div>
+              {% for psdoc in psdocs %}
+                <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
+              {% endfor %}
+                <div class="section__header">
+                  <h1 class="section__title">{{ _('Most Upvoted Solutions') }}</h1>
+                </div>
+              {% for psdoc in psdocs_hot %}
+                <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
+              {% endfor %}
+                {% endif %}
+              </div>
+            </li>
+            <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Submissions') }} ({{ dudoc['num_submit']|default(0) }})</h1>
               <div class="section__tab-main">
                 <div class="section__header">
@@ -126,57 +177,6 @@
                     </li>
                   </ul>
                 </div>
-              </div>
-            </li>
-            <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Problems') }} ({{ pcount }})</h1>
-              <div class="section__tab-main">
-                  {% if not pdocs %}
-                    {{ nothing.render('Oh, the user hasn\'t provide any problems yet!') }}
-                  {% else %}
-                <div class="section__header">
-                  <h1 class="section__title">{{ _('Problem List') }}</h1>
-                </div>
-              {% for pdoc in pdocs %}
-                <p><a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">{{ pdoc['title'] }}</a></p>
-              {% endfor %}
-                  {% endif %}
-              </div>
-            </li>
-            <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Solutions') }} ({{ pscount }})</h1>
-              <div class="section__tab-main">
-                {% if not psdocs %}
-                    {{ nothing.render('Oh, the user hasn\'t provide any solutions yet!') }}
-                {% else %}
-                <div class="section__header">
-                  <h1 class="section__title">{{ _('Recent Solutions') }}</h1>
-                </div>
-              {% for psdoc in psdocs %}
-                <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
-              {% endfor %}
-                <div class="section__header">
-                  <h1 class="section__title">{{ _('Most Upvoted Solutions') }}</h1>
-                </div>
-              {% for psdoc in psdocs_hot %}
-                <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
-              {% endfor %}
-                {% endif %}
-              </div>
-            </li>
-            <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Discussions') }} ({{ dcount }})</h1>
-              <div class="section__tab-main">
-                {% if not ddocs %}
-                    {{ nothing.render('Oh, the user hasn\'t provide any discussions yet!') }}
-                {% else %}
-                <div class="section__header">
-                  <h1 class="section__title">{{ _('Resent Discussions') }}</h1>
-                </div>
-                {% with udict = {udoc['_id']: udoc} %}
-                  {% include "partials/discussion_list.html" %}
-                {% endwith %}
-                {% endif %}
               </div>
             </li>
           </ul>
