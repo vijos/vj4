@@ -16,10 +16,14 @@
     background: $tab-color
 
   .rc-tabs-tab-prev-icon, .rc-tabs-tab-next-icon
+    display: none
     font-family: $icon-font-name !important
     line-height: rem($panel-header-height)
     font-size: rem($font-size)
     color: #FFF
+
+  .rc-tabs-tab-arrow-show
+    display: block
 
   &.rc-tabs-top .rc-tabs-tab-prev-icon:before
     content: $icon-chevron_left
