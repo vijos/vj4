@@ -99,12 +99,12 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
 
   +mobile()
     position: relative
+    height: auto
 
   .header__hamburger
     display: none
 
     +mobile()
-      margin-top: rem(28px)
       display: block
 
 .header.mini .location
@@ -119,12 +119,6 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
   a:hover
     color: rgba(#FFF, 0.9)
 
-  +mobile()
-    color: $text-3-color
-
-    a, a:visited, a:hover
-      color: $text-1-color
-
 .location-current
   color: #9ad4f1
   line-height: rem(40px)
@@ -133,8 +127,9 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
   text-overflow: ellipsis
 
   +mobile()
-    color: $primary-color
+    color: #91fcff
     font-size: 1.7rem
+    white-space: normal
 
 .header--mobile
   display: none
@@ -142,14 +137,12 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
 .header--mobile, .location
   +mobile()
     display: block
-    background: #FFF
-    color: $text-1-color
+    background: #56758f
+    color: #FFF
     line-height: rem($nav-item-height)
     font-size: rem($font-size-title)
     padding: rem(10px 0)
 
-.layout--immersive .header--mobile
-  background: transparent
   a, a:visited, a:hover
     color: #FFF
 
@@ -158,9 +151,9 @@ $header-gap-mini-domain = ($header-bg-height-mini - $nav-item-height - $header-l
   width: $nav-logo-width    // no rem
   height: $nav-logo-height  // no rem
   margin-top: rem(10px)
-  background: url('../navigation/nav-logo-small_dark.png') no-repeat
+  background: url('../navigation/nav-logo-small_light.png') no-repeat
   +retina()
-    background: url('../navigation/nav-logo-small@2x_dark.png') no-repeat
+    background: url('../navigation/nav-logo-small@2x_light.png') no-repeat
     background-size: $nav-logo-width $nav-logo-height // no rem
 
 .header--mobile__system
