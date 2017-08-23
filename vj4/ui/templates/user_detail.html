@@ -99,7 +99,7 @@
                         <th class="col--problem">{{ _('Problem') }}</th>
                         <th class="col--time">{{ _('Time') }}</th>
                         <th class="col--memory">{{ _('Memory') }}</th>
-                        <th class="col--lang">{{ _('Language') }}</th>
+                        <th class="col--lang">{{ _('Lang.') }}</th>
                         <th class="col--submit-at">{{ _('Submit At') }}</th>
                       </tr>
                     </thead>
@@ -131,12 +131,12 @@
             <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Problems') }} ({{ pcount }})</h1>
               <div class="section__tab-main">
-                <div class="section__header">
-                  <h1 class="section__title">{{ _('Problem List') }}</h1>
-                </div>
                   {% if not pdocs %}
                     {{ nothing.render('Oh, the user hasn\'t provide any problems yet!') }}
                   {% else %}
+                <div class="section__header">
+                  <h1 class="section__title">{{ _('Problem List') }}</h1>
+                </div>
               {% for pdoc in pdocs %}
                 <p><a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">{{ pdoc['title'] }}</a></p>
               {% endfor %}
