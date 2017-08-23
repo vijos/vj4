@@ -60,7 +60,7 @@ Some requirements may need `Python.h`. In Ubuntu/Debian simply use
 apt install python3-dev
 ```
 
-to resolve the problem.
+to solve the problem.
 
 ### IP Geo-Location
 
