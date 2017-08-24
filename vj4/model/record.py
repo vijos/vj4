@@ -82,6 +82,7 @@ async def set_visibility(rid: objectid.ObjectId, visibility: int):
   doc = await coll.find_one_and_update(filter={'_id': rid},
                                        update={'$set': {'visibility': visibility}},
                                        return_document=ReturnDocument.AFTER)
+  return doc
 
 
 @argmethod.wrap
