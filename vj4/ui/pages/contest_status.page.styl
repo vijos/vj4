@@ -4,18 +4,22 @@
     border-right: 1px solid $table-border-color
 
   .col--user
-    width: rem(150px)
+    width: rem(100px)
 
   .col--score
     width: rem(70px)
-    border-right: 1px solid $table-border-color
+
+  .col--solve
+    width: rem(100px)
+    text-align: center
+
+  .col--problem
+    border-left: 1px solid $table-border-color
+    text-align: center
 
   +mobile()
     .col--user
       width: auto
-
-    .col--score
-      border-right: 0
 
     .col--problem
       display: none
