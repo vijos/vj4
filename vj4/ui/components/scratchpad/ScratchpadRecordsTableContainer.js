@@ -11,7 +11,7 @@ const mapStateToProps = state => ({
 @connect(mapStateToProps)
 export default class ScratchpadRecordsTableContainer extends React.PureComponent {
   render() {
-    const cn = classNames('data-table scratchpad__records__table', {
+    const cn = classNames('data-table is--full-row scratchpad__records__table', {
       loading: this.props.isLoading,
     });
     return (
