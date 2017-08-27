@@ -1,0 +1,21 @@
+.page--contest_status
+  .col--rank
+    width: rem(70px)
+    border-right: 1px solid $table-border-color
+
+  .col--user
+    width: rem(150px)
+
+  .col--score
+    width: rem(70px)
+    border-right: 1px solid $table-border-color
+
+  +mobile()
+    .col--user
+      width: auto
+
+    .col--score
+      border-right: 0
+
+    .col--problem
+      display: none
