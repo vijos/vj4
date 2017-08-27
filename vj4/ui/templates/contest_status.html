@@ -3,6 +3,7 @@
 <div class="row"><div class="medium-12 columns">
   <div class="section visible">
     <div class="section__body no-padding">
+      <a href="{{ reverse_url('contest_status_download', tid=tdoc['doc_id']) }}">{{ _('Download') }}</a>
       {% include 'partials/contest_status_'~vj4.constant.contest.RULE_ID[tdoc['rule']]~'.html' %}
     </div>
   </div>

@@ -287,6 +287,25 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
                 udict=udict, pdict=pdict, path_components=path_components)
 
 
+@app.route('/contest/{tid}/status/download', 'contest_status_download')
+class ContestStatusHandler(base.Handler, ContestStatusMixin):
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
+  @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
+        and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
+      raise error.ContestStatusHiddenError()
+    udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
+                                        problem.get_dict(self.domain_id, tdoc['pids']))
+    ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
+    self.render('contest_status_download.csv', content_type='test/csv',
+                tdoc=tdoc, ranked_tsdocs=ranked_tsdocs, dict=dict,
+                udict=udict, pdict=pdict)
+
+
 @app.route('/contest/create', 'contest_create')
 class ContestCreateHandler(base.Handler, ContestStatusMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)

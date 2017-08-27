@@ -1,0 +1,6 @@
+{{ _('Rank') }},{{ _('User') }},{{ _('Solve') }},{{ _('Time') }},{% for pid in tdoc['pids'] %}#{{ loop.index }} {{ pdict[pid]['title'] }},{% endfor %}
+
+{% for rank, tsdoc in ranked_tsdocs %}
+{{ rank }},{{ udict[tsdoc['uid']]['uname'] }},{{ tsdoc['accept']|default(0) }},{{ tsdoc['time']|default(0.0) }},{% with tsddict = dict(tsdoc['detail']|groupby('pid')) %}{% for pid in tdoc['pids'] %}{% if tsddict[pid][0]['accept'] %}{{ _('Accepted') }} ({{ tsddict[pid][0]['time'] }}){% else %}-{% endif %},{% endfor %}{% endwith %}
+
+{% endfor %}

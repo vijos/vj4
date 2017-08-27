@@ -1,0 +1,6 @@
+{{ _('Rank') }},{{ _('User') }},{{ _('Score') }},{% for pid in tdoc['pids'] %}#{{ loop.index }} {{ pdict[pid]['title'] }},{% endfor %}
+
+{% for rank, tsdoc in ranked_tsdocs %}
+{{ rank }},{{ udict[tsdoc['uid']]['uname'] }},{{ tsdoc['score']|default(0) }},{% with tsddict = dict(tsdoc['detail']|groupby('pid')) %}{% for pid in tdoc['pids'] %}{% if tsddict[pid] %}{{ tsddict[pid][0]['score']|default(0) }}{% else %}-{% endif %},{% endfor %}{% endwith %}
+
+{% endfor %}

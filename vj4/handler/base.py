@@ -246,8 +246,8 @@ class Handler(web.View, HandlerBase):
       raise
     return self.response
 
-  def render(self, template_name, **kwargs):
-    self.response.content_type = 'text/html'
+  def render(self, template_name, content_type='text/html', **kwargs):
+    self.response.content_type = content_type
     self.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate')
     self.response.headers.add('Pragma', 'no-cache')
     self.response.text = self.render_html(template_name, **kwargs)
