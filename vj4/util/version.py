@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 @argmethod.wrap
 def get():
   try:
-    return git.Repo(path.dirname(path.dirname(vj4.__file__))).git.describe(always=True, dirty=True)
+    return git.Repo(path.dirname(path.dirname(vj4.__file__))).git.describe(always=True, tags=True, dirty=True)
   except (git.InvalidGitRepositoryError, git.GitCommandError) as e:
     _logger.error('Failed to get repository: %s', repr(e))
     return 'unknown'
