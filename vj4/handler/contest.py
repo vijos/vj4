@@ -328,7 +328,7 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
     return rows
 
   def get_csv_content(self, rows):
-    csv_content = [row.join(',') for row in rows].join('\r\n')  # \r\n for notepad compatibility
+    csv_content = '\r\n'.join([','.join([str(c) for c in row]) for row in rows])  # \r\n for notepad compatibility
     data = '\uFEFF' + csv_content
     return data.encode(), 'csv'
 
