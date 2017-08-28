@@ -360,17 +360,17 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, tid: objectid.ObjectId, title: str, content: str, rule: int,
-                 begin_at_date: str='',
-                 begin_at_time: str='',
+                 begin_at_date: str=None,
+                 begin_at_time: str=None,
                  duration: float,
                  pids: str):
     tdoc = await contest.get(self.domain_id, tid)
     if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
     if self.is_live(tdoc) or self.is_done(tdoc):
-      if len(begin_at_date) > 0:
+      if begin_at_date != None:
         raise error.ValidationError('begin_at_date')
-      if len(begin_at_time) > 0:
+      if begin_at_time != None:
         raise error.ValidationError('begin_at_time')
       begin_at = tdoc['begin_at']
     else:
