@@ -287,13 +287,61 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
                 udict=udict, pdict=pdict, path_components=path_components)
 
 
-@app.route('/contest/{tid}/status/download', 'contest_status_download')
+@app.route('/contest/{tid}/status/download/{extension}', 'contest_status_download')
 class ContestStatusHandler(base.Handler, ContestStatusMixin):
+  def get_oi_status(self, tdoc, ranked_tsdocs, udict, pdict):
+    columns = [self.translate(column) for column in ['Rank', 'User', 'Score']]
+    for index, pid in enumerate(tdoc['pids']):
+      columns.append('#{0} {1}'.format(index + 1, pdict[pid]['title']))
+    rows = [columns]
+    for rank, tsdoc in ranked_tsdocs:
+      if 'detail' in tsdoc:
+        tsddict = {item['pid']: item for item in tsdoc['detail']}
+      else:
+        tsddict = {}
+      row = [rank, udict[tsdoc['uid']]['uname'], tsdoc.get('score', 0)]
+      for pid in tdoc['pids']:
+        row.append(tsddict.get(pid, {}).get('score', '-'))
+      rows.append(row)
+    return rows
+
+  def get_acm_status(self, tdoc, ranked_tsdocs, udict, pdict):
+    columns = [self.translate(column) for column in ['Rank', 'User', 'Solved Problems', 'Total Time']]
+    for index, pid in enumerate(tdoc['pids']):
+      columns.append('#{0} {1}'.format(index + 1, pdict[pid]['title']))
+      columns.append('#{0} {1}'.format(index + 1, self.translate('Time')))
+    rows = [columns]
+    for rank, tsdoc in ranked_tsdocs:
+      if 'detail' in tsdoc:
+        tsddict = {item['pid']: item for item in tsdoc['detail']}
+      else:
+        tsddict = {}
+      row = [rank, udict[tsdoc['uid']]['uname'], tsdoc.get('accept', 0), tsdoc.get('time', 0.0)]
+      for pid in tdoc['pids']:
+        if tsddict.get(pid, {}).get('accept', False):
+          row.append(self.translate('Accepted'))
+          row.append(tsddict[pid]['time'])
+        else:
+          row.append('-')
+          row.append('-')
+      rows.append(row)
+    return rows
+
+  def get_csv_content(self, rows):
+    csv_content = [row.join(',') for row in rows].join('\r\n')  # \r\n for notepad compatibility
+    data = '\uFEFF' + csv_content
+    return data.encode(), 'csv'
+
+  def get_html_content(self, rows):
+    return self.render_html('contest_status_download_html.html', rows=rows).encode(), 'html'
+
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
   @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId):
+  async def get(self, *, tid: objectid.ObjectId, extension: str):
+    if not extension in ['csv', 'html']:
+      raise error.ValidationError('extension')
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
@@ -301,9 +349,20 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
                                         problem.get_dict(self.domain_id, tdoc['pids']))
     ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
-    self.render('contest_status_download.csv', content_type='test/csv',
-                tdoc=tdoc, ranked_tsdocs=ranked_tsdocs, dict=dict,
-                udict=udict, pdict=pdict)
+    get_status = {
+      constant.contest.RULE_ACM: self.get_acm_status,
+      constant.contest.RULE_OI: self.get_oi_status,
+    }
+    get_content = {
+      'csv': self.get_csv_content,
+      'html': self.get_html_content,
+    }
+    rows = get_status[tdoc['rule']](tdoc, ranked_tsdocs, udict, pdict)
+    data, ext = get_content[extension](rows)
+    file_name = tdoc['title']
+    for char in '/<>:\"\'\\|?* ':
+      file_name = file_name.replace(char, '')
+    await self.binary(data, file_name='{0}.{1}'.format(file_name, ext))
 
 
 @app.route('/contest/create', 'contest_create')

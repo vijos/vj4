@@ -1,1 +1,0 @@
-{% include 'partials/contest_status_download_'~vj4.constant.contest.RULE_ID[tdoc['rule']]~'.csv' %}
