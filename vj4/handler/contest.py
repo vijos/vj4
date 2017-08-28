@@ -360,22 +360,34 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, tid: objectid.ObjectId, title: str, content: str, rule: int,
-                 begin_at_date: str,
-                 begin_at_time: str,
+                 begin_at_date: str='',
+                 begin_at_time: str='',
                  duration: float,
                  pids: str):
     tdoc = await contest.get(self.domain_id, tid)
     if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
-    try:
-      begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-      begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
-      end_at = begin_at + datetime.timedelta(hours=duration)
-    except ValueError as e:
-      raise error.ValidationError('begin_at_date', 'begin_at_time')
+    if self.is_live(tdoc) or self.is_done(tdoc):
+      if len(begin_at_date) > 0:
+        raise error.ValidationError('begin_at_date')
+      if len(begin_at_time) > 0:
+        raise error.ValidationError('begin_at_time')
+      begin_at = tdoc['begin_at']
+    else:
+      try:
+        begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
+        begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
+      except ValueError as e:
+        raise error.ValidationError('begin_at_date', 'begin_at_time')
+    end_at = begin_at + datetime.timedelta(hours=duration)
     if begin_at >= end_at:
       raise error.ValidationError('duration')
-    pids = list(set(map(document.convert_doc_id, pids.split(','))))
+    # not allow removing existing problems
+    pid_set = set(map(document.convert_doc_id, pids.split(',')))
+    if self.is_live(tdoc) or self.is_done(tdoc):
+      if len(pid_set & set(tdoc['pids'])) != len(tdoc['pids']):
+        raise error.ValidationError('pids')
+    pids = list(pid_set)
     pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
                                     fields={'doc_id': 1}) \
                          .sort('doc_id', 1) \
