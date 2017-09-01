@@ -7,10 +7,10 @@
     background-position: center center
     background-size: cover
     min-height: rem(270px)
-    padding-bottom: rem($tab-item-height + 20px)
+    padding-bottom: rem($tab-item-height + $tab-item-shadow-size + 20px)
 
     +mobile()
-      padding-bottom: rem($tab-item-height)
+      padding-bottom: rem($tab-item-height-mobile)
 
   .profile-header__content
     position: relative
@@ -78,11 +78,17 @@
   .profile-content
     position: relative
     z-index: 2
-    margin-top: rem(-($tab-item-height))
+    margin-top: rem(-($tab-item-height + $tab-item-shadow-size))
+
+    +mobile()
+      margin-top: rem(-($tab-item-height-mobile))
 
     .section__tabs
-      padding-top: rem($tab-item-height)
-      
+      padding-top: rem($tab-item-height + $tab-item-shadow-size)
+
+      +mobile()
+        padding-top: rem($tab-item-height-mobile)
+
     .section__tab-main
       min-height: rem(384px)
 

@@ -16,7 +16,10 @@ export default function DataInputComponent(props) {
         className="scratchpad__data-input"
         wrap="off"
         value={value}
-        onChange={ev => onChange(ev.target.value)}
+        onChange={(ev) => {
+          ev.stopPropagation();
+          onChange(ev.target.value);
+        }}
         placeholder={title}
       />
     </div>

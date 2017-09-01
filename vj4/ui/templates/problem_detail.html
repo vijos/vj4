@@ -7,6 +7,7 @@
     'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['doc_id']),
     'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['doc_id']) if not tdoc else reverse_url('contest_detail_problem_submit', tid=tdoc['doc_id'], pid=pdoc['doc_id']),
     'getSubmissionsUrl': reverse_url('problem_submit', pid=pdoc['doc_id']) if not tdoc else reverse_url('contest_detail_problem_submit', tid=tdoc['doc_id'], pid=pdoc['doc_id']),
+    'getRecordDetailUrl': reverse_url('record_detail', rid='{rid}'),
     'code_lang': handler.get_setting('code_lang'),
     'code_template': handler.get_code_template(),
   }|json|safe }};
