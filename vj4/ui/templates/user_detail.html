@@ -77,68 +77,72 @@
             <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Discussions') }} ({{ dcount }})</h1>
               <div class="section__tab-main">
-                {% if not ddocs %}
-                    {{ nothing.render('Oh, the user hasn\'t provide any discussions yet!') }}
-                {% else %}
+              {% if not ddocs %}
+                {{ nothing.render('Oh, the user hasn\'t created any discussions yet!') }}
+              {% else %}
                 <div class="section__header">
-                  <h1 class="section__title">{{ _('Resent Discussions') }}</h1>
+                  <h1 class="section__title">{{ _('Recently Created Discussions') }}</h1>
                 </div>
+                <div class="section__body no-padding">
                 {% with udict = {udoc['_id']: udoc} %}
                   {% include "partials/discussion_list.html" %}
                 {% endwith %}
-                {% endif %}
+                </div>
+              {% endif %}
               </div>
             </li>
             <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Problems') }} ({{ pcount }})</h1>
+              <h1 class="section__tab-title">{{ _('Contributions') }} ({{ pcount+pscount }})</h1>
               <div class="section__tab-main">
-                  {% if not pdocs %}
-                    {{ nothing.render('Oh, the user hasn\'t provide any problems yet!') }}
-                  {% else %}
+              {% if not pdocs and not psdocs %}
+                {{ nothing.render('Oh, the user doesn\'t have any contributions!') }}
+              {% else %}
+              {% if pdocs %}
                 <div class="section__header">
-                  <h1 class="section__title">{{ _('Problem List') }}</h1>
+                  <h1 class="section__title">{{ _('Contributed Problems') }}</h1>
                 </div>
-              {% for pdoc in pdocs %}
-                <p><a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">{{ pdoc['title'] }}</a></p>
-              {% endfor %}
-                  {% endif %}
-              </div>
-            </li>
-            <li class="section__tab-item">
-              <h1 class="section__tab-title">{{ _('Solutions') }} ({{ pscount }})</h1>
-              <div class="section__tab-main">
-                {% if not psdocs %}
-                    {{ nothing.render('Oh, the user hasn\'t provide any solutions yet!') }}
-                {% else %}
-                <div class="section__header">
-                  <h1 class="section__title">{{ _('Recent Solutions') }}</h1>
+                <div class="section__body">
+                {% for pdoc in pdocs %}
+                  <p><a href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">{{ pdoc['title'] }}</a></p>
+                {% endfor %}
                 </div>
-              {% for psdoc in psdocs %}
-                <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
-              {% endfor %}
+              {% endif %}{# if pdocs #}
+              {% if psdocs %}
                 <div class="section__header">
                   <h1 class="section__title">{{ _('Most Upvoted Solutions') }}</h1>
                 </div>
-              {% for psdoc in psdocs_hot %}
-                <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
-              {% endfor %}
-                {% endif %}
+                <div class="section__body">
+                {% for psdoc in psdocs_hot %}
+                  <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
+                {% endfor %}
+                </div>
+                <div class="section__header">
+                  <h1 class="section__title">{{ _('Recent Solutions') }}</h1>
+                </div>
+                <div class="section__body">
+                {% for psdoc in psdocs %}
+                  <p><a href="{{ reverse_url('problem_solution', pid=psdoc['parent_doc_id']) }}">PS{{ psdoc['doc_id'] }}</a></p>
+                {% endfor %}
+                </div>
+              {% endif %}{# if psdocs #}
+              {% endif %}{# if not pdocs and not psdocs #}
               </div>
             </li>
             <li class="section__tab-item">
               <h1 class="section__tab-title">{{ _('Submissions') }} ({{ dudoc['num_submit']|default(0) }})</h1>
               <div class="section__tab-main">
+              {% if not rdocs %}
+                {{ nothing.render('Oh, the user hasn\'t submitted yet!') }}
+              {% else %}
                 <div class="section__header">
                   <h1 class="section__title">{{ _('Recent Submissions') }}</h1>
                 </div>
-                <div class="section__table-container">
-                  {% if not rdocs %}
-                    {{ nothing.render('Oh, the user hasn\'t submitted yet!') }}
-                  {% else %}
-                  <table class="data-table section__table-header">
+                <div class="section__body no-padding">
+                  <table class="data-table record_main__table">
                     <colgroup>
                       <col class="col--status">
                       <col class="col--problem">
+                      <col class="col--submit-by">
                       <col class="col--time">
                       <col class="col--memory">
                       <col class="col--lang">
@@ -148,35 +152,23 @@
                       <tr>
                         <th class="col--status record-status--border">{{ _('Status') }}</th>
                         <th class="col--problem">{{ _('Problem') }}</th>
+                        <th class="col--submit-by">{{ _('Submit By') }}</th>
                         <th class="col--time">{{ _('Time') }}</th>
                         <th class="col--memory">{{ _('Memory') }}</th>
-                        <th class="col--lang">{{ _('Lang.') }}</th>
+                        <th class="col--lang">{{ _('Language') }}</th>
                         <th class="col--submit-at">{{ _('Submit At') }}</th>
                       </tr>
                     </thead>
-                  </table>
-                  <table class="data-table record_main__table">
-                    <colgroup>
-                      <col class="col--status">
-                      <col class="col--problem">
-                      <col class="col--time">
-                      <col class="col--memory">
-                      <col class="col--lang">
-                      <col class="col--submit-at">
-                    </colgroup>
+                    <tbody>
                     {% for rdoc in rdocs %}
                       {% with pdoc = pdict[(rdoc['domain_id'], rdoc['pid'])] %}
-                        {% include 'record_main_tr.html' %}
+                      {% include 'record_main_tr.html' %}
                       {% endwith %}
                     {% endfor %}
+                    </tbody>
                   </table>
-                  {% endif %}
-                  <ul class="pager">
-                    <li>
-                     <a class="pager__item link" href="{{ reverse_url('record_main') }}?uid_or_name={{ udoc['_id'] }}">{{ _('All Submissions') }}</a>
-                    </li>
-                  </ul>
                 </div>
+              {% endif %}
               </div>
             </li>
           </ul>
@@ -218,7 +210,11 @@
         <h1 class="section__title">{{ _('Bio') }}{% if is_self_profile %} <small><a href="{{ reverse_url('home_account') }}#setting_info">[{{ _('Edit') }}]</a></small>{% endif %}</h1>
       </div>
       <div class="section__body typo">
-        {{ udoc['bio']|default('')|markdown }}
+      {% if udoc['bio'] and udoc['bio']|length > 0 %}
+        {{ udoc['bio']|markdown }}
+      {% else %}
+        {{ _('The user is too lazy to leave something here...') }}
+      {% endif %}
       </div>
     </div>
   {% endif %}

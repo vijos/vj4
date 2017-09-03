@@ -42,6 +42,9 @@ export default class DOMAttachedObject {
     const newInstance = new Protoclass($singleObj, ...args);
     // $dom may be updated in constructor so that we use $dom instead
     // of $singleObj here.
+    if (!newInstance.$dom) {
+      return null;
+    }
     newInstance.$dom.data(key, newInstance);
     return newInstance;
   }

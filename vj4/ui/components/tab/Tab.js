@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
+const TAB_TRANSITION_DURATION = 300;
+
 export default class Tab extends DOMAttachedObject {
   static DOMAttachKey = 'vjTabInstance';
 
@@ -66,21 +68,21 @@ export default class Tab extends DOMAttachedObject {
       .transition({
         opacity: 0,
       }, {
-        duration: 500,
-        easing: 'easeOutCubic',
+        duration: TAB_TRANSITION_DURATION,
+        easing: 'linear',
       });
     $newTab
       .transition({
         opacity: 1,
       }, {
-        duration: 500,
-        easing: 'easeOutCubic',
+        duration: TAB_TRANSITION_DURATION,
+        easing: 'linear',
       });
     await this.$content
       .transition({
         x: animateParameter.to,
       }, {
-        duration: 500,
+        duration: TAB_TRANSITION_DURATION,
         easing: 'easeOutCubic',
       })
       .promise();
