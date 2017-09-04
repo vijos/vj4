@@ -210,6 +210,7 @@ Write Your Solution: 发表您的题解
 author: 作者
 content: 内容
 contest_create: 创建比赛
+contest_edit: 编辑比赛
 contest_main: 比赛
 contest_status: 比赛状态
 current domain: 当前域
@@ -668,3 +669,9 @@ Oh, the user doesn't have any contributions!: 啊哦，这个用户还没贡献�
 Recent Solutions: 最近编写的题解
 Most Upvoted Solutions: 最被赞同的题解
 The user is too lazy to leave something here...: 该用户太懒，这里啥也没写 (´・ω・｀)
+Edit any contests: 修改任意的比赛
+Edit own contests: 修改自己的比赛
+Export as CSV: 导出为 CSV
+Export as HTML: 导出为 HTML
+Export All Code: 导出所有代码
+Solved Problems: 解决题目

@@ -79,6 +79,20 @@ async def get(domain_id: str, tid: objectid.ObjectId):
   return tdoc
 
 
+async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
+  if 'title' in kwargs:
+      validator.check_title(kwargs['title'])
+  if 'content' in kwargs:
+      validator.check_content(kwargs['content'])
+  if 'rule' in kwargs:
+    if kwargs['rule'] not in RULES:
+      raise error.ValidationError('rule')
+  if 'begin_at' in kwargs and 'end_at' in kwargs:
+    if kwargs['begin_at'] >= kwargs['end_at']:
+      raise error.ValidationError('begin_at', 'end_at')
+  return await document.set(domain_id, document.TYPE_CONTEST, tid, **kwargs)
+
+
 def get_multi(domain_id: str, fields=None, **kwargs):
   # TODO(twd2): projection.
   return document.get_multi(domain_id=domain_id,

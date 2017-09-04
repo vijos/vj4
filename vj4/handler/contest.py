@@ -287,6 +287,84 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
                 udict=udict, pdict=pdict, path_components=path_components)
 
 
+@app.route('/contest/{tid}/status/download/{ext}', 'contest_status_download')
+class ContestStatusDownloadHandler(base.Handler, ContestStatusMixin):
+  def get_oi_status(self, tdoc, ranked_tsdocs, udict, pdict):
+    columns = [self.translate(column) for column in ['Rank', 'User', 'Score']]
+    for index, pid in enumerate(tdoc['pids']):
+      columns.append('#{0} {1}'.format(index + 1, pdict[pid]['title']))
+    rows = [columns]
+    for rank, tsdoc in ranked_tsdocs:
+      if 'detail' in tsdoc:
+        tsddict = {item['pid']: item for item in tsdoc['detail']}
+      else:
+        tsddict = {}
+      row = [rank, udict[tsdoc['uid']]['uname'], tsdoc.get('score', 0)]
+      for pid in tdoc['pids']:
+        row.append(tsddict.get(pid, {}).get('score', '-'))
+      rows.append(row)
+    return rows
+
+  def get_acm_status(self, tdoc, ranked_tsdocs, udict, pdict):
+    columns = [self.translate(column) for column in ['Rank', 'User', 'Solved Problems', 'Total Time']]
+    for index, pid in enumerate(tdoc['pids']):
+      columns.append('#{0} {1}'.format(index + 1, pdict[pid]['title']))
+      columns.append('#{0} {1}'.format(index + 1, self.translate('Time')))
+    rows = [columns]
+    for rank, tsdoc in ranked_tsdocs:
+      if 'detail' in tsdoc:
+        tsddict = {item['pid']: item for item in tsdoc['detail']}
+      else:
+        tsddict = {}
+      row = [rank, udict[tsdoc['uid']]['uname'], tsdoc.get('accept', 0), tsdoc.get('time', 0.0)]
+      for pid in tdoc['pids']:
+        if tsddict.get(pid, {}).get('accept', False):
+          row.append(self.translate('Accepted'))
+          row.append(tsddict[pid]['time'])
+        else:
+          row.append('-')
+          row.append('-')
+      rows.append(row)
+    return rows
+
+  def get_csv_content(self, rows):
+    csv_content = '\r\n'.join([','.join([str(c) for c in row]) for row in rows])  # \r\n for notepad compatibility
+    data = '\uFEFF' + csv_content
+    return data.encode()
+
+  def get_html_content(self, rows):
+    return self.render_html('contest_status_download_html.html', rows=rows).encode()
+
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
+  @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId, ext: str):
+    get_content = {
+      'csv': self.get_csv_content,
+      'html': self.get_html_content,
+    }
+    if ext not in get_content:
+      raise error.ValidationError('ext')
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
+        and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
+      raise error.ContestStatusHiddenError()
+    udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
+                                        problem.get_dict(self.domain_id, tdoc['pids']))
+    ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
+    get_status = {
+      constant.contest.RULE_ACM: self.get_acm_status,
+      constant.contest.RULE_OI: self.get_oi_status,
+    }
+    rows = get_status[tdoc['rule']](tdoc, ranked_tsdocs, udict, pdict)
+    data = get_content[ext](rows)
+    file_name = tdoc['title']
+    for char in '/<>:\"\'\\|?* ':
+      file_name = file_name.replace(char, '')
+    await self.binary(data, file_name='{0}.{1}'.format(file_name, ext))
+
+
 @app.route('/contest/create', 'contest_create')
 class ContestCreateHandler(base.Handler, ContestStatusMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -297,7 +375,7 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
     # find next quarter
     ts = ts - ts % (15 * 60) + 15 * 60
     dt = datetime.datetime.fromtimestamp(ts, self.timezone)
-    self.render('contest_create.html',
+    self.render('contest_edit.html',
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'))
 
@@ -337,3 +415,70 @@ class ContestCreateHandler(base.Handler, ContestStatusMixin):
     for pid in pids:
       await problem.set_hidden(self.domain_id, pid, True)
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
+
+
+@app.route('/contest/{tid}/edit', 'contest_edit')
+class ContestEditHandler(base.Handler, ContestStatusMixin):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc = await contest.get(self.domain_id, tid)
+    if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
+      self.check_perm(builtin.PERM_EDIT_CONTEST)
+    dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
+    self.render('contest_edit.html', tdoc=tdoc,
+                date_text=dt.strftime('%Y-%m-%d'),
+                time_text=dt.strftime('%H:%M'))
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, tid: objectid.ObjectId, title: str, content: str, rule: int,
+                 begin_at_date: str=None,
+                 begin_at_time: str=None,
+                 duration: float,
+                 pids: str):
+    tdoc = await contest.get(self.domain_id, tid)
+    if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
+      self.check_perm(builtin.PERM_EDIT_CONTEST)
+    if self.is_live(tdoc) or self.is_done(tdoc):
+      if begin_at_date:
+        raise error.ValidationError('begin_at_date')
+      if begin_at_time:
+        raise error.ValidationError('begin_at_time')
+      begin_at = tdoc['begin_at']
+    else:
+      try:
+        begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
+        begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
+      except ValueError as e:
+        raise error.ValidationError('begin_at_date', 'begin_at_time')
+    end_at = begin_at + datetime.timedelta(hours=duration)
+    if begin_at >= end_at:
+      raise error.ValidationError('duration')
+    # not allow removing existing problems
+    pid_set = set(map(document.convert_doc_id, pids.split(',')))
+    if self.is_live(tdoc) or self.is_done(tdoc):
+      old_set = set(tdoc['pids'])
+      if not old_set <= pid_set:
+        raise error.ValidationError('pids')
+    pids = list(pid_set)
+    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
+                                    fields={'doc_id': 1}) \
+                         .sort('doc_id', 1) \
+                         .to_list()
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
+    # TODO(twd2): further checks for editing?
+    await contest.edit(self.domain_id, tdoc['doc_id'], title=title, content=content,
+                       rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
+    for pid in pids:
+      await problem.set_hidden(self.domain_id, pid, True)
+    self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['doc_id']))
