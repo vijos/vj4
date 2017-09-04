@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import TimeAgo from 'timeago-react';
 import moment from 'moment';
 import _ from 'lodash';
-import { parse as parseMongoId } from 'vj/utils/mongoId';
 
+import substitute from 'vj/utils/substitute';
+import emulateAnchorClick from 'vj/utils/emulateAnchorClick';
+import { parse as parseMongoId } from 'vj/utils/mongoId';
 import i18n from 'vj/utils/i18n';
 import * as recordEnum from 'vj/constant/record';
 
@@ -52,11 +54,19 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 
 @connect(mapStateToProps, null, mergeProps)
 export default class ScratchpadRecordsRowContainer extends React.PureComponent {
+  handleRowClick(ev, id) {
+    const url = substitute(
+      decodeURIComponent(Context.getRecordDetailUrl),
+      { rid: id }
+    );
+    emulateAnchorClick(ev, url, true);
+  }
+
   render() {
     const { data } = this.props;
     const submitAt = parseMongoId(data._id).timestamp * 1000;
     return (
-      <tr>
+      <tr onClick={ev => this.handleRowClick(ev, data._id)}>
         <td className={`col--detail record-status--border ${recordEnum.STATUS_CODES[data.status]}`}>
           <span className={`icon record-status--icon ${recordEnum.STATUS_CODES[data.status]}`}></span>
           <span className="icol icol--pretest">

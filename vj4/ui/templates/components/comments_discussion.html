@@ -10,7 +10,7 @@
       <div class="clearfix">
         <div class="supplementary dczcomments__supplementary">
           {{ user.render_inline(udoc, dudict[udoc['_id']], avatar=false) }}
-          <span class="v-center">@ {{ datetime_span(rdoc['_id'].generation_time) }}</span>
+          @ {{ datetime_span(rdoc['_id'].generation_time) }}
         </div>
         {{ comment_base.reply_operations(doc, rdoc) }}
       </div>
@@ -37,7 +37,7 @@
       <div class="clearfix">
         <div class="supplementary dczcomments__supplementary">
           {{ user.render_inline(udoc, dudict[udoc['_id']], avatar=false) }}
-          <span class="v-center">@ {{ datetime_span(doc['_id'].generation_time) }}</span>
+          @ {{ datetime_span(doc['_id'].generation_time) }}
         </div>
         {{ comment_base.comment_operations(doc) }}
       </div>
