@@ -3,10 +3,10 @@
 <div class="row"><div class="medium-12 columns">
   <div class="section visible">
     <div class="section__header">
-      <a class="button" target="_blank" href="{{ reverse_url('contest_status_download', tid=tdoc['doc_id'], extension='html') }}">
+      <a class="button" target="_blank" href="{{ reverse_url('contest_status_download', tid=tdoc['doc_id'], ext='html') }}">
         <span class="icon icon-download"></span> {{ _('Export as HTML') }}
       </a>
-      <a class="button" href="{{ reverse_url('contest_status_download', tid=tdoc['doc_id'], extension='csv') }}">
+      <a class="button" href="{{ reverse_url('contest_status_download', tid=tdoc['doc_id'], ext='csv') }}">
         <span class="icon icon-download"></span> {{ _('Export as CSV') }}
       </a>
     </div>

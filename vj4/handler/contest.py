@@ -287,8 +287,8 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
                 udict=udict, pdict=pdict, path_components=path_components)
 
 
-@app.route('/contest/{tid}/status/download/{extension}', 'contest_status_download')
-class ContestStatusHandler(base.Handler, ContestStatusMixin):
+@app.route('/contest/{tid}/status/download/{ext}', 'contest_status_download')
+class ContestStatusDownloadHandler(base.Handler, ContestStatusMixin):
   def get_oi_status(self, tdoc, ranked_tsdocs, udict, pdict):
     columns = [self.translate(column) for column in ['Rank', 'User', 'Score']]
     for index, pid in enumerate(tdoc['pids']):
@@ -330,18 +330,22 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
   def get_csv_content(self, rows):
     csv_content = '\r\n'.join([','.join([str(c) for c in row]) for row in rows])  # \r\n for notepad compatibility
     data = '\uFEFF' + csv_content
-    return data.encode(), 'csv'
+    return data.encode()
 
   def get_html_content(self, rows):
-    return self.render_html('contest_status_download_html.html', rows=rows).encode(), 'html'
+    return self.render_html('contest_status_download_html.html', rows=rows).encode()
 
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
   @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId, extension: str):
-    if not extension in ['csv', 'html']:
-      raise error.ValidationError('extension')
+  async def get(self, *, tid: objectid.ObjectId, ext: str):
+    get_content = {
+      'csv': self.get_csv_content,
+      'html': self.get_html_content,
+    }
+    if ext not in get_content:
+      raise error.ValidationError('ext')
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
@@ -353,12 +357,8 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
       constant.contest.RULE_ACM: self.get_acm_status,
       constant.contest.RULE_OI: self.get_oi_status,
     }
-    get_content = {
-      'csv': self.get_csv_content,
-      'html': self.get_html_content,
-    }
     rows = get_status[tdoc['rule']](tdoc, ranked_tsdocs, udict, pdict)
-    data, ext = get_content[extension](rows)
+    data = get_content[ext](rows)
     file_name = tdoc['title']
     for char in '/<>:\"\'\\|?* ':
       file_name = file_name.replace(char, '')
