@@ -194,17 +194,20 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
     rdocs = await rdocs.limit(10).to_list()
     pdict = await problem.get_dict_multi_domain((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs)
 
-    # TODO(twd2): check status, eg. test, hidden problem, ...
-    pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid).sort([('_id', -1)])
+    # check hidden problem
+    if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
+      f = {'hidden': False}
+    else:
+      f = {}
+    pdocs = problem.get_multi(domain_id=self.domain_id, owner_uid=uid, **f).sort([('_id', -1)])
     pcount = await pdocs.count()
     pdocs = await pdocs.limit(10).to_list()
 
     psdocs = problem.get_multi_solution_by_uid(self.domain_id, uid)
-    psdocs_hot = problem.get_multi_solution_by_uid(self.domain_id, uid)\
-                        .sort([('vote', -1), ('doc_id', -1)])
+    psdocs_hot = problem.get_multi_solution_by_uid(self.domain_id, uid)
     pscount = await psdocs.count()
     psdocs = await psdocs.limit(10).to_list()
-    psdocs_hot = await psdocs_hot.limit(10).to_list()
+    psdocs_hot = await psdocs_hot.sort([('vote', -1), ('doc_id', -1)]).limit(10).to_list()
 
     if self.has_perm(builtin.PERM_VIEW_DISCUSSION):
       ddocs = discussion.get_multi(self.domain_id, owner_uid=uid)
