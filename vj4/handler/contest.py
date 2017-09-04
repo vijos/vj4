@@ -368,9 +368,9 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
     if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
     if self.is_live(tdoc) or self.is_done(tdoc):
-      if begin_at_date != None:
+      if begin_at_date:
         raise error.ValidationError('begin_at_date')
-      if begin_at_time != None:
+      if begin_at_time:
         raise error.ValidationError('begin_at_time')
       begin_at = tdoc['begin_at']
     else:
@@ -385,7 +385,8 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
     # not allow removing existing problems
     pid_set = set(map(document.convert_doc_id, pids.split(',')))
     if self.is_live(tdoc) or self.is_done(tdoc):
-      if len(pid_set & set(tdoc['pids'])) != len(tdoc['pids']):
+      old_set = set(tdoc['pids'])
+      if not old_set <= pid_set:
         raise error.ValidationError('pids')
     pids = list(pid_set)
     pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
