@@ -92,20 +92,14 @@
                   <a href="?rule={{ tdoc['rule'] }}" class="contest-type-tag"><span class="icon icon-award"></span>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</a>
                 </li>
                 <li>
-                  <span class="v-center">
-                    <span class="icon icon-schedule--fill text-blue"></span> {{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}
-                  </span>
+                  <span class="icon icon-schedule--fill text-blue"></span> {{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}
                 </li>
                 <li>
-                  <span class="v-center">
-                    <span class="icon icon-user--multiple"></span> {{ tdoc['attend']|default(0) }}
-                  </span>
+                  <span class="icon icon-user--multiple"></span> {{ tdoc['attend']|default(0) }}
                 </li>
               {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
                 <li class="contest__info-attended">
-                  <span class="v-center">
-                    <span class="icon icon-check"></span> {{ _('Attended') }}
-                  </span>
+                  <span class="icon icon-check"></span> {{ _('Attended') }}
                 </li>
               {% endif %}
               </ul>

@@ -3,8 +3,9 @@
   <colgroup>
     <col class="col--rank">
     <col class="col--user">
+    <col class="col--score">
   {% for pid in tdoc['pids'] %}
-    <col class="col--p{{ loop.index }}">
+    <col class="col--problem">
   {% endfor %}
   </colgroup>
   <thead>
@@ -13,7 +14,7 @@
       <th class="col--user">{{ _('User') }}</th>
       <th class="col--score">{{ _('Score') }}</th>
     {% for pid in tdoc['pids'] %}
-      <th class="col--p{{ loop.index }}"><a href="{{ reverse_url('contest_detail_problem', tid=tdoc['_id'], pid=pid) }}"  data-tooltip="{{ pdict[pid]['title'] }}">#{{ loop.index }}</a></th>
+      <th class="col--problem"><a href="{{ reverse_url('contest_detail_problem', tid=tdoc['_id'], pid=pid) }}"  data-tooltip="{{ pdict[pid]['title'] }}">#{{ loop.index }}</a></th>
     {% endfor %}
     </tr>
   </thead>
@@ -31,7 +32,7 @@
       </td>
     {% with tsddict = dict(tsdoc['detail']|groupby('pid')) %}
     {% for pid in tdoc['pids'] %}
-      <td class="col--p{{ loop.index }}">
+      <td class="col--problem">
       {% if tsddict[pid] %}
         <a href="{{ reverse_url('record_detail', rid=tsddict[pid][0]['rid']) }}">{{ tsddict[pid][0]['score']|default(0) }}</a>
       {% else %}

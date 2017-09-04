@@ -75,11 +75,11 @@
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_READ_RECORD_CODE) %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_code', tid=tdoc['doc_id']) }}">
-        <span class="icon icon-download"></span> {{ _('Code') }}
+        <span class="icon icon-download"></span> {{ _('Export All Code') }}
       </a></li>
     {% endif %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('record_main') }}?tid={{ tdoc['doc_id'] }}">
-        <span class="icon icon-filter"></span> {{ _('All Submissions') }}
+        <span class="icon icon-flag"></span> {{ _('All Submissions') }}
       </a></li>
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('wiki_help') }}#contest">
         <span class="icon icon-help"></span> {{ _('Help') }}

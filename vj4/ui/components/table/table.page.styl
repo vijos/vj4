@@ -16,6 +16,12 @@
       background: $table-alternate-bg-color
 
     &.highlight
+      background: lighten($highlight-color, 85%)
+
+  &.is--full-row tr
+    cursor: pointer
+
+    &:hover
       background: lighten($primary-color, 85%)
 
   thead > tr
