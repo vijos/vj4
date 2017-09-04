@@ -64,6 +64,8 @@ PERM_VIEW_CONTEST_STATUS = 1 << 42
 PERM_VIEW_CONTEST_HIDDEN_STATUS = 1 << 43
 PERM_CREATE_CONTEST = 1 << 44
 PERM_ATTEND_CONTEST = 1 << 45
+PERM_EDIT_CONTEST = 1 << 50
+PERM_EDIT_CONTEST_SELF = 1 << 51
 
 # Training.
 PERM_VIEW_TRAINING = 1 << 46
@@ -124,6 +126,8 @@ PERMS = [
     Permission('perm_contest', PERM_VIEW_CONTEST_HIDDEN_STATUS, 'View hidden contest status'),
     Permission('perm_contest', PERM_CREATE_CONTEST, 'Create contests'),
     Permission('perm_contest', PERM_ATTEND_CONTEST, 'Attend contests'),
+    Permission('perm_contest', PERM_EDIT_CONTEST, 'Edit any contests'),
+    Permission('perm_contest', PERM_EDIT_CONTEST_SELF, 'Edit own contests'),
     Permission('perm_training', PERM_VIEW_TRAINING, 'View training plans'),
     Permission('perm_training', PERM_CREATE_TRAINING, 'Create training plans'),
     Permission('perm_training', PERM_EDIT_TRAINING, 'Edit training plans'),
@@ -207,6 +211,7 @@ DEFAULT_PERMISSIONS = (
     PERM_VIEW_CONTEST |
     PERM_VIEW_CONTEST_STATUS |
     PERM_ATTEND_CONTEST |
+    PERM_EDIT_CONTEST_SELF |
     PERM_VIEW_TRAINING |
     PERM_CREATE_TRAINING |
     PERM_EDIT_TRAINING_SELF
