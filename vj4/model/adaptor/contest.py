@@ -42,15 +42,38 @@ def _acm_stat(tdoc, journal):
           'detail': detail}
 
 
+def _assignment_stat(tdoc, journal):
+  effective = {}
+  for j in journal:
+    if j['pid'] in tdoc['pids'] and not (j['pid'] in effective and effective[j['pid']]['accept']):
+      effective[j['pid']] = j
+
+  def time(jdoc):
+    real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
+    return real.total_seconds()
+
+  detail = [{**j, 'time': time(j)} for j in effective.values()]
+  return {'score': sum(int(d['score']) for d in detail),
+          'time': sum(d['time'] for d in detail if d['accept']),
+          'detail': detail}
+
+
 def _oi_equ_func(a, b):
   return a.get('score', 0) == b.get('score', 0)
 
 RULES = {
-  constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)],
+  constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'],
+                                 _oi_stat,
+                                 [('score', -1)],
                                  functools.partial(rank.ranked, equ_func=_oi_equ_func)),
-  constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'], _acm_stat,
-                                  [('accept', -1), ('time', 1)], functools.partial(enumerate,
-                                                                                   start=1)),
+  constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
+                                  _acm_stat,
+                                  [('accept', -1), ('time', 1)],
+                                  functools.partial(enumerate, start=1)),
+  constant.contest.RULE_ASSIGNMENT: Rule(lambda tdoc, now: True,
+                                         _assignment_stat,
+                                         [('score', -1), ('time', 1)],
+                                         functools.partial(enumerate, start=1)),
 }
 
 
@@ -58,7 +81,7 @@ RULES = {
 async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: int,
               begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
-              pids=[]):
+              pids=[], **kwargs):
   validator.check_title(title)
   validator.check_content(content)
   if rule not in RULES:
@@ -68,7 +91,8 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
   # TODO(twd2): should we check problem existance here?
   return await document.add(domain_id, content, owner_uid, document.TYPE_CONTEST,
                             title=title, rule=rule,
-                            begin_at=begin_at, end_at=end_at, pids=pids, attend=0)
+                            begin_at=begin_at, end_at=end_at, pids=pids, attend=0,
+                            **kwargs)
 
 
 @argmethod.wrap
