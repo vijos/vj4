@@ -54,9 +54,23 @@ def _assignment_stat(tdoc, journal):
     real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
     return real.total_seconds()
 
-  detail = [{**j, 'time': time(j)} for j in effective.values()]
-  return {'score': sum(int(d['score']) for d in detail),
-          'time': sum(d['time'] for d in detail if d['accept']),
+  def penalty_score(jdoc):
+    score = jdoc['score']
+    exceed_seconds = (jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['penalty_since']).total_seconds()
+    if exceed_seconds < 0:
+      return score
+    coefficient = 1
+    for p_time, p_coefficient in tdoc['penalty_rules'].items():
+      if int(p_time) <= exceed_seconds:
+        coefficient = p_coefficient
+      else:
+        break
+    return score * coefficient
+
+  detail = [{**j, 'penalty_score': penalty_score(j), 'time': time(j)} for j in effective.values()]
+  return {'score': sum(d['score'] for d in detail),
+          'penalty_score': sum(d['penalty_score'] for d in detail),
+          'time': sum(d['time'] for d in detail),
           'detail': detail}
 
 
@@ -72,9 +86,9 @@ RULES = {
                                   _acm_stat,
                                   [('accept', -1), ('time', 1)],
                                   functools.partial(enumerate, start=1)),
-  constant.contest.RULE_ASSIGNMENT: Rule(lambda tdoc, now: True,
+  constant.contest.RULE_ASSIGNMENT: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
                                          _assignment_stat,
-                                         [('score', -1), ('time', 1)],
+                                         [('penalty_score', -1), ('time', 1)],
                                          functools.partial(enumerate, start=1)),
 }
 

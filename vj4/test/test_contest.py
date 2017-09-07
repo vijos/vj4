@@ -22,13 +22,24 @@ def _rule_test_stat(tdoc, journal):
 
 
 NOW = datetime.datetime.utcnow().replace(microsecond=0)
-TDOC = {'pids': [777, 778, 779], 'begin_at': NOW}
+TDOC = {'pids': [777, 778, 779],
+        'begin_at': NOW}
+ASSDOC = {'pids': [777, 778, 779],
+          'begin_at': NOW,
+          'penalty_since': NOW + datetime.timedelta(seconds=5),
+          'penalty_rules': {'1': 0.9, '2': 0.8, '3': 0.6, '4': 0.2}}
 SUBMIT_777_AC = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=2)),
                  'pid': 777, 'accept': True, 'score': 22}
+SUBMIT_777_AC_LATE = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=7)),
+                      'pid': 777, 'accept': True, 'score': 17}
 SUBMIT_777_NAC = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=3)),
                   'pid': 777, 'accept': False, 'score': 44}
+SUBMIT_777_NAC_LATE = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=12)),
+                       'pid': 777, 'accept': False, 'score': 23}
 SUBMIT_778_AC = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=4)),
                  'pid': 778, 'accept': True, 'score': 33}
+SUBMIT_778_AC_LATE = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=8)),
+                      'pid': 778, 'accept': True, 'score': 37}
 SUBMIT_780_AC = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=5)),
                  'pid': 780, 'accept': True, 'score': 1000}
 
@@ -116,6 +127,105 @@ class AcmRuleTest(unittest.TestCase):
     self.assertEqual(stats['detail'], [])
 
 
+class AssignmentRuleTest(unittest.TestCase):
+  def test_zero(self):
+    stats = contest._assignment_stat(ASSDOC, [])
+    self.assertEqual(stats['score'], 0)
+    self.assertEqual(stats['penalty_score'], 0)
+    self.assertEqual(stats['time'], 0)
+    self.assertEqual(stats['detail'], [])
+
+  def test_one_ac(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_AC])
+    self.assertEqual(stats['score'], 22)
+    self.assertEqual(stats['penalty_score'], 22)
+    self.assertEqual(stats['time'], 2)
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC, 'penalty_score': 22, 'time': 2}])
+
+  def test_one_late_ac(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_AC_LATE])
+    self.assertEqual(stats['score'], 17)
+    self.assertEqual(stats['penalty_score'], 17*0.8)
+    self.assertEqual(stats['time'], 7)
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17*0.8, 'time': 7}])
+
+  def test_one_late_nac(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_NAC_LATE])
+    self.assertEqual(stats['score'], 23)
+    self.assertEqual(stats['penalty_score'], 23*0.2)
+    self.assertEqual(stats['time'], 12)
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_NAC_LATE, 'penalty_score': 23*0.2, 'time': 12}])
+
+  def test_one_nac_late_ac_late(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_NAC_LATE, SUBMIT_777_AC_LATE])
+    self.assertEqual(stats['score'], 17)
+    self.assertEqual(stats['penalty_score'], 17*0.8)
+    self.assertEqual(stats['time'], 7)
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17*0.8, 'time': 7}])
+
+  def test_one_ac_late_nac_late(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_AC_LATE, SUBMIT_777_NAC_LATE])
+    self.assertEqual(stats['score'], 17)
+    self.assertEqual(stats['penalty_score'], 17*0.8)
+    self.assertEqual(stats['time'], 7)
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17*0.8, 'time': 7}])
+
+  def test_one_ac_nac(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_AC, SUBMIT_777_NAC])
+    self.assertEqual(stats['score'], 22)
+    self.assertEqual(stats['penalty_score'], 22)
+    self.assertEqual(stats['time'], 2)
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC, 'penalty_score': 22, 'time': 2}])
+
+  def test_one_ac_nac_late(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_AC, SUBMIT_777_NAC_LATE])
+    self.assertEqual(stats['score'], 22)
+    self.assertEqual(stats['penalty_score'], 22)
+    self.assertEqual(stats['time'], 2)
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC, 'penalty_score': 22, 'time': 2}])
+
+  def test_one_nac_nac_late(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_NAC, SUBMIT_777_NAC_LATE])
+    self.assertEqual(stats['score'], 23)
+    self.assertEqual(stats['penalty_score'], 23*0.2)
+    self.assertEqual(stats['time'], 12)
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_NAC_LATE, 'penalty_score': 23*0.2, 'time': 12}])
+
+  def test_multiple_1(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_778_AC, SUBMIT_777_NAC])
+    self.assertEqual(stats['score'], 33+44)
+    self.assertEqual(stats['penalty_score'], 33+44)
+    self.assertEqual(stats['time'], 4+3)
+    self.assertCountEqual(stats['detail'],
+                          [{**SUBMIT_778_AC, 'penalty_score': 33, 'time': 4},
+                           {**SUBMIT_777_NAC, 'penalty_score': 44, 'time': 3}])
+
+  def test_multiple_2(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_778_AC, SUBMIT_777_NAC_LATE])
+    self.assertEqual(stats['score'], 33+23)
+    self.assertEqual(stats['penalty_score'], 33+23*0.2)
+    self.assertEqual(stats['time'], 4+12)
+    self.assertCountEqual(stats['detail'],
+                          [{**SUBMIT_778_AC, 'penalty_score': 33, 'time': 4},
+                           {**SUBMIT_777_NAC_LATE, 'penalty_score': 23*0.2, 'time': 12}])
+
+  def test_multiple_3(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_778_AC, SUBMIT_777_NAC, SUBMIT_778_AC_LATE, SUBMIT_777_AC_LATE])
+    self.assertEqual(stats['score'], 33+17)
+    self.assertEqual(stats['penalty_score'], 33+17*0.8)
+    self.assertEqual(stats['time'], 4+7)
+    self.assertCountEqual(stats['detail'],
+                          [{**SUBMIT_778_AC, 'penalty_score': 33, 'time': 4},
+                           {**SUBMIT_777_AC_LATE, 'penalty_score': 17*0.8, 'time': 7}])
+
+  def test_inject(self):
+    stats = contest._assignment_stat(ASSDOC, [SUBMIT_780_AC])
+    self.assertEqual(stats['score'], 0)
+    self.assertEqual(stats['penalty_score'], 0)
+    self.assertEqual(stats['time'], 0)
+    self.assertEqual(stats['detail'], [])
+
+
 class OuterTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_get(self):
@@ -186,22 +296,10 @@ class InnerTest(base.DatabaseTestCase):
     await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_778_AC)
     tsdoc = await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_780_AC)
     self.assertEqual(len(tsdoc['journal']), 4)
-    self.assertEqual(tsdoc['journal'][0]['rid'], SUBMIT_777_AC['rid'])
-    self.assertEqual(tsdoc['journal'][0]['pid'], SUBMIT_777_AC['pid'])
-    self.assertEqual(tsdoc['journal'][0]['accept'], SUBMIT_777_AC['accept'])
-    self.assertEqual(tsdoc['journal'][0]['score'], SUBMIT_777_AC['score'])
-    self.assertEqual(tsdoc['journal'][1]['rid'], SUBMIT_777_NAC['rid'])
-    self.assertEqual(tsdoc['journal'][1]['pid'], SUBMIT_777_NAC['pid'])
-    self.assertEqual(tsdoc['journal'][1]['accept'], SUBMIT_777_NAC['accept'])
-    self.assertEqual(tsdoc['journal'][1]['score'], SUBMIT_777_NAC['score'])
-    self.assertEqual(tsdoc['journal'][2]['rid'], SUBMIT_778_AC['rid'])
-    self.assertEqual(tsdoc['journal'][2]['pid'], SUBMIT_778_AC['pid'])
-    self.assertEqual(tsdoc['journal'][2]['accept'], SUBMIT_778_AC['accept'])
-    self.assertEqual(tsdoc['journal'][2]['score'], SUBMIT_778_AC['score'])
-    self.assertEqual(tsdoc['journal'][3]['rid'], SUBMIT_780_AC['rid'])
-    self.assertEqual(tsdoc['journal'][3]['pid'], SUBMIT_780_AC['pid'])
-    self.assertEqual(tsdoc['journal'][3]['accept'], SUBMIT_780_AC['accept'])
-    self.assertEqual(tsdoc['journal'][3]['score'], SUBMIT_780_AC['score'])
+    self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
+    self.assertEqual(tsdoc['journal'][1], SUBMIT_777_NAC)
+    self.assertEqual(tsdoc['journal'][2], SUBMIT_778_AC)
+    self.assertEqual(tsdoc['journal'][3], SUBMIT_780_AC)
     self.assertEqual(tsdoc['score'], 1099)
     self.assertEqual(tsdoc['time'], 14)
     self.assertEqual(len(tsdoc['detail']), 4)
@@ -217,6 +315,8 @@ class InnerTest(base.DatabaseTestCase):
     await contest.edit(DOMAIN_ID_DUMMY, self.tid, begin_at=NOW - datetime.timedelta(seconds=3))
     await contest.recalc_contest_status(DOMAIN_ID_DUMMY, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
+    self.assertEqual(len(tsdoc['journal']), 1)
+    self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
     self.assertEqual(tsdoc['score'], 22)
     self.assertEqual(tsdoc['time'], 5)
     self.assertEqual(len(tsdoc['detail']), 1)
@@ -225,6 +325,9 @@ class InnerTest(base.DatabaseTestCase):
     await contest.edit(DOMAIN_ID_DUMMY, self.tid, begin_at=NOW - datetime.timedelta(seconds=5))
     await contest.recalc_contest_status(DOMAIN_ID_DUMMY, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
+    self.assertEqual(len(tsdoc['journal']), 2)
+    self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
+    self.assertEqual(tsdoc['journal'][1], SUBMIT_777_NAC)
     self.assertEqual(tsdoc['score'], 66)
     self.assertEqual(tsdoc['time'], 15)
     self.assertEqual(len(tsdoc['detail']), 2)
@@ -234,6 +337,10 @@ class InnerTest(base.DatabaseTestCase):
     await contest.edit(DOMAIN_ID_DUMMY, self.tid, begin_at=NOW - datetime.timedelta(seconds=3))
     await contest.recalc_contest_status(DOMAIN_ID_DUMMY, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
+    self.assertEqual(len(tsdoc['journal']), 3)
+    self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
+    self.assertEqual(tsdoc['journal'][1], SUBMIT_777_NAC)
+    self.assertEqual(tsdoc['journal'][2], SUBMIT_778_AC)
     self.assertEqual(tsdoc['score'], 99)
     self.assertEqual(tsdoc['time'], 18)
     self.assertEqual(len(tsdoc['detail']), 3)
