@@ -198,7 +198,7 @@ class ProblemDetailHandler(base.Handler):
     udoc = await user.get_by_uid(pdoc['owner_uid'])
     tdocs = await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list() \
             if self.has_perm(builtin.PERM_VIEW_TRAINING) else None
-    ctdocs = await contest.get_multi(self.domain_id, pids=pid).to_list() \
+    ctdocs = await contest.get_multi(self.domain_id, rule={'$in': constant.contest.CONTEST_RULES}, pids=pid).to_list() \
              if self.has_perm(builtin.PERM_VIEW_CONTEST) else None
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
@@ -307,9 +307,15 @@ class ProblemPretestConnection(base.Connection):
     if rdoc['tid']:
       now = datetime.datetime.utcnow()
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
-          and (self.domain_id != tdoc['domain_id']
-               or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+      if tdoc['rule'] in constant.contest.CONTEST_RULES:
+        if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+            and (self.domain_id != tdoc['domain_id']
+                or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+          return
+      elif tdoc['rule'] in constant.contest.HOMEWORK_RULES:
+        if not contest.RULES[tdoc['rule']].show_func(tdoc, now):
+          return
+      else:
         return
     self.send(rdoc=rdoc)
 

@@ -66,9 +66,11 @@ class ContestMainHandler(base.Handler, ContestStatusMixin):
   @base.sanitize
   async def get(self, *, rule: int=0, page: int=1):
     if not rule:
-      tdocs = contest.get_multi(self.domain_id)
+      tdocs = contest.get_multi(self.domain_id, rule={'$in': constant.contest.CONTEST_RULES})
       qs = ''
     else:
+      if not rule in constant.contest.CONTEST_RULES:
+        raise error.ValidationError('rule')
       tdocs = contest.get_multi(self.domain_id, rule=rule)
       qs = 'rule={0}'.format(rule)
     tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
@@ -88,7 +90,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, page: int=1):
     # contest
-    tdoc = await contest.get(self.domain_id, tid)
+    tdoc = await contest.get_contest(self.domain_id, tid)
     tsdoc, pdict = await asyncio.gather(
         contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
         problem.get_dict(self.domain_id, tdoc['pids']))
@@ -129,7 +131,7 @@ class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
   @base.require_csrf_token
   @base.sanitize
   async def post_attend(self, *, tid: objectid.ObjectId):
-    tdoc = await contest.get(self.domain_id, tid)
+    tdoc = await contest.get_contest(self.domain_id, tid)
     if self.is_done(tdoc):
       raise error.ContestNotLiveError(tdoc['doc_id'])
     await contest.attend(self.domain_id, tdoc['doc_id'], self.user['_id'])
@@ -170,7 +172,7 @@ class ContestDetailProblemHandler(base.Handler, ContestStatusMixin):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
-    tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
+    tdoc, pdoc = await asyncio.gather(contest.get_contest(self.domain_id, tid),
                                       problem.get(self.domain_id, pid, uid))
     if not self.is_done(tdoc):
       tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])
@@ -201,7 +203,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
-    tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
+    tdoc, pdoc = await asyncio.gather(contest.get_contest(self.domain_id, tid),
                                       problem.get(self.domain_id, pid, uid))
     tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])
     if not tsdoc or tsdoc.get('attend') != 1:
@@ -245,7 +247,7 @@ class ContestDetailProblemSubmitHandler(base.Handler, ContestStatusMixin):
   async def post(self, *,
                  tid: objectid.ObjectId, pid: document.convert_doc_id, lang: str, code: str):
     await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
-    tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
+    tdoc, pdoc = await asyncio.gather(contest.get_contest(self.domain_id, tid),
                                       problem.get(self.domain_id, pid))
     tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])
     if not tsdoc or tsdoc.get('attend') != 1:
@@ -423,7 +425,7 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
-    tdoc = await contest.get(self.domain_id, tid)
+    tdoc = await contest.get_contest(self.domain_id, tid)
     if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
     dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
@@ -442,7 +444,7 @@ class ContestEditHandler(base.Handler, ContestStatusMixin):
                  begin_at_time: str=None,
                  duration: float,
                  pids: str):
-    tdoc = await contest.get(self.domain_id, tid)
+    tdoc = await contest.get_contest(self.domain_id, tid)
     if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
     if self.is_live(tdoc) or self.is_done(tdoc):

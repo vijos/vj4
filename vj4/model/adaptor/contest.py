@@ -112,11 +112,29 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
 
 
 @argmethod.wrap
-async def get(domain_id: str, tid: objectid.ObjectId):
+async def get(domain_id: str, contest_type: str, tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
   if not tdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_CONTEST, tid)
+  if contest_type == 'contest':
+    if not tdoc['rule'] in constant.contest.CONTEST_RULES:
+      raise error.DocumentNotFoundError(domain_id, contest_type, tid)
+  elif contest_type == 'homework':
+    if not tdoc['rule'] in constant.contest.HOMEWORK_RULES:
+      raise error.DocumentNotFoundError(domain_id, contest_type, tid)
+  elif contest_type != None:  # use None to skip contest_type checking
+    assert False
   return tdoc
+
+
+@argmethod.wrap
+async def get_contest(domain_id: str, tid: objectid.ObjectId):
+  return await get(domain_id, 'contest', tid)
+
+
+@argmethod.wrap
+async def get_homework(domain_id: str, tid: objectid.ObjectId):
+  return await get(domain_id, 'homework', tid)
 
 
 async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
@@ -174,9 +192,9 @@ async def get_dict_status(domain_id, uid, tids, *, fields=None):
 
 
 @argmethod.wrap
-async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=None):
+async def get_and_list_status(domain_id: str, contest_type: str, tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.
-  tdoc = await get(domain_id, tid)
+  tdoc = await get(domain_id, contest_type, tid)
   tsdocs = await document.get_multi_status(domain_id=domain_id,
                                            doc_type=document.TYPE_CONTEST,
                                            doc_id=tdoc['doc_id'],

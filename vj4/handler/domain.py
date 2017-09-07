@@ -3,6 +3,7 @@ import collections
 
 from vj4 import app
 from vj4 import error
+from vj4 import constant
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import user
@@ -20,7 +21,7 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
 
   async def prepare_contest(self):
     if self.has_perm(builtin.PERM_VIEW_CONTEST):
-      tdocs = await contest.get_multi(self.domain_id) \
+      tdocs = await contest.get_multi(self.domain_id, rule={'$in': constant.contest.CONTEST_RULES}) \
                            .limit(self.CONTESTS_ON_MAIN) \
                            .to_list()
       tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],

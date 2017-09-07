@@ -1,0 +1,66 @@
+{% extends "layout/basic.html" %}
+{% block content %}
+<div class="row">
+  <div class="medium-8 columns">
+    <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('All Homeworks') }}</h1>
+        {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_HOMEWORK) %}
+          <div class="section__tools">
+            <a class="primary rounded button">{{ _('Create Homework') }}</a>
+          </div>
+        {% endif %}
+      </div>
+    {% if not tdocs %}
+      {{ nothing.render('There is no homework so far ╰(*°▽°*)╯') }}
+    {% else %}
+      <ol class="section__list homework__list">
+      {% for tdoc in tdocs %}
+        <li class="section__list__item homework__item">
+          <div class="media">
+            <div class="media__left medium">
+              <div class="homework__date numbox">
+                <div class="numbox__num large">{{ datetime_span(tdoc['penalty_since'], false, '%d') }}</div>
+                <div class="numbox__text">{{ datetime_span(tdoc['penalty_since'], false, '%Y-%m') }}</div>
+              </div>
+            </div>
+            <div class="media__body medium">
+              <h1 class="homework__title"><a href="{{ reverse_url('homework_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+              <ul class="supplementary list">
+                <li>
+                  {{ _('Status') }}: {{ _(handler.status_text(tdoc)) }}
+                </li>
+                <li>
+                  {{ _('Begin at') }} {{ datetime_span(tdoc['begin_at']) }}
+                </li>
+                <li>
+                {% if handler.is_extend(tdoc) or handler.is_done(tdoc) %}
+                  {{ _('End at') }} {{ datetime_span(tdoc['end_at']) }}
+                {% else %}
+                  {{ _('End at') }} {{ datetime_span(tdoc['penalty_since']) }}
+                {% endif %}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+      </ol>
+      {{ paginator.render(page, tpcount) }}
+    {% endif %}
+    </div>
+  </div>
+  <div class="medium-4 columns">
+    <div class="section side">
+      <div class="section__header">
+        <h1 class="section__title">
+          {{ _('Calendar') }}
+        </h1>
+      </div>
+      <div class="section__body">
+        TODO
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -58,6 +58,7 @@ class Application(web.Application):
     from vj4.handler import domain
     from vj4.handler import fs
     from vj4.handler import home
+    from vj4.handler import homework
     from vj4.handler import judge
     from vj4.handler import misc
     from vj4.handler import problem

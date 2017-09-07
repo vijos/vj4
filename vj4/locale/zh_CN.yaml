@@ -287,6 +287,7 @@ Comment: 评论
 Share: 分享
 Delete: 删除
 Highlight: 高亮讨论
+Begin at: 开始于
 End at: 结束于
 Action: 动作
 Rejudge: 重测
@@ -667,3 +668,6 @@ Export as CSV: 导出为 CSV
 Export as HTML: 导出为 HTML
 Export All Code: 导出所有代码
 Solved Problems: 解决题目
+homework_main: 作业
+All Homeworks: 所有作业
+Calendar: 日历

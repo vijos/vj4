@@ -22,11 +22,17 @@ from vj4.util import options
 
 
 class RecordMixin:
-  def tdoc_visible(self, tdoc):
+  def rdoc_visible(self, tdoc):
     now = datetime.datetime.utcnow()
-    if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
-        and (self.domain_id != tdoc['domain_id']
-             or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+    if tdoc['rule'] in constant.contest.CONTEST_RULES:
+      if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
+          and (self.domain_id != tdoc['domain_id']
+              or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+        return False
+    elif tdoc['rule'] in constant.contest.HOMEWORK_RULES:
+      if not contest.RULES[tdoc['rule']].show_func(tdoc, now):
+        return False
+    else:
       return False
     return True
 
@@ -109,7 +115,7 @@ class RecordMainConnection(base.Connection, RecordMixin):
         return
     if rdoc['tid']:
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if not self.tdoc_visible(tdoc):
+      if not self.rdoc_visible(tdoc):
         return
     # TODO(iceboy): projection.
     udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
@@ -139,7 +145,7 @@ class RecordDetailHandler(base.Handler, RecordMixin):
     show_status = True
     if rdoc['tid']:
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      show_status = self.tdoc_visible(tdoc)
+      show_status = self.rdoc_visible(tdoc)
     else:
       tdoc = None
     # TODO(twd2): futher check permission for visibility.
@@ -177,7 +183,7 @@ class RecordDetailConnection(base.Connection, RecordMixin):
     rdoc = await record.get(self.rid, record.PROJECTION_PUBLIC)
     if rdoc['tid']:
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if not self.tdoc_visible(tdoc):
+      if not self.rdoc_visible(tdoc):
         self.close()
         return
     bus.subscribe(self.on_record_change, ['record_change'])

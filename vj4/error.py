@@ -254,6 +254,12 @@ class ContestNotLiveError(ForbiddenError):
     return 'This contest is not live.'
 
 
+class HomeworkNotLiveError(ForbiddenError):
+  @property
+  def message(self):
+    return 'This homework is not open.'
+
+
 class ProblemNotFoundError(DocumentNotFoundError):
   @property
   def message(self):

@@ -392,14 +392,12 @@ async def ensure_indexes():
   # for contest
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
-                           ('pids', 1)], sparse=True)
-  await coll.create_index([('domain_id', 1),
-                           ('doc_type', 1),
                            ('rule', 1),
                            ('doc_id', -1)], sparse=True)
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
-                           ('pids', 1)], sparse=True)
+                           ('rule', 1),
+                           ('pids', 1)], sparse=True)  # TODO: Drop original index.
   # for training
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
