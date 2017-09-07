@@ -14,6 +14,8 @@ from vj4.util import validator
 from vj4.util import rank
 
 
+journal_key_func = lambda j: j['rid']
+
 Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort', 'rank_func'])
 
 
@@ -170,6 +172,12 @@ async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=Non
   return tdoc, tsdocs
 
 
+def _get_status_journal(tsdoc):
+  # Sort and uniquify journal of the contest status document, by rid.
+  return [list(g)[-1]
+             for _, g in itertools.groupby(sorted(tsdoc['journal'], key=journal_key_func), key=journal_key_func)]
+
+
 @argmethod.wrap
 async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
                         pid: document.convert_doc_id, accept: bool, score: int):
@@ -184,14 +192,26 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
   if 'attend' not in tsdoc or not tsdoc['attend']:
     raise error.ContestNotAttendedError(domain_id, tid, uid)
 
-  # Sort and uniquify journal of the contest status document, by rid.
-  key_func = lambda j: j['rid']
-  journal = [list(g)[-1]
-             for _, g in itertools.groupby(sorted(tsdoc['journal'], key=key_func), key=key_func)]
+  journal = _get_status_journal(tsdoc)
   stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
   tsdoc = await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, uid, tsdoc['rev'],
                                         journal=journal, **stats)
   return tsdoc
+
+
+@argmethod.wrap
+async def recalc_contest_status(domain_id: str, tid: objectid.ObjectId):
+  tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
+  async with document.get_multi_status(domain_id=domain_id,
+                                       doc_type=document.TYPE_CONTEST,
+                                       doc_id=tdoc['doc_id']) as cursor:
+    async for tsdoc in cursor:
+      if 'attend' not in tsdoc or not tsdoc['attend']:
+        continue
+      journal = _get_status_journal(tsdoc)
+      stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
+      tsdoc = await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, tsdoc['uid'], tsdoc['rev'],
+                                            journal=journal, **stats)
 
 
 if __name__ == '__main__':
