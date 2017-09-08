@@ -233,7 +233,7 @@ class OuterTest(base.DatabaseTestCase):
     end_at = begin_at + datetime.timedelta(seconds=22)
     tid = await contest.add(DOMAIN_ID_DUMMY, TITLE, CONTENT, OWNER_UID,
                             constant.contest.RULE_ACM, begin_at, end_at)
-    tdoc = await contest.get(DOMAIN_ID_DUMMY, tid)
+    tdoc = await contest.get(DOMAIN_ID_DUMMY, 'contest', tid)
     self.assertEqual(tdoc['doc_id'], tid)
     self.assertEqual(tdoc['domain_id'], DOMAIN_ID_DUMMY)
     self.assertEqual(tdoc['owner_uid'], OWNER_UID)
@@ -250,23 +250,25 @@ class InnerTest(base.DatabaseTestCase):
     super(InnerTest, self).setUp()
     begin_at = NOW
     end_at = NOW + datetime.timedelta(seconds=22)
+    constant.contest.CONTEST_RULES.append(RULE_TEST_ID)
     contest.RULES[RULE_TEST_ID] = RULE_TEST
     self.tid = base.wait(contest.add(DOMAIN_ID_DUMMY, TITLE, CONTENT, OWNER_UID,
                                      RULE_TEST_ID, begin_at, end_at, [777, 778, 780]))
 
   def tearDown(self):
     super(InnerTest, self).tearDown()
+    constant.contest.CONTEST_RULES.remove(RULE_TEST_ID)
     del contest.RULES[RULE_TEST_ID]
 
   @base.wrap_coro
   async def test_attend(self):
-    tdoc = await contest.get(DOMAIN_ID_DUMMY, self.tid)
+    tdoc = await contest.get(DOMAIN_ID_DUMMY, 'contest', self.tid)
     self.assertEqual(tdoc['attend'], 0)
-    _, tsdocs = await contest.get_and_list_status(DOMAIN_ID_DUMMY, self.tid)
+    _, tsdocs = await contest.get_and_list_status(DOMAIN_ID_DUMMY, 'contest', self.tid)
     self.assertEqual(len(tsdocs), 0)
     tdoc = await contest.attend(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
     self.assertEqual(tdoc['attend'], 1)
-    _, tsdocs = await contest.get_and_list_status(DOMAIN_ID_DUMMY, self.tid)
+    _, tsdocs = await contest.get_and_list_status(DOMAIN_ID_DUMMY, 'contest', self.tid)
     self.assertEqual(len(tsdocs), 1)
     self.assertEqual(tsdocs[0]['uid'], ATTEND_UID)
 

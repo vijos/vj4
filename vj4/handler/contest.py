@@ -146,7 +146,7 @@ class ContestCodeHandler(base.OperationHandler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
-    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, 'contest', tid)
     rnames = {}
     for tsdoc in tsdocs:
       for pdetail in tsdoc.get('detail', []):
@@ -274,7 +274,7 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
-    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, 'contest', tid)
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
@@ -348,7 +348,7 @@ class ContestStatusDownloadHandler(base.Handler, ContestStatusMixin):
     }
     if ext not in get_content:
       raise error.ValidationError('ext')
-    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, 'contest', tid)
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
       raise error.ContestStatusHiddenError()
