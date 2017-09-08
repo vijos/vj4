@@ -186,8 +186,8 @@ async def recalc_contest_status(domain_id: str, tid: objectid.ObjectId):
         continue
       journal = _get_status_journal(tsdoc)
       stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
-      tsdoc = await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, tsdoc['uid'], tsdoc['rev'],
-                                            journal=journal, **stats)
+      await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, tsdoc['uid'], tsdoc['rev'],
+                                    return_doc=False, journal=journal, **stats)
 
 
 if __name__ == '__main__':
