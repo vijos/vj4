@@ -13,6 +13,7 @@
   transition: background-color .2s, box-shadow .5s
   transition-timing-function: ease-out-sine
   cursor: pointer
+  user-select: none
 
   &, &:visited, &:hover
     &, .typo &
@@ -56,6 +57,12 @@
   &.disabled
     cursor: default
     opacity: 0.5
+
+  &.compact
+    margin-bottom: 0
+    height: rem($compact-control-height)
+    line-height: rem($compact-control-height - 2)
+    padding: rem(0 15px)
 
 .button.inverse
   line-height: rem($form-control-height - 4)

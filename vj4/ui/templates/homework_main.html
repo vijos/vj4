@@ -1,15 +1,22 @@
 {% extends "layout/basic.html" %}
 {% block content %}
 <div class="row">
-  <div class="medium-8 columns">
+  <div class="medium-12 columns">
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('All Homeworks') }}</h1>
+        <div class="section__tools">
+          <span class="nojs-hide">
+            {{ _('View') }}:
+            <select class="inline compact select" name="rule">
+              <option value="calendar">{{ _('Calendar View') }}</option>
+              <option value="list">{{ _('List View') }}</option>
+            </select>
+          </span>
         {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_HOMEWORK) %}
-          <div class="section__tools">
-            <a class="primary rounded button">{{ _('Create Homework') }}</a>
-          </div>
+          <a class="compact button">{{ _('Create Homework') }}</a>
         {% endif %}
+        </div>
       </div>
     {% if not tdocs %}
       {{ nothing.render('There is no homework so far ╰(*°▽°*)╯') }}
@@ -48,18 +55,6 @@
       </ol>
       {{ paginator.render(page, tpcount) }}
     {% endif %}
-    </div>
-  </div>
-  <div class="medium-4 columns">
-    <div class="section side">
-      <div class="section__header">
-        <h1 class="section__title">
-          {{ _('Calendar') }}
-        </h1>
-      </div>
-      <div class="section__body">
-        TODO
-      </div>
     </div>
   </div>
 </div>
