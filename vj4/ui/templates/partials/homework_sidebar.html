@@ -66,9 +66,11 @@
       </a></li>
     {% endif %}
     -->
-      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('record_main') }}?tid={{ tdoc['doc_id'] }}">
-        <span class="icon icon-flag"></span> {{ _('All Submissions') }}
+    {% if attended %}
+      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('record_main') }}?uid_or_name={{ handler.user['_id'] }}&tid={{ tdoc['doc_id'] }}">
+        <span class="icon icon-flag"></span> {{ _('My Recent Submissions') }}
       </a></li>
+    {% endif %}
       <li class="menu__seperator"></li>
     </ol>
   </div>
