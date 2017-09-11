@@ -24,46 +24,94 @@ export default class Calendar {
             </tr></thead>
           </table>
         </div>
-        <div class="calendar__body"></div>
+        <div class="calendar__body-container"></div>
       </div>
     `);
     this.events = events.map(ev => ({
       ...ev,
       beginAt: moment(ev.beginAt),
       endAt: moment(ev.endAt),
+      maskFrom: ev.maskFrom ? moment(ev.maskFrom) : null,
     }));
     this.$dom.find('[name="prev"]').click(() => this.navToPrev());
     this.$dom.find('[name="next"]').click(() => this.navToNext());
+    this.$lastBody = null;
     this.navToToday();
   }
 
+  getDom() {
+    return this.$dom;
+  }
+
   navToToday() {
+    if (this.animating) {
+      return;
+    }
     this.current = moment().date(1);
     this.update();
   }
 
   navToNext() {
+    if (this.animating) {
+      return;
+    }
     this.current.add('months', 1);
-    this.update();
+    this.update(1);
   }
 
   navToPrev() {
+    if (this.animating) {
+      return;
+    }
     this.current.subtract('months', 1);
-    this.update();
+    this.update(-1);
   }
 
-  update() {
+  update(direction = 0) {
     this.updateHeader();
-    this.updateBody();
+    this.updateBody(direction);
   }
 
   updateHeader() {
     this.$dom.find('.calendar__header__title').text(this.current.format('MMMM YYYY'));
   }
 
-  updateBody() {
+  async updateBody(direction) {
+    this.animating = true;
+    const $newBody = this.buildBody();
+    $newBody.appendTo(this.$dom.find('.calendar__body-container'));
+    if (this.$lastBody !== null) {
+      this.$lastBody
+        .addClass('exit')
+        .transition({
+          y: direction * 100,
+          opacity: 0,
+        }, {
+          duration: 500,
+          easing: 'easeOutCubic',
+        });
+      await $newBody
+        .css({
+          y: -direction * 100,
+          opacity: 0,
+        })
+        .transition({
+          y: 0,
+          opacity: 1,
+        }, {
+          duration: 500,
+          easing: 'easeOutCubic',
+        })
+        .promise();
+      this.$lastBody.remove();
+    }
+    this.$lastBody = $newBody;
+    this.animating = false;
+  }
+
+  buildBody() {
     const data = this.buildBodyData();
-    const $body = this.$dom.find('.calendar__body').empty();
+    const $body = $('<div class="calendar__body"></div>');
     data.forEach((week) => {
       const $row = $(tpl`<div class="calendar__row">
         <div class="calendar__row__bg"><table><tbody><tr></tr></tbody></table></div>
@@ -81,23 +129,30 @@ export default class Calendar {
       });
       week.banners.forEach((banners) => {
         const $tr = $('<tr/>');
-        banners.forEach((banner) => {
-          if (banner === undefined) {
-            $tr.append('<td></td>');
+        banners.forEach((bannerSpan) => {
+          if (!bannerSpan.banner) {
+            $tr.append(tpl`<td colspan="${bannerSpan.span}"></td>`);
             return;
           }
-          const $cell = $(tpl`<td colspan="${banner.span}"></td>`);
+          const $cell = $(tpl`<td colspan="${bannerSpan.span}"></td>`);
           const $banner = $(tpl`
             <a
-              href="${banner.banner.event.link}"
-              class="calendar__banner color-${banner.banner.event.colorIndex}"
-            >${banner.banner.event.title}</a>
+              href="${bannerSpan.banner.event.link}"
+              class="calendar__banner color-${bannerSpan.banner.event.colorIndex}"
+            >${bannerSpan.banner.mask ? bannerSpan.banner.event.maskTitle : bannerSpan.banner.event.title}</a>
           `);
-          if (banner.banner.beginTrunc) {
-            $banner.addClass('is-trunc-begin');
+          if (bannerSpan.banner.mask) {
+            $banner.addClass('is-masked');
           }
-          if (banner.banner.endTrunc) {
+          if (bannerSpan.banner.beginTrunc) {
+            $banner.addClass('is-trunc-begin');
+          } else if (bannerSpan.banner.beginSnap) {
+            $banner.addClass('is-snap-begin');
+          }
+          if (bannerSpan.banner.endTrunc) {
             $banner.addClass('is-trunc-end');
+          } else if (bannerSpan.banner.endSnap) {
+            $banner.addClass('is-snap-end');
           }
           $cell.append($banner);
           $tr.append($cell);
@@ -106,6 +161,7 @@ export default class Calendar {
       });
       $body.append($row);
     });
+    return $body;
   }
 
   buildBodyData() {
@@ -153,6 +209,8 @@ export default class Calendar {
     days.forEach((day) => {
       day.current = day.date.isSame(now, 'day'); // eslint-disable-line no-param-reassign
     });
+
+    const daysByWeek = _.chunk(days, 7);
 
     const numberOfWeeks = days.length / 7;
     const bannersByWeek = _.fill(new Array(numberOfWeeks), 1).map(() => []);
@@ -217,7 +275,7 @@ export default class Calendar {
           for (; vIndex < vIndexMax; ++vIndex) {
             if (_.every(_
               .range(beginDay, endDay + 1)
-              .map(day => dayBitmap[day][vIndex] === undefined) // eslint-disable-line no-loop-func
+              .map(day => !dayBitmap[day][vIndex]) // eslint-disable-line no-loop-func
             )) {
               break;
             }
@@ -227,30 +285,76 @@ export default class Calendar {
             dayBitmap[i][vIndex] = banner;
           }
         });
-        // merge adjacent cells and arrange banners by vertical index. only banner cells are merged.
+        // merge adjacent cells and arrange banners by vertical index
         const vMaxLength = _.max(_.range(0, 7).map(day => dayBitmap[day].length));
         const weekBanners = _
           .fill(new Array(vMaxLength), 1)
           .map(() => []);
         for (let vIndex = 0; vIndex < vMaxLength; ++vIndex) {
-          for (let day = 0; day < 7; ++day) {
+          let last = { span: 1, banner: dayBitmap[0][vIndex] };
+          weekBanners[vIndex].push(last);
+          for (let day = 1; day < 7; ++day) {
             const banner = dayBitmap[day][vIndex];
-            if (banner === undefined) {
-              weekBanners[vIndex].push(undefined);
+            if (banner !== last.banner) {
+              last = { span: 1, banner };
+              weekBanners[vIndex].push(last);
             } else {
-              const last = _.last(weekBanners[vIndex]);
-              if (day === 0 || last === undefined || banner !== last.banner) {
-                weekBanners[vIndex].push({ span: 1, banner });
-              } else {
-                _.last(weekBanners[vIndex]).span++;
-              }
+              last.span++;
             }
           }
         }
+        // cut banners by masked areas, scanning from left to right
+        weekBanners.forEach((bannerSpans) => {
+          for (let i = 0; i < bannerSpans.length; ++i) {
+            const banner = bannerSpans[i].banner;
+            if (!banner) {
+              continue;
+            }
+            if (banner.mask) {
+              continue;
+            }
+            if (!banner.event.maskFrom) {
+              continue;
+            }
+            if (banner.event.maskFrom.isSame(banner.event.endAt)) {
+              // do not show masks if maskFrom === endAt
+              continue;
+            }
+            if (banner.event.endAt.isSame(banner.event.beginAt, 'day')) {
+              // do not show masks if endAt - beginAt <= 1 day
+              continue;
+            }
+            if (banner.event.maskFrom.isAfter(banner.endAt, 'day')) {
+              // we are not in the time region for masking
+              continue;
+            }
+            if (banner.event.maskFrom.isSameOrBefore(banner.beginAt, 'day')) {
+              // mask begins before this banner: replace current banner with masked banner
+              banner.mask = true;
+            } else {
+              // mask begins during this banner: cut current banner into two pieces
+              const newBanner = {
+                ...banner,
+                beginAt: banner.event.maskFrom.clone(),
+                beginSnap: true,
+                beginTrunc: false,
+                mask: true,
+              };
+              const newBannerSpan = {
+                span: newBanner.endAt.day() - newBanner.beginAt.day() + 1,
+                banner: newBanner,
+              };
+              banner.endAt = banner.event.maskFrom.clone().subtract(1, 'day');
+              banner.endSnap = true;
+              bannerSpans[i].span -= newBannerSpan.span; // eslint-disable-line no-param-reassign
+              bannerSpans.splice(i + 1, 0, newBannerSpan);
+              i++;
+            }
+          }
+        });
         return weekBanners;
       });
-    return _
-      .chunk(days, 7)
+    return daysByWeek
       .map((daysInWeek, weekIndex) => ({
         days: daysInWeek,
         banners: layout[weekIndex],

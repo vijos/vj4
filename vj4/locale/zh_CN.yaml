@@ -671,3 +671,8 @@ Solved Problems: 解决题目
 homework_main: 作业
 All Homeworks: 所有作业
 Calendar: 日历
+homework.status.ready: 即将开放
+homework.status.live: 开放递交
+homework.status.extend: 开放递交(延期)
+homework.status.done: 已结束
+homework.ui.banner.text.delayed: 延期

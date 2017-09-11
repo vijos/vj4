@@ -5,6 +5,7 @@
   h1
     display: inline-block
     line-height: inherit
+    width: rem(280px)
 
   button
     font-size: rem($font-size-title)
@@ -88,14 +89,41 @@
     color: #FFF
     text-decoration: none
 
-  &.is-trunc-begin
+  &.is-trunc-begin, &.is-snap-begin
     border-top-left-radius: 0
     border-bottom-left-radius: 0
 
-  &.is-trunc-end
+  &.is-trunc-end, &.is-snap-end
     border-top-right-radius: 0
     border-bottom-right-radius: 0
+
+  &.is-snap-begin
+    left: 0
+    padding-left: rem(10px)
+
+  &.is-snap-end
+    right: 0
+    padding-right: rem(10px)
+
+  &.is-masked
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(#000, 0.1),
+      rgba(#000, 0.1) 10px,
+      rgba(#000, 0) 10px,
+      rgba(#000, 0) 20px
+    );
 
   for key, value in $calendar-banner-color
     &.color-{key}
       background-color: value
+
+.calendar__body-container
+  position: relative
+
+.calendar__body.exit
+  position: absolute
+  left: 0
+  top: 0
+  width: 100%
+  user-select: none

@@ -26,29 +26,37 @@ class HomeworkStatusMixin(contestHandler.ContestStatusMixin):
   def is_done(self, tdoc):
     return self.now >= tdoc['end_at']
 
-  def status_text(self, tdoc):
-    if self.is_new(tdoc):
-      return 'Ready'
+  def get_status(self, tdoc):
+    if self.is_ready(tdoc):
+      return 'ready'
     if self.is_live(tdoc):
-      return 'Open'
+      return 'live'
     elif self.is_extend(tdoc):
-      return 'Open (Extend)'
+      return 'extend'
     else:
-      return 'Finished'
+      return 'done'
 
 @app.route('/homework', 'homework_main')
 class HomeworkMainHandler(base.Handler, HomeworkStatusMixin):
-  HOMEWORK_PER_PAGE = 20
-
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
   @base.get_argument
   @base.sanitize
-  async def get(self, *, page: int=1):
-    tdocs = contest.get_multi(self.domain_id, rule={'$in': constant.contest.HOMEWORK_RULES})
-    tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.HOMEWORK_PER_PAGE)
-    tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
-                                           (tdoc['doc_id'] for tdoc in tdocs))
-    self.render('homework_main.html', page=page, tpcount=tpcount, tdocs=tdocs, tsdict=tsdict)
+  async def get(self):
+    tdocs = await contest.get_multi(self.domain_id, rule={'$in': constant.contest.HOMEWORK_RULES}).to_list()
+    calendar_tdocs = []
+    for tdoc in tdocs:
+      cal_tdoc = {'_id': tdoc['_id'],
+                  'begin_at': self.datetime_stamp(tdoc['begin_at']),
+                  'title': tdoc['title'],
+                  'status': self.get_status(tdoc),
+                  'url': self.reverse_url('homework_detail', tid=tdoc['doc_id'])}
+      if cal_tdoc['status'] == 'extend' or cal_tdoc['status'] == 'done':
+        cal_tdoc['end_at'] = self.datetime_stamp(tdoc['end_at'])
+        cal_tdoc['penalty_since'] = self.datetime_stamp(tdoc['penalty_since'])
+      else:
+        cal_tdoc['end_at'] = self.datetime_stamp(tdoc['penalty_since'])
+      calendar_tdocs.append(cal_tdoc)
+    self.render('homework_main.html', tdocs=tdocs, calendar_tdocs=calendar_tdocs)
 
 
 @app.route('/homework/{tid:\w{24}}', 'homework_detail')
@@ -57,7 +65,7 @@ class HomeworkDetailHandler(base.OperationHandler, HomeworkStatusMixin):
   @base.get_argument
   @base.route_argument
   @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId, page: int=1):
+  async def get(self, *, tid: objectid.ObjectId):
     # homework
     tdoc = await contest.get_homework(self.domain_id, tid)
     tsdoc, pdict = await asyncio.gather(
@@ -81,7 +89,7 @@ class HomeworkDetailHandler(base.OperationHandler, HomeworkStatusMixin):
         (tdoc['title'], None))
     self.render('homework_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended,
                 pdict=pdict, psdict=psdict, rdict=rdict,
-                page=page, page_title=tdoc['title'], path_components=path_components)
+                page_title=tdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_ATTEND_HOMEWORK)

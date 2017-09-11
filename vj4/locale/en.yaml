@@ -67,3 +67,8 @@ home_file: My Files
 fs_upload: File Upload
 page.training_detail.invalid_when_not_enrolled: You cannot view problem details unless enrolled.
 page.problem_detail.sidebar.show_category: Click to Show
+homework.status.ready: Upcoming
+homework.status.live: Open
+homework.status.extend: Open (Delayed)
+homework.status.done: Finished
+homework.ui.banner.text.delayed: Delayed
