@@ -19,6 +19,7 @@ from vj4.model.adaptor import discussion
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import problem
 from vj4.handler import base
+from vj4.handler import problem as problemHandler
 from vj4.util import pagination
 
 
@@ -81,7 +82,7 @@ class ContestMainHandler(base.Handler, ContestStatusMixin):
 
 
 @app.route('/contest/{tid:\w{24}}', 'contest_detail')
-class ContestDetailHandler(base.OperationHandler, ContestStatusMixin):
+class ContestDetailHandler(base.OperationHandler, ContestStatusMixin, problemHandler.ProblemMixin):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_CONTEST)

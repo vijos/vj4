@@ -260,6 +260,12 @@ class HomeworkNotLiveError(ForbiddenError):
     return 'This homework is not open.'
 
 
+class HomeworkNotAttendedError(ForbiddenError):
+  @property
+  def message(self):
+    return "You haven't claimed this homework yet."
+
+
 class ProblemNotFoundError(DocumentNotFoundError):
   @property
   def message(self):

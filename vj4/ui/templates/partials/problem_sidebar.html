@@ -1,8 +1,13 @@
 {% if tdoc %}
-  {% include "partials/problem_sidebar_contest.html" %}
-  {% with owner_udoc=udoc %}
-    {% include "partials/contest_sidebar.html" %}
-  {% endwith %}
+  {% if tdoc['rule'] in vj4.constant.contest.CONTEST_RULES %}
+    {% include "partials/problem_sidebar_contest.html" %}
+    {% with owner_udoc=udoc %}
+      {% include "partials/contest_sidebar.html" %}
+    {% endwith %}
+  {% else %}
+    {% include "partials/problem_sidebar_homework.html" %}
+    {% include "partials/homework_sidebar.html" %}
+  {% endif %}
 {% else %}
   {% include "partials/problem_sidebar_normal.html" %}
 {% endif %}

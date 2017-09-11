@@ -111,7 +111,7 @@ class ProblemPageExtender {
   }
 }
 
-const page = new NamedPage(['problem_detail', 'contest_detail_problem'], () => {
+const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homework_detail_problem'], () => {
   let reactLoaded = false;
   let $floatingSidebar = null;
   let renderReact = null;
