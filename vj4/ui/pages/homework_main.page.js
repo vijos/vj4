@@ -7,9 +7,9 @@ const page = new NamedPage('homework_main', () => {
   const events = Context.docs.map(doc => ({
     beginAt: doc.begin_at * 1000,
     endAt: doc.end_at * 1000,
-    title: `${doc.title}: ${i18n(`homework.status.${doc.status}`)}`,
+    title: doc.title,
     maskFrom: doc.penalty_since ? doc.penalty_since * 1000 : null,
-    maskTitle: i18n('homework.ui.banner.text.delayed'),
+    maskTitle: i18n('homework.ui.banner.text.extension'),
     colorIndex: parseMongoId(doc._id).timestamp % 12,
     link: doc.url,
   }));

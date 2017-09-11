@@ -42,16 +42,16 @@
                 <h1 class="homework__title"><a href="{{ reverse_url('homework_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
                 <ul class="supplementary list">
                   <li>
-                    {{ _('Status') }}: <span class="homework-status--text {{ tdoc_status }}">{{ _('homework.status.{0}'.format(tdoc_status)) }}</span>
+                    {{ _('homework.ui.item.supplementary.status') }}: <span class="homework-status--text {{ tdoc_status }}">{{ _('homework.status.{0}'.format(tdoc_status)) }}</span>
                   </li>
                   <li>
-                    {{ _('Begin at') }} {{ datetime_span(tdoc['begin_at']) }}
+                    {{ _('homework.ui.item.supplementary.open_since') }}: {{ datetime_span(tdoc['begin_at']) }}
                   </li>
                   <li>
                   {% if handler.is_extend(tdoc) or handler.is_done(tdoc) %}
-                    {{ _('End at') }} {{ datetime_span(tdoc['end_at']) }}
+                    {{ _('homework.ui.item.supplementary.hard_deadline') }}: {{ datetime_span(tdoc['end_at']) }}
                   {% else %}
-                    {{ _('End at') }} {{ datetime_span(tdoc['penalty_since']) }}
+                    {{ _('homework.ui.item.supplementary.deadline') }}: {{ datetime_span(tdoc['penalty_since']) }}
                   {% endif %}
                   </li>
                 </ul>

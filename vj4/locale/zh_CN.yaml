@@ -673,6 +673,26 @@ All Homeworks: 所有作业
 Calendar: 日历
 homework.status.ready: 即将开放
 homework.status.live: 开放递交
-homework.status.extend: 开放递交(延期)
+homework.status.extend: 延期递交
 homework.status.done: 已结束
-homework.ui.banner.text.delayed: 延期
+homework.ui.banner.text.extension: 延期
+homework.ui.item.supplementary.status: 状态
+homework.ui.item.supplementary.open_since: 开始时间
+homework.ui.item.supplementary.hard_deadline: 最终截止时间
+homework.ui.item.supplementary.deadline: 截止时间
+homework.ui.status.status: 状态
+homework.ui.status.problems: 题量
+homework.ui.status.open_since: 开始时间
+homework.ui.status.deadline: 截止时间
+homework.ui.status.extension: 可延期
+Homework Introduction: 作业介绍
+Claim Homework: 认领作业
+Please claim the assignment to see the problems.: 认领作业后才可以查看作业内容。
+Login to Claim Homework: 登录后认领作业
+No Permission to Claim Homework: 您没有权限认领作业
+View Homework: 查看作业
+Claimed: 已认领
+Not Claimed: 未认领
+Create Homework: 创建作业
+Calendar View: 日历视图
+List View: 列表视图
