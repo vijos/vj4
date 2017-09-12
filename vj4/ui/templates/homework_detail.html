@@ -12,11 +12,13 @@
         {{ tdoc['content']|markdown }}
       </div>
     </div>
-  {% if not handler.is_ready(tdoc) %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Problem') }}</h1>
       </div>
+    {% if handler.is_ready(tdoc) %}
+      {{ nothing.render('This homework is not open and you cannot view problems.') }}
+    {% else %}
     {% if attended or handler.is_done(tdoc) %}
       <div class="section__body no-padding">
         <table class="data-table">
@@ -65,9 +67,9 @@
       </div>
     {% else %}
       {{ nothing.render('Please claim the assignment to see the problems.') }}
-    {% endif %}
+    {% endif %}{# attended or handler.is_done(tdoc) #}
+    {% endif %}{# handler.is_ready(tdoc) #}
     </div>
-  {% endif %}
   </div>
   <div class="medium-3 columns">
     {% include "partials/homework_sidebar.html" %}
