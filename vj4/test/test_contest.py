@@ -167,12 +167,6 @@ class InnerTest(base.DatabaseTestCase):
       await contest.attend(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
 
   @base.wrap_coro
-  async def test_update_status_wrong_pid(self):
-    rid = objectid.ObjectId()
-    with self.assertRaises(error.ValidationError):
-      await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, rid, 1000, True, 100)
-
-  @base.wrap_coro
   async def test_update_status_none(self):
     rid = objectid.ObjectId()
     with self.assertRaises(error.ContestNotAttendedError):
