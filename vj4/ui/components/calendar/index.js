@@ -225,6 +225,12 @@ export default class Calendar {
       if (ev.endAt.isBefore(beginDate, 'day') || ev.beginAt.isAfter(endDate, 'day')) {
         return;
       }
+      if (ev.beginAt.hour() >= 22) {
+        ev.beginAt.add(1, 'day').startOf('day');
+      }
+      if (ev.endAt.hour() <= 2) {
+        ev.endAt.subtract(1, 'day').endOf('day');
+      }
       let [bannerBegin, bannerBeginTruncated] = [ev.beginAt.clone(), false];
       if (bannerBegin.isBefore(beginDate, 'day')) {
         [bannerBegin, bannerBeginTruncated] = [beginDate.clone(), true];

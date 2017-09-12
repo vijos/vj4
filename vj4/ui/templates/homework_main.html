@@ -19,7 +19,7 @@
             </select>
           </span>
         {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_HOMEWORK) %}
-          <a class="compact button">{{ _('Create Homework') }}</a>
+          <a class="compact button" href="{{ reverse_url('homework_create') }}">{{ _('Create Homework') }}</a>
         {% endif %}
         </div>
       </div>

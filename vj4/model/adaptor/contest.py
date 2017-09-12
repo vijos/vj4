@@ -216,13 +216,16 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
   """This method returns None when the modification has been superseded by a parallel operation."""
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
   if pid not in tdoc['pids']:
-    raise error.ValidationError('pid')
+    return None
 
   tsdoc = await document.rev_push_status(
     domain_id, document.TYPE_CONTEST, tdoc['doc_id'], uid,
     'journal', {'rid': rid, 'pid': pid, 'accept': accept, 'score': score})
   if 'attend' not in tsdoc or not tsdoc['attend']:
-    raise error.ContestNotAttendedError(domain_id, tid, uid)
+    if tdoc['rule'] in constant.contest.CONTEST_RULES:
+      raise error.ContestNotAttendedError(domain_id, tid, uid)
+    else:
+      raise error.HomeworkNotAttendedError(domain_id, tid, uid)
 
   journal = _get_status_journal(tsdoc)
   stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
