@@ -316,7 +316,7 @@ class ProblemPretestConnection(base.Connection):
     # check permission for visibility: contest
     if rdoc['tid']:
       now = datetime.datetime.utcnow()
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      tdoc = await contest.get(rdoc['domain_id'], None, rdoc['tid'])
       if tdoc['rule'] in constant.contest.CONTEST_RULES:
         if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
             and (self.domain_id != tdoc['domain_id']

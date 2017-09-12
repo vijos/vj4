@@ -114,7 +114,7 @@ class RecordMainConnection(base.Connection, RecordMixin):
       if rdoc[key] != value:
         return
     if rdoc['tid']:
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      tdoc = await contest.get(rdoc['domain_id'], None, rdoc['tid'])
       if not self.rdoc_visible(tdoc):
         return
     # TODO(iceboy): projection.
@@ -144,7 +144,7 @@ class RecordDetailHandler(base.Handler, RecordMixin):
       return
     show_status = True
     if rdoc['tid']:
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      tdoc = await contest.get(rdoc['domain_id'], None, rdoc['tid'])
       show_status = self.rdoc_visible(tdoc)
     else:
       tdoc = None
@@ -182,7 +182,7 @@ class RecordDetailConnection(base.Connection, RecordMixin):
     self.rid = objectid.ObjectId(self.request.match_info['rid'])
     rdoc = await record.get(self.rid, record.PROJECTION_PUBLIC)
     if rdoc['tid']:
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+      tdoc = await contest.get(rdoc['domain_id'], None, rdoc['tid'])
       if not self.rdoc_visible(tdoc):
         self.close()
         return
