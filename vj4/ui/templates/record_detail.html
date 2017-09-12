@@ -47,6 +47,7 @@
               </button>
             </form>
           </li>
+          <li class="menu__seperator"></li>
         </ol>
       </div>
     {% endif %}
@@ -63,11 +64,18 @@
           </dd>
           {% endif %}
           {% if tdoc %}
+          {% if tdoc['rule'] in vj4.constant.contest.CONTEST_RULES %}
           <dt>{{ _('Contest') }}</dt>
           <dd>
             <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a>
           </dd>
-          {% endif %}
+          {% else %}{# tdoc['rule'] in vj4.constant.contest.CONTEST_RULES #}
+          <dt>{{ _('Homework') }}</dt>
+          <dd>
+            <a href="{{ reverse_url('homework_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a>
+          </dd>
+          {% endif %}{# tdoc['rule'] in vj4.constant.contest.CONTEST_RULES #}
+          {% endif %}{# tdoc #}
         {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST and (handler.own(rdoc, priv=vj4.model.builtin.PRIV_READ_PRETEST_DATA_SELF, field='uid') or handler.has_priv(vj4.model.builtin.PRIV_READ_PRETEST_DATA)) %}
           <dt>{{ _('Pretest Data') }}</dt>
           <dd><a href="{{ reverse_url('record_pretest_data', rid=rdoc['_id']) }}"><span class="icon icon-download"></span> {{ _('Download') }}</a></dd>
