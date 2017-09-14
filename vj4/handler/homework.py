@@ -61,7 +61,7 @@ class HomeworkStatusMixin(contestHandler.ContestStatusMixin):
   def is_done(self, tdoc):
     return self.now >= tdoc['end_at']
 
-  def get_status(self, tdoc):
+  def status(self, tdoc):
     if self.is_ready(tdoc):
       return 'ready'
     if self.is_live(tdoc):
@@ -84,7 +84,7 @@ class HomeworkMainHandler(base.Handler, HomeworkStatusMixin):
       cal_tdoc = {'_id': tdoc['_id'],
                   'begin_at': self.datetime_stamp(tdoc['begin_at']),
                   'title': tdoc['title'],
-                  'status': self.get_status(tdoc),
+                  'status': self.status(tdoc),
                   'url': self.reverse_url('homework_detail', tid=tdoc['doc_id'])}
       if cal_tdoc['status'] == 'extend' or cal_tdoc['status'] == 'done':
         cal_tdoc['end_at'] = self.datetime_stamp(tdoc['end_at'])
@@ -277,8 +277,6 @@ class HomeworkCreateHandler(base.Handler, HomeworkStatusMixin):
     except ValueError as e:
       raise error.ValidationError('end_at_date', 'end_at_time')
     end_at = penalty_since + datetime.timedelta(days=extension_days)
-    if begin_at <= self.now:
-      raise error.ValidationError('begin_at_date', 'begin_at_time')
     if begin_at >= penalty_since:
       raise error.ValidationError('end_at_date', 'end_at_time')
     if penalty_since > end_at:
@@ -371,3 +369,28 @@ class HomeworkEditHandler(base.Handler, HomeworkStatusMixin):
     for pid in pids:
       await problem.set_hidden(self.domain_id, pid, True)
     self.json_or_redirect(self.reverse_url('homework_detail', tid=tid))
+
+
+@app.route('/homework/{tid}/status', 'homework_status')
+class HomeworkStatusHandler(base.Handler, HomeworkStatusMixin):
+  @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
+  @base.require_perm(builtin.PERM_VIEW_HOMEWORK_STATUS)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc, rows = await self.get_status('homework', tid)
+    path_components = self.build_path(
+        (self.translate('homework_main'), self.reverse_url('homework_main')),
+        (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
+        (self.translate('homework_status'), None))
+    self.render('homework_status.html', tdoc=tdoc, rows=rows, path_components=path_components)
+
+
+@app.route('/homework/{tid}/status/download/{ext}', 'homework_status_download')
+class ContestStatusDownloadHandler(base.Handler, HomeworkStatusMixin):
+  @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
+  @base.require_perm(builtin.PERM_VIEW_HOMEWORK_STATUS)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId, ext: str):
+    await self.export_status('homework', ext, tid)

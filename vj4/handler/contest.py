@@ -57,6 +57,45 @@ class ContestStatusMixin(object):
   def can_show(self, tdoc):
     return contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
 
+  def _export_status_as_csv(self, rows):
+    csv_content = '\r\n'.join([','.join([str(c['value']) for c in row]) for row in rows])  # \r\n for notepad compatibility
+    data = '\uFEFF' + csv_content
+    return data.encode()
+
+  def _export_status_as_html(self, rows):
+    return self.render_html('contest_status_download_html.html', rows=rows).encode()
+
+  def _check_status_permission(self, tdoc):
+    if tdoc['rule'] in constant.contest.CONTEST_RULES:
+      if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
+          and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
+        raise error.ContestStatusHiddenError()
+    else:
+      self.check_perm(builtin.PERM_VIEW_HOMEWORK_STATUS)
+
+  async def get_status(self, contest_type: str, tid: objectid.ObjectId, is_export: bool=False):
+    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, contest_type, tid)
+    self._check_status_permission(tdoc)
+    udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
+                                        problem.get_dict(self.domain_id, tdoc['pids']))
+    ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
+    rows = contest.RULES[tdoc['rule']].status_func(is_export, self.translate, tdoc, ranked_tsdocs, udict, pdict)
+    return tdoc, rows
+
+  async def export_status(self, contest_type: str, export_format: str, tid: objectid.ObjectId):
+    get_status_content = {
+      'csv': self._export_status_as_csv,
+      'html': self._export_status_as_html,
+    }
+    if export_format not in get_status_content:
+      raise error.ValidationError('export_format')
+    tdoc, rows = await self.get_status(contest_type, tid, True)
+    data = get_status_content[export_format](rows)
+    file_name = tdoc['title']
+    for char in '/<>:\"\'\\|?* ':
+      file_name = file_name.replace(char, '')
+    await self.binary(data, file_name='{0}.{1}'.format(file_name, export_format))
+
 
 @app.route('/contest', 'contest_main')
 class ContestMainHandler(base.Handler, ContestStatusMixin):
@@ -275,97 +314,22 @@ class ContestStatusHandler(base.Handler, ContestStatusMixin):
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
-    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, 'contest', tid)
-    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
-        and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
-      raise error.ContestStatusHiddenError()
-    udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
-                                        problem.get_dict(self.domain_id, tdoc['pids']))
-    ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
+    tdoc, rows = await self.get_status('contest', tid)
     path_components = self.build_path(
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
         (self.translate('contest_status'), None))
-    self.render('contest_status.html', tdoc=tdoc, ranked_tsdocs=ranked_tsdocs, dict=dict,
-                udict=udict, pdict=pdict, path_components=path_components)
+    self.render('contest_status.html', tdoc=tdoc, rows=rows, path_components=path_components)
 
 
 @app.route('/contest/{tid}/status/download/{ext}', 'contest_status_download')
 class ContestStatusDownloadHandler(base.Handler, ContestStatusMixin):
-  def get_oi_status(self, tdoc, ranked_tsdocs, udict, pdict):
-    columns = [self.translate(column) for column in ['Rank', 'User', 'Score']]
-    for index, pid in enumerate(tdoc['pids']):
-      columns.append('#{0} {1}'.format(index + 1, pdict[pid]['title']))
-    rows = [columns]
-    for rank, tsdoc in ranked_tsdocs:
-      if 'detail' in tsdoc:
-        tsddict = {item['pid']: item for item in tsdoc['detail']}
-      else:
-        tsddict = {}
-      row = [rank, udict[tsdoc['uid']]['uname'], tsdoc.get('score', 0)]
-      for pid in tdoc['pids']:
-        row.append(tsddict.get(pid, {}).get('score', '-'))
-      rows.append(row)
-    return rows
-
-  def get_acm_status(self, tdoc, ranked_tsdocs, udict, pdict):
-    columns = [self.translate(column) for column in ['Rank', 'User', 'Solved Problems', 'Total Time']]
-    for index, pid in enumerate(tdoc['pids']):
-      columns.append('#{0} {1}'.format(index + 1, pdict[pid]['title']))
-      columns.append('#{0} {1}'.format(index + 1, self.translate('Time')))
-    rows = [columns]
-    for rank, tsdoc in ranked_tsdocs:
-      if 'detail' in tsdoc:
-        tsddict = {item['pid']: item for item in tsdoc['detail']}
-      else:
-        tsddict = {}
-      row = [rank, udict[tsdoc['uid']]['uname'], tsdoc.get('accept', 0), tsdoc.get('time', 0.0)]
-      for pid in tdoc['pids']:
-        if tsddict.get(pid, {}).get('accept', False):
-          row.append(self.translate('Accepted'))
-          row.append(tsddict[pid]['time'])
-        else:
-          row.append('-')
-          row.append('-')
-      rows.append(row)
-    return rows
-
-  def get_csv_content(self, rows):
-    csv_content = '\r\n'.join([','.join([str(c) for c in row]) for row in rows])  # \r\n for notepad compatibility
-    data = '\uFEFF' + csv_content
-    return data.encode()
-
-  def get_html_content(self, rows):
-    return self.render_html('contest_status_download_html.html', rows=rows).encode()
-
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_VIEW_CONTEST_STATUS)
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId, ext: str):
-    get_content = {
-      'csv': self.get_csv_content,
-      'html': self.get_html_content,
-    }
-    if ext not in get_content:
-      raise error.ValidationError('ext')
-    tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, 'contest', tid)
-    if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
-        and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)):
-      raise error.ContestStatusHiddenError()
-    udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
-                                        problem.get_dict(self.domain_id, tdoc['pids']))
-    ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
-    get_status = {
-      constant.contest.RULE_ACM: self.get_acm_status,
-      constant.contest.RULE_OI: self.get_oi_status,
-    }
-    rows = get_status[tdoc['rule']](tdoc, ranked_tsdocs, udict, pdict)
-    data = get_content[ext](rows)
-    file_name = tdoc['title']
-    for char in '/<>:\"\'\\|?* ':
-      file_name = file_name.replace(char, '')
-    await self.binary(data, file_name='{0}.{1}'.format(file_name, ext))
+    await self.export_status('contest', ext, tid)
 
 
 @app.route('/contest/create', 'contest_create')

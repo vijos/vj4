@@ -709,3 +709,7 @@ homework_edit: 编辑作业
 Edit Homework: 编辑作业
 This homework is not open and you cannot view problems.: 该作业还未到开放时间，您无法查看作业题目。
 Homework: 作业
+homework_status: 作业成绩表
+Total Score: 总分数
+Original Score: 原始分数
+Scoreboard: 成绩表

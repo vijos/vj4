@@ -29,7 +29,7 @@
       {% else %}
         <ol class="section__list homework__list hasjs--hide">
         {% for tdoc in tdocs %}
-          {% set tdoc_status = handler.get_status(tdoc) %}
+          {% set tdoc_status = handler.status(tdoc) %}
           <li class="section__list__item homework__item">
             <div class="media">
               <div class="media__left medium">
