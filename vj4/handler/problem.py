@@ -61,6 +61,7 @@ class ProblemMixin(object):
       else:
         return self.reverse_url('homework_detail_problem_submit', tid=tdoc['doc_id'], pid=pdoc['doc_id'])
 
+
 @app.route('/p', 'problem_main')
 class ProblemMainHandler(base.OperationHandler, ProblemMixin):
   PROBLEMS_PER_PAGE = 100
