@@ -381,7 +381,7 @@ class HomeworkStatusHandler(base.Handler, HomeworkStatusMixin):
     tdoc, rows = await self.get_status('homework', tid)
     path_components = self.build_path(
         (self.translate('homework_main'), self.reverse_url('homework_main')),
-        (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
+        (tdoc['title'], self.reverse_url('homework_detail', tid=tdoc['doc_id'])),
         (self.translate('homework_status'), None))
     self.render('homework_status.html', tdoc=tdoc, rows=rows, path_components=path_components)
 
