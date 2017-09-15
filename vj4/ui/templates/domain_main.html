@@ -33,10 +33,10 @@
               </div>
             </div>
             <div class="media__body medium">
-              <h1 class="contest__title"><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+              <h1 class="contest__title"><a href="{{ reverse_url('contest_detail', ctype='contest', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
               <ul class="supplementary list">
                 <li>
-                  <a href="{{ reverse_url('contest_main') }}?rule={{ tdoc['rule'] }}" class="contest-type-tag"><span class="icon icon-award"></span>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</a>
+                  <a href="{{ reverse_url('contest_main', ctype='contest') }}?rule={{ tdoc['rule'] }}" class="contest-type-tag"><span class="icon icon-award"></span>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</a>
                 </li>
                 <li>
                   <span class="icon icon-schedule--fill text-blue"></span> {{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}

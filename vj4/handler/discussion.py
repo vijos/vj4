@@ -24,8 +24,14 @@ def node_url(handler, name, node_or_dtuple):
   return handler.reverse_url(name, **kwargs)
 
 
+class DiscussionPageCategoryMixin(object):
+  @property
+  def page_category(self):
+    return 'discussion'
+
+
 @app.route('/discuss', 'discussion_main')
-class DiscussionMainHandler(base.Handler):
+class DiscussionMainHandler(DiscussionPageCategoryMixin, base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -47,7 +53,7 @@ class DiscussionMainHandler(base.Handler):
 
 @app.route('/discuss/{doc_type:-?\d+}/{doc_id}', 'discussion_node_document_as_node')
 @app.route('/discuss/{doc_id:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
-class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
+class DiscussionNodeHandler(DiscussionPageCategoryMixin, base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -88,7 +94,7 @@ class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
 
 @app.route('/discuss/{doc_type:-?\d+}/{doc_id}/create', 'discussion_create_document_as_node')
 @app.route('/discuss/{doc_id}/create', 'discussion_create')
-class DiscussionCreateHandler(base.Handler):
+class DiscussionCreateHandler(DiscussionPageCategoryMixin, base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_DISCUSSION)
   @base.route_argument
@@ -138,7 +144,7 @@ class DiscussionCreateHandler(base.Handler):
 
 
 @app.route('/discuss/{did:\w{24}}', 'discussion_detail')
-class DiscussionDetailHandler(base.OperationHandler):
+class DiscussionDetailHandler(DiscussionPageCategoryMixin, base.OperationHandler):
   REPLIES_PER_PAGE = 50
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -317,7 +323,7 @@ class DiscussionTailReplyRawHandler(base.Handler):
 
 
 @app.route('/discuss/{did:\w{24}}/edit', 'discussion_edit')
-class DiscussionEditHandler(base.OperationHandler):
+class DiscussionEditHandler(DiscussionPageCategoryMixin, base.OperationHandler):
   DEFAULT_OPERATION = 'update'
 
   @base.route_argument

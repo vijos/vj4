@@ -206,9 +206,6 @@ Write Your Comment: 發表您的評論
 Write Your Solution: 發表您的題解
 author: 作者
 content: 內容
-contest_create: 創建比賽
-contest_main: 比賽
-contest_status: 比賽狀態
 current domain: 當前域
 currently offline: 目前離線
 discussion_create: 創建討論
@@ -331,7 +328,6 @@ Domain {0} not found.: 域 {0} 不存在。
 Domain {0} already exists.: 域 {0} 已經存在。
 You've already attended this contest.: 您已經參加本次比賽。
 You haven't attended this contest yet.: 您還沒有參加本次比賽。
-Contest status is hidden.: 當前比賽狀態隱藏，暫不可顯示。
 Problem {1} not found.: 題目 {1} 不存在。
 Training requirement is not satisfied.: 不滿足訓練條件。
 Record {0} not found.: 記錄 {0} 不存在。

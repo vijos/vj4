@@ -19,7 +19,7 @@
             </select>
           </span>
         {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_HOMEWORK) %}
-          <a class="compact button" href="{{ reverse_url('homework_create') }}">{{ _('Create Homework') }}</a>
+          <a class="compact button" href="{{ reverse_url('contest_create', ctype='homework') }}">{{ _('Create Homework') }}</a>
         {% endif %}
         </div>
       </div>
@@ -29,7 +29,7 @@
       {% else %}
         <ol class="section__list homework__list hasjs--hide">
         {% for tdoc in tdocs %}
-          {% set tdoc_status = handler.status(tdoc) %}
+          {% set tdoc_status = handler.get_status(tdoc) %}
           <li class="section__list__item homework__item">
             <div class="media">
               <div class="media__left medium">
@@ -39,19 +39,19 @@
                 </div>
               </div>
               <div class="media__body medium">
-                <h1 class="homework__title"><a href="{{ reverse_url('homework_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+                <h1 class="homework__title"><a href="{{ reverse_url('contest_detail', ctype='homework', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
                 <ul class="supplementary list">
                   <li>
-                    {{ _('homework.ui.item.supplementary.status') }}: <span class="homework-status--text {{ tdoc_status }}">{{ _('homework.status.{0}'.format(tdoc_status)) }}</span>
+                    {{ _('page.contest_main.homework.item.supplementary.status') }}: <span class="homework-status--text {{ tdoc_status }}">{{ _('model.contest.homework.status.{0}'.format(tdoc_status)) }}</span>
                   </li>
                   <li>
-                    {{ _('homework.ui.item.supplementary.open_since') }}: {{ datetime_span(tdoc['begin_at']) }}
+                    {{ _('page.contest_main.homework.item.supplementary.open_since') }}: {{ datetime_span(tdoc['begin_at']) }}
                   </li>
                   <li>
-                  {% if handler.is_extend(tdoc) or handler.is_done(tdoc) %}
-                    {{ _('homework.ui.item.supplementary.hard_deadline') }}: {{ datetime_span(tdoc['end_at']) }}
+                  {% if handler.is_homework_extended(tdoc) or handler.is_finished(tdoc) %}
+                    {{ _('page.contest_main.homework.item.supplementary.hard_deadline') }}: {{ datetime_span(tdoc['end_at']) }}
                   {% else %}
-                    {{ _('homework.ui.item.supplementary.deadline') }}: {{ datetime_span(tdoc['penalty_since']) }}
+                    {{ _('page.contest_main.homework.item.supplementary.deadline') }}: {{ datetime_span(tdoc['penalty_since']) }}
                   {% endif %}
                   </li>
                 </ul>

@@ -209,10 +209,6 @@ Write Your Comment: 发表您的评论
 Write Your Solution: 发表您的题解
 author: 作者
 content: 内容
-contest_create: 创建比赛
-contest_edit: 编辑比赛
-contest_main: 比赛
-contest_status: 比赛状态
 current domain: 当前域
 currently offline: 目前离线
 discussion_create: 创建讨论
@@ -339,7 +335,6 @@ Domain {0} not found.: 域 {0} 不存在。
 Domain {0} already exists.: 域 {0} 已经存在。
 You've already attended this contest.: 您已经参加本次比赛。
 You haven't attended this contest yet.: 您还没有参加本次比赛。
-Contest status is hidden.: 当前比赛状态隐藏，暂不可显示。
 Problem {1} not found.: 题目 {1} 不存在。
 Training requirement is not satisfied.: 不满足训练条件。
 Record {0} not found.: 记录 {0} 不存在。
@@ -360,11 +355,12 @@ Live...: 正在进行…
 Ready (☆▽☆): 马上开始 (☆▽☆)
 View Details: 查看详情
 All Contests: 所有比赛
+Edit Contest: 编辑比赛
+Contest scoreboard is not visible.: 目前无法查看比赛成绩表。
 No Submissions: 没有递交
 Do not discuss solutions otherwise you will be regarded as cheating and then lose qualifications.: 请勿讨论解法，否则以作弊论处并且将失去参赛资格。
 Please attend contest to see the problems.: 请参加比赛来查看题目。
 This contest is not live.: 比赛没有开始。
-contest_detail_problem_submit: 递交比赛代码
 Host: 主持人
 Rank: 排名
 Solve: 解决
@@ -439,8 +435,8 @@ Delete discussion replies: 删除讨论回复
 Delete own discussion replies: 删除讨论中自己的回复
 Delete discussion replies of own discussion: 删除自己讨论中的回复
 View contests: 查看比赛
-View contest status: 查看比赛状态
-View hidden contest status: 查看隐藏的比赛状态
+View contest scoreboard: 查看比赛成绩表
+View hidden contest submission status and scoreboard: 查看隐藏的比赛递交状态和成绩表
 Create contests: 创建比赛
 Attend contests: 参加比赛
 View training plans: 查看训练计划
@@ -508,6 +504,7 @@ perm_record: 记录
 perm_problem_solution: 题解
 perm_discussion: 讨论
 perm_contest: 比赛
+perm_homework: 作业
 perm_training: 训练
 discussion_edit: 编辑讨论
 At least 4 characters: 至少 4 个字符
@@ -671,20 +668,7 @@ Solved Problems: 解决题目
 homework_main: 作业
 All Homeworks: 所有作业
 Calendar: 日历
-homework.status.ready: 即将开放
-homework.status.live: 开放递交
-homework.status.extend: 延期递交
-homework.status.done: 已结束
-homework.ui.banner.text.extension: 延期
-homework.ui.item.supplementary.status: 状态
-homework.ui.item.supplementary.open_since: 开始时间
-homework.ui.item.supplementary.hard_deadline: 最终截止时间
-homework.ui.item.supplementary.deadline: 截止时间
-homework.ui.status.status: 状态
-homework.ui.status.problems: 题量
-homework.ui.status.open_since: 开始时间
-homework.ui.status.deadline: 截止时间
-homework.ui.status.extension: 可延期
+page.contest_main.homework.banner.extension: 延期
 Homework Introduction: 作业介绍
 Claim Homework: 认领作业
 Please claim the assignment to see the problems.: 认领作业后才可以查看作业内容。
@@ -699,7 +683,6 @@ List View: 列表视图
 My Recent Submissions: 我的最近递交记录
 The homework's deadline is due but in extension. You can still submit for this problem but your score will be panelled.: 作业已超过截止时间，在仍在延期时间内。您递交题目将无法获得全部分数。
 You cannot submit for this problem because the homework's deadline is due.: 作业已超过截止时间，您无法递交本题目。
-homework_detail_problem_submit: 递交作业代码
 End Date: 结束日期
 End Time: 结束时间
 Extension (days): 最长延期 (日)
@@ -713,3 +696,36 @@ homework_status: 作业成绩表
 Total Score: 总分数
 Original Score: 原始分数
 Scoreboard: 成绩表
+page.contest_main.contest.title: 比赛
+page.contest_main.homework.title: 作业
+page.contest_scoreboard.contest.title: 比赛成绩表
+page.contest_scoreboard.homework.title: 作业成绩表
+page.contest_edit.contest.title: 编辑比赛
+page.contest_edit.homework.title: 编辑作业
+page.contest_create.contest.title: 创建比赛
+page.contest_create.homework.title: 创建作业
+page.contest_detail_problem_submit.contest.title: 递交比赛代码
+page.contest_detail_problem_submit.homework.title: 递交作业代码
+View homework: 查看作业
+View homework scoreboard: 查看作业成绩表
+View hidden homework submission status and scoreboard: 查看隐藏的作业递交状态和成绩表
+Create homework: 创建作业
+Claim homework: 认领作业
+Edit any homework: 修改任意的作业
+Edit own homework: 修改自己的作业
+model.contest.contest.status.not_started: 尚未开始
+model.contest.contest.status.ongoing: 正在进行
+model.contest.contest.status.finished: 已结束
+model.contest.homework.status.not_started: 未开放递交
+model.contest.homework.status.ongoing: 可递交
+model.contest.homework.status.finished: 已截止
+page.contest_detail.homework.info.status: 状态
+page.contest_detail.homework.info.problems: 题量
+page.contest_detail.homework.info.open_since: 开始时间
+page.contest_detail.homework.info.deadline: 截止时间
+page.contest_detail.homework.info.extension: 可延期
+page.contest_main.homework.item.supplementary.status: 状态
+page.contest_main.homework.item.supplementary.open_since: 开始时间
+page.contest_main.homework.item.supplementary.hard_deadline: 最终截止时间
+page.contest_main.homework.item.supplementary.deadline: 截止时间
+There is no homework so far ╰(*°▽°*)╯: 目前还没有作业 ╰(*°▽°*)╯

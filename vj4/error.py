@@ -242,10 +242,10 @@ class ContestNotAttendedError(ForbiddenError):
     return "You haven't attended this contest yet."
 
 
-class ContestStatusHiddenError(ForbiddenError):
+class ContestScoreboardHiddenError(ForbiddenError):
   @property
   def message(self):
-    return 'Contest status is hidden.'
+    return 'Contest scoreboard is not visible.'
 
 
 class ContestNotLiveError(ForbiddenError):
@@ -254,10 +254,22 @@ class ContestNotLiveError(ForbiddenError):
     return 'This contest is not live.'
 
 
+class HomeworkScoreboardHiddenError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Homework scoreboard is not visible.'
+
+
 class HomeworkNotLiveError(ForbiddenError):
   @property
   def message(self):
     return 'This homework is not open.'
+
+
+class HomeworkAlreadyAttendedError(ForbiddenError):
+  @property
+  def message(self):
+    return "You've already claimed this homework."
 
 
 class HomeworkNotAttendedError(ForbiddenError):
@@ -318,3 +330,21 @@ class NoProblemError(NotFoundError):
   @property
   def message(self):
     return 'No problem.'
+
+
+class UpgradeLockAcquireError(Error):
+  @property
+  def message(self):
+    return 'Failed to acquire the upgrade lock. There may be another ongoing upgrade process, or a previous process is exited unexpectedly.'
+
+
+class UpgradeLockReleaseError(Error):
+  @property
+  def message(self):
+    return 'Failed to release the upgrade lock. The database is malformed during the upgrade.'
+
+
+class DatabaseVersionMismatchError(Error):
+  @property
+  def message(self):
+    return 'Database version mismatch, got {0}, expect {1}. You need to invoke database upgrades.'

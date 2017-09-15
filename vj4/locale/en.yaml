@@ -1,9 +1,5 @@
 #English
 ---
-contest_create: Contest Create
-contest_edit: Contest Edit
-contest_main: Contest
-contest_status: Contest Status
 discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
@@ -67,17 +63,16 @@ home_file: My Files
 fs_upload: File Upload
 page.training_detail.invalid_when_not_enrolled: You cannot view problem details unless enrolled.
 page.problem_detail.sidebar.show_category: Click to Show
-homework.status.ready: Upcoming
-homework.status.live: Open
-homework.status.extend: Extension
-homework.status.done: Finished
-homework.ui.banner.text.extension: Extension
-homework.ui.item.supplementary.status: Status
-homework.ui.item.supplementary.open_since: Open Since
-homework.ui.item.supplementary.hard_deadline: Hard DDL
-homework.ui.item.supplementary.deadline: DDL
-homework.ui.status.status: Status
-homework.ui.status.problems: Problems
-homework.ui.status.open_since: Open Since
-homework.ui.status.deadline: DDL
-homework.ui.status.extension: Extension
+model.contest.homework.status.not_started: Not Started
+model.contest.homework.status.ongoing: Open
+model.contest.homework.status.finished: Finished
+page.contest_main.homework.banner.extension: Extension
+page.contest_main.homework.item.supplementary.status: Status
+page.contest_main.homework.item.supplementary.open_since: Open Since
+page.contest_main.homework.item.supplementary.hard_deadline: Hard DDL
+page.contest_main.homework.item.supplementary.deadline: DDL
+page.contest_detail.homework.info.status: Status
+page.contest_detail.homework.info.problems: Problems
+page.contest_detail.homework.info.open_since: Open Since
+page.contest_detail.homework.info.deadline: DDL
+page.contest_detail.homework.info.extension: Extension

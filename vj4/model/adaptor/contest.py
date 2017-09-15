@@ -16,7 +16,12 @@ from vj4.util import rank
 
 journal_key_func = lambda j: j['rid']
 
-Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort', 'rank_func', 'status_func'])
+Rule = collections.namedtuple('Rule', ['can_show_record_func',
+                                       'can_show_scoreboard_func',
+                                       'stat_func',
+                                       'status_sort',
+                                       'rank_func',
+                                       'status_func'])
 
 
 def _oi_stat(tdoc, journal):
@@ -95,7 +100,7 @@ def _oi_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
     row.append({'type': 'user', 'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
     for pid in tdoc['pids']:
-      row.append({'type': 'string',
+      row.append({'type': 'record',
                   'value': tsddict.get(pid, {}).get('score', '-'),
                   'raw': tsddict.get(pid, {}).get('rid', None)})
     rows.append(row)
@@ -186,16 +191,19 @@ def _assignment_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pd
 
 RULES = {
   constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'],
+                                 lambda tdoc, now: now > tdoc['end_at'],
                                  _oi_stat,
                                  [('score', -1)],
                                  functools.partial(rank.ranked, equ_func=lambda a, b: a.get('score', 0) == b.get('score', 0)),
                                  _oi_status),
   constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
+                                  lambda tdoc, now: now >= tdoc['begin_at'],
                                   _acm_stat,
                                   [('accept', -1), ('time', 1)],
                                   functools.partial(enumerate, start=1),
                                   _acm_status),
   constant.contest.RULE_ASSIGNMENT: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
+                                         lambda tdoc, now: False,   # TODO: show scoreboard according to assignment preference
                                          _assignment_stat,
                                          [('penalty_score', -1), ('time', 1)],
                                          functools.partial(enumerate, start=1),
@@ -204,91 +212,103 @@ RULES = {
 
 
 @argmethod.wrap
-async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: int,
+async def add(domain_id: str, doc_type: int,
+              title: str, content: str, owner_uid: int, rule: int,
               begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               pids=[], **kwargs):
   validator.check_title(title)
   validator.check_content(content)
-  if rule not in RULES:
-    raise error.ValidationError('rule')
+  if doc_type == document.TYPE_CONTEST:
+    if rule not in constant.contest.CONTEST_RULES:
+      raise error.ValidationError('rule')
+  elif doc_type == document.TYPE_HOMEWORK:
+    if rule not in constant.contest.HOMEWORK_RULES:
+      raise error.ValidationError('rule')
+  else:
+    raise error.InvalidArgumentError('doc_type')
   if begin_at >= end_at:
     raise error.ValidationError('begin_at', 'end_at')
+  if doc_type == document.TYPE_HOMEWORK:
+    if 'penalty_since' not in kwargs:
+      raise error.ValidationError('penalty_since')
+    if kwargs['penalty_since'] < begin_at:
+      raise error.ValidationError('penalty_since', 'begin_at')
+    if kwargs['penalty_since'] > end_at:
+      raise error.ValidationError('penalty_since', 'end_at')
   # TODO(twd2): should we check problem existance here?
-  return await document.add(domain_id, content, owner_uid, document.TYPE_CONTEST,
+  return await document.add(domain_id, content, owner_uid, doc_type,
                             title=title, rule=rule,
                             begin_at=begin_at, end_at=end_at, pids=pids, attend=0,
                             **kwargs)
 
 
 @argmethod.wrap
-async def get(domain_id: str, contest_type: str, tid: objectid.ObjectId):
-  tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
+async def get(domain_id: str, doc_type: int, tid: objectid.ObjectId):
+  tdoc = await document.get(domain_id, doc_type, tid)
   if not tdoc:
-    raise error.DocumentNotFoundError(domain_id, document.TYPE_CONTEST, tid)
-  if contest_type == 'contest':
-    if not tdoc['rule'] in constant.contest.CONTEST_RULES:
-      raise error.DocumentNotFoundError(domain_id, contest_type, tid)
-  elif contest_type == 'homework':
-    if not tdoc['rule'] in constant.contest.HOMEWORK_RULES:
-      raise error.DocumentNotFoundError(domain_id, contest_type, tid)
-  elif contest_type != None:  # use None to skip contest_type checking
-    assert False
+    raise error.DocumentNotFoundError(domain_id, doc_type, tid)
   return tdoc
 
 
-@argmethod.wrap
-async def get_contest(domain_id: str, tid: objectid.ObjectId):
-  return await get(domain_id, 'contest', tid)
-
-
-@argmethod.wrap
-async def get_homework(domain_id: str, tid: objectid.ObjectId):
-  return await get(domain_id, 'homework', tid)
-
-
-async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
+async def edit(domain_id: str, doc_type: int, tid: objectid.ObjectId, **kwargs):
   if 'title' in kwargs:
       validator.check_title(kwargs['title'])
   if 'content' in kwargs:
       validator.check_content(kwargs['content'])
   if 'rule' in kwargs:
-    if kwargs['rule'] not in RULES:
-      raise error.ValidationError('rule')
+    if doc_type == document.TYPE_CONTEST:
+      if kwargs['rule'] not in constant.contest.CONTEST_RULES:
+        raise error.ValidationError('rule')
+    elif doc_type == document.TYPE_HOMEWORK:
+      if kwargs['rule'] not in constant.contest.HOMEWORK_RULES:
+        raise error.ValidationError('rule')
+    else:
+      raise error.InvalidArgumentError('doc_type')
   if 'begin_at' in kwargs and 'end_at' in kwargs:
     if kwargs['begin_at'] >= kwargs['end_at']:
       raise error.ValidationError('begin_at', 'end_at')
-  return await document.set(domain_id, document.TYPE_CONTEST, tid, **kwargs)
+  if 'penalty_since' in kwargs:
+    if 'begin_at' in kwargs and kwargs['penalty_since'] < kwargs['begin_at']:
+      raise error.ValidationError('penalty_since', 'begin_at')
+    if 'end_at' in kwargs and kwargs['penalty_since'] > kwargs['end_at']:
+      raise error.ValidationError('penalty_since', 'end_at')
+  return await document.set(domain_id, doc_type, tid, **kwargs)
 
 
-def get_multi(domain_id: str, fields=None, **kwargs):
+def get_multi(domain_id: str, doc_type: int, fields=None, **kwargs):
   # TODO(twd2): projection.
   return document.get_multi(domain_id=domain_id,
-                            doc_type=document.TYPE_CONTEST,
+                            doc_type=doc_type,
                             fields=fields,
                             **kwargs) \
                  .sort([('doc_id', -1)])
 
 
 @argmethod.wrap
-async def attend(domain_id: str, tid: objectid.ObjectId, uid: int):
+async def attend(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int):
   # TODO(iceboy): check time.
   try:
-    await document.capped_inc_status(domain_id, document.TYPE_CONTEST, tid,
+    await document.capped_inc_status(domain_id, doc_type, tid,
                                      uid, 'attend', 1, 0, 1)
   except errors.DuplicateKeyError:
-    raise error.ContestAlreadyAttendedError(domain_id, tid, uid) from None
-  return await document.inc(domain_id, document.TYPE_CONTEST, tid, 'attend', 1)
+    if doc_type == document.TYPE_CONTEST:
+      raise error.ContestAlreadyAttendedError(domain_id, tid, uid) from None
+    elif doc_type == document.TYPE_HOMEWORK:
+      raise error.HomeworkAlreadyAttendedError(domain_id, tid, uid) from None
+    else:
+      raise error.InvalidArgumentError('doc_type')
+  return await document.inc(domain_id, doc_type, tid, 'attend', 1)
 
 
 @argmethod.wrap
-async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=None):
-  return await document.get_status(domain_id, document.TYPE_CONTEST, doc_id=tid,
+async def get_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int, fields=None):
+  return await document.get_status(domain_id, doc_type, doc_id=tid,
                                    uid=uid, fields=fields)
 
 
 def get_multi_status(*, fields=None, **kwargs):
-  return document.get_multi_status(doc_type=document.TYPE_CONTEST, fields=fields, **kwargs)
+  return document.get_multi_status(fields=fields, **kwargs)
 
 
 async def get_dict_status(domain_id, uid, tids, *, fields=None):
@@ -302,11 +322,11 @@ async def get_dict_status(domain_id, uid, tids, *, fields=None):
 
 
 @argmethod.wrap
-async def get_and_list_status(domain_id: str, contest_type: str, tid: objectid.ObjectId, fields=None):
+async def get_and_list_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.
-  tdoc = await get(domain_id, contest_type, tid)
+  tdoc = await get(domain_id, doc_type, tid)
   tsdocs = await document.get_multi_status(domain_id=domain_id,
-                                           doc_type=document.TYPE_CONTEST,
+                                           doc_type=doc_type,
                                            doc_id=tdoc['doc_id'],
                                            fields=fields) \
                          .sort(RULES[tdoc['rule']].status_sort) \
@@ -321,41 +341,43 @@ def _get_status_journal(tsdoc):
 
 
 @argmethod.wrap
-async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
+async def update_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
                         pid: document.convert_doc_id, accept: bool, score: int):
   """This method returns None when the modification has been superseded by a parallel operation."""
-  tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
+  tdoc = await document.get(domain_id, doc_type, tid)
   if pid not in tdoc['pids']:
     return None
 
   tsdoc = await document.rev_push_status(
-    domain_id, document.TYPE_CONTEST, tdoc['doc_id'], uid,
+    domain_id, doc_type, tdoc['doc_id'], uid,
     'journal', {'rid': rid, 'pid': pid, 'accept': accept, 'score': score})
   if 'attend' not in tsdoc or not tsdoc['attend']:
-    if tdoc['rule'] in constant.contest.CONTEST_RULES:
+    if doc_type == document.TYPE_CONTEST:
       raise error.ContestNotAttendedError(domain_id, tid, uid)
-    else:
+    elif doc_type == document.TYPE_HOMEWORK:
       raise error.HomeworkNotAttendedError(domain_id, tid, uid)
+    else:
+      raise error.InvalidArgumentError('doc_type')
 
   journal = _get_status_journal(tsdoc)
   stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
-  tsdoc = await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, uid, tsdoc['rev'],
+  tsdoc = await document.rev_set_status(domain_id, doc_type, tid, uid, tsdoc['rev'],
                                         journal=journal, **stats)
   return tsdoc
 
 
 @argmethod.wrap
-async def recalc_contest_status(domain_id: str, tid: objectid.ObjectId):
-  tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
+async def recalc_contest_status(domain_id: str, doc_type: int, tid: objectid.ObjectId):
+  tdoc = await document.get(domain_id, doc_type, tid)
   async with document.get_multi_status(domain_id=domain_id,
-                                       doc_type=document.TYPE_CONTEST,
+                                       doc_type=doc_type,
                                        doc_id=tdoc['doc_id']) as cursor:
     async for tsdoc in cursor:
       if 'attend' not in tsdoc or not tsdoc['attend']:
         continue
       journal = _get_status_journal(tsdoc)
       stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
-      await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, tsdoc['uid'], tsdoc['rev'],
+      await document.rev_set_status(domain_id, doc_type, tid, tsdoc['uid'], tsdoc['rev'],
                                     return_doc=False, journal=journal, **stats)
 
 

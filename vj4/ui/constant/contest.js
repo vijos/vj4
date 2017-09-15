@@ -7,6 +7,17 @@ export const RULE_OI = 2;
 export const RULE_ACM = 3;
 export const RULE_ASSIGNMENT = 11;
 
+export const DOCTYPE_TO_CTYPE = {
+  30: 'contest',
+  60: 'homework',
+};
+attachObjectMeta(DOCTYPE_TO_CTYPE, 'intKey', true);
+
+export const CTYPE_TO_DOCTYPE = {
+  contest: 30,
+  homework: 60,
+};
+
 export const CONTEST_RULES = [
   RULE_OI,
   RULE_ACM,

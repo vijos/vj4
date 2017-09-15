@@ -8,19 +8,19 @@
     <div class="section">
       <div class="section__body typo">
         {{ tdoc['content']|markdown }}
-      {% if handler.is_live(tdoc) %}
+      {% if handler.is_ongoing(tdoc) %}
         <blockquote class="warn">
           <p>{{ _('We will check code similarity after this contest.') }}</p>
         </blockquote>
       {% endif %}
       </div>
     </div>
-  {% if handler.is_live(tdoc) or handler.is_done(tdoc) %}
+  {% if not handler.is_not_started(tdoc) %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Problem') }}</h1>
       </div>
-    {% if attended or handler.is_done(tdoc) %}
+    {% if attended or handler.is_finished(tdoc) %}
       <div class="section__body no-padding">
         <table class="data-table">
           <colgroup>
@@ -45,7 +45,7 @@
             {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
               {% if psdict[pid] and psdict[pid]['rid'] %}
               {% with rdoc=rdict[psdict[pid]['rid']] %}
-              {% if handler.can_show(tdoc) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS) %}
+              {% if handler.can_show_record(tdoc) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS_AND_SCOREBOARD) %}
                 {{ record.render_status_td(rdoc) }}
               {% else %}
                 <td class="col--status record-status--border"><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=handler.domain_id) }}">{{ _('Submitted') }}</a></td>
