@@ -729,3 +729,7 @@ page.contest_main.homework.item.supplementary.open_since: 开始时间
 page.contest_main.homework.item.supplementary.hard_deadline: 最终截止时间
 page.contest_main.homework.item.supplementary.deadline: 截止时间
 There is no homework so far ╰(*°▽°*)╯: 目前还没有作业 ╰(*°▽°*)╯
+Homework scoreboard is not visible.: 目前无法查看作业成绩表。
+This homework is not open.: 该作业还未开放递交。
+You've already claimed this homework.: 您已认领过该作业。
+You haven't claimed this homework yet.: 您还未认领过该作业。

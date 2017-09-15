@@ -299,7 +299,7 @@ class ProblemPretestHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
-class ProblemPretestConnection(ProblemPageCategoryMixin, base.Connection, recordHandler.RecordVisibilityMixin):
+class ProblemPretestConnection(ProblemPageCategoryMixin, recordHandler.RecordVisibilityMixin, base.Connection):
   async def on_open(self):
     await super(ProblemPretestConnection, self).on_open()
     self.pid = document.convert_doc_id(self.request.match_info['pid'])

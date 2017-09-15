@@ -53,7 +53,7 @@ class RecordMixin(RecordVisibilityMixin, RecordCommonOperationMixin):
 
 
 @app.route('/records', 'record_main')
-class RecordMainHandler(base.Handler, RecordMixin):
+class RecordMainHandler(RecordMixin, base.Handler):
   @base.get_argument
   @base.sanitize
   async def get(self, *, start: str='', uid_or_name: str='', pid: str='', tid: str=''):
@@ -97,7 +97,7 @@ class RecordMainHandler(base.Handler, RecordMixin):
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
-class RecordMainConnection(base.Connection, RecordMixin):
+class RecordMainConnection(RecordMixin, base.Connection):
   @base.get_argument
   @base.sanitize
   async def on_open(self, *, uid_or_name: str='', pid: str='', tid: str=''):
@@ -128,7 +128,7 @@ class RecordMainConnection(base.Connection, RecordMixin):
 
 
 @app.route('/records/{rid}', 'record_detail')
-class RecordDetailHandler(base.Handler, RecordMixin):
+class RecordDetailHandler(RecordMixin, base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):
@@ -172,7 +172,7 @@ class RecordDetailHandler(base.Handler, RecordMixin):
 
 
 @app.connection_route('/records/{rid}/conn', 'record_detail-conn')
-class RecordDetailConnection(base.Connection, RecordMixin):
+class RecordDetailConnection(RecordMixin, base.Connection):
   async def on_open(self):
     await super(RecordDetailConnection, self).on_open()
     self.rid = objectid.ObjectId(self.request.match_info['rid'])
