@@ -143,7 +143,7 @@ class RecordDetailHandler(RecordMixin, base.Handler):
     if rdoc['tid']:
       show_status, tdoc = await self.rdoc_contest_visible(rdoc)
     else:
-      show_status, tdoc = False, None
+      show_status, tdoc = True, None
     # TODO(twd2): futher check permission for visibility.
     if (not self.own(rdoc, field='uid')
         and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
