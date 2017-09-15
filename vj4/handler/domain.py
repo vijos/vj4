@@ -35,7 +35,7 @@ class DomainMainHandler(trainingHandler.TrainingStatusMixin, DomainMainPageCateg
 
   async def prepare_contest(self):
     if self.has_perm(builtin.PERM_VIEW_CONTEST):
-      tdocs = await contest.get_multi(self.domain_id, document.TYPE_CONTEST, rule={'$in': constant.contest.CONTEST_RULES}) \
+      tdocs = await contest.get_multi(self.domain_id, document.TYPE_CONTEST) \
                            .limit(self.CONTESTS_ON_MAIN) \
                            .to_list()
       tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
