@@ -121,7 +121,7 @@ class ContestCommonOperationMixin(object):
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
                                         problem.get_dict(self.domain_id, tdoc['pids']))
     ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
-    rows = contest.RULES[tdoc['rule']].status_func(is_export, self.translate, tdoc, ranked_tsdocs, udict, pdict)
+    rows = contest.RULES[tdoc['rule']].scoreboard_func(is_export, self.translate, tdoc, ranked_tsdocs, udict, pdict)
     return tdoc, rows
 
   async def convert_and_verify_pids_str(self, pids: str):

@@ -21,7 +21,7 @@ Rule = collections.namedtuple('Rule', ['can_show_record_func',
                                        'stat_func',
                                        'status_sort',
                                        'rank_func',
-                                       'status_func'])
+                                       'scoreboard_func'])
 
 
 def _oi_stat(tdoc, journal):
