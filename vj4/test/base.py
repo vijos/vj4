@@ -18,6 +18,7 @@ wait = asyncio.get_event_loop().run_until_complete
 
 class DatabaseTestCase(unittest.TestCase):
   def setUp(self):
+    db._client = None
     db._db = None
     db.coll.cache_clear()
     db.fs.cache_clear()
@@ -26,6 +27,8 @@ class DatabaseTestCase(unittest.TestCase):
     wait(tools.ensure_all_indexes())
 
   def tearDown(self):
+    db._client.close()
+    wait(db._client.wait_closed())
     pymongo.MongoClient(options.db_host).drop_database(options.db_name)
 
 

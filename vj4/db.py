@@ -8,9 +8,9 @@ options.define('db_name', default='test', help='Database name.')
 
 
 async def init():
-  client = await aiomongo.create_client('mongodb://' + options.db_host)
-  global _db
-  _db = client.get_database(options.db_name)
+  global _client, _db
+  _client = await aiomongo.create_client('mongodb://' + options.db_host)
+  _db = _client.get_database(options.db_name)
 
 
 @functools.lru_cache()
