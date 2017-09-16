@@ -180,8 +180,8 @@ async def recalc_contest_status(domain_id: str, tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
   async with document.get_multi_status(domain_id=domain_id,
                                        doc_type=document.TYPE_CONTEST,
-                                       doc_id=tdoc['doc_id']) as cursor:
-    async for tsdoc in cursor:
+                                       doc_id=tdoc['doc_id']) as tsdocs:
+    async for tsdoc in tsdocs:
       if 'attend' not in tsdoc or not tsdoc['attend']:
         continue
       journal = _get_status_journal(tsdoc)
