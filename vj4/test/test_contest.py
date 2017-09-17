@@ -41,7 +41,8 @@ RULE_TEST_ID = 999
 RULE_TEST = contest.Rule(lambda tdoc, now: now > tdoc['begin_at'],
                          _rule_test_stat,
                          [('score', -1), ('time', -1)],
-                         functools.partial(enumerate, start=1))
+                         functools.partial(enumerate, start=1),
+                         lambda **kwargs: None)
 
 
 class OiRuleTest(unittest.TestCase):
@@ -167,12 +168,6 @@ class InnerTest(base.DatabaseTestCase):
       await contest.attend(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
 
   @base.wrap_coro
-  async def test_update_status_wrong_pid(self):
-    rid = objectid.ObjectId()
-    with self.assertRaises(error.ValidationError):
-      await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, rid, 1000, True, 100)
-
-  @base.wrap_coro
   async def test_update_status_none(self):
     rid = objectid.ObjectId()
     with self.assertRaises(error.ContestNotAttendedError):
@@ -186,22 +181,10 @@ class InnerTest(base.DatabaseTestCase):
     await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_778_AC)
     tsdoc = await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_780_AC)
     self.assertEqual(len(tsdoc['journal']), 4)
-    self.assertEqual(tsdoc['journal'][0]['rid'], SUBMIT_777_AC['rid'])
-    self.assertEqual(tsdoc['journal'][0]['pid'], SUBMIT_777_AC['pid'])
-    self.assertEqual(tsdoc['journal'][0]['accept'], SUBMIT_777_AC['accept'])
-    self.assertEqual(tsdoc['journal'][0]['score'], SUBMIT_777_AC['score'])
-    self.assertEqual(tsdoc['journal'][1]['rid'], SUBMIT_777_NAC['rid'])
-    self.assertEqual(tsdoc['journal'][1]['pid'], SUBMIT_777_NAC['pid'])
-    self.assertEqual(tsdoc['journal'][1]['accept'], SUBMIT_777_NAC['accept'])
-    self.assertEqual(tsdoc['journal'][1]['score'], SUBMIT_777_NAC['score'])
-    self.assertEqual(tsdoc['journal'][2]['rid'], SUBMIT_778_AC['rid'])
-    self.assertEqual(tsdoc['journal'][2]['pid'], SUBMIT_778_AC['pid'])
-    self.assertEqual(tsdoc['journal'][2]['accept'], SUBMIT_778_AC['accept'])
-    self.assertEqual(tsdoc['journal'][2]['score'], SUBMIT_778_AC['score'])
-    self.assertEqual(tsdoc['journal'][3]['rid'], SUBMIT_780_AC['rid'])
-    self.assertEqual(tsdoc['journal'][3]['pid'], SUBMIT_780_AC['pid'])
-    self.assertEqual(tsdoc['journal'][3]['accept'], SUBMIT_780_AC['accept'])
-    self.assertEqual(tsdoc['journal'][3]['score'], SUBMIT_780_AC['score'])
+    self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
+    self.assertEqual(tsdoc['journal'][1], SUBMIT_777_NAC)
+    self.assertEqual(tsdoc['journal'][2], SUBMIT_778_AC)
+    self.assertEqual(tsdoc['journal'][3], SUBMIT_780_AC)
     self.assertEqual(tsdoc['score'], 1099)
     self.assertEqual(tsdoc['time'], 14)
     self.assertEqual(len(tsdoc['detail']), 4)
@@ -217,6 +200,8 @@ class InnerTest(base.DatabaseTestCase):
     await contest.edit(DOMAIN_ID_DUMMY, self.tid, begin_at=NOW - datetime.timedelta(seconds=3))
     await contest.recalc_status(DOMAIN_ID_DUMMY, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
+    self.assertEqual(len(tsdoc['journal']), 1)
+    self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
     self.assertEqual(tsdoc['score'], 22)
     self.assertEqual(tsdoc['time'], 5)
     self.assertEqual(len(tsdoc['detail']), 1)
@@ -225,6 +210,9 @@ class InnerTest(base.DatabaseTestCase):
     await contest.edit(DOMAIN_ID_DUMMY, self.tid, begin_at=NOW - datetime.timedelta(seconds=5))
     await contest.recalc_status(DOMAIN_ID_DUMMY, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
+    self.assertEqual(len(tsdoc['journal']), 2)
+    self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
+    self.assertEqual(tsdoc['journal'][1], SUBMIT_777_NAC)
     self.assertEqual(tsdoc['score'], 66)
     self.assertEqual(tsdoc['time'], 15)
     self.assertEqual(len(tsdoc['detail']), 2)
@@ -234,6 +222,10 @@ class InnerTest(base.DatabaseTestCase):
     await contest.edit(DOMAIN_ID_DUMMY, self.tid, begin_at=NOW - datetime.timedelta(seconds=3))
     await contest.recalc_status(DOMAIN_ID_DUMMY, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID)
+    self.assertEqual(len(tsdoc['journal']), 3)
+    self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
+    self.assertEqual(tsdoc['journal'][1], SUBMIT_777_NAC)
+    self.assertEqual(tsdoc['journal'][2], SUBMIT_778_AC)
     self.assertEqual(tsdoc['score'], 99)
     self.assertEqual(tsdoc['time'], 18)
     self.assertEqual(len(tsdoc['detail']), 3)

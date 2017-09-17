@@ -242,10 +242,10 @@ class ContestNotAttendedError(ForbiddenError):
     return "You haven't attended this contest yet."
 
 
-class ContestStatusHiddenError(ForbiddenError):
+class ContestScoreboardHiddenError(ForbiddenError):
   @property
   def message(self):
-    return 'Contest status is hidden.'
+    return 'Contest scoreboard is hidden.'
 
 
 class ContestNotLiveError(ForbiddenError):

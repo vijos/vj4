@@ -60,8 +60,8 @@ PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION = 1 << 40
 
 # Contest.
 PERM_VIEW_CONTEST = 1 << 41
-PERM_VIEW_CONTEST_STATUS = 1 << 42
-PERM_VIEW_CONTEST_HIDDEN_STATUS = 1 << 43
+PERM_VIEW_CONTEST_SCOREBOARD = 1 << 42
+PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD = 1 << 43
 PERM_CREATE_CONTEST = 1 << 44
 PERM_ATTEND_CONTEST = 1 << 45
 PERM_EDIT_CONTEST = 1 << 50
@@ -122,8 +122,8 @@ PERMS = [
     Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY_SELF, 'Delete own discussion replies'),
     Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION, 'Delete discussion replies of own discussion'),
     Permission('perm_contest', PERM_VIEW_CONTEST, 'View contests'),
-    Permission('perm_contest', PERM_VIEW_CONTEST_STATUS, 'View contest status'),
-    Permission('perm_contest', PERM_VIEW_CONTEST_HIDDEN_STATUS, 'View hidden contest status'),
+    Permission('perm_contest', PERM_VIEW_CONTEST_SCOREBOARD, 'View contest scoreboard'),
+    Permission('perm_contest', PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD, 'View hidden contest scoreboard'),
     Permission('perm_contest', PERM_CREATE_CONTEST, 'Create contests'),
     Permission('perm_contest', PERM_ATTEND_CONTEST, 'Attend contests'),
     Permission('perm_contest', PERM_EDIT_CONTEST, 'Edit any contests'),
@@ -183,7 +183,7 @@ BASIC_PERMISSIONS = (
     PERM_VIEW_PROBLEM_SOLUTION |
     PERM_VIEW_DISCUSSION |
     PERM_VIEW_CONTEST |
-    PERM_VIEW_CONTEST_STATUS |
+    PERM_VIEW_CONTEST_SCOREBOARD |
     PERM_VIEW_TRAINING
 )
 DEFAULT_PERMISSIONS = (
@@ -209,7 +209,7 @@ DEFAULT_PERMISSIONS = (
     PERM_DELETE_DISCUSSION_REPLY_SELF |
     PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION |
     PERM_VIEW_CONTEST |
-    PERM_VIEW_CONTEST_STATUS |
+    PERM_VIEW_CONTEST_SCOREBOARD |
     PERM_ATTEND_CONTEST |
     PERM_EDIT_CONTEST_SELF |
     PERM_VIEW_TRAINING |

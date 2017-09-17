@@ -26,7 +26,7 @@ class RecordMixin:
     now = datetime.datetime.utcnow()
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
         and (self.domain_id != tdoc['domain_id']
-             or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+             or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD))):
       return False
     return True
 
@@ -148,7 +148,7 @@ class RecordDetailHandler(base.Handler, RecordMixin):
         and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
       del rdoc['code']
     if not show_status and 'code' not in rdoc:
-      raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS)
+      raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
     udoc, dudoc = await asyncio.gather(
         user.get_by_uid(rdoc['uid']),
         domain.get_user(self.domain_id, rdoc['uid']))

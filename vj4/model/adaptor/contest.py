@@ -16,7 +16,8 @@ from vj4.util import rank
 
 journal_key_func = lambda j: j['rid']
 
-Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort', 'rank_func'])
+Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort', 'rank_func',
+                                       'scoreboard_func'])
 
 
 def _oi_stat(tdoc, journal):
@@ -47,12 +48,97 @@ def _acm_stat(tdoc, journal):
 def _oi_equ_func(a, b):
   return a.get('score', 0) == b.get('score', 0)
 
+
+def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
+  columns = []
+  columns.append({'type': 'rank', 'value': _('Rank')})
+  columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'total_score', 'value': _('Total Score')})
+  for index, pid in enumerate(tdoc['pids']):
+    if is_export:
+      columns.append({'type': 'problem_score', 
+                      'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+    else:
+      columns.append({'type': 'problem_detail',
+                      'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+  rows = [columns]
+  for rank, tsdoc in ranked_tsdocs:
+    if 'detail' in tsdoc:
+      tsddict = {item['pid']: item for item in tsdoc['detail']}
+    else:
+      tsddict = {}
+    row = []
+    row.append({'type': 'string', 'value': rank})
+    row.append({'type': 'user', 
+                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+    row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
+    for pid in tdoc['pids']:
+      row.append({'type': 'record',
+                  'value': tsddict.get(pid, {}).get('score', '-'),
+                  'raw': tsddict.get(pid, {}).get('rid', None)})
+    rows.append(row)
+  return rows
+
+
+def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
+  columns = []
+  columns.append({'type': 'rank', 'value': _('Rank')})
+  columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'solved_problems', 'value': _('Solved Problems')})
+  if is_export: columns.append({'type': 'total_time',
+                                'value': _('Total Time')})
+  for index, pid in enumerate(tdoc['pids']):
+    if is_export:
+      columns.append({'type': 'problem_flag',
+                      'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+      columns.append({'type': 'problem_time',
+                      'value': '#{0} {1}'.format(index + 1, _('Time'))})
+    else:
+      columns.append({'type': 'problem_detail',
+                      'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+  rows = [columns]
+  for rank, tsdoc in ranked_tsdocs:
+    if 'detail' in tsdoc:
+      tsddict = {item['pid']: item for item in tsdoc['detail']}
+    else:
+      tsddict = {}
+    row = []
+    row.append({'type': 'string', 'value': rank})
+    row.append({'type': 'user',
+                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+    row.append({'type': 'string',
+                'value': tsdoc.get('accept', 0)})
+    if is_export: row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
+    for pid in tdoc['pids']:
+      if tsddict.get(pid, {}).get('accept', False):
+        rdoc = tsddict[pid]['rid']
+        col_accepted = _('Accepted')
+        col_time = tsddict[pid]['time']
+      else:
+        rdoc = None
+        col_accepted = '-'
+        col_time = '-'
+      if is_export:
+        row.append({'type': 'string', 'value': col_accepted})
+        row.append({'type': 'string', 'value': col_time})
+      else:
+        row.append({'type': 'record',
+                    'value': '{0}\n{1}'.format(col_accepted, col_time), 'raw': rdoc})
+    rows.append(row)
+  return rows
+
+
 RULES = {
-  constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'], _oi_stat, [('score', -1)],
-                                 functools.partial(rank.ranked, equ_func=_oi_equ_func)),
-  constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'], _acm_stat,
-                                  [('accept', -1), ('time', 1)], functools.partial(enumerate,
-                                                                                   start=1)),
+  constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'],
+                                 _oi_stat,
+                                 [('score', -1)],
+                                 functools.partial(rank.ranked, equ_func=_oi_equ_func),
+                                 _oi_scoreboard),
+  constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
+                                  _acm_stat,
+                                  [('accept', -1), ('time', 1)],
+                                  functools.partial(enumerate, start=1),
+                                  _acm_scoreboard),
 }
 
 
@@ -159,9 +245,6 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
                         pid: document.convert_doc_id, accept: bool, score: int):
   """This method returns None when the modification has been superseded by a parallel operation."""
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
-  if pid not in tdoc['pids']:
-    raise error.ValidationError('pid')
-
   tsdoc = await document.rev_push_status(
     domain_id, document.TYPE_CONTEST, tdoc['doc_id'], uid,
     'journal', {'rid': rid, 'pid': pid, 'accept': accept, 'score': score})

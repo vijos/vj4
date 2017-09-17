@@ -28,8 +28,8 @@
   <thead>
     <tr>
     {%- for column in rows[0] -%}
-      <th>
-        {{ column }}
+      <th class="col--{{ column['type'] }}">
+        {{ column['value'] }}
       </th>
     {%- endfor -%}
     </tr>
@@ -39,7 +39,7 @@
     <tr>
       {%- for column in row -%}
         <td>
-          {{ column }}
+          {{ column['value'] }}
         </td>
       {%- endfor -%}
     </tr>
