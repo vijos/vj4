@@ -79,16 +79,22 @@ def _assignment_stat(tdoc, journal):
           'detail': detail}
 
 
-def _oi_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
+def _oi_equ_func(a, b):
+  return a.get('score', 0) == b.get('score', 0)
+
+
+def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   columns = []
-  columns.append({'type': 'rank', 'value': translate_func('Rank')})
-  columns.append({'type': 'user', 'value': translate_func('User')})
-  columns.append({'type': 'total_score', 'value': translate_func('Total Score')})
+  columns.append({'type': 'rank', 'value': _('Rank')})
+  columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'total_score', 'value': _('Total Score')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
-      columns.append({'type': 'problem_score', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+      columns.append({'type': 'problem_score',
+                      'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
     else:
-      columns.append({'type': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+      columns.append({'type': 'problem_detail',
+                      'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
     if 'detail' in tsdoc:
@@ -97,7 +103,8 @@ def _oi_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
-    row.append({'type': 'user', 'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+    row.append({'type': 'user',
+                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
     for pid in tdoc['pids']:
       row.append({'type': 'record',
@@ -107,18 +114,22 @@ def _oi_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
   return rows
 
 
-def _acm_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
+def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   columns = []
-  columns.append({'type': 'rank', 'value': translate_func('Rank')})
-  columns.append({'type': 'user', 'value': translate_func('User')})
-  columns.append({'type': 'solved_problems', 'value': translate_func('Solved Problems')})
-  if is_export: columns.append({'type': 'total_time', 'value': translate_func('Total Time')})
+  columns.append({'type': 'rank', 'value': _('Rank')})
+  columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'solved_problems', 'value': _('Solved Problems')})
+  if is_export: columns.append({'type': 'total_time',
+                                'value': _('Total Time')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
-      columns.append({'type': 'problem_flag', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
-      columns.append({'type': 'problem_time', 'value': '#{0} {1}'.format(index + 1, translate_func('Time'))})
+      columns.append({'type': 'problem_flag',
+                      'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+      columns.append({'type': 'problem_time',
+                      'value': '#{0} {1}'.format(index + 1, _('Time'))})
     else:
-      columns.append({'type': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+      columns.append({'type': 'problem_detail',
+                      'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
     if 'detail' in tsdoc:
@@ -127,13 +138,15 @@ def _acm_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
-    row.append({'type': 'user', 'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
-    row.append({'type': 'string', 'value': tsdoc.get('accept', 0)})
+    row.append({'type': 'user',
+                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+    row.append({'type': 'string',
+                'value': tsdoc.get('accept', 0)})
     if is_export: row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
     for pid in tdoc['pids']:
       if tsddict.get(pid, {}).get('accept', False):
         rdoc = tsddict[pid]['rid']
-        col_accepted = translate_func('Accepted')
+        col_accepted = _('Accepted')
         col_time = tsddict[pid]['time']
       else:
         rdoc = None
@@ -143,25 +156,31 @@ def _acm_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
         row.append({'type': 'string', 'value': col_accepted})
         row.append({'type': 'string', 'value': col_time})
       else:
-        row.append({'type': 'record', 'value': '{0}\n{1}'.format(col_accepted, col_time), 'raw': rdoc})
+        row.append({'type': 'record',
+                    'value': '{0}\n{1}'.format(col_accepted, col_time), 'raw': rdoc})
     rows.append(row)
   return rows
 
 
-def _assignment_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
+def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   columns = []
-  columns.append({'type': 'rank', 'value': translate_func('Rank')})
-  columns.append({'type': 'user', 'value': translate_func('User')})
-  columns.append({'type': 'total_score', 'value': translate_func('Score')})
-  if is_export: columns.append({'type': 'total_original_score', 'value': translate_func('Original Score')})
-  columns.append({'type': 'total_time', 'value': translate_func('Total Time')})
+  columns.append({'type': 'rank', 'value': _('Rank')})
+  columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'total_score', 'value': _('Score')})
+  if is_export: columns.append({'type': 'total_original_score',
+                                'value': _('Original Score')})
+  columns.append({'type': 'total_time', 'value': _('Total Time')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
-      columns.append({'type': 'problem_score', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
-      columns.append({'type': 'problem_original_score', 'value': '#{0} {1}'.format(index + 1, translate_func('Original Score'))})
-      columns.append({'type': 'problem_time', 'value': '#{0} {1}'.format(index + 1, translate_func('Time'))})
+      columns.append({'type': 'problem_score',
+                      'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+      columns.append({'type': 'problem_original_score',
+                      'value': '#{0} {1}'.format(index + 1, _('Original Score'))})
+      columns.append({'type': 'problem_time',
+                      'value': '#{0} {1}'.format(index + 1, _('Time'))})
     else:
-      columns.append({'type': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+      columns.append({'type': 'problem_detail',
+                      'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
     if 'detail' in tsdoc:
@@ -170,8 +189,10 @@ def _assignment_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pd
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
-    row.append({'type': 'user', 'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
-    row.append({'type': 'string', 'value': tsdoc.get('penalty_score', 0)})
+    row.append({'type': 'user',
+                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+    row.append({'type': 'string',
+                'value': tsdoc.get('penalty_score', 0)})
     if is_export: row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
     row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
     for pid in tdoc['pids']:
@@ -184,7 +205,8 @@ def _assignment_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pd
         row.append({'type': 'string', 'value': col_original_score})
         row.append({'type': 'string', 'value': col_time})
       else:
-        row.append({'type': 'record', 'value': '{0} / {1}\n{2}'.format(col_score, col_original_score, col_time), 'raw': rdoc})
+        row.append({'type': 'record',
+                    'value':'{0} / {1}\n{2}'.format(col_score, col_original_score, col_time), 'raw': rdoc})
     rows.append(row)
   return rows
 
@@ -194,20 +216,20 @@ RULES = {
                                  lambda tdoc, now: now > tdoc['end_at'],
                                  _oi_stat,
                                  [('score', -1)],
-                                 functools.partial(rank.ranked, equ_func=lambda a, b: a.get('score', 0) == b.get('score', 0)),
-                                 _oi_status),
+                                 functools.partial(rank.ranked, equ_func=_oi_equ_func),
+                                 _oi_scoreboard),
   constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
                                   lambda tdoc, now: now >= tdoc['begin_at'],
                                   _acm_stat,
                                   [('accept', -1), ('time', 1)],
                                   functools.partial(enumerate, start=1),
-                                  _acm_status),
+                                  _acm_scoreboard),
   constant.contest.RULE_ASSIGNMENT: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
                                          lambda tdoc, now: False,   # TODO: show scoreboard according to assignment preference
                                          _assignment_stat,
                                          [('penalty_score', -1), ('time', 1)],
                                          functools.partial(enumerate, start=1),
-                                         _assignment_status),
+                                         _assignment_scoreboard),
 }
 
 
