@@ -365,7 +365,7 @@ class ContestDetailProblemSubmitHandler(ContestMixin, ContestPageCategoryMixin, 
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
     if self.can_show_record(tdoc):
-      rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id']) \
+      rdocs = await record.get_user_in_problem_multi(uid, self.domain_id, pdoc['doc_id'], get_hidden=True) \
                           .sort([('_id', -1)]) \
                           .limit(10) \
                           .to_list()
