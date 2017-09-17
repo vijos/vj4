@@ -335,7 +335,8 @@ async def rev_set_status(domain_id, doc_type, doc_id, uid, rev, return_doc=True,
   update = {'$set': kwargs,
             '$inc': {'rev': 1}}
   if return_doc:
-    doc = await coll.find_one_and_update(filter=filter, update=update, return_document=ReturnDocument.AFTER)
+    doc = await coll.find_one_and_update(filter=filter, update=update,
+                                         return_document=ReturnDocument.AFTER)
     return doc
   else:
     result = await coll.update_one(filter, update)

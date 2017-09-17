@@ -367,12 +367,12 @@ async def update_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, u
 
 
 @argmethod.wrap
-async def recalc_contest_status(domain_id: str, doc_type: int, tid: objectid.ObjectId):
+async def recalc_status(domain_id: str, doc_type: int, tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, doc_type, tid)
   async with document.get_multi_status(domain_id=domain_id,
                                        doc_type=doc_type,
-                                       doc_id=tdoc['doc_id']) as cursor:
-    async for tsdoc in cursor:
+                                       doc_id=tdoc['doc_id']) as tsdocs:
+    async for tsdoc in tsdocs:
       if 'attend' not in tsdoc or not tsdoc['attend']:
         continue
       journal = _get_status_journal(tsdoc)
