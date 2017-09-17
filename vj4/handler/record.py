@@ -139,7 +139,6 @@ class RecordDetailHandler(RecordMixin, base.Handler):
     if rdoc['domain_id'] != self.domain_id:
       self.redirect(self.reverse_url('record_detail', rid=rid, domain_id=rdoc['domain_id']))
       return
-    show_status = True
     if rdoc['tid']:
       show_status, tdoc = await self.rdoc_contest_visible(rdoc)
     else:
