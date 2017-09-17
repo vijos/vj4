@@ -22,8 +22,7 @@ def _rule_test_stat(tdoc, journal):
 
 
 NOW = datetime.datetime.utcnow().replace(microsecond=0)
-TDOC = {'pids': [777, 778, 779],
-        'begin_at': NOW}
+TDOC = {'pids': [777, 778, 779], 'begin_at': NOW}
 SUBMIT_777_AC = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=2)),
                  'pid': 777, 'accept': True, 'score': 22}
 SUBMIT_777_NAC = {'rid': objectid.ObjectId.from_datetime(NOW + datetime.timedelta(seconds=3)),
