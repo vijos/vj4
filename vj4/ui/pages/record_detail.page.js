@@ -1,6 +1,12 @@
 import { NamedPage } from 'vj/misc/PageLoader';
 
 const page = new NamedPage('record_detail', async () => {
+  // Update visibility
+  $('[name="visibility-form"] [name="visibility"]').change(() => {
+    $('[name="visibility-form"]').submit();
+  });
+
+  // Realtime update
   const SockJs = await System.import('sockjs-client');
   const DiffDOM = await System.import('diff-dom');
 

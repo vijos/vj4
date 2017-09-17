@@ -18,6 +18,8 @@ Begin Time: 开始时间
 Belongs to: 属于
 Bio: 个人简介
 Bio Visibility: 个人简介可见性
+Submission Code Visibility: 递交记录代码可见性
+Sets whether your source code is public to others. This option may be overridden by submission options.: 设置其他人是否可以看到您递交的代码。该设置可能被递交记录的设置覆盖。
 Blog: 博客
 Boom!: 炸了！
 Browser: 浏览器
@@ -142,6 +144,7 @@ Save All Changes: 保存所有修改
 Saved session: 已保存的会话
 Score: 分数
 Secret: 保密
+Use account settings: 由账户设置决定
 Secret (visible to admins): 保密（对管理员可见）
 Security: 安全
 Select a node to create discussion.: 选择一个节点来发表讨论。
@@ -201,7 +204,7 @@ Using your Vijos universal account: 使用您的 Vijos 通用账户
 View Problem: 查看题目
 View or create discussion: 查看与发表讨论
 View or submit solution: 查看与发表题解
-Visible to registered users: 对注册用户可见
+Public to registered users: 对注册用户可见
 Vote: 投票
 'We use <a href="https://en.gravatar.com/" target="_blank">Gravatar</a> to present your avatar icon.': '我们使用 <a href="https://cn.gravatar.com/" target="_blank">Gravatar</a> 服务来呈现您的头像。'
 Whether to show tags in the problem list.: 是否在题目列表中显示题目的标签。
@@ -408,33 +411,33 @@ View problems: 查看题目
 Submit problem: 递交题目
 Read data of problem: 读取题目数据
 Read data of own problems: 读取自己题目的数据
-Read record codes: 读取记录的代码
+Read any record codes: 读取任意记录的代码
 Rejudge problems: 重测题目
 Rejudge records: 重测记录
 View problem solutions: 查看题解
 Create problem solutions: 创建题解
 Vote problem solutions: 为题解投票
-Edit problem solutions: 修改题解
+Edit any problem solutions: 修改任意题解
 Edit own problem solutions: 修改自己的题解
-Delete problem solutions: 删除题解
+Delete any problem solutions: 删除任意题解
 Delete own problem solutions: 删除自己的题解
 Reply problem solutions: 回复题解
-Edit problem solution replies: 修改题解的回复
+Edit any problem solution replies: 修改任意题解的回复
 Edit own problem solution replies: 修改题解中自己的回复
-Delete problem solution replies: 删除题解的回复
+Delete any problem solution replies: 删除任意题解的回复
 Delete own problem solution replies: 删除题解中自己的回复
 View discussions: 查看讨论
 Create discussions: 创建讨论
 Highlight discussions: 高亮讨论
-Edit discussions: 修改讨论
+Edit any discussions: 修改任意讨论
 Edit own discussions: 修改自己的讨论
-Delete discussions: 删除讨论
+Delete any discussions: 删除任意讨论
 Delete own discussions: 删除自己的讨论
 Reply discussions: 回复讨论
-Edit discussion replies: 修改讨论的回复
+Edit any discussion replies: 修改任意讨论的回复
 Edit own discussion replies: 修改讨论中自己的回复
 Edit discussion replies of own discussion: 修改自己讨论中的回复
-Delete discussion replies: 删除讨论回复
+Delete any discussion replies: 删除任意讨论回复
 Delete own discussion replies: 删除讨论中自己的回复
 Delete discussion replies of own discussion: 删除自己讨论中的回复
 View contests: 查看比赛
@@ -525,7 +528,7 @@ collapse: 收缩
 'Note: Problem title may not be hidden.': 注意：题目标题可能不会被隐藏。
 Partic.: 参赛人数
 Create training plans: 创建训练计划
-Edit training plans: 修改训练计划
+Edit any training plans: 修改任意训练计划
 Edit own training plans: 修改自己的训练计划
 Click here to chat with me: 点击这里与我聊天
 Terms of Service: 服务条款
@@ -646,15 +649,12 @@ Bulletin: 公告
 You cannot visit this domain.: 您不能访问此域。
 'Copy failed :(': '复制失败 :('
 Code copied to clipboard!: 代码已复制到剪贴板！
+Set any records' code visibility: 设置任意记录中代码的可见性
+Set own records' code visibility: 设置自己记录中代码的可见性
 No comments so far...: 目前还没有评论...
 No solutions so far...: 目前还没有题解...
-Edit Profile: 编辑个人信息
-Send Message: 发送站内信息
-Copy Email: 复制电子邮件
-Copy QQ Number: 复制QQ号
-Copy WeChat Account: 复制微信号
-'"{data}" copied to clipboard!': “{data}”已复制到剪贴板！
-'Copy "{data}" failed :(': '复制“{data}”失败 :('
+You don't have the permission to view the code.: 您没有权限查看代码。
+Visibility: 可见性
 Introduce: 简介
 Introduce must not exceed 500 characters and it will be shown in the list view.: 简介不能超过 500 个字符，将显示在列表页面中。
 Hint: 提示

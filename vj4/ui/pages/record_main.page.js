@@ -2,6 +2,12 @@ import { NamedPage } from 'vj/misc/PageLoader';
 import UserSelectAutoComplete from 'vj/components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('record_main', async () => {
+  // Autocomplete
+  UserSelectAutoComplete.getOrConstruct($('.filter-user [name="uid_or_name"]'), {
+    clearDefaultValue: false,
+  });
+
+  // Realtime update
   const SockJs = await System.import('sockjs-client');
   const DiffDOM = await System.import('diff-dom');
 
@@ -21,9 +27,6 @@ const page = new NamedPage('record_main', async () => {
       $newTr.trigger('vjContentNew');
     }
   };
-  UserSelectAutoComplete.getOrConstruct($('.filter-user [name="uid_or_name"]'), {
-    clearDefaultValue: false,
-  });
 });
 
 export default page;

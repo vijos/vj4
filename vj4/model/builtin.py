@@ -73,6 +73,10 @@ PERM_CREATE_TRAINING = 1 << 47
 PERM_EDIT_TRAINING = 1 << 48
 PERM_EDIT_TRAINING_SELF = 1 << 49
 
+# Record.
+PERM_EDIT_RECORD_VISIBILITY = 1 << 50
+PERM_EDIT_RECORD_VISIBILITY_SELF = 1 << 51
+
 PERM_ALL = -1
 
 Permission = functools.partial(
@@ -92,33 +96,35 @@ PERMS = [
     Permission('perm_problem', PERM_SUBMIT_PROBLEM, 'Submit problem'),
     Permission('perm_problem', PERM_READ_PROBLEM_DATA, 'Read data of problem'),
     Permission('perm_problem', PERM_READ_PROBLEM_DATA_SELF, 'Read data of own problems'),
-    Permission('perm_record', PERM_READ_RECORD_CODE, 'Read record codes'),
+    Permission('perm_record', PERM_READ_RECORD_CODE, 'Read any record codes'),
+    Permission('perm_record', PERM_EDIT_RECORD_VISIBILITY, 'Set any records\' code visibility'),
+    Permission('perm_record', PERM_EDIT_RECORD_VISIBILITY_SELF, 'Set own records\' code visibility'),
     Permission('perm_record', PERM_REJUDGE_PROBLEM, 'Rejudge problems'),
     Permission('perm_record', PERM_REJUDGE, 'Rejudge records'),
     Permission('perm_problem_solution', PERM_VIEW_PROBLEM_SOLUTION, 'View problem solutions'),
     Permission('perm_problem_solution', PERM_CREATE_PROBLEM_SOLUTION, 'Create problem solutions'),
     Permission('perm_problem_solution', PERM_VOTE_PROBLEM_SOLUTION, 'Vote problem solutions'),
-    Permission('perm_problem_solution', PERM_EDIT_PROBLEM_SOLUTION, 'Edit problem solutions'),
+    Permission('perm_problem_solution', PERM_EDIT_PROBLEM_SOLUTION, 'Edit any problem solutions'),
     Permission('perm_problem_solution', PERM_EDIT_PROBLEM_SOLUTION_SELF, 'Edit own problem solutions'),
-    Permission('perm_problem_solution', PERM_DELETE_PROBLEM_SOLUTION, 'Delete problem solutions'),
+    Permission('perm_problem_solution', PERM_DELETE_PROBLEM_SOLUTION, 'Delete any problem solutions'),
     Permission('perm_problem_solution', PERM_DELETE_PROBLEM_SOLUTION_SELF, 'Delete own problem solutions'),
     Permission('perm_problem_solution', PERM_REPLY_PROBLEM_SOLUTION, 'Reply problem solutions'),
-    Permission('perm_problem_solution', PERM_EDIT_PROBLEM_SOLUTION_REPLY, 'Edit problem solution replies'),
+    Permission('perm_problem_solution', PERM_EDIT_PROBLEM_SOLUTION_REPLY, 'Edit any problem solution replies'),
     Permission('perm_problem_solution', PERM_EDIT_PROBLEM_SOLUTION_REPLY_SELF, 'Edit own problem solution replies'),
-    Permission('perm_problem_solution', PERM_DELETE_PROBLEM_SOLUTION_REPLY, 'Delete problem solution replies'),
+    Permission('perm_problem_solution', PERM_DELETE_PROBLEM_SOLUTION_REPLY, 'Delete any problem solution replies'),
     Permission('perm_problem_solution', PERM_DELETE_PROBLEM_SOLUTION_REPLY_SELF, 'Delete own problem solution replies'),
     Permission('perm_discussion', PERM_VIEW_DISCUSSION, 'View discussions'),
     Permission('perm_discussion', PERM_CREATE_DISCUSSION, 'Create discussions'),
     Permission('perm_discussion', PERM_HIGHLIGHT_DISCUSSION, 'Highlight discussions'),
-    Permission('perm_discussion', PERM_EDIT_DISCUSSION, 'Edit discussions'),
+    Permission('perm_discussion', PERM_EDIT_DISCUSSION, 'Edit any discussions'),
     Permission('perm_discussion', PERM_EDIT_DISCUSSION_SELF, 'Edit own discussions'),
-    Permission('perm_discussion', PERM_DELETE_DISCUSSION, 'Delete discussions'),
+    Permission('perm_discussion', PERM_DELETE_DISCUSSION, 'Delete any discussions'),
     Permission('perm_discussion', PERM_DELETE_DISCUSSION_SELF, 'Delete own discussions'),
     Permission('perm_discussion', PERM_REPLY_DISCUSSION, 'Reply discussions'),
-    Permission('perm_discussion', PERM_EDIT_DISCUSSION_REPLY, 'Edit discussion replies'),
+    Permission('perm_discussion', PERM_EDIT_DISCUSSION_REPLY, 'Edit any discussion replies'),
     Permission('perm_discussion', PERM_EDIT_DISCUSSION_REPLY_SELF, 'Edit own discussion replies'),
     Permission('perm_discussion', PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION, 'Edit discussion replies of own discussion'),
-    Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY, 'Delete discussion replies'),
+    Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY, 'Delete any discussion replies'),
     Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY_SELF, 'Delete own discussion replies'),
     Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION, 'Delete discussion replies of own discussion'),
     Permission('perm_contest', PERM_VIEW_CONTEST, 'View contests'),
@@ -130,7 +136,7 @@ PERMS = [
     Permission('perm_contest', PERM_EDIT_CONTEST_SELF, 'Edit own contests'),
     Permission('perm_training', PERM_VIEW_TRAINING, 'View training plans'),
     Permission('perm_training', PERM_CREATE_TRAINING, 'Create training plans'),
-    Permission('perm_training', PERM_EDIT_TRAINING, 'Edit training plans'),
+    Permission('perm_training', PERM_EDIT_TRAINING, 'Edit any training plans'),
     Permission('perm_training', PERM_EDIT_TRAINING_SELF, 'Edit own training plans'),
 ]
 
@@ -214,7 +220,8 @@ DEFAULT_PERMISSIONS = (
     PERM_EDIT_CONTEST_SELF |
     PERM_VIEW_TRAINING |
     PERM_CREATE_TRAINING |
-    PERM_EDIT_TRAINING_SELF
+    PERM_EDIT_TRAINING_SELF |
+    PERM_EDIT_RECORD_VISIBILITY_SELF
 )
 ADMIN_PERMISSIONS = PERM_ALL
 DOMAIN_SYSTEM = {

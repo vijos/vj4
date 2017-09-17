@@ -75,6 +75,17 @@ async def rejudge(record_id: objectid.ObjectId, enqueue: bool=True):
 
 
 @argmethod.wrap
+async def set_visibility(rid: objectid.ObjectId, visibility: int):
+  if visibility not in constant.setting.SUBMISSION_VISIBILITY_RANGE:
+    raise error.ValidationError('visibility')
+  coll = db.coll('record')
+  doc = await coll.find_one_and_update(filter={'_id': rid},
+                                       update={'$set': {'visibility': visibility}},
+                                       return_document=ReturnDocument.AFTER)
+  return doc
+
+
+@argmethod.wrap
 def get_all_multi(end_id: objectid.ObjectId=None, get_hidden: bool=False, *, fields=None,
                   **kwargs):
   coll = db.coll('record')
