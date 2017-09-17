@@ -60,7 +60,7 @@ class ContestStatusMixin(object):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     if (not contest.RULES[tdoc['rule']].show_func(tdoc, self.now)
         and not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)):
-      raise error.ContestScoreboardHiddenError()
+      raise error.ContestScoreboardHiddenError(self.domain_id, tid)
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
                                         problem.get_dict(self.domain_id, tdoc['pids']))
     ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
