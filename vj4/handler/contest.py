@@ -113,9 +113,9 @@ class ContestCommonOperationMixin(object):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, doc_type, tid)
     if not self.can_show_scoreboard(tdoc):
       if doc_type == document.TYPE_CONTEST:
-        raise error.ContestScoreboardHiddenError()
+        raise error.ContestScoreboardHiddenError(self.domain_id, tid)
       elif doc_type == document.TYPE_HOMEWORK:
-        raise error.HomeworkScoreboardHiddenError()
+        raise error.HomeworkScoreboardHiddenError(self.domain_id, tid)
       else:
         raise error.InvalidArgumentError('doc_type')
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
