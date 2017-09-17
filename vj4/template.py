@@ -41,6 +41,7 @@ class Environment(jinja2.Environment):
     self.globals['static_url'] = lambda s: options.cdn_prefix + staticmanifest.get(s)
     self.globals['paginate'] = paginate
 
+    self.filters['nl2br'] = nl2br
     self.filters['markdown'] = markdown
     self.filters['json'] = json.encode
     self.filters['gravatar_url'] = gravatar_url
@@ -62,6 +63,11 @@ MARKDOWN_RENDER_FLAGS = (hoedown.HTML_ESCAPE |  # Escape all HTML.
 
 
 FS_RE = re.compile(r'\(vijos\:\/\/fs\/([0-9a-f]{40,})\)')
+
+
+def nl2br(text):
+  markup = jinja2.escape(text)
+  return jinja2.Markup('<br>'.join(markup.split('\n')))
 
 
 def fs_replace(m):

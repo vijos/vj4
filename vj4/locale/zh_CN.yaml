@@ -34,7 +34,7 @@ Code: 代码
 Comments: 评论
 Contact Us: 联系我们
 Content: 内容
-Contest Status: 比赛状态
+Contest Scoreboard: 比赛成绩表
 Create: 创建
 Create Contest: 创建比赛
 Create Discussion: 创建讨论
@@ -167,7 +167,7 @@ Star: 收藏
 Unstar: 取消收藏
 Star Topic: 收藏讨论
 Unstar Topic: 取消收藏
-Use Your Privilege to View Status: 使用您的特权来查看状态
+Use Your Privilege to View Scoreboard: 使用您的特权来查看成绩表
 Status is hidden: 状态已隐藏
 Submission Statistics: 递交统计
 Submission: 递交
@@ -212,7 +212,7 @@ content: 内容
 contest_create: 创建比赛
 contest_edit: 编辑比赛
 contest_main: 比赛
-contest_status: 比赛状态
+contest_scoreboard: 比赛成绩表
 current domain: 当前域
 currently offline: 目前离线
 discussion_create: 创建讨论
@@ -338,7 +338,7 @@ Domain {0} not found.: 域 {0} 不存在。
 Domain {0} already exists.: 域 {0} 已经存在。
 You've already attended this contest.: 您已经参加本次比赛。
 You haven't attended this contest yet.: 您还没有参加本次比赛。
-Contest status is hidden.: 当前比赛状态隐藏，暂不可显示。
+Contest scoreboard is hidden.: 当前比赛成绩表隐藏，暂不可显示。
 Problem {1} not found.: 题目 {1} 不存在。
 Training requirement is not satisfied.: 不满足训练条件。
 Record {0} not found.: 记录 {0} 不存在。
@@ -438,8 +438,8 @@ Delete discussion replies: 删除讨论回复
 Delete own discussion replies: 删除讨论中自己的回复
 Delete discussion replies of own discussion: 删除自己讨论中的回复
 View contests: 查看比赛
-View contest status: 查看比赛状态
-View hidden contest status: 查看隐藏的比赛状态
+View contest scoreboard: 查看比赛成绩表
+View hidden contest scoreboard: 查看隐藏的比赛成绩表
 Create contests: 创建比赛
 Attend contests: 参加比赛
 View training plans: 查看训练计划
@@ -667,3 +667,5 @@ Export as CSV: 导出为 CSV
 Export as HTML: 导出为 HTML
 Export All Code: 导出所有代码
 Solved Problems: 解决题目
+Total Score: 总分数
+Scoreboard: 成绩表

@@ -309,7 +309,7 @@ class ProblemPretestConnection(base.Connection):
       tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
       if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
           and (self.domain_id != tdoc['domain_id']
-               or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS))):
+               or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD))):
         return
     self.send(rdoc=rdoc)
 
