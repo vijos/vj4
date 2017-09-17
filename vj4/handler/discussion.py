@@ -41,8 +41,7 @@ class DiscussionMainHandler(base.Handler):
         user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
         discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs)))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
-                udict=udict, vndict=vndict, page=page, dpcount=dpcount,
-                datetime_stamp=self.datetime_stamp)
+                udict=udict, vndict=vndict, page=page, dpcount=dpcount)
 
 
 @app.route('/discuss/{doc_type:-?\d+}/{doc_id}', 'discussion_node_document_as_node')
@@ -82,7 +81,6 @@ class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
         (vnode['title'], None))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode, ddocs=ddocs,
                 udict=udict, vndict=vndict, page=page, dpcount=dpcount, **vncontext,
-                datetime_stamp=self.datetime_stamp,
                 path_components=path_components)
 
 

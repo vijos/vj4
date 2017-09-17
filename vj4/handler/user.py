@@ -223,8 +223,7 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
                 udoc=udoc, dudoc=dudoc, sdoc=sdoc,
                 rdocs=rdocs, pdict=pdict, pdocs=pdocs, pcount=pcount,
                 psdocs=psdocs, pscount=pscount, psdocs_hot=psdocs_hot,
-                ddocs=ddocs, dcount=dcount, vndict=vndict,
-                datetime_stamp=self.datetime_stamp)
+                ddocs=ddocs, dcount=dcount, vndict=vndict)
 
 
 @app.route('/user/search', 'user_search')
