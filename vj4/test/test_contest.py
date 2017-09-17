@@ -39,6 +39,7 @@ CONTENT = 'dummy_content'
 ATTEND_UID = 44
 RULE_TEST_ID = 999
 RULE_TEST = contest.Rule(lambda tdoc, now: now > tdoc['begin_at'],
+                         lambda tdoc, now: now > tdoc['begin_at'],
                          _rule_test_stat,
                          [('score', -1), ('time', -1)],
                          functools.partial(enumerate, start=1),

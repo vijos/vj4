@@ -16,7 +16,11 @@ from vj4.util import rank
 
 journal_key_func = lambda j: j['rid']
 
-Rule = collections.namedtuple('Rule', ['show_func', 'stat_func', 'status_sort', 'rank_func',
+Rule = collections.namedtuple('Rule', ['can_show_record_func',
+                                       'can_show_scoreboard_func',
+                                       'stat_func',
+                                       'status_sort',
+                                       'rank_func',
                                        'scoreboard_func'])
 
 
@@ -56,7 +60,7 @@ def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   columns.append({'type': 'total_score', 'value': _('Total Score')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
-      columns.append({'type': 'problem_score', 
+      columns.append({'type': 'problem_score',
                       'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
     else:
       columns.append({'type': 'problem_detail',
@@ -69,7 +73,7 @@ def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
-    row.append({'type': 'user', 
+    row.append({'type': 'user',
                 'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
     for pid in tdoc['pids']:
@@ -130,11 +134,13 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
 
 RULES = {
   constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'],
+                                 lambda tdoc, now: now > tdoc['end_at'],
                                  _oi_stat,
                                  [('score', -1)],
                                  functools.partial(rank.ranked, equ_func=_oi_equ_func),
                                  _oi_scoreboard),
   constant.contest.RULE_ACM: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
+                                  lambda tdoc, now: now >= tdoc['begin_at'],
                                   _acm_stat,
                                   [('accept', -1), ('time', 1)],
                                   functools.partial(enumerate, start=1),

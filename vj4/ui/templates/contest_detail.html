@@ -45,7 +45,7 @@
             {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
               {% if psdict[pid] and psdict[pid]['rid'] %}
               {% with rdoc=rdict[psdict[pid]['rid']] %}
-              {% if handler.can_show(tdoc) or handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD) %}
+              {% if handler.can_show_record(tdoc) %}
                 {{ record.render_status_td(rdoc) }}
               {% else %}
                 <td class="col--status record-status--border"><a href="{{ reverse_url('record_detail', rid=rdoc['_id'], domain_id=handler.domain_id) }}">{{ _('Submitted') }}</a></td>
