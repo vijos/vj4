@@ -28,7 +28,7 @@
   <thead>
     <tr>
     {%- for column in rows[0] -%}
-      <th class="col--{{ column['kind'] }}">
+      <th class="col--{{ column['type'] }}">
         {{ column['value'] }}
       </th>
     {%- endfor -%}
