@@ -81,14 +81,14 @@ def _assignment_stat(tdoc, journal):
 
 def _oi_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
   columns = []
-  columns.append({'kind': 'rank', 'value': translate_func('Rank')})
-  columns.append({'kind': 'user', 'value': translate_func('User')})
-  columns.append({'kind': 'total_score', 'value': translate_func('Total Score')})
+  columns.append({'type': 'rank', 'value': translate_func('Rank')})
+  columns.append({'type': 'user', 'value': translate_func('User')})
+  columns.append({'type': 'total_score', 'value': translate_func('Total Score')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
-      columns.append({'kind': 'problem_score', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+      columns.append({'type': 'problem_score', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
     else:
-      columns.append({'kind': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+      columns.append({'type': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
     if 'detail' in tsdoc:
@@ -109,16 +109,16 @@ def _oi_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
 
 def _acm_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
   columns = []
-  columns.append({'kind': 'rank', 'value': translate_func('Rank')})
-  columns.append({'kind': 'user', 'value': translate_func('User')})
-  columns.append({'kind': 'solved_problems', 'value': translate_func('Solved Problems')})
-  if is_export: columns.append({'kind': 'total_time', 'value': translate_func('Total Time')})
+  columns.append({'type': 'rank', 'value': translate_func('Rank')})
+  columns.append({'type': 'user', 'value': translate_func('User')})
+  columns.append({'type': 'solved_problems', 'value': translate_func('Solved Problems')})
+  if is_export: columns.append({'type': 'total_time', 'value': translate_func('Total Time')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
-      columns.append({'kind': 'problem_flag', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
-      columns.append({'kind': 'problem_time', 'value': '#{0} {1}'.format(index + 1, translate_func('Time'))})
+      columns.append({'type': 'problem_flag', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+      columns.append({'type': 'problem_time', 'value': '#{0} {1}'.format(index + 1, translate_func('Time'))})
     else:
-      columns.append({'kind': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+      columns.append({'type': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
     if 'detail' in tsdoc:
@@ -150,18 +150,18 @@ def _acm_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
 
 def _assignment_status(is_export, translate_func, tdoc, ranked_tsdocs, udict, pdict):
   columns = []
-  columns.append({'kind': 'rank', 'value': translate_func('Rank')})
-  columns.append({'kind': 'user', 'value': translate_func('User')})
-  columns.append({'kind': 'total_score', 'value': translate_func('Score')})
-  if is_export: columns.append({'kind': 'total_original_score', 'value': translate_func('Original Score')})
-  columns.append({'kind': 'total_time', 'value': translate_func('Total Time')})
+  columns.append({'type': 'rank', 'value': translate_func('Rank')})
+  columns.append({'type': 'user', 'value': translate_func('User')})
+  columns.append({'type': 'total_score', 'value': translate_func('Score')})
+  if is_export: columns.append({'type': 'total_original_score', 'value': translate_func('Original Score')})
+  columns.append({'type': 'total_time', 'value': translate_func('Total Time')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
-      columns.append({'kind': 'problem_score', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
-      columns.append({'kind': 'problem_original_score', 'value': '#{0} {1}'.format(index + 1, translate_func('Original Score'))})
-      columns.append({'kind': 'problem_time', 'value': '#{0} {1}'.format(index + 1, translate_func('Time'))})
+      columns.append({'type': 'problem_score', 'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+      columns.append({'type': 'problem_original_score', 'value': '#{0} {1}'.format(index + 1, translate_func('Original Score'))})
+      columns.append({'type': 'problem_time', 'value': '#{0} {1}'.format(index + 1, translate_func('Time'))})
     else:
-      columns.append({'kind': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+      columns.append({'type': 'problem_detail', 'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
     if 'detail' in tsdoc:
@@ -345,9 +345,6 @@ async def update_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, u
                         pid: document.convert_doc_id, accept: bool, score: int):
   """This method returns None when the modification has been superseded by a parallel operation."""
   tdoc = await document.get(domain_id, doc_type, tid)
-  if pid not in tdoc['pids']:
-    return None
-
   tsdoc = await document.rev_push_status(
     domain_id, doc_type, tdoc['doc_id'], uid,
     'journal', {'rid': rid, 'pid': pid, 'accept': accept, 'score': score})
