@@ -467,7 +467,7 @@ class ContestScoreboardDownloadHandler(ContestMixin, base.Handler):
       'html': self._export_status_as_html,
     }
     if ext not in get_status_content:
-      raise error.ValidationError('export_format')
+      raise error.ValidationError('ext')
     tdoc, rows = await self.get_scoreboard(constant.contest.CTYPE_TO_DOCTYPE[ctype], tid, True)
     data = get_status_content[ext](rows)
     file_name = tdoc['title']

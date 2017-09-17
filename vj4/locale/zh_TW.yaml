@@ -32,7 +32,7 @@ Code: 程式碼
 Comments: 評論
 Contact Us: 聯絡我們
 Content: 內容
-Contest Status: 比賽狀態
+Contest Scoreboard: 比賽成績表
 Create: 創建
 Create Contest: 創建比賽
 Create Discussion: 創建討論
@@ -328,6 +328,7 @@ Domain {0} not found.: 域 {0} 不存在。
 Domain {0} already exists.: 域 {0} 已經存在。
 You've already attended this contest.: 您已經參加本次比賽。
 You haven't attended this contest yet.: 您還沒有參加本次比賽。
+Contest scoreboard is not visible.: 當前比賽成績表隱藏，暫不可顯示。
 Problem {1} not found.: 題目 {1} 不存在。
 Training requirement is not satisfied.: 不滿足訓練條件。
 Record {0} not found.: 記錄 {0} 不存在。
@@ -427,8 +428,8 @@ Delete discussion replies: 刪除討論回覆
 Delete own discussion replies: 刪除討論中自己的回覆
 Delete discussion replies of own discussion: 刪除自己討論中的回覆
 View contests: 檢視比賽
-View contest status: 檢視比賽狀態
-View hidden contest status: 檢視隱藏的比賽狀態
+View contest scoreboard: 檢視比賽成績表
+View hidden contest scoreboard: 檢視隱藏的比賽成績表
 Create contests: 創建比賽
 Attend contests: 參加比賽
 View training: 檢視訓練

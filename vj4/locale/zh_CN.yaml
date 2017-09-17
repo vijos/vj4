@@ -34,7 +34,7 @@ Code: 代码
 Comments: 评论
 Contact Us: 联系我们
 Content: 内容
-Contest Status: 比赛状态
+Contest Scoreboard: 比赛成绩表
 Create: 创建
 Create Contest: 创建比赛
 Create Discussion: 创建讨论
@@ -167,7 +167,7 @@ Star: 收藏
 Unstar: 取消收藏
 Star Topic: 收藏讨论
 Unstar Topic: 取消收藏
-Use Your Privilege to View Status: 使用您的特权来查看状态
+Use Your Privilege to View Scoreboard: 使用您的特权来查看成绩表
 Status is hidden: 状态已隐藏
 Submission Statistics: 递交统计
 Submission: 递交
@@ -673,6 +673,8 @@ Export as CSV: 导出为 CSV
 Export as HTML: 导出为 HTML
 Export All Code: 导出所有代码
 Solved Problems: 解决题目
+Total Score: 总分数
+Scoreboard: 成绩表
 Contributions: 贡献
 Contributed Problems: 贡献的题目
 homework_main: 作业
