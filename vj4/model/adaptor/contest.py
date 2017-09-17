@@ -176,7 +176,7 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
 
 
 @argmethod.wrap
-async def recalc_contest_status(domain_id: str, tid: objectid.ObjectId):
+async def recalc_status(domain_id: str, tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
   async with document.get_multi_status(domain_id=domain_id,
                                        doc_type=document.TYPE_CONTEST,
@@ -186,8 +186,8 @@ async def recalc_contest_status(domain_id: str, tid: objectid.ObjectId):
         continue
       journal = _get_status_journal(tsdoc)
       stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
-      await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, tsdoc['uid'], tsdoc['rev'],
-                                    return_doc=False, journal=journal, **stats)
+      await document.rev_set_status(domain_id, document.TYPE_CONTEST, tid, tsdoc['uid'],
+                                    tsdoc['rev'], return_doc=False, journal=journal, **stats)
 
 
 if __name__ == '__main__':
