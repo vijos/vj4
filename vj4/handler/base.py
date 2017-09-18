@@ -263,6 +263,8 @@ class Handler(web.View, HandlerBase):
     self.response.content_length = len(data)
     self.response.content_type = content_type
     if file_name:
+      for char in '/<>:\"\'\\|?* ':
+        file_name = file_name.replace(char, '')
       self.response.headers.add('Content-Disposition',
                                 'attachment; filename="{}"'.format(file_name))
     await self.response.prepare(self.request)

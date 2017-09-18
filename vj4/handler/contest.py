@@ -171,7 +171,8 @@ class ContestCodeHandler(base.OperationHandler):
       zfile.create_system = 0
     zip_file.close()
 
-    await self.binary(output_buffer.getvalue(), 'application/zip', file_name='code.zip')
+    await self.binary(output_buffer.getvalue(), 'application/zip',
+                      file_name='{}.zip'.format(tdoc['title']))
 
 
 @app.route('/contest/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
@@ -317,9 +318,7 @@ class ContestScoreboardDownloadHandler(base.Handler, ContestStatusMixin):
     tdoc, rows = await self.get_scoreboard(tid, True)
     data = get_status_content[ext](rows)
     file_name = tdoc['title']
-    for char in '/<>:\"\'\\|?* ':
-      file_name = file_name.replace(char, '')
-    await self.binary(data, file_name='{0}.{1}'.format(file_name, ext))
+    await self.binary(data, file_name='{}.{}'.format(file_name, ext))
 
 
 @app.route('/contest/create', 'contest_create')
