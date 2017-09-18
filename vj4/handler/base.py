@@ -264,7 +264,7 @@ class Handler(web.View, HandlerBase):
     self.response.content_type = content_type
     if file_name:
       self.response.headers.add('Content-Disposition',
-                                'attachment; filename="{0}"'.format(file_name))
+                                'attachment; filename="{}"'.format(file_name))
     await self.response.prepare(self.request)
     self.response.write(data)
 

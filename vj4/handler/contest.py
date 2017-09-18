@@ -171,7 +171,7 @@ class ContestCodeHandler(base.OperationHandler):
       zfile.create_system = 0
     zip_file.close()
 
-    await self.binary(output_buffer.getvalue(), 'application/zip')
+    await self.binary(output_buffer.getvalue(), 'application/zip', file_name='code.zip')
 
 
 @app.route('/contest/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')

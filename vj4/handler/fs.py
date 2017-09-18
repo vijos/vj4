@@ -25,10 +25,17 @@ class FsGetHandler(base.Handler):
     self.response.content_type = grid_out.content_type or 'application/octet-stream'
     # FIXME(iceboy): For some reason setting response.content_length doesn't work in aiohttp 2.0.6.
     self.response.headers['Content-Length'] = str(grid_out.length)
+    # TODO(twd2): more types
+    if self.response.content_type == 'application/zip':
+      ext = '.zip'
+    else:
+      ext = ''
+    self.response.headers.add('Content-Disposition',
+                              'attachment; filename="{}{}"'.format(secret, ext))
 
     # Cache control.
     self.response.last_modified = grid_out.upload_date
-    self.response.headers['Etag'] = '"{0}"'.format(grid_out.md5)
+    self.response.headers['Etag'] = '"{}"'.format(grid_out.md5)
     self.response.headers['Cache-Control'] = 'max-age=2592000' # 30 days = 2592000 seconds
 
     # Handle If-Modified-Since & If-None-Match.
