@@ -91,7 +91,7 @@ class ContestStatusMixin(object):
 
 
 class ContestVisibilityMixin(object):
-  def can_view_hidden_status_scoreboard(self, tdoc):
+  def can_view_hidden_scoreboard(self, tdoc):
     if tdoc['doc_type'] == document.TYPE_CONTEST:
       return self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
     elif tdoc['doc_type'] == document.TYPE_HOMEWORK:
@@ -102,14 +102,14 @@ class ContestVisibilityMixin(object):
   def can_show_record(self, tdoc, allow_perm_override=True):
     if contest.RULES[tdoc['rule']].show_record_func(tdoc, datetime.datetime.utcnow()):
       return True
-    if allow_perm_override and self.can_view_hidden_status_scoreboard(tdoc):
+    if allow_perm_override and self.can_view_hidden_scoreboard(tdoc):
       return True
     return False
 
   def can_show_scoreboard(self, tdoc, allow_perm_override=True):
     if contest.RULES[tdoc['rule']].show_scoreboard_func(tdoc, datetime.datetime.utcnow()):
       return True
-    if allow_perm_override and self.can_view_hidden_status_scoreboard(tdoc):
+    if allow_perm_override and self.can_view_hidden_scoreboard(tdoc):
       return True
     return False
 

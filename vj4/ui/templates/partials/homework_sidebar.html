@@ -47,7 +47,7 @@
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_scoreboard', ctype='homework', tid=tdoc['doc_id']) }}">
         <span class="icon icon-statistics"></span> {{ _('Scoreboard') }}
       </a></li>
-    {% elif handler.can_view_hidden_status_scoreboard(tdoc) %}
+    {% elif handler.can_view_hidden_scoreboard(tdoc) %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_scoreboard', ctype='homework', tid=tdoc['doc_id']) }}">
         <span class="icon icon-statistics"></span> {{ _('Scoreboard (Hidden)') }}
       </a></li>
