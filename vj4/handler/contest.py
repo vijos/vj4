@@ -288,7 +288,7 @@ class ContestDetailProblemSubmitHandler(ContestMixin, base.Handler):
                            self.user['_id'], lang, code, tid=tdoc['doc_id'], hidden=True)
     await contest.update_status(self.domain_id, tdoc['doc_id'], self.user['_id'],
                                 rid, pdoc['doc_id'], False, 0)
-    if self.can_show_record(tdoc):
+    if not self.can_show_record(tdoc):
       self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['doc_id']))
     else:
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
