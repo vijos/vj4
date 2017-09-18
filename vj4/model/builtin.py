@@ -70,7 +70,7 @@ PERM_EDIT_CONTEST_SELF = 1 << 51
 # Homework.
 PERM_VIEW_HOMEWORK = 1 << 52
 PERM_VIEW_HOMEWORK_SCOREBOARD = 1 << 53
-PERM_VIEW_HOMEWORK_HIDDEN_STATUS_AND_SCOREBOARD = 1 << 54
+PERM_VIEW_HOMEWORK_HIDDEN_SCOREBOARD = 1 << 54
 PERM_CREATE_HOMEWORK = 1 << 55
 PERM_ATTEND_HOMEWORK = 1 << 56
 PERM_EDIT_HOMEWORK = 1 << 57
@@ -139,7 +139,7 @@ PERMS = [
     Permission('perm_contest', PERM_EDIT_CONTEST_SELF, 'Edit own contests'),
     Permission('perm_homework', PERM_VIEW_HOMEWORK, 'View homework'),
     Permission('perm_homework', PERM_VIEW_HOMEWORK_SCOREBOARD, 'View homework scoreboard'),
-    Permission('perm_homework', PERM_VIEW_HOMEWORK_HIDDEN_STATUS_AND_SCOREBOARD, 'View hidden homework submission status and scoreboard'),
+    Permission('perm_homework', PERM_VIEW_HOMEWORK_HIDDEN_SCOREBOARD, 'View hidden homework submission status and scoreboard'),
     Permission('perm_homework', PERM_CREATE_HOMEWORK, 'Create homework'),
     Permission('perm_homework', PERM_ATTEND_HOMEWORK, 'Claim homework'),
     Permission('perm_homework', PERM_EDIT_HOMEWORK, 'Edit any homework'),

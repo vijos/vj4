@@ -334,6 +334,7 @@ Domain {0} not found.: 域 {0} 不存在。
 Domain {0} already exists.: 域 {0} 已经存在。
 You've already attended this contest.: 您已经参加本次比赛。
 You haven't attended this contest yet.: 您还没有参加本次比赛。
+Contest scoreboard is not visible.: 当前比赛成绩表隐藏，暂不可显示。
 Problem {1} not found.: 题目 {1} 不存在。
 Training requirement is not satisfied.: 不满足训练条件。
 Record {0} not found.: 记录 {0} 不存在。
@@ -355,7 +356,6 @@ Ready (☆▽☆): 马上开始 (☆▽☆)
 View Details: 查看详情
 All Contests: 所有比赛
 Edit Contest: 编辑比赛
-Contest scoreboard is not visible.: 目前无法查看比赛成绩表。
 No Submissions: 没有递交
 Do not discuss solutions otherwise you will be regarded as cheating and then lose qualifications.: 请勿讨论解法，否则以作弊论处并且将失去参赛资格。
 Please attend contest to see the problems.: 请参加比赛来查看题目。
