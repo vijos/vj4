@@ -2,6 +2,7 @@ import attachObjectMeta from './util/objectMeta';
 
 export const RULE_OI = 2;
 export const RULE_ACM = 3;
+export const RULE_ASSIGNMENT = 11;
 
 export const RULE_ID = {
   [RULE_OI]: 'oi',
