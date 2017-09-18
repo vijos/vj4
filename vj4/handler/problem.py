@@ -12,7 +12,7 @@ from vj4 import constant
 from vj4 import error
 from vj4 import job
 from vj4.handler import base
-from vj4.handler import record as recordHandler
+from vj4.handler import record as record_handler
 from vj4.model import builtin
 from vj4.model import user
 from vj4.model import document
@@ -299,7 +299,7 @@ class ProblemPretestHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
-class ProblemPretestConnection(ProblemPageCategoryMixin, recordHandler.RecordVisibilityMixin, base.Connection):
+class ProblemPretestConnection(ProblemPageCategoryMixin, record_handler.RecordVisibilityMixin, base.Connection):
   async def on_open(self):
     await super(ProblemPretestConnection, self).on_open()
     self.pid = document.convert_doc_id(self.request.match_info['pid'])

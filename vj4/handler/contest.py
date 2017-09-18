@@ -100,11 +100,11 @@ class ContestVisibilityMixin(object):
       return False
 
   def can_show_record(self, tdoc):
-    return contest.RULES[tdoc['rule']].can_show_record_func(tdoc, datetime.datetime.utcnow()) \
+    return contest.RULES[tdoc['rule']].show_record_func(tdoc, datetime.datetime.utcnow()) \
         or self._can_view_hidden_status_scoreboard(tdoc)
 
   def can_show_scoreboard(self, tdoc):
-    return contest.RULES[tdoc['rule']].can_show_scoreboard_func(tdoc, datetime.datetime.utcnow()) \
+    return contest.RULES[tdoc['rule']].show_scoreboard_func(tdoc, datetime.datetime.utcnow()) \
         or self._can_view_hidden_status_scoreboard(tdoc)
 
 
@@ -186,7 +186,7 @@ class ContestMainHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     tdocs = await contest.get_multi(self.domain_id, document.TYPE_HOMEWORK).to_list()
     calendar_tdocs = []
     for tdoc in tdocs:
-      cal_tdoc = {'_id': tdoc['_id'],
+      cal_tdoc = {'id': tdoc['doc_id'],
                   'begin_at': self.datetime_stamp(tdoc['begin_at']),
                   'title': tdoc['title'],
                   'status': self.get_status(tdoc),
@@ -677,7 +677,11 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     await contest.edit(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'], title=title, content=content,
                        rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
     await self.hide_problems(pids)
-    await contest.recalc_contest_status(self.domain_id, tdoc['doc_id'])
+    if tdoc['begin_at'] != begin_at \
+        or tdoc['end_at'] != end_at \
+        or set(tdoc['pids']) != set(pids) \
+        or tdoc['rule'] != rule:
+      await contest.recalc_status(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('contest_detail', ctype='contest', tid=tdoc['doc_id']))
 
 
@@ -715,5 +719,9 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
                        begin_at=begin_at, end_at=end_at, pids=pids,
                        penalty_since=penalty_since, penalty_rules=penalty_rules)
     await self.hide_problems(pids)
-    await contest.recalc_contest_status(self.domain_id, tdoc['doc_id'])
+    if tdoc['begin_at'] != begin_at \
+        or tdoc['end_at'] != end_at \
+        or tdoc['penalty_since'] != penalty_since \
+        or set(tdoc['pids']) != set(pids):
+      await contest.recalc_status(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('contest_detail', ctype='homework', tid=tid))

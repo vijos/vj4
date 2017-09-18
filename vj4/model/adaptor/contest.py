@@ -16,8 +16,8 @@ from vj4.util import rank
 
 journal_key_func = lambda j: j['rid']
 
-Rule = collections.namedtuple('Rule', ['can_show_record_func',
-                                       'can_show_scoreboard_func',
+Rule = collections.namedtuple('Rule', ['show_record_func',
+                                       'show_scoreboard_func',
                                        'stat_func',
                                        'status_sort',
                                        'rank_func',

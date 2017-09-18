@@ -17,7 +17,7 @@ const page = new NamedPage('contest_main', () => {
       title: doc.title,
       maskFrom: doc.penalty_since ? doc.penalty_since * 1000 : null,
       maskTitle: i18n('page.contest_main.homework.banner.extension'),
-      colorIndex: parseMongoId(doc._id).timestamp % 12,
+      colorIndex: parseMongoId(doc.id).timestamp % 12,
       link: doc.url,
     }));
     const calendar = new Calendar(events);

@@ -9,7 +9,7 @@ from vj4 import app
 from vj4 import constant
 from vj4 import error
 from vj4.handler import base
-from vj4.handler import contest as contestHandler
+from vj4.handler import contest as contest_handler
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
@@ -22,7 +22,7 @@ from vj4.service import bus
 from vj4.util import options
 
 
-class RecordVisibilityMixin(contestHandler.ContestVisibilityMixin):
+class RecordVisibilityMixin(contest_handler.ContestVisibilityMixin):
   async def rdoc_contest_visible(self, rdoc):
     tdoc = await contest.get(rdoc['domain_id'], {'$in': [document.TYPE_CONTEST, document.TYPE_HOMEWORK]}, rdoc['tid'])
     return self.can_show_record(tdoc), tdoc
