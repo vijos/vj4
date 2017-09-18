@@ -56,7 +56,7 @@ class ContestStatusMixin(object):
 
 class ContestVisibilityMixin(object):
   def can_view_hidden_status_scoreboard(self, tdoc):
-    return self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS_AND_SCOREBOARD)
+    return self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
 
   def can_show_record(self, tdoc, allow_perm_override=True):
     if contest.RULES[tdoc['rule']].show_record_func(tdoc, datetime.datetime.utcnow()):
