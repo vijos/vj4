@@ -55,16 +55,22 @@ class ContestStatusMixin(object):
 
 
 class ContestVisibilityMixin(object):
-  def _can_view_hidden_status_scoreboard(self, tdoc):
+  def can_view_hidden_status_scoreboard(self, tdoc):
     return self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS_AND_SCOREBOARD)
 
-  def can_show_record(self, tdoc):
-    return contest.RULES[tdoc['rule']].show_record_func(tdoc, datetime.datetime.utcnow()) \
-        or self._can_view_hidden_status_scoreboard(tdoc)
+  def can_show_record(self, tdoc, allow_perm_override=True):
+    if contest.RULES[tdoc['rule']].show_record_func(tdoc, datetime.datetime.utcnow()):
+      return True
+    if allow_perm_override and self.can_view_hidden_status_scoreboard(tdoc):
+      return True
+    return False
 
-  def can_show_scoreboard(self, tdoc):
-    return contest.RULES[tdoc['rule']].show_scoreboard_func(tdoc, datetime.datetime.utcnow()) \
-        or self._can_view_hidden_status_scoreboard(tdoc)
+  def can_show_scoreboard(self, tdoc, allow_perm_override=True):
+    if contest.RULES[tdoc['rule']].show_scoreboard_func(tdoc, datetime.datetime.utcnow()):
+      return True
+    if allow_perm_override and self.can_view_hidden_status_scoreboard(tdoc):
+      return True
+    return False
 
 
 class ContestCommonOperationMixin(object):
