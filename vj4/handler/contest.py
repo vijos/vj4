@@ -59,11 +59,11 @@ class ContestVisibilityMixin(object):
     return self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS_AND_SCOREBOARD)
 
   def can_show_record(self, tdoc):
-    return contest.RULES[tdoc['rule']].can_show_record_func(tdoc, datetime.datetime.utcnow()) \
+    return contest.RULES[tdoc['rule']].show_record_func(tdoc, datetime.datetime.utcnow()) \
         or self._can_view_hidden_status_scoreboard(tdoc)
 
   def can_show_scoreboard(self, tdoc):
-    return contest.RULES[tdoc['rule']].can_show_scoreboard_func(tdoc, datetime.datetime.utcnow()) \
+    return contest.RULES[tdoc['rule']].show_scoreboard_func(tdoc, datetime.datetime.utcnow()) \
         or self._can_view_hidden_status_scoreboard(tdoc)
 
 
@@ -204,7 +204,6 @@ class ContestDetailProblemHandler(ContestMixin, base.Handler):
         user.get_by_uid(tdoc['owner_uid']))
     attended = tsdoc and tsdoc.get('attend') == 1
     if not self.is_done(tdoc):
-      tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])
       if not attended:
         raise error.ContestNotAttendedError(tdoc['doc_id'])
       if not self.is_live(tdoc):
@@ -425,9 +424,18 @@ class ContestEditHandler(ContestMixin, base.Handler):
                                     fields={'doc_id': 1}) \
                          .sort('doc_id', 1) \
                          .to_list()
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
     await contest.edit(self.domain_id, tdoc['doc_id'], title=title, content=content,
                        rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
     for pid in pids:
       await problem.set_hidden(self.domain_id, pid, True)
-    await contest.recalc_status(self.domain_id, tdoc['doc_id'])
+    if tdoc['begin_at'] != begin_at \
+        or tdoc['end_at'] != end_at \
+        or set(tdoc['pids']) != set(pids) \
+        or tdoc['rule'] != rule:
+      await contest.recalc_status(self.domain_id, tdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['doc_id']))
