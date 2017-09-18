@@ -123,7 +123,7 @@ PERMS = [
     Permission('perm_discussion', PERM_DELETE_DISCUSSION_REPLY_SELF_DISCUSSION, 'Delete discussion replies of own discussion'),
     Permission('perm_contest', PERM_VIEW_CONTEST, 'View contests'),
     Permission('perm_contest', PERM_VIEW_CONTEST_SCOREBOARD, 'View contest scoreboard'),
-    Permission('perm_contest', PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD, 'View hidden contest scoreboard'),
+    Permission('perm_contest', PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD, 'View hidden contest submission status and scoreboard'),
     Permission('perm_contest', PERM_CREATE_CONTEST, 'Create contests'),
     Permission('perm_contest', PERM_ATTEND_CONTEST, 'Attend contests'),
     Permission('perm_contest', PERM_EDIT_CONTEST, 'Edit any contests'),

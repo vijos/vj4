@@ -245,7 +245,7 @@ class ContestNotAttendedError(ForbiddenError):
 class ContestScoreboardHiddenError(ForbiddenError):
   @property
   def message(self):
-    return 'Contest scoreboard is hidden.'
+    return 'Contest scoreboard is not visible.'
 
 
 class ContestNotLiveError(ForbiddenError):

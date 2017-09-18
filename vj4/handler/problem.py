@@ -12,6 +12,7 @@ from vj4 import constant
 from vj4 import error
 from vj4 import job
 from vj4.handler import base
+from vj4.handler import record as record_handler
 from vj4.model import builtin
 from vj4.model import user
 from vj4.model import document
@@ -292,7 +293,7 @@ class ProblemPretestHandler(base.Handler):
 
 
 @app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
-class ProblemPretestConnection(base.Connection):
+class ProblemPretestConnection(record_handler.RecordVisibilityMixin, base.Connection):
   async def on_open(self):
     await super(ProblemPretestConnection, self).on_open()
     self.pid = document.convert_doc_id(self.request.match_info['pid'])
@@ -305,11 +306,8 @@ class ProblemPretestConnection(base.Connection):
       return
     # check permission for visibility: contest
     if rdoc['tid']:
-      now = datetime.datetime.utcnow()
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
-          and (self.domain_id != tdoc['domain_id']
-               or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD))):
+      show_status, tdoc = await self.rdoc_contest_visible(rdoc)
+      if not show_status:
         return
     self.send(rdoc=rdoc)
 

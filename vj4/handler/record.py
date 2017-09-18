@@ -9,6 +9,7 @@ from vj4 import app
 from vj4 import constant
 from vj4 import error
 from vj4.handler import base
+from vj4.handler import contest as contest_handler
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
@@ -21,15 +22,13 @@ from vj4.service import bus
 from vj4.util import options
 
 
-class RecordMixin:
-  def tdoc_visible(self, tdoc):
-    now = datetime.datetime.utcnow()
-    if (not contest.RULES[tdoc['rule']].show_func(tdoc, now)
-        and (self.domain_id != tdoc['domain_id']
-             or not self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD))):
-      return False
-    return True
+class RecordVisibilityMixin(contest_handler.ContestVisibilityMixin):
+  async def rdoc_contest_visible(self, rdoc):
+    tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
+    return self.can_show_record(tdoc), tdoc
 
+
+class RecordCommonOperationMixin(object):
   async def get_filter_query(self, uid_or_name, pid, tid):
     query = dict()
     if uid_or_name:
@@ -49,8 +48,12 @@ class RecordMixin:
     return query
 
 
+class RecordMixin(RecordVisibilityMixin, RecordCommonOperationMixin):
+  pass
+
+
 @app.route('/records', 'record_main')
-class RecordMainHandler(base.Handler, RecordMixin):
+class RecordMainHandler(RecordMixin, base.Handler):
   @base.get_argument
   @base.sanitize
   async def get(self, *, start: str='', uid_or_name: str='', pid: str='', tid: str=''):
@@ -94,7 +97,7 @@ class RecordMainHandler(base.Handler, RecordMixin):
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
-class RecordMainConnection(base.Connection, RecordMixin):
+class RecordMainConnection(RecordMixin, base.Connection):
   @base.get_argument
   @base.sanitize
   async def on_open(self, *, uid_or_name: str='', pid: str='', tid: str=''):
@@ -108,8 +111,8 @@ class RecordMainConnection(base.Connection, RecordMixin):
       if rdoc[key] != value:
         return
     if rdoc['tid']:
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if not self.tdoc_visible(tdoc):
+      show_status, tdoc = await self.rdoc_contest_visible(rdoc)
+      if not show_status:
         return
     # TODO(iceboy): projection.
     udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
@@ -125,7 +128,7 @@ class RecordMainConnection(base.Connection, RecordMixin):
 
 
 @app.route('/records/{rid}', 'record_detail')
-class RecordDetailHandler(base.Handler, RecordMixin):
+class RecordDetailHandler(RecordMixin, base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, rid: objectid.ObjectId):
@@ -136,12 +139,10 @@ class RecordDetailHandler(base.Handler, RecordMixin):
     if rdoc['domain_id'] != self.domain_id:
       self.redirect(self.reverse_url('record_detail', rid=rid, domain_id=rdoc['domain_id']))
       return
-    show_status = True
     if rdoc['tid']:
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      show_status = self.tdoc_visible(tdoc)
+      show_status, tdoc = await self.rdoc_contest_visible(rdoc)
     else:
-      tdoc = None
+      show_status, tdoc = True, None
     # TODO(twd2): futher check permission for visibility.
     if (not self.own(rdoc, field='uid')
         and not self.has_perm(builtin.PERM_READ_RECORD_CODE)
@@ -170,14 +171,14 @@ class RecordDetailHandler(base.Handler, RecordMixin):
 
 
 @app.connection_route('/records/{rid}/conn', 'record_detail-conn')
-class RecordDetailConnection(base.Connection, RecordMixin):
+class RecordDetailConnection(RecordMixin, base.Connection):
   async def on_open(self):
     await super(RecordDetailConnection, self).on_open()
     self.rid = objectid.ObjectId(self.request.match_info['rid'])
     rdoc = await record.get(self.rid, record.PROJECTION_PUBLIC)
     if rdoc['tid']:
-      tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-      if not self.tdoc_visible(tdoc):
+      show_status, tdoc = await self.rdoc_contest_visible(rdoc)
+      if not show_status:
         self.close()
         return
     bus.subscribe(self.on_record_change, ['record_change'])
