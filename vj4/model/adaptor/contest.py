@@ -49,6 +49,36 @@ def _acm_stat(tdoc, journal):
           'detail': detail}
 
 
+def _assignment_stat(tdoc, journal):
+  effective = {}
+  for j in journal:
+    if j['pid'] in tdoc['pids'] and not (j['pid'] in effective and effective[j['pid']]['accept']):
+      effective[j['pid']] = j
+
+  def time(jdoc):
+    real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
+    return real.total_seconds()
+
+  def penalty_score(jdoc):
+    score = jdoc['score']
+    exceed_seconds = (jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['penalty_since']).total_seconds()
+    if exceed_seconds < 0:
+      return score
+    coefficient = 1
+    for p_time, p_coefficient in sorted(tdoc['penalty_rules'].items(), key=lambda x: int(x[0])):
+      if int(p_time) <= exceed_seconds:
+        coefficient = p_coefficient
+      else:
+        break
+    return score * coefficient
+
+  detail = [{**j, 'penalty_score': penalty_score(j), 'time': time(j)} for j in effective.values()]
+  return {'score': sum(d['score'] for d in detail),
+          'penalty_score': sum(d['penalty_score'] for d in detail),
+          'time': sum(d['time'] for d in detail),
+          'detail': detail}
+
+
 def _oi_equ_func(a, b):
   return a.get('score', 0) == b.get('score', 0)
 
@@ -132,6 +162,55 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   return rows
 
 
+def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
+  columns = []
+  columns.append({'type': 'rank', 'value': _('Rank')})
+  columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'total_score', 'value': _('Score')})
+  if is_export: columns.append({'type': 'total_original_score',
+                                'value': _('Original Score')})
+  columns.append({'type': 'total_time', 'value': _('Total Time')})
+  for index, pid in enumerate(tdoc['pids']):
+    if is_export:
+      columns.append({'type': 'problem_score',
+                      'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
+      columns.append({'type': 'problem_original_score',
+                      'value': '#{0} {1}'.format(index + 1, _('Original Score'))})
+      columns.append({'type': 'problem_time',
+                      'value': '#{0} {1}'.format(index + 1, _('Time'))})
+    else:
+      columns.append({'type': 'problem_detail',
+                      'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
+  rows = [columns]
+  for rank, tsdoc in ranked_tsdocs:
+    if 'detail' in tsdoc:
+      tsddict = {item['pid']: item for item in tsdoc['detail']}
+    else:
+      tsddict = {}
+    row = []
+    row.append({'type': 'string', 'value': rank})
+    row.append({'type': 'user',
+                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+    row.append({'type': 'string',
+                'value': tsdoc.get('penalty_score', 0)})
+    if is_export: row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
+    row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
+    for pid in tdoc['pids']:
+      rdoc = tsddict.get(pid, {}).get('rid', None)
+      col_score = tsddict.get(pid, {}).get('penalty_score', '-')
+      col_original_score = tsddict.get(pid, {}).get('score', '-')
+      col_time = tsddict.get(pid, {}).get('time', '-')
+      if is_export:
+        row.append({'type': 'string', 'value': col_score})
+        row.append({'type': 'string', 'value': col_original_score})
+        row.append({'type': 'string', 'value': col_time})
+      else:
+        row.append({'type': 'record',
+                    'value':'{0} / {1}\n{2}'.format(col_score, col_original_score, col_time), 'raw': rdoc})
+    rows.append(row)
+  return rows
+
+
 RULES = {
   constant.contest.RULE_OI: Rule(lambda tdoc, now: now > tdoc['end_at'],
                                  lambda tdoc, now: now > tdoc['end_at'],
@@ -145,6 +224,12 @@ RULES = {
                                   [('accept', -1), ('time', 1)],
                                   functools.partial(enumerate, start=1),
                                   _acm_scoreboard),
+  constant.contest.RULE_ASSIGNMENT: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
+                                         lambda tdoc, now: False,   # TODO: show scoreboard according to assignment preference
+                                         _assignment_stat,
+                                         [('penalty_score', -1), ('time', 1)],
+                                         functools.partial(enumerate, start=1),
+                                         _assignment_scoreboard),
 }
 
 
