@@ -85,6 +85,23 @@ class ContestCommonOperationMixin(object):
                                                        ranked_tsdocs, udict, pdict)
     return tdoc, rows
 
+  async def convert_and_verify_pids_str(self, pids: str):
+    pids = list(set(map(document.convert_doc_id, pids.split(','))))
+    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
+                                    fields={'doc_id': 1}) \
+                         .sort('doc_id', 1) \
+                         .to_list()
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
+    return pids
+
+  async def hide_problems(self, pids):
+    for pid in pids:
+      await problem.set_hidden(self.domain_id, pid, True)
+
 
 class ContestMixin(ContestStatusMixin, ContestVisibilityMixin, ContestCommonOperationMixin):
   pass
@@ -367,25 +384,15 @@ class ContestCreateHandler(ContestMixin, base.Handler):
     try:
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
       begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
-      end_at = begin_at + datetime.timedelta(hours=duration)
-    except ValueError as e:
+    except ValueError:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
+    end_at = begin_at + datetime.timedelta(hours=duration)
     if begin_at >= end_at:
       raise error.ValidationError('duration')
-    pids = list(set(map(document.convert_doc_id, pids.split(','))))
-    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
-                                    fields={'doc_id': 1}) \
-                         .sort('doc_id', 1) \
-                         .to_list()
-    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
-    if len(pids) != len(exist_pids):
-      for pid in pids:
-        if pid not in exist_pids:
-          raise error.ProblemNotFoundError(self.domain_id, pid)
+    pids = await self.convert_and_verify_pids_str(pids)
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
                             rule, begin_at, end_at, pids)
-    for pid in pids:
-      await problem.set_hidden(self.domain_id, pid, True)
+    await self.hide_problems(pids)
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
 
 
@@ -420,25 +427,15 @@ class ContestEditHandler(ContestMixin, base.Handler):
     try:
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
       begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
-    except ValueError as e:
+    except ValueError:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     end_at = begin_at + datetime.timedelta(hours=duration)
     if begin_at >= end_at:
       raise error.ValidationError('duration')
-    pids = list(set(map(document.convert_doc_id, pids.split(','))))
-    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
-                                    fields={'doc_id': 1}) \
-                         .sort('doc_id', 1) \
-                         .to_list()
-    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
-    if len(pids) != len(exist_pids):
-      for pid in pids:
-        if pid not in exist_pids:
-          raise error.ProblemNotFoundError(self.domain_id, pid)
+    pids = await self.convert_and_verify_pids_str(pids)
     await contest.edit(self.domain_id, tdoc['doc_id'], title=title, content=content,
                        rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
-    for pid in pids:
-      await problem.set_hidden(self.domain_id, pid, True)
+    await self.hide_problems(pids)
     if tdoc['begin_at'] != begin_at \
         or tdoc['end_at'] != end_at \
         or set(tdoc['pids']) != set(pids) \
