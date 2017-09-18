@@ -262,8 +262,9 @@ class Handler(web.View, HandlerBase):
     self.response = web.StreamResponse()
     self.response.content_length = len(data)
     self.response.content_type = content_type
-    if file_name != None:
-      self.response.headers.add('Content-Disposition', 'attachment; filename="{0}"'.format(file_name))
+    if file_name:
+      self.response.headers.add('Content-Disposition',
+                                'attachment; filename="{0}"'.format(file_name))
     await self.response.prepare(self.request)
     self.response.write(data)
 
