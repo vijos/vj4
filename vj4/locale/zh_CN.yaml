@@ -705,6 +705,7 @@ homework_status: 作业成绩表
 Total Score: 总分数
 Original Score: 原始分数
 Scoreboard: 成绩表
+Scoreboard (Hidden): 成绩表 (隐藏)
 page.contest_main.contest.title: 比赛
 page.contest_main.homework.title: 作业
 page.contest_scoreboard.contest.title: 比赛成绩表
