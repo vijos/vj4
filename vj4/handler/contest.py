@@ -93,7 +93,7 @@ class ContestStatusMixin(object):
 class ContestVisibilityMixin(object):
   def can_view_hidden_status_scoreboard(self, tdoc):
     if tdoc['doc_type'] == document.TYPE_CONTEST:
-      return self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_STATUS_AND_SCOREBOARD)
+      return self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
     elif tdoc['doc_type'] == document.TYPE_HOMEWORK:
       return self.has_perm(builtin.PERM_VIEW_HOMEWORK_HIDDEN_STATUS_AND_SCOREBOARD)
     else:
