@@ -147,30 +147,30 @@ class AssignmentRuleTest(unittest.TestCase):
   def test_one_late_ac(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_AC_LATE])
     self.assertEqual(stats['score'], 17)
-    self.assertEqual(stats['penalty_score'], 17*0.8)
+    self.assertEqual(stats['penalty_score'], 17 * 0.8)
     self.assertEqual(stats['time'], 7)
-    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17*0.8, 'time': 7}])
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17 * 0.8, 'time': 7}])
 
   def test_one_late_nac(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_NAC_LATE])
     self.assertEqual(stats['score'], 23)
-    self.assertEqual(stats['penalty_score'], 23*0.2)
+    self.assertEqual(stats['penalty_score'], 23 * 0.2)
     self.assertEqual(stats['time'], 12)
-    self.assertEqual(stats['detail'], [{**SUBMIT_777_NAC_LATE, 'penalty_score': 23*0.2, 'time': 12}])
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_NAC_LATE, 'penalty_score': 23 * 0.2, 'time': 12}])
 
   def test_one_nac_late_ac_late(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_NAC_LATE, SUBMIT_777_AC_LATE])
     self.assertEqual(stats['score'], 17)
-    self.assertEqual(stats['penalty_score'], 17*0.8)
+    self.assertEqual(stats['penalty_score'], 17 * 0.8)
     self.assertEqual(stats['time'], 7)
-    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17*0.8, 'time': 7}])
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17 * 0.8, 'time': 7}])
 
   def test_one_ac_late_nac_late(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_AC_LATE, SUBMIT_777_NAC_LATE])
     self.assertEqual(stats['score'], 17)
-    self.assertEqual(stats['penalty_score'], 17*0.8)
+    self.assertEqual(stats['penalty_score'], 17 * 0.8)
     self.assertEqual(stats['time'], 7)
-    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17*0.8, 'time': 7}])
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_AC_LATE, 'penalty_score': 17 * 0.8, 'time': 7}])
 
   def test_one_ac_nac(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_AC, SUBMIT_777_NAC])
@@ -189,36 +189,36 @@ class AssignmentRuleTest(unittest.TestCase):
   def test_one_nac_nac_late(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_777_NAC, SUBMIT_777_NAC_LATE])
     self.assertEqual(stats['score'], 23)
-    self.assertEqual(stats['penalty_score'], 23*0.2)
+    self.assertEqual(stats['penalty_score'], 23 * 0.2)
     self.assertEqual(stats['time'], 12)
-    self.assertEqual(stats['detail'], [{**SUBMIT_777_NAC_LATE, 'penalty_score': 23*0.2, 'time': 12}])
+    self.assertEqual(stats['detail'], [{**SUBMIT_777_NAC_LATE, 'penalty_score': 23 * 0.2, 'time': 12}])
 
   def test_multiple_1(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_778_AC, SUBMIT_777_NAC])
-    self.assertEqual(stats['score'], 33+44)
-    self.assertEqual(stats['penalty_score'], 33+44)
-    self.assertEqual(stats['time'], 4+3)
+    self.assertEqual(stats['score'], 33 + 44)
+    self.assertEqual(stats['penalty_score'], 33 + 44)
+    self.assertEqual(stats['time'], 4 + 3)
     self.assertCountEqual(stats['detail'],
                           [{**SUBMIT_778_AC, 'penalty_score': 33, 'time': 4},
                            {**SUBMIT_777_NAC, 'penalty_score': 44, 'time': 3}])
 
   def test_multiple_2(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_778_AC, SUBMIT_777_NAC_LATE])
-    self.assertEqual(stats['score'], 33+23)
-    self.assertEqual(stats['penalty_score'], 33+23*0.2)
-    self.assertEqual(stats['time'], 4+12)
+    self.assertEqual(stats['score'], 33 + 23)
+    self.assertEqual(stats['penalty_score'], 33 + 23 * 0.2)
+    self.assertEqual(stats['time'], 4 + 12)
     self.assertCountEqual(stats['detail'],
                           [{**SUBMIT_778_AC, 'penalty_score': 33, 'time': 4},
-                           {**SUBMIT_777_NAC_LATE, 'penalty_score': 23*0.2, 'time': 12}])
+                           {**SUBMIT_777_NAC_LATE, 'penalty_score': 23 * 0.2, 'time': 12}])
 
   def test_multiple_3(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_778_AC, SUBMIT_777_NAC, SUBMIT_778_AC_LATE, SUBMIT_777_AC_LATE])
-    self.assertEqual(stats['score'], 33+17)
-    self.assertEqual(stats['penalty_score'], 33+17*0.8)
-    self.assertEqual(stats['time'], 4+7)
+    self.assertEqual(stats['score'], 33 + 17)
+    self.assertEqual(stats['penalty_score'], 33 + 17 * 0.8)
+    self.assertEqual(stats['time'], 4 + 7)
     self.assertCountEqual(stats['detail'],
                           [{**SUBMIT_778_AC, 'penalty_score': 33, 'time': 4},
-                           {**SUBMIT_777_AC_LATE, 'penalty_score': 17*0.8, 'time': 7}])
+                           {**SUBMIT_777_AC_LATE, 'penalty_score': 17 * 0.8, 'time': 7}])
 
   def test_inject(self):
     stats = contest._assignment_stat(ASSDOC, [SUBMIT_780_AC])
