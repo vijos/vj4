@@ -2,7 +2,7 @@
 {% import "components/contest.html" as contest with context %}
 <div class="section side">
 {% if page_name != 'contest_detail' %}
-  <a class="contest-sidebar__bg" href="{{ reverse_url('contest_detail', tid=tdoc['_id']) }}">
+  <a class="contest-sidebar__bg" href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">
     <div class="section__body">
       <h1>{{ tdoc['title'] }}</h1>
       <div class="contest-sidebar__status">
