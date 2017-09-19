@@ -8,6 +8,7 @@ from pymongo import errors
 
 from vj4 import constant
 from vj4 import error
+from vj4 import template
 from vj4.model import document
 from vj4.util import argmethod
 from vj4.util import validator
@@ -41,7 +42,7 @@ def _acm_stat(tdoc, journal):
   def time(jdoc):
     real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
     penalty = datetime.timedelta(minutes=20) * naccept[jdoc['pid']]
-    return (real + penalty).total_seconds()
+    return int((real + penalty).total_seconds())
 
   detail = [{**j, 'naccept': naccept[j['pid']], 'time': time(j)} for j in effective.values()]
   return {'accept': sum(int(d['accept']) for d in detail),
@@ -57,7 +58,7 @@ def _assignment_stat(tdoc, journal):
 
   def time(jdoc):
     real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
-    return real.total_seconds()
+    return int(real.total_seconds())
 
   def penalty_score(jdoc):
     score = jdoc['score']
@@ -119,13 +120,16 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
   columns.append({'type': 'solved_problems', 'value': _('Solved Problems')})
-  if is_export: columns.append({'type': 'total_time',
-                                'value': _('Total Time')})
+  if is_export:
+    columns.append({'type': 'total_time', 'value': _('Total Time (Seconds)')})
+    columns.append({'type': 'total_time_str', 'value': _('Total Time')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
       columns.append({'type': 'problem_flag',
                       'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
       columns.append({'type': 'problem_time',
+                      'value': '#{0} {1}'.format(index + 1, _('Time (Seconds)'))})
+      columns.append({'type': 'problem_time_str',
                       'value': '#{0} {1}'.format(index + 1, _('Time'))})
     else:
       columns.append({'type': 'problem_detail',
@@ -142,22 +146,27 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
                 'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string',
                 'value': tsdoc.get('accept', 0)})
-    if is_export: row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
+    if is_export:
+      row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
+      row.append({'type': 'string', 'value': template.format_seconds(tsdoc.get('time', 0.0))})
     for pid in tdoc['pids']:
       if tsddict.get(pid, {}).get('accept', False):
         rdoc = tsddict[pid]['rid']
         col_accepted = _('Accepted')
         col_time = tsddict[pid]['time']
+        col_time_str = template.format_seconds(col_time)
       else:
         rdoc = None
         col_accepted = '-'
         col_time = '-'
+        col_time_str = '-'
       if is_export:
         row.append({'type': 'string', 'value': col_accepted})
         row.append({'type': 'string', 'value': col_time})
+        row.append({'type': 'string', 'value': col_time_str})
       else:
         row.append({'type': 'record',
-                    'value': '{0}\n{1}'.format(col_accepted, col_time), 'raw': rdoc})
+                    'value': '{0}\n{1}'.format(col_accepted, col_time_str), 'raw': rdoc})
     rows.append(row)
   return rows
 
@@ -167,9 +176,10 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
   columns.append({'type': 'total_score', 'value': _('Score')})
-  if is_export: columns.append({'type': 'total_original_score',
-                                'value': _('Original Score')})
-  columns.append({'type': 'total_time', 'value': _('Total Time')})
+  if is_export:
+    columns.append({'type': 'total_original_score', 'value': _('Original Score')})
+    columns.append({'type': 'total_time', 'value': _('Total Time (Seconds)')})
+  columns.append({'type': 'total_time_str', 'value': _('Total Time')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
       columns.append({'type': 'problem_score',
@@ -177,6 +187,8 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
       columns.append({'type': 'problem_original_score',
                       'value': '#{0} {1}'.format(index + 1, _('Original Score'))})
       columns.append({'type': 'problem_time',
+                      'value': '#{0} {1}'.format(index + 1, _('Time (Seconds)'))})
+      columns.append({'type': 'problem_time_str',
                       'value': '#{0} {1}'.format(index + 1, _('Time'))})
     else:
       columns.append({'type': 'problem_detail',
@@ -193,20 +205,24 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
                 'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string',
                 'value': tsdoc.get('penalty_score', 0)})
-    if is_export: row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
-    row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
+    if is_export:
+      row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
+      row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
+    row.append({'type': 'string', 'value': template.format_seconds(tsdoc.get('time', 0))})
     for pid in tdoc['pids']:
       rdoc = tsddict.get(pid, {}).get('rid', None)
       col_score = tsddict.get(pid, {}).get('penalty_score', '-')
       col_original_score = tsddict.get(pid, {}).get('score', '-')
       col_time = tsddict.get(pid, {}).get('time', '-')
+      col_time_str = template.format_seconds(col_time) if col_time != '-' else '-'
       if is_export:
         row.append({'type': 'string', 'value': col_score})
         row.append({'type': 'string', 'value': col_original_score})
         row.append({'type': 'string', 'value': col_time})
+        row.append({'type': 'string', 'value': col_time_str})
       else:
         row.append({'type': 'record',
-                    'value':'{0} / {1}\n{2}'.format(col_score, col_original_score, col_time), 'raw': rdoc})
+                    'value':'{0} / {1}\n{2}'.format(col_score, col_original_score, col_time_str), 'raw': rdoc})
     rows.append(row)
   return rows
 
