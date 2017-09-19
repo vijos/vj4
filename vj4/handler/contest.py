@@ -529,9 +529,9 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
   @base.route_argument
   async def post(self, *, ctype: str, **kwargs):
     if ctype == 'homework':
-      await self._post_homework(**kwargs)
+      await self._post_homework()
     elif ctype == 'contest':
-      await self._post_contest(**kwargs)
+      await self._post_contest()
     else:
       raise error.InvalidArgumentError('ctype')
 
@@ -539,10 +539,11 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
+  @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def _post_contest(self, *, title: str, content: str, rule: int,
+  async def _post_contest(self, *, ctype: str, title: str, content: str, rule: int,
                           begin_at_date: str, begin_at_time: str, duration: float,
                           pids: str):
     try:
@@ -563,10 +564,11 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
   @base.require_perm(builtin.PERM_CREATE_HOMEWORK)
+  @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def _post_homework(self, *, title: str, content: str,
+  async def _post_homework(self, *, ctype: str, title: str, content: str,
                            begin_at_date: str, begin_at_time: str,
                            penalty_since_date: str, penalty_since_time: str,
                            extension_days: float, penalty_rules: str,
@@ -653,19 +655,20 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
   @base.route_argument
   async def post(self, *, ctype: str, **kwargs):
     if ctype == 'homework':
-      await self._post_homework(**kwargs)
+      await self._post_homework()
     elif ctype == 'contest':
-      await self._post_contest(**kwargs)
+      await self._post_contest()
     else:
       raise error.InvalidArgumentError('ctype')
 
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def _post_contest(self, *, tid: objectid.ObjectId, title: str, content: str, rule: int,
+  async def _post_contest(self, *, ctype: str, tid: objectid.ObjectId, title: str, content: str, rule: int,
                           begin_at_date: str=None, begin_at_time: str=None, duration: float,
                           pids: str):
     tdoc = await contest.get(self.domain_id, document.TYPE_CONTEST, tid)
@@ -693,10 +696,11 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def _post_homework(self, *, tid: objectid.ObjectId, title: str, content: str,
+  async def _post_homework(self, *, ctype: str, tid: objectid.ObjectId, title: str, content: str,
                            begin_at_date: str, begin_at_time: str,
                            penalty_since_date: str, penalty_since_time: str,
                            extension_days: float, penalty_rules: str,
@@ -721,7 +725,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     if penalty_since > end_at:
       raise error.ValidationError('extension_days')
     pids = await self.convert_and_verify_pids_str(pids)
-    await contest.edit(self.domain_id, tdoc['doc_id'], title=title, content=content,
+    await contest.edit(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'], title=title, content=content,
                        begin_at=begin_at, end_at=end_at, pids=pids,
                        penalty_since=penalty_since, penalty_rules=penalty_rules)
     await self.hide_problems(pids)
