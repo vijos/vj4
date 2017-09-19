@@ -306,3 +306,21 @@ class NoProblemError(NotFoundError):
   @property
   def message(self):
     return 'No problem.'
+
+
+class UpgradeLockAcquireError(Error):
+  @property
+  def message(self):
+    return 'Failed to acquire the upgrade lock. There may be another ongoing upgrade process, or a previous process is exited unexpectedly.'
+
+
+class UpgradeLockReleaseError(Error):
+  @property
+  def message(self):
+    return 'Failed to release the upgrade lock. The database is malformed during the upgrade.'
+
+
+class DatabaseVersionMismatchError(Error):
+  @property
+  def message(self):
+    return 'Database version mismatch, got {0}, expect {1}. You need to invoke database upgrades.'

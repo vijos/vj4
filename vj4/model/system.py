@@ -8,6 +8,9 @@ from vj4 import error
 from vj4.util import argmethod
 
 
+EXPECTED_DB_VERSION = 20170919
+
+
 @argmethod.wrap
 async def inc_user_counter():
   """Increments the user counter.
@@ -91,11 +94,14 @@ async def get_db_version():
 async def set_db_version(version: int):
   coll = db.coll('system')
   result = await coll.update_one(filter={'_id': 'db_version'},
-                        update={'$set': {'value': version}})
+                                 update={'$set': {'value': version}},
+                                 upsert=True)
   return result.modified_count
 
 
-async def ensure_db_version(allowed_version):
+async def ensure_db_version(allowed_version=None):
+  if allowed_version is None:
+    allowed_version = EXPECTED_DB_VERSION
   current_version = await get_db_version()
   if current_version != allowed_version:
     raise error.DatabaseVersionMismatchError(current_version, allowed_version)

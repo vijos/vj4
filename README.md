@@ -72,6 +72,14 @@ curl "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz" 
 
 You may also want to install [libmaxminddb](https://github.com/maxmind/libmaxminddb/blob/master/README.md) for higher performance.
 
+## Initialize
+
+Before first run, you need to initialize the database:
+
+```bash
+python3 -m vj4.upgrader.fresh_install run
+```
+
 ## Development
 
 In the root of the repository:
