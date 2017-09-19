@@ -373,7 +373,6 @@ Will be used as the domain icon.: 将被用作域图标。
 My Role: 我的角色
 What's domain?: 什么是域？
 Visit: 查看
-owner: 所有者
 delete: 删除
 User ID: 用户 ID
 '{0}: Users': '{0}: 用户'
@@ -387,6 +386,7 @@ Remove Selected User from Domain: 将所选用户移出域
 Set Roles for Selected User: 设置所选用户的角色
 Create Role: 创建角色
 Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
+'Built-in: Domain owner, who is always granted all privileges': '内置: 域所有者，总是拥有所有域权限'
 'Built-in: Valid for visitors': '内置: 对未登录的游客有效'
 'Built-in: Valid for registered users who are not members of the domain': '内置: 对域外注册用户有效'
 User-defined role: 用户定义的角色
@@ -499,6 +499,7 @@ Confirm deleting the selected roles?: 您确定删除所选角色吗？
 Users with those roles will be removed from the domain.: 拥有这些角色的用户将从此域中移除。
 Selected roles have been deleted.: 所选角色已删除。
 Please select at least one role to perform this operation.: 请选择至少一个角色来进行操作。
+'Role {1} already exists in domain {0}.': '域 {0} 中已存在角色 {1}。'
 Domain {0} is bulit-in and cannot be modified.: 域 {0} 为内置，不可修改。
 perm_general: 一般
 perm_problem: 题库

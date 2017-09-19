@@ -72,7 +72,6 @@ class HandlerBase(setting.SettingMixin):
     role = self.domain_user.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
-            or self.domain['owner_uid'] == self.user['_id']
             or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def check_perm(self, perm):
@@ -93,7 +92,6 @@ class HandlerBase(setting.SettingMixin):
     role = dudoc.get('role', builtin.ROLE_DEFAULT)
     mask = self.domain['roles'].get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
-            or self.domain['owner_uid'] == udoc['_id']
             or self.udoc_has_priv(udoc, builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def udoc_has_priv(self, udoc, priv):

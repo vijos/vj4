@@ -238,8 +238,7 @@ class HomeDomainHandler(base.Handler):
   async def get(self):
     dudict = await domain.get_dict_user_by_domain_id(self.user['_id'])
     dids = list(dudict.keys())
-    ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
-                                              {'owner_uid': self.user['_id']}]}) \
+    ddocs = await domain.get_multi(_id={'$in': dids}) \
                         .to_list()
     can_manage = {}
     for ddoc in builtin.DOMAINS + ddocs:
@@ -247,7 +246,6 @@ class HomeDomainHandler(base.Handler):
       mask = ddoc['roles'].get(role, builtin.PERM_NONE)
       can_manage[ddoc['_id']] = (
           ((builtin.PERM_EDIT_DESCRIPTION | builtin.PERM_EDIT_PERM) & mask) != 0
-          or ddoc['owner_uid'] == self.user['_id']
           or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
     self.render('home_domain.html', ddocs=ddocs, dudict=dudict, can_manage=can_manage)
 

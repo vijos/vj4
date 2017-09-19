@@ -69,7 +69,7 @@ class DomainManageHandler(base.Handler):
   async def get(self):
     if not self.has_perm(builtin.PERM_EDIT_PERM):
        self.check_perm(builtin.PERM_EDIT_DESCRIPTION)
-    self.render('domain_manage.html', owner_udoc=await user.get_by_uid(self.domain['owner_uid']))
+    self.render('domain_manage.html')
 
 
 @app.route('/domain/edit', 'domain_manage_edit')
@@ -107,7 +107,7 @@ class DomainEditHandler(base.Handler):
 class DomainUserHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
-    uids = [self.domain['owner_uid']]
+    uids = []
     rudocs = collections.defaultdict(list)
     async for dudoc in domain.get_multi_user(domain_id=self.domain_id,
                                              role={'$gte': ''},
@@ -155,21 +155,23 @@ class DomainPermissionHandler(base.Handler):
     def bitand(a, b):
       return a & b
     roles = sorted(list(self.domain['roles'].keys()))
+    # owner role is not mutable
+    roles.remove('owner')
     self.render('domain_manage_permission.html', bitand=bitand, roles=roles)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.post_argument
   @base.require_csrf_token
   async def post(self, **kwargs):
-    new_roles = dict()
+    update = dict()
     for role in self.domain['roles']:
       perms = 0
       for perm in (await self.request.post()).getall(role, []):
        perm = int(perm)
        if perm in builtin.PERMS_BY_KEY:
           perms |= perm
-      new_roles[role] = perms
-    await domain.edit(self.domain_id, roles=new_roles)
+      update['roles.' + role] = perms
+    await domain.edit(self.domain_id, **update)
     self.json_or_redirect(self.url)
 
 
@@ -189,8 +191,10 @@ class DomainRoleHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
   @base.sanitize
-  async def post_set(self, *, role: str, perm: int=builtin.DEFAULT_PERMISSIONS):
-    await domain.set_role(self.domain_id, role, perm)
+  async def post_set(self, *, role: str):
+    if role in self.domain['roles']:
+      raise error.DomainRoleAlreadyExistError(self.domain_id, role)
+    await domain.set_role(self.domain_id, role, builtin.DEFAULT_PERMISSIONS)
     self.json_or_redirect(self.url)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)

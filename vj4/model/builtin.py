@@ -171,9 +171,13 @@ JUDGE_PRIV = (PRIV_USER_PROFILE
               | PRIV_WRITE_RECORD)
 
 # Roles.
+ROLE_OWNER = 'owner'
 ROLE_GUEST = 'guest'
 ROLE_DEFAULT = 'default'
+ROLE_MEMBER = 'member'
 ROLE_ADMIN = 'admin'
+
+INTERNAL_ROLES = [ROLE_GUEST, ROLE_DEFAULT, ROLE_OWNER]
 
 # Domains.
 DOMAIN_ID_SYSTEM = 'system'
@@ -219,9 +223,10 @@ DEFAULT_PERMISSIONS = (
 ADMIN_PERMISSIONS = PERM_ALL
 DOMAIN_SYSTEM = {
     '_id': DOMAIN_ID_SYSTEM,
-    'owner_uid': 0,
-    'roles': {ROLE_GUEST: BASIC_PERMISSIONS,
+    'roles': {ROLE_OWNER: PERM_ALL,
+              ROLE_GUEST: BASIC_PERMISSIONS,
               ROLE_DEFAULT: DEFAULT_PERMISSIONS,
+              ROLE_MEMBER: DEFAULT_PERMISSIONS,
               ROLE_ADMIN: ADMIN_PERMISSIONS},
     'gravatar': '',
     'name': 'Vijos',

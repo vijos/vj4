@@ -124,25 +124,6 @@ class DocumentTest(base.DatabaseTestCase):
 
 class DomainTest(base.DatabaseTestCase):
   @base.wrap_coro
-  async def test_add_get_transfer(self):
-    inserted_id = await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
-    self.assertEqual(DOMAIN_ID, inserted_id)
-    ddoc = await domain.get(DOMAIN_ID)
-    self.assertEqual(ddoc['_id'], DOMAIN_ID)
-    self.assertEqual(ddoc['owner_uid'], OWNER_UID)
-    self.assertEqual(ddoc['roles'], ROLES)
-    self.assertEqual(ddoc['name'], DOMAIN_NAME)
-    ddoc = await domain.transfer(DOMAIN_ID, OWNER_UID, OWNER_UID2)
-    self.assertEqual(ddoc['_id'], DOMAIN_ID)
-    self.assertEqual(ddoc['owner_uid'], OWNER_UID2)
-    self.assertEqual(ddoc['roles'], ROLES)
-    self.assertEqual(ddoc['name'], DOMAIN_NAME)
-    ddoc = await domain.transfer(DOMAIN_ID, OWNER_UID, OWNER_UID2)
-    self.assertIsNone(ddoc)
-    ddoc = await domain.get('null')
-    self.assertIsNone(ddoc)
-
-  @base.wrap_coro
   async def test_user_in_domain(self):
     await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     await domain.set_user(DOMAIN_ID, UID, test_field='test tset', num=1)

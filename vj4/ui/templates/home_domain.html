@@ -55,11 +55,7 @@
             {{ ddoc['name'] }} ({{ ddoc['_id'] }})
           </td>
           <td class="col--role">
-          {% if ddoc['owner_uid'] == handler.user['_id'] %}
-            ({{ _('owner') }})
-          {% else %}
             {{ dudict.get(ddoc['_id'], {})['role']|default(vj4.model.builtin.ROLE_DEFAULT) }}
-          {% endif %}
           </td>
           <td class="col--action">
             <a class="typo-a" href="{{ reverse_url('domain_main', domain_id=ddoc['_id']) }}">{{ _('Visit') }}</a>

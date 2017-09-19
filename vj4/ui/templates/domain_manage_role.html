@@ -49,6 +49,22 @@
             </label>
           </td>
           <td class="col--id">
+            owner
+          </td>
+          <td class="col--description">
+            {{ _('Built-in: Domain owner, who is always granted all privileges') }}
+          </td>
+          <td class="col--users">
+            {{ rucounts['owner'] }}
+          </td>
+        </tr>
+        <tr>
+          <td class="col--checkbox">
+            <label class="compact checkbox">
+              <input type="checkbox" data-checkbox-group="role" disabled>
+            </label>
+          </td>
+          <td class="col--id">
             guest
           </td>
           <td class="col--description">
@@ -75,7 +91,7 @@
           </td>
         </tr>
         {% for role in roles %}
-        {% if role != 'guest' and role != 'default' %}
+        {% if role not in vj4.model.builtin.INTERNAL_ROLES %}
         <tr data-role="{{ role }}">
           <td class="col--checkbox">
             <label class="compact checkbox">

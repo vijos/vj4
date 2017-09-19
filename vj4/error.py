@@ -116,6 +116,12 @@ class DocumentNotFoundError(NotFoundError):
     return 'Document {2} not found.'
 
 
+class DomainNotFoundError(NotFoundError):
+  @property
+  def message(self):
+    return 'Domain {0} not found.'
+
+
 class ProblemDataNotFoundError(NotFoundError):
   @property
   def message(self):
@@ -288,6 +294,24 @@ class UsageExceededError(ForbiddenError):
   @property
   def message(self):
     return 'Usage exceeded.'
+
+
+class DomainRoleAlreadyExistError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Role {1} already exists in domain {0}.'
+
+
+class DeleteBuiltinDomainRoleError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Built-in roles cannot be deleted.'
+
+
+class UserAlreadyDomainMemberError(ForbiddenError):
+  @property
+  def message(self):
+    return 'The user is already a member of the domain.'
 
 
 class UnknownArgumentError(BadRequestError):

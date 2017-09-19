@@ -1,3 +1,4 @@
+import datetime
 from pymongo import errors
 from pymongo import ReturnDocument
 
@@ -22,9 +23,11 @@ async def add(domain_id: str, owner_uid: int,
       raise error.DomainAlreadyExistError(domain_id)
   coll = db.coll('domain')
   try:
-    return (await coll.insert_one({'_id': domain_id, 'owner_uid': owner_uid,
+    result = await coll.insert_one({'_id': domain_id,
                                    'roles': roles, 'name': name,
-                                   'gravatar': gravatar, 'bulletin': bulletin})).inserted_id
+                                   'gravatar': gravatar, 'bulletin': bulletin})
+    domain_id = result.inserted_id
+    await add_user(domain_id, owner_uid, 'owner')
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
 
@@ -35,7 +38,10 @@ async def get(domain_id: str, fields=None):
     if domain['_id'] == domain_id:
       return domain
   coll = db.coll('domain')
-  return await coll.find_one(domain_id, fields)
+  ddoc = await coll.find_one(domain_id, fields)
+  if ddoc is None:
+    raise error.DomainNotFoundError(domain_id)
+  return ddoc
 
 
 def get_multi(*, fields=None, **kwargs):
@@ -55,8 +61,6 @@ async def edit(domain_id: str, **kwargs):
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
   coll = db.coll('domain')
-  if 'owner_uid' in kwargs:
-    del kwargs['owner_uid']
   if 'name' in kwargs:
     validator.check_name(kwargs['name'])
   # TODO(twd2): check kwargs
@@ -94,6 +98,8 @@ async def delete_roles(domain_id: str, roles):
   roles = list(set(roles))
   for role in roles:
     validator.check_role(role)
+    if role in builtin.INTERNAL_ROLES:
+      raise error.DeleteBuiltinDomainRoleError(domain_id, role)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
@@ -104,17 +110,6 @@ async def delete_roles(domain_id: str, roles):
   return await coll.find_one_and_update(filter={'_id': domain_id},
                                         update={'$unset': dict(('roles.{0}'.format(role), '')
                                                                for role in roles)},
-                                        return_document=ReturnDocument.AFTER)
-
-
-@argmethod.wrap
-async def transfer(domain_id: str, old_owner_uid: int, new_owner_uid: int):
-  for domain in builtin.DOMAINS:
-    if domain['_id'] == domain_id:
-      raise error.BuiltinDomainError(domain_id)
-  coll = db.coll('domain')
-  return await coll.find_one_and_update(filter={'_id': domain_id, 'owner_uid': old_owner_uid},
-                                        update={'$set': {'owner_uid': new_owner_uid}},
                                         return_document=ReturnDocument.AFTER)
 
 
@@ -152,6 +147,20 @@ async def unset_users(domain_id, uids, fields):
   await coll.update_many({'domain_id': domain_id, 'uid': {'$in': list(set(uids))}},
                          {'$unset': dict((f, '') for f in set(fields))},
                          upsert=True)
+
+
+@argmethod.wrap
+async def add_user(domain_id: str, uid: int, role: str):
+  validator.check_role(role)
+  coll = db.coll('domain.user')
+  try:
+    result = await coll.insert_one({'domain_id': domain_id, 'uid': uid, 'role': role, 'join_at': datetime.datetime.utcnow()})
+  except errors.DuplicateKeyError:
+    result = await coll.update_one({'domain_id': domain_id, 'uid': uid, 'role': { '$exists': False }},
+                                   {'$set': { 'role': role, 'join_at': datetime.datetime.utcnow() }})
+    if result.matched_count == 0:
+      raise error.UserAlreadyDomainMemberError(domain_id, uid) from None
+  return True
 
 
 @argmethod.wrap
@@ -216,8 +225,6 @@ async def get_dict_user_by_domain_id(uid, *, fields=None):
 
 @argmethod.wrap
 async def ensure_indexes():
-  coll = db.coll('domain')
-  await coll.create_index('owner_uid')
   user_coll = db.coll('domain.user')
   await user_coll.create_index('uid')
   await user_coll.create_index([('domain_id', 1),
