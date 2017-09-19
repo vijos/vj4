@@ -46,6 +46,7 @@ class Environment(jinja2.Environment):
     self.filters['json'] = json.encode
     self.filters['gravatar_url'] = gravatar_url
     self.filters['format_size'] = format_size
+    self.filters['format_seconds'] = format_seconds
     self.filters['base64_encode'] = base64_encode
 
 
@@ -125,6 +126,11 @@ def format_size(size, base=1, ndigits=3):
       return '{0} {1}'.format(round(size, ndigits=ndigits), unit_name)
     size /= unit
   return '{0} {1}'.format(round(size * unit, ndigits=ndigits), unit_names[-1])
+
+
+def format_seconds(seconds):
+  seconds = int(seconds)
+  return '{:02}:{:02}:{:02}'.format(seconds // 3600, seconds % 3600 // 60, seconds % 60)
 
 
 def base64_encode(str):
