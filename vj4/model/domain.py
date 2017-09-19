@@ -166,7 +166,8 @@ async def add_user(domain_id: str, uid: int, role: str):
 @argmethod.wrap
 async def set_user_role(domain_id: str, uid: int, role: str):
   validator.check_role(role)
-  return await set_user(domain_id, uid, role=role)
+  # use set_users to utilize "upsert=False"
+  return await set_users(domain_id, [uid], role=role)
 
 
 @argmethod.wrap

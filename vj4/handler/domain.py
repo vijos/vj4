@@ -121,6 +121,15 @@ class DomainUserHandler(base.OperationHandler):
     self.render('domain_manage_user.html', roles=roles, roles_with_text=roles_with_text,
                 rudocs=rudocs, udict=udict)
 
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_add_user(self, *, uid: int, role: str):
+    await domain.add_user(self.domain_id, uid, role)
+    self.json_or_redirect(self.url)
+
+
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
   @base.sanitize
