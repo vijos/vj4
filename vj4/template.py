@@ -9,8 +9,8 @@ import vj4.constant
 import vj4.job
 from vj4.service import staticmanifest
 from vj4.util import json
+from vj4.util import misc
 from vj4.util import options
-from vj4.util import template_func
 
 
 class Undefined(jinja2.runtime.Undefined):
@@ -34,12 +34,12 @@ class Environment(jinja2.Environment):
 
     self.globals['vj4'] = vj4
     self.globals['static_url'] = lambda s: options.cdn_prefix + staticmanifest.get(s)
-    self.globals['paginate'] = template_func.paginate
+    self.globals['paginate'] = misc.paginate
 
-    self.filters['nl2br'] = template_func.nl2br
-    self.filters['markdown'] = template_func.markdown
+    self.filters['nl2br'] = misc.nl2br
+    self.filters['markdown'] = misc.markdown
     self.filters['json'] = json.encode
-    self.filters['gravatar_url'] = template_func.gravatar_url
-    self.filters['format_size'] = template_func.format_size
-    self.filters['format_seconds'] = template_func.format_seconds
-    self.filters['base64_encode'] = template_func.base64_encode
+    self.filters['gravatar_url'] = misc.gravatar_url
+    self.filters['format_size'] = misc.format_size
+    self.filters['format_seconds'] = misc.format_seconds
+    self.filters['base64_encode'] = misc.base64_encode

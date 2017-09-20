@@ -1,7 +1,7 @@
 from vj4 import app
 from vj4 import template
 from vj4.handler import base
-from vj4.util import template_func
+from vj4.util import misc
 
 
 @app.route('/about', 'about', global_route=True)
@@ -22,4 +22,4 @@ class PreviewHandler(base.Handler):
   @base.sanitize
   async def post(self, *, text: str):
     self.response.content_type = 'text/html'
-    self.response.text = template_func.markdown(text)
+    self.response.text = misc.markdown(text)

@@ -14,8 +14,8 @@ from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
+from vj4.util import misc
 from vj4.util import options
-from vj4.util import template_func
 from vj4.util import validator
 from vj4.handler import base
 
@@ -230,7 +230,7 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
 class UserSearchHandler(base.Handler):
   def modify_udoc(self, udict, key):
     udoc = udict[key]
-    gravatar_url = template_func.gravatar_url(udoc.get('gravatar'))
+    gravatar_url = misc.gravatar_url(udoc.get('gravatar'))
     if 'gravatar' in udoc and udoc['gravatar']:
       udict[key] = {**udoc,
                     'gravatar_url': gravatar_url,
