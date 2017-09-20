@@ -208,13 +208,13 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
     if is_export:
       row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
       row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
-    row.append({'type': 'string', 'value': template.format_seconds(tsdoc.get('time', 0))})
+    row.append({'type': 'string', 'value': template_func.format_seconds(tsdoc.get('time', 0))})
     for pid in tdoc['pids']:
       rdoc = tsddict.get(pid, {}).get('rid', None)
       col_score = tsddict.get(pid, {}).get('penalty_score', '-')
       col_original_score = tsddict.get(pid, {}).get('score', '-')
       col_time = tsddict.get(pid, {}).get('time', '-')
-      col_time_str = template.format_seconds(col_time) if col_time != '-' else '-'
+      col_time_str = template_func.format_seconds(col_time) if col_time != '-' else '-'
       if is_export:
         row.append({'type': 'string', 'value': col_score})
         row.append({'type': 'string', 'value': col_original_score})
