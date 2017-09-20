@@ -8,7 +8,7 @@ from vj4 import error
 from vj4.util import argmethod
 
 
-EXPECTED_DB_VERSION = 20170919
+EXPECTED_DB_VERSION = 1
 
 
 @argmethod.wrap
