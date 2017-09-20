@@ -10,8 +10,9 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
-from vj4.util import validator
+from vj4.util import misc
 from vj4.util import rank
+from vj4.util import validator
 
 
 journal_key_func = lambda j: j['rid']
@@ -41,7 +42,7 @@ def _acm_stat(tdoc, journal):
   def time(jdoc):
     real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
     penalty = datetime.timedelta(minutes=20) * naccept[jdoc['pid']]
-    return (real + penalty).total_seconds()
+    return int((real + penalty).total_seconds())
 
   detail = [{**j, 'naccept': naccept[j['pid']], 'time': time(j)} for j in effective.values()]
   return {'accept': sum(int(d['accept']) for d in detail),
@@ -119,13 +120,16 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
   columns.append({'type': 'solved_problems', 'value': _('Solved Problems')})
-  if is_export: columns.append({'type': 'total_time',
-                                'value': _('Total Time')})
+  if is_export:
+    columns.append({'type': 'total_time', 'value': _('Total Time (Seconds)')})
+    columns.append({'type': 'total_time_str', 'value': _('Total Time')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
       columns.append({'type': 'problem_flag',
                       'value': '#{0} {1}'.format(index + 1, pdict[pid]['title'])})
       columns.append({'type': 'problem_time',
+                      'value': '#{0} {1}'.format(index + 1, _('Time (Seconds)'))})
+      columns.append({'type': 'problem_time_str',
                       'value': '#{0} {1}'.format(index + 1, _('Time'))})
     else:
       columns.append({'type': 'problem_detail',
@@ -142,22 +146,27 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
                 'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string',
                 'value': tsdoc.get('accept', 0)})
-    if is_export: row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
+    if is_export:
+      row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
+      row.append({'type': 'string', 'value': misc.format_seconds(tsdoc.get('time', 0.0))})
     for pid in tdoc['pids']:
       if tsddict.get(pid, {}).get('accept', False):
         rdoc = tsddict[pid]['rid']
         col_accepted = _('Accepted')
         col_time = tsddict[pid]['time']
+        col_time_str = misc.format_seconds(col_time)
       else:
         rdoc = None
         col_accepted = '-'
         col_time = '-'
+        col_time_str = '-'
       if is_export:
         row.append({'type': 'string', 'value': col_accepted})
         row.append({'type': 'string', 'value': col_time})
+        row.append({'type': 'string', 'value': col_time_str})
       else:
         row.append({'type': 'record',
-                    'value': '{0}\n{1}'.format(col_accepted, col_time), 'raw': rdoc})
+                    'value': '{0}\n{1}'.format(col_accepted, col_time_str), 'raw': rdoc})
     rows.append(row)
   return rows
 

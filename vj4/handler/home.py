@@ -6,7 +6,6 @@ from bson import objectid
 
 from vj4 import app
 from vj4 import error
-from vj4 import template
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
@@ -20,6 +19,7 @@ from vj4.handler import base
 from vj4.service import bus
 from vj4.util import useragent
 from vj4.util import geoip
+from vj4.util import misc
 from vj4.util import options
 from vj4.util import validator
 
@@ -156,7 +156,7 @@ class HomeMessagesHandler(base.OperationHandler):
     udoc = udict.get(key)
     if not udoc:
       return
-    gravatar_url = template.gravatar_url(udoc.get('gravatar'))
+    gravatar_url = misc.gravatar_url(udoc.get('gravatar'))
     if 'gravatar' in udoc and udoc['gravatar']:
       udict[key] = {**udoc,
                     'gravatar_url': gravatar_url,
