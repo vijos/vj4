@@ -10,9 +10,9 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import document
 from vj4.util import argmethod
-from vj4.util import validator
+from vj4.util import misc
 from vj4.util import rank
-from vj4.util import template_func
+from vj4.util import validator
 
 
 journal_key_func = lambda j: j['rid']
@@ -118,13 +118,13 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
                 'value': tsdoc.get('accept', 0)})
     if is_export:
       row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
-      row.append({'type': 'string', 'value': template_func.format_seconds(tsdoc.get('time', 0.0))})
+      row.append({'type': 'string', 'value': misc.format_seconds(tsdoc.get('time', 0.0))})
     for pid in tdoc['pids']:
       if tsddict.get(pid, {}).get('accept', False):
         rdoc = tsddict[pid]['rid']
         col_accepted = _('Accepted')
         col_time = tsddict[pid]['time']
-        col_time_str = template_func.format_seconds(col_time)
+        col_time_str = misc.format_seconds(col_time)
       else:
         rdoc = None
         col_accepted = '-'
