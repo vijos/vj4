@@ -7,7 +7,6 @@ from aiohttp import web
 
 from vj4 import db
 from vj4 import error
-from vj4.model import system
 from vj4.service import bus
 from vj4.service import smallcache
 from vj4.service import staticmanifest
@@ -50,7 +49,6 @@ class Application(web.Application):
     locale.load_translations(translation_path)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(db.init())
-    loop.run_until_complete(system.ensure_db_version(0))
     loop.run_until_complete(asyncio.gather(tools.ensure_all_indexes(), bus.init()))
     smallcache.init()
 
