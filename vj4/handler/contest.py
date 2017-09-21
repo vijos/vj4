@@ -24,6 +24,15 @@ from vj4.handler import base
 from vj4.util import pagination
 
 
+def _parse_pids(pids_str):
+  pids = list(set(map(document.convert_doc_id, pids_str.split(','))))
+  return pids
+
+
+def _format_pids(pids_list):
+  return ','.join([str(pid) for pid in pids_list])
+
+
 def _parse_penalty_rules_yaml(penalty_rules):
   try:
     penalty_rules = yaml.safe_load(penalty_rules)
@@ -131,8 +140,7 @@ class ContestCommonOperationMixin(object):
                                                        ranked_tsdocs, udict, pdict)
     return tdoc, rows
 
-  async def convert_and_verify_pids_str(self, pids: str):
-    pids = list(set(map(document.convert_doc_id, pids.split(','))))
+  async def verify_problems(self, pids):
     pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
                                     fields={'doc_id': 1}) \
                          .sort('doc_id', 1) \
@@ -507,6 +515,7 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
     self.render('contest_edit.html',
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'),
+                pids=_format_pids([1000, 1001]),
                 page_title=page_title, path_components=path_components)
 
 
@@ -522,6 +531,7 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
                 time_begin_text='00:00',
                 date_penalty_text=penalty_since.strftime('%Y-%m-%d'),
                 time_penalty_text='23:59',
+                pids=_format_pids([1000, 1001]),
                 extension_days='1',
                 page_title=page_title, path_components=path_components)
 
@@ -554,7 +564,8 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
     end_at = begin_at + datetime.timedelta(hours=duration)
     if begin_at >= end_at:
       raise error.ValidationError('duration')
-    pids = await self.convert_and_verify_pids_str(pids)
+    pids = _parse_pids(pids)
+    await self.verify_problems(pids)
     tid = await contest.add(self.domain_id, document.TYPE_CONTEST, title, content, self.user['_id'],
                             rule, begin_at, end_at, pids)
     await self.hide_problems(pids)
@@ -589,7 +600,8 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
       raise error.ValidationError('end_at_date', 'end_at_time')
     if penalty_since > end_at:
       raise error.ValidationError('extension_days')
-    pids = await self.convert_and_verify_pids_str(pids)
+    pids = _parse_pids(pids)
+    await self.verify_problems(pids)
     tid = await contest.add(self.domain_id, document.TYPE_HOMEWORK, title, content, self.user['_id'],
                             constant.contest.RULE_ASSIGNMENT, begin_at, end_at, pids,
                             penalty_since=penalty_since, penalty_rules=penalty_rules)
@@ -624,6 +636,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     self.render('contest_edit.html', tdoc=tdoc,
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'),
+                pids=_format_pids(tdoc['pids']),
                 page_title=page_title, path_components=path_components)
 
 
@@ -649,6 +662,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
                 time_penalty_text=penalty_since.strftime('%H:%M'),
                 extension_days=extension_days,
                 penalty_rules=_format_penalty_rules_yaml(tdoc['penalty_rules']),
+                pids=_format_pids(tdoc['pids']),
                 page_title=page_title, path_components=path_components)
 
 
@@ -682,7 +696,8 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     end_at = begin_at + datetime.timedelta(hours=duration)
     if begin_at >= end_at:
       raise error.ValidationError('duration')
-    pids = await self.convert_and_verify_pids_str(pids)
+    pids = _parse_pids(pids)
+    await self.verify_problems(pids)
     await contest.edit(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'], title=title, content=content,
                        rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
     await self.hide_problems(pids)
@@ -724,7 +739,8 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
       raise error.ValidationError('end_at_date', 'end_at_time')
     if penalty_since > end_at:
       raise error.ValidationError('extension_days')
-    pids = await self.convert_and_verify_pids_str(pids)
+    pids = _parse_pids(pids)
+    await self.verify_problems(pids)
     await contest.edit(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'], title=title, content=content,
                        begin_at=begin_at, end_at=end_at, pids=pids,
                        penalty_since=penalty_since, penalty_rules=penalty_rules)

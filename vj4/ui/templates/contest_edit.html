@@ -13,7 +13,7 @@
             {{ form.form_text(columns=4, label='Begin Time', name='begin_at_time', placeholder='HH:MM', value=time_text, time=True, row=False) }}
             {{ form.form_text(columns=4, label='Duration (hours)', name='duration', value=tdoc['duration']|default('3'), row=False) }}
           </div>
-          {{ form.form_text(columns=None, label='Problems', name='pids', value=tdoc['pids']|default([1000, 1001])|join(',')) }}
+          {{ form.form_text(columns=None, label='Problems', name='pids', value=pids) }}
           {{ form.form_textarea(columns=None, label='Content', name='content', value=tdoc['content']|default(''), markdown=True) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">

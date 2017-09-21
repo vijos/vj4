@@ -20,7 +20,7 @@
               <textarea name="penalty_rules" class="monospace textbox">{% if tdoc %}{{ penalty_rules }}{% else %}{% include 'partials/homework_default_penalty_rules.yaml' %}{% endif %}</textarea>
             </label>
           </div></div>
-          {{ form.form_text(columns=None, label='Problems', name='pids', value=tdoc['pids']|default([1000, 1001])|join(',')) }}
+          {{ form.form_text(columns=None, label='Problems', name='pids', value=pids) }}
           {{ form.form_textarea(columns=None, label='Content', name='content', value=tdoc['content']|default(''), markdown=True) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
