@@ -150,7 +150,6 @@ class ContestCommonOperationMixin(object):
       for pid in pids:
         if pid not in exist_pids:
           raise error.ProblemNotFoundError(self.domain_id, pid)
-    return pids
 
   async def hide_problems(self, pids):
     for pid in pids:
