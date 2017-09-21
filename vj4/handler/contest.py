@@ -22,6 +22,15 @@ from vj4.handler import base
 from vj4.util import pagination
 
 
+def _parse_pids(pids_str):
+  pids = list(set(map(document.convert_doc_id, pids_str.split(','))))
+  return pids
+
+
+def _format_pids(pids_list):
+  return ','.join([str(pid) for pid in pids_list])
+
+
 class ContestStatusMixin(object):
   @property
   @functools.lru_cache()
@@ -84,6 +93,22 @@ class ContestCommonOperationMixin(object):
     rows = contest.RULES[tdoc['rule']].scoreboard_func(is_export, self.translate, tdoc,
                                                        ranked_tsdocs, udict, pdict)
     return tdoc, rows
+
+  async def verify_problems(self, pids):
+    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
+                                    fields={'doc_id': 1}) \
+                         .sort('doc_id', 1) \
+                         .to_list()
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
+    return pids
+
+  async def hide_problems(self, pids):
+    for pid in pids:
+      await problem.set_hidden(self.domain_id, pid, True)
 
 
 class ContestMixin(ContestStatusMixin, ContestVisibilityMixin, ContestCommonOperationMixin):
@@ -350,7 +375,8 @@ class ContestCreateHandler(ContestMixin, base.Handler):
     dt = datetime.datetime.fromtimestamp(ts, self.timezone)
     self.render('contest_edit.html',
                 date_text=dt.strftime('%Y-%m-%d'),
-                time_text=dt.strftime('%H:%M'))
+                time_text=dt.strftime('%H:%M'),
+                pids=_format_pids([1000, 1001]))
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
@@ -366,25 +392,16 @@ class ContestCreateHandler(ContestMixin, base.Handler):
     try:
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
       begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
-      end_at = begin_at + datetime.timedelta(hours=duration)
-    except ValueError as e:
+    except ValueError:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
+    end_at = begin_at + datetime.timedelta(hours=duration)
     if begin_at >= end_at:
       raise error.ValidationError('duration')
-    pids = list(set(map(document.convert_doc_id, pids.split(','))))
-    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
-                                    fields={'doc_id': 1}) \
-                         .sort('doc_id', 1) \
-                         .to_list()
-    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
-    if len(pids) != len(exist_pids):
-      for pid in pids:
-        if pid not in exist_pids:
-          raise error.ProblemNotFoundError(self.domain_id, pid)
+    pids = _parse_pids(pids)
+    await self.verify_problems(pids)
     tid = await contest.add(self.domain_id, title, content, self.user['_id'],
                             rule, begin_at, end_at, pids)
-    for pid in pids:
-      await problem.set_hidden(self.domain_id, pid, True)
+    await self.hide_problems(pids)
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
 
 
@@ -400,7 +417,8 @@ class ContestEditHandler(ContestMixin, base.Handler):
     dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
     self.render('contest_edit.html', tdoc=tdoc,
                 date_text=dt.strftime('%Y-%m-%d'),
-                time_text=dt.strftime('%H:%M'))
+                time_text=dt.strftime('%H:%M'),
+                pids=_format_pids(tdoc['pids']))
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
@@ -419,25 +437,16 @@ class ContestEditHandler(ContestMixin, base.Handler):
     try:
       begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
       begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
-    except ValueError as e:
+    except ValueError:
       raise error.ValidationError('begin_at_date', 'begin_at_time')
     end_at = begin_at + datetime.timedelta(hours=duration)
     if begin_at >= end_at:
       raise error.ValidationError('duration')
-    pids = list(set(map(document.convert_doc_id, pids.split(','))))
-    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
-                                    fields={'doc_id': 1}) \
-                         .sort('doc_id', 1) \
-                         .to_list()
-    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
-    if len(pids) != len(exist_pids):
-      for pid in pids:
-        if pid not in exist_pids:
-          raise error.ProblemNotFoundError(self.domain_id, pid)
+    pids = _parse_pids(pids)
+    await self.verify_problems(pids)
     await contest.edit(self.domain_id, tdoc['doc_id'], title=title, content=content,
                        rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
-    for pid in pids:
-      await problem.set_hidden(self.domain_id, pid, True)
+    await self.hide_problems(pids)
     if tdoc['begin_at'] != begin_at \
         or tdoc['end_at'] != end_at \
         or set(tdoc['pids']) != set(pids) \
