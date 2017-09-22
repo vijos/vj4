@@ -24,7 +24,7 @@ async def run():
       _logger.info('Updating domain {0}...'.format(ddoc['_id']))
       owner_uid = ddoc['owner_uid']
       # assign `root` role to owner
-      await domain.set_user(ddoc['_id'], owner_uid, role='root')
+      await domain.set_user(ddoc['_id'], owner_uid, role=builtin.ROLE_ROOT)
 
     # add `join_at` attribute
     _logger.info('Updating join_at ...')
