@@ -236,6 +236,8 @@ class HomeMessagesConnection(base.Connection):
 class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
+    pending_ddocs = await domain.get_pending(owner_uid=self.user['_id']) \
+                                .to_list()
     dudict = await domain.get_dict_user_by_domain_id(self.user['_id'])
     dids = list(dudict.keys())
     ddocs = await domain.get_multi(_id={'$in': dids}) \
@@ -247,7 +249,15 @@ class HomeDomainHandler(base.Handler):
       can_manage[ddoc['_id']] = (
           ((builtin.PERM_EDIT_DESCRIPTION | builtin.PERM_EDIT_PERM) & mask) != 0
           or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
-    self.render('home_domain.html', ddocs=ddocs, dudict=dudict, can_manage=can_manage)
+    self.render('home_domain.html', pending_ddocs=pending_ddocs, ddocs=ddocs, dudict=dudict, can_manage=can_manage)
+
+  @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, id: str):
+    await domain.add_continue(id)
+    self.json_or_redirect(self.url)
 
 
 @app.route('/home/domain/create', 'home_domain_create', global_route=True)

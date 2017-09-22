@@ -10,6 +10,13 @@
       <a class="tool-button" href="{{ reverse_url('wiki_help') }}#domain"><span class="icon icon-help"></span> {{ _('What\'s domain?') }}</a>
     </div>
   </div>
+{% if pending_ddocs|length > 0 %}
+  <div class="section__body">
+    <blockquote class="note">
+      {{ _('You have uncompleted domain creation operation. You can click "Continue" to finish the creation.') }}
+    </blockquote>
+  </div>
+{% endif %}
   <div class="section__body no-padding">
     <table class="data-table">
       <colgroup>
@@ -27,6 +34,24 @@
         </tr>
       </thead>
       <tbody>
+      {% for ddoc in pending_ddocs %}
+        <tr>
+          <td class="col--icon">
+            <img src="{{ ddoc['gravatar']|gravatar_url }}" width="32" height="32">
+          </td>
+          <td class="col--name">
+            <span class="text-red">{{ _('Uncompleted') }}</span>: {{ ddoc['name'] }} ({{ ddoc['_id'] }})
+          </td>
+          <td class="col--role">
+            --
+          </td>
+          <td class="col--action"><form method="post">
+            <input type="hidden" name="id" value="{{ ddoc['_id'] }}">
+            <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+            <button type="submit" class="typo-a">{{ _('Continue') }}</button>
+          </form></td>
+        </tr>
+      {% endfor %}
       {% for ddoc in vj4.model.builtin.DOMAINS %}
         <tr>
           <td class="col--icon">
@@ -47,6 +72,7 @@
         </tr>
       {% endfor %}
       {% for ddoc in ddocs %}
+      {% if not ddoc['pending'] %}
         <tr>
           <td class="col--icon">
             <img src="{{ ddoc['gravatar']|gravatar_url }}" width="32" height="32">
@@ -64,6 +90,7 @@
           {% endif %}
           </td>
         </tr>
+      {% endif %}
       {% endfor %}
       </tbody>
     </table>

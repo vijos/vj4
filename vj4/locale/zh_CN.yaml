@@ -378,6 +378,9 @@ User ID: 用户 ID
 '{0}: Users': '{0}: 用户'
 '{0}: Roles': '{0}: 角色'
 '{0}: Permissions': '{0}: 权限'
+You have uncompleted domain creation operation. You can click "Continue" to finish the creation.: 您有未完成的创建域操作。您可以点击“继续”来完成创建。
+Uncompleted: 未完成
+Continue: 继续
 Role: 角色
 Select a role: 选择一个角色
 Add User: 添加用户

@@ -36,7 +36,7 @@ async def add(domain_id: str, owner_uid: int,
 
 
 async def add_continue(domain_id: str):
-  ddoc = get(domain_id)
+  ddoc = await get(domain_id)
   if 'pending' not in ddoc:
     raise error.DomainNotFoundError(domain_id)
   owner_uid = ddoc['owner_uid']
@@ -44,6 +44,7 @@ async def add_continue(domain_id: str):
     await add_user_role(domain_id, owner_uid, builtin.ROLE_ROOT)
   except error.UserAlreadyDomainMemberError:
     pass
+  coll = db.coll('domain')
   await coll.update_one({'_id': domain_id},
                         {'$unset': {'pending': ''}})
 
@@ -71,8 +72,7 @@ async def get_list(*, fields=None, limit: int=None, **kwargs):
   return await coll.find(kwargs, fields).limit(limit).to_list(None)
 
 
-@argmethod.wrap
-async def get_pending(**kwargs):
+def get_pending(**kwargs):
   return get_multi(pending=True, **kwargs)
 
 
