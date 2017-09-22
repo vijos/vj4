@@ -23,9 +23,6 @@ async def run():
     for ddoc in ddocs:
       _logger.info('Updating domain {0}...'.format(ddoc['_id']))
       owner_uid = ddoc['owner_uid']
-      # override the `root` role
-      await coll_domain.update_one({'_id': ddoc['_id']},
-                                    {'$set': {'roles.' + builtin.ROLE_ROOT: -1}})
       # assign `root` role to owner
       await domain.set_user(ddoc['_id'], owner_uid, role='root')
 

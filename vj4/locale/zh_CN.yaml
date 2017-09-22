@@ -389,9 +389,10 @@ Remove Selected User from Domain: 将所选用户移出域
 Set Roles for Selected User: 设置所选用户的角色
 Create Role: 创建角色
 Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
-'Built-in: Always granted all privileges': '内置: 总是拥有所有权限'
-'Built-in: Valid for visitors': '内置: 对未登录的游客有效'
-'Built-in: Valid for registered users who are not members of the domain': '内置: 对域外注册用户有效'
+Built-in: 内置
+Always granted all privileges: 总是拥有所有权限
+Valid for visitors: 对未登录的游客有效
+Valid for registered users who are not members of the domain: 对域外注册用户有效
 User-defined role: 用户定义的角色
 Users: 用户
 Delete Selected Roles: 删除所选角色

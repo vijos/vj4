@@ -245,7 +245,7 @@ class HomeDomainHandler(base.Handler):
     can_manage = {}
     for ddoc in builtin.DOMAINS + ddocs:
       role = dudict.get(ddoc['_id'], {}).get('role', builtin.ROLE_DEFAULT)
-      mask = ddoc['roles'].get(role, builtin.PERM_NONE)
+      mask = domain.get_all_roles(ddoc).get(role, builtin.PERM_NONE)
       can_manage[ddoc['_id']] = (
           ((builtin.PERM_EDIT_DESCRIPTION | builtin.PERM_EDIT_PERM) & mask) != 0
           or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
@@ -255,8 +255,8 @@ class HomeDomainHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, id: str):
-    await domain.add_continue(id)
+  async def post(self, *, domain_id: str):
+    await domain.add_continue(domain_id)
     self.json_or_redirect(self.url)
 
 

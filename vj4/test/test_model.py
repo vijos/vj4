@@ -162,9 +162,9 @@ class DomainTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_continue_2(self):
     # test pending commit ddoc
-    await db.coll('domain').insert({'_id': DOMAIN_ID,
-                                    'owner_uid': OWNER_UID,
-                                    'pending': True})
+    await db.coll('domain').insert_one({'_id': DOMAIN_ID,
+                                        'owner_uid': OWNER_UID,
+                                        'pending': True})
     await domain.add_user_role(DOMAIN_ID, OWNER_UID, BAR_ROLE)
     await domain.add_continue(DOMAIN_ID)
     ddoc = await domain.get(DOMAIN_ID)
@@ -173,7 +173,7 @@ class DomainTest(base.DatabaseTestCase):
     self.assertEqual(dudoc['role'], BAR_ROLE)
 
   @base.wrap_coro
-  async def test_add_continue_2(self):
+  async def test_add_continue_3(self):
     # test committed
     await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     await domain.set_user_role(DOMAIN_ID, OWNER_UID, FOO_ROLE)
@@ -259,6 +259,72 @@ class DomainTest(base.DatabaseTestCase):
     self.assertEqual(dudoc['test_field'], 'test tset')
     self.assertEqual(dudoc['role'], BAR_ROLE)
     self.assertEqual(dudoc['join_at'], NOW)
+
+  @base.wrap_coro
+  async def test_set_roles_1(self):
+    # modify a modifiable built-in role
+    await domain.add(DOMAIN_ID, OWNER_UID, name=DOMAIN_NAME)
+    await domain.set_roles(DOMAIN_ID, {builtin.ROLE_DEFAULT: 777})
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertEqual(ddoc['roles'][builtin.ROLE_DEFAULT], 777)
+
+  @base.wrap_coro
+  async def test_set_roles_2(self):
+    # modify an un-modifiable built-in role
+    await domain.add(DOMAIN_ID, OWNER_UID, name=DOMAIN_NAME)
+    with self.assertRaises(error.ModifyBuiltinRoleError):
+      await domain.set_roles(DOMAIN_ID, {builtin.ROLE_ROOT: 777})
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertTrue(builtin.ROLE_ROOT not in ddoc['roles'])
+
+  @base.wrap_coro
+  async def test_set_roles_3(self):
+    # modify a non-exist role
+    await domain.add(DOMAIN_ID, OWNER_UID, name=DOMAIN_NAME)
+    await domain.set_roles(DOMAIN_ID, {FOO_ROLE: 777})
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertEqual(ddoc['roles'][FOO_ROLE], 777)
+
+  @base.wrap_coro
+  async def test_set_roles_4(self):
+    # modify an existing role
+    await domain.add(DOMAIN_ID, OWNER_UID, name=DOMAIN_NAME)
+    await domain.set_roles(DOMAIN_ID, {FOO_ROLE: 777})
+    await domain.set_roles(DOMAIN_ID, {FOO_ROLE: 666})
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertEqual(ddoc['roles'][FOO_ROLE], 666)
+
+  @base.wrap_coro
+  async def test_delete_roles_1(self):
+    # delete a built-in role
+    await domain.add(DOMAIN_ID, OWNER_UID, name=DOMAIN_NAME)
+    with self.assertRaises(error.ModifyBuiltinRoleError):
+      await domain.delete_roles(DOMAIN_ID, [builtin.ROLE_DEFAULT])
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertEqual(ddoc['roles'][builtin.ROLE_DEFAULT],
+                     builtin.BUILTIN_ROLES[builtin.ROLE_DEFAULT].default_permission)
+    with self.assertRaises(error.ModifyBuiltinRoleError):
+      await domain.delete_roles(DOMAIN_ID, [builtin.ROLE_ROOT])
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertTrue(builtin.ROLE_ROOT not in ddoc['roles'])
+
+  @base.wrap_coro
+  async def test_delete_roles_2(self):
+    # delete a non-existing role
+    await domain.add(DOMAIN_ID, OWNER_UID, name=DOMAIN_NAME)
+    await domain.delete_roles(DOMAIN_ID, [FOO_ROLE])
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertTrue(FOO_ROLE not in ddoc['roles'])
+
+  @base.wrap_coro
+  async def test_delete_roles_3(self):
+    # delete an existing role
+    await domain.add(DOMAIN_ID, OWNER_UID, name=DOMAIN_NAME)
+    await domain.set_roles(DOMAIN_ID, {FOO_ROLE: 777, BAR_ROLE: 666})
+    await domain.delete_roles(DOMAIN_ID, [FOO_ROLE])
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertTrue(FOO_ROLE not in ddoc['roles'])
+    self.assertEqual(ddoc['roles'][BAR_ROLE], 666)
 
 
 class FsTest(base.DatabaseTestCase):

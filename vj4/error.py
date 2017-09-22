@@ -302,10 +302,10 @@ class DomainRoleAlreadyExistError(ForbiddenError):
     return 'Role {1} already exists in domain {0}.'
 
 
-class DeleteBuiltinDomainRoleError(ForbiddenError):
+class ModifyBuiltinRoleError(ForbiddenError):
   @property
   def message(self):
-    return 'Built-in roles cannot be deleted.'
+    return 'Built-in roles cannot be modified.'
 
 
 class UserAlreadyDomainMemberError(ForbiddenError):

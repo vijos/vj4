@@ -42,6 +42,7 @@
         </tr>
       </thead>
       <tbody>
+      {% for role, rd in vj4.model.builtin.BUILTIN_ROLES.items() %}
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
@@ -49,49 +50,18 @@
             </label>
           </td>
           <td class="col--id">
-            root
+            {{ role }}
           </td>
           <td class="col--description">
-            {{ _('Built-in: Always granted all privileges') }}
+            {{ _('Built-in') }}: {{ _(rd.description) }}
           </td>
           <td class="col--users">
-            {{ rucounts['root'] }}
+            {{ rucounts.get(role, '--') }}
           </td>
         </tr>
-        <tr>
-          <td class="col--checkbox">
-            <label class="compact checkbox">
-              <input type="checkbox" data-checkbox-group="role" disabled>
-            </label>
-          </td>
-          <td class="col--id">
-            guest
-          </td>
-          <td class="col--description">
-            {{ _('Built-in: Valid for visitors') }}
-          </td>
-          <td class="col--users">
-            --
-          </td>
-        </tr>
-        <tr>
-          <td class="col--checkbox">
-            <label class="compact checkbox">
-              <input type="checkbox" data-checkbox-group="role" disabled>
-            </label>
-          </td>
-          <td class="col--id">
-            default
-          </td>
-          <td class="col--description">
-            {{ _('Built-in: Valid for registered users who are not members of the domain') }}
-          </td>
-          <td class="col--users">
-            --
-          </td>
-        </tr>
-        {% for role in roles %}
-        {% if role not in vj4.model.builtin.INTERNAL_ROLES %}
+      {% endfor %}
+      {% for role in roles %}
+      {% if role not in vj4.model.builtin.BUILTIN_ROLES %}
         <tr data-role="{{ role }}">
           <td class="col--checkbox">
             <label class="compact checkbox">
@@ -108,8 +78,8 @@
             {{ rucounts[role] }}
           </td>
         </tr>
-        {% endif %}
-        {% endfor %}
+      {% endif %}
+      {% endfor %}
       </tbody>
     </table>
   </div>

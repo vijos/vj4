@@ -102,13 +102,25 @@ async def unset(domain_id, fields):
 
 @argmethod.wrap
 async def set_role(domain_id: str, role: str, perm: int):
-  validator.check_role(role)
+  return await set_roles(domain_id, {role: perm})
+
+
+@argmethod.wrap
+async def set_roles(domain_id: str, roles):
+  roles = {str(role): int(roles[role]) for role in roles}
+  update = {}
+  for role in roles:
+    validator.check_role(role)
+    if role in builtin.BUILTIN_ROLES:
+      if not builtin.BUILTIN_ROLES[role].modifiable:
+        raise error.ModifyBuiltinRoleError(domain_id, role)
+    update['roles.{0}'.format(role)] = roles[role]
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
   coll = db.coll('domain')
   return await coll.find_one_and_update(filter={'_id': domain_id},
-                                        update={'$set': {'roles.{0}'.format(role): perm}},
+                                        update={'$set': update},
                                         return_document=ReturnDocument.AFTER)
 
 
@@ -121,8 +133,8 @@ async def delete_roles(domain_id: str, roles):
   roles = list(set(roles))
   for role in roles:
     validator.check_role(role)
-    if role in builtin.INTERNAL_ROLES:
-      raise error.DeleteBuiltinDomainRoleError(domain_id, role)
+    if role in builtin.BUILTIN_ROLES:
+      raise error.ModifyBuiltinRoleError(domain_id, role)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
@@ -260,6 +272,12 @@ async def get_dict_user_by_domain_id(uid, *, fields=None):
   async for dudoc in get_multi_user(uid=uid, fields=fields):
     result[dudoc['domain_id']] = dudoc
   return result
+
+
+def get_all_roles(ddoc):
+  builtin_roles = {role: rd.default_permission for role, rd in builtin.BUILTIN_ROLES.items()}
+  domain_roles = ddoc['roles']
+  return {**builtin_roles, **domain_roles}
 
 
 @argmethod.wrap
