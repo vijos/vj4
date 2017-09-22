@@ -164,8 +164,7 @@ class DomainPermissionHandler(base.Handler):
     def bitand(a, b):
       return a & b
     roles = sorted(list(self.domain['roles'].keys()))
-    # owner role is not mutable
-    roles.remove('owner')
+    roles.remove(builtin.ROLE_ROOT) # root is not mutable
     self.render('domain_manage_permission.html', bitand=bitand, roles=roles)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
@@ -180,6 +179,7 @@ class DomainPermissionHandler(base.Handler):
        if perm in builtin.PERMS_BY_KEY:
           perms |= perm
       update['roles.' + role] = perms
+    update.remove('roles.' + builtin.ROLE_ROOT) # root is not mutable
     await domain.edit(self.domain_id, **update)
     self.json_or_redirect(self.url)
 

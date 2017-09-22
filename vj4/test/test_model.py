@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import time
 import unittest
@@ -6,7 +7,9 @@ from bson import objectid
 from gridfs import errors as gridfs_errors
 from pymongo import errors as pymongo_errors
 
+from vj4 import db
 from vj4 import error
+from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
@@ -27,7 +30,9 @@ DOMAIN_NAME = 'Dummy Domain'
 DOC_TYPE = document.TYPE_PROBLEM
 SUB_DOC_KEY = 'subsub'
 STATUS_KEY = 'dummy_key'
-ROLES = {'dummy': 777}
+FOO_ROLE = 'foo'
+BAR_ROLE = 'bar'
+ROLES = {FOO_ROLE: 777, BAR_ROLE: 777}
 OWNER_UID2 = 222
 OP1 = 'test1'
 OP2 = 'test2'
@@ -124,6 +129,62 @@ class DocumentTest(base.DatabaseTestCase):
 
 class DomainTest(base.DatabaseTestCase):
   @base.wrap_coro
+  async def test_add_get_transfer(self):
+    inserted_id = await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
+    self.assertEqual(DOMAIN_ID, inserted_id)
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertEqual(ddoc['_id'], DOMAIN_ID)
+    self.assertEqual(ddoc['owner_uid'], OWNER_UID)
+    self.assertEqual(ddoc['roles'], ROLES)
+    self.assertEqual(ddoc['name'], DOMAIN_NAME)
+    ddoc = await domain.transfer(DOMAIN_ID, OWNER_UID, OWNER_UID2)
+    self.assertEqual(ddoc['_id'], DOMAIN_ID)
+    self.assertEqual(ddoc['owner_uid'], OWNER_UID2)
+    self.assertEqual(ddoc['roles'], ROLES)
+    self.assertEqual(ddoc['name'], DOMAIN_NAME)
+    ddoc = await domain.transfer(DOMAIN_ID, OWNER_UID, OWNER_UID2)
+    self.assertIsNone(ddoc)
+    ddoc = await domain.get('null')
+    self.assertIsNone(ddoc)
+
+  @base.wrap_coro
+  async def test_add_continue_1(self):
+    # test pending inserting dudoc
+    await db.collection('domain.user').insert({'_id': DOMAIN_ID,
+                                               'owner_uid': OWNER_UID,
+                                               'pending': True})
+    await domain.add_continue(DOMAIN_ID)
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertTrue('pending' not in ddoc)
+    dudoc = await domain.get_user(DOMAIN_ID, OWNER_UID)
+    self.assertEqual(dudoc['role'], builtin.ROLE_ROOT)
+
+  @base.wrap_coro
+  async def test_add_continue_2(self):
+    # test pending commit ddoc
+    await db.collection('domain.user').insert({'_id': DOMAIN_ID,
+                                               'owner_uid': OWNER_UID,
+                                               'pending': True})
+    await domain.add_user_role(DOMAIN_ID, OWNER_UID, BAR_ROLE)
+    await domain.add_continue(DOMAIN_ID)
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertTrue('pending' not in ddoc)
+    dudoc = await domain.get_user(DOMAIN_ID, OWNER_UID)
+    self.assertEqual(dudoc['role'], BAR_ROLE)
+
+  @base.wrap_coro
+  async def test_add_continue_2(self):
+    # test committed
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
+    await domain.set_user_role(DOMAIN_ID, OWNER_UID, FOO_ROLE)
+    with self.assertRaises(error.DomainNotFoundError):
+      await domain.add_continue(DOMAIN_ID)
+    ddoc = await domain.get(DOMAIN_ID)
+    self.assertTrue('pending' not in ddoc)
+    dudoc = await domain.get_user(DOMAIN_ID, OWNER_UID)
+    self.assertEqual(dudoc['role'], FOO_ROLE)
+
+  @base.wrap_coro
   async def test_user_in_domain(self):
     await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     await domain.set_user(DOMAIN_ID, UID, test_field='test tset', num=1)
@@ -150,6 +211,54 @@ class DomainTest(base.DatabaseTestCase):
     dudoc = await domain.get_user(DOMAIN_ID, UID, fields={'test_field': 0})
     self.assertTrue('test_field' not in dudoc)
     self.assertEqual(dudoc['num'], 3)
+
+  @base.wrap_coro
+  async def test_add_user_role_1(self):
+    # test non-existing dudoc
+    NOW = datetime.datetime.utcnow().replace(microsecond=0)
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
+    await domain.add_user_role(DOMAIN_ID, UID, FOO_ROLE, NOW)
+    dudoc = await domain.get_user(DOMAIN_ID, UID)
+    self.assertEqual(dudoc['role'], FOO_ROLE)
+    self.assertEqual(dudoc['join_at'], NOW)
+
+  @base.wrap_coro
+  async def test_add_user_role_2(self):
+    # test existing dudoc without a role
+    NOW = datetime.datetime.utcnow().replace(microsecond=0)
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
+    await domain.set_user(DOMAIN_ID, UID, test_field='test tset')
+    await domain.add_user_role(DOMAIN_ID, UID, FOO_ROLE, NOW)
+    dudoc = await domain.get_user(DOMAIN_ID, UID)
+    self.assertEqual(dudoc['test_field'], 'test tset')
+    self.assertEqual(dudoc['role'], FOO_ROLE)
+    self.assertEqual(dudoc['join_at'], NOW)
+
+  @base.wrap_coro
+  async def test_add_user_role_3(self):
+    # test existing dudoc with a role, without join_at
+    NOW = datetime.datetime.utcnow().replace(microsecond=0)
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
+    await domain.set_user(DOMAIN_ID, UID, test_field='test tset', role=BAR_ROLE)
+    with self.assertRaises(error.UserAlreadyDomainMemberError):
+      await domain.add_user_role(DOMAIN_ID, UID, FOO_ROLE, NOW)
+    dudoc = await domain.get_user(DOMAIN_ID, UID)
+    self.assertEqual(dudoc['test_field'], 'test tset')
+    self.assertEqual(dudoc['role'], BAR_ROLE)
+    self.assertTrue('join_at' not in dudoc)
+
+  @base.wrap_coro
+  async def test_add_user_role_4(self):
+    # test existing dudoc with a role and join_at
+    NOW = datetime.datetime.utcnow().replace(microsecond=0)
+    await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
+    await domain.set_user(DOMAIN_ID, UID, test_field='test tset', role=BAR_ROLE, join_at=NOW)
+    with self.assertRaises(error.UserAlreadyDomainMemberError):
+      await domain.add_user_role(DOMAIN_ID, UID, FOO_ROLE, NOW + datetime.timedelta(seconds=5))
+    dudoc = await domain.get_user(DOMAIN_ID, UID)
+    self.assertEqual(dudoc['test_field'], 'test tset')
+    self.assertEqual(dudoc['role'], BAR_ROLE)
+    self.assertEqual(dudoc['join_at'], NOW)
 
 
 class FsTest(base.DatabaseTestCase):
