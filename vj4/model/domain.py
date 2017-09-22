@@ -23,16 +23,18 @@ async def add(domain_id: str, owner_uid: int,
       raise error.DomainAlreadyExistError(domain_id)
   coll = db.coll('domain')
   try:
-    await coll.insert_one({'_id': domain_id,
-                           'pending': True, 'owner_uid': owner_uid,
-                           'roles': roles, 'name': name,
-                           'gravatar': gravatar, 'bulletin': bulletin})
+    result = await coll.insert_one({'_id': domain_id,
+                                    'pending': True, 'owner_uid': owner_uid,
+                                    'roles': roles, 'name': name,
+                                    'gravatar': gravatar, 'bulletin': bulletin})
+    domain_id = result.inserted_id
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
   # grant root role to owner by default
   await add_user_role(domain_id, owner_uid, builtin.ROLE_ROOT)
   await coll.update_one({'_id': domain_id},
                         {'$unset': {'pending': ''}})
+  return domain_id
 
 
 async def add_continue(domain_id: str):

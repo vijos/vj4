@@ -24,7 +24,7 @@ DUP_UID = 0
 DUP_UNAME = 'GuESt'
 UID = 22
 UNAME = 'twd2'
-OWNER_UID = 22
+OWNER_UID = -1
 DOMAIN_ID = 'dummy_domain'
 DOMAIN_NAME = 'Dummy Domain'
 DOC_TYPE = document.TYPE_PROBLEM
@@ -144,15 +144,15 @@ class DomainTest(base.DatabaseTestCase):
     self.assertEqual(ddoc['name'], DOMAIN_NAME)
     ddoc = await domain.transfer(DOMAIN_ID, OWNER_UID, OWNER_UID2)
     self.assertIsNone(ddoc)
-    ddoc = await domain.get('null')
-    self.assertIsNone(ddoc)
+    with self.assertRaises(error.DomainNotFoundError):
+      await domain.get('null')
 
   @base.wrap_coro
   async def test_add_continue_1(self):
     # test pending inserting dudoc
-    await db.collection('domain.user').insert({'_id': DOMAIN_ID,
-                                               'owner_uid': OWNER_UID,
-                                               'pending': True})
+    await db.coll('domain').insert_one({'_id': DOMAIN_ID,
+                                        'owner_uid': OWNER_UID,
+                                        'pending': True})
     await domain.add_continue(DOMAIN_ID)
     ddoc = await domain.get(DOMAIN_ID)
     self.assertTrue('pending' not in ddoc)
@@ -162,9 +162,9 @@ class DomainTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_add_continue_2(self):
     # test pending commit ddoc
-    await db.collection('domain.user').insert({'_id': DOMAIN_ID,
-                                               'owner_uid': OWNER_UID,
-                                               'pending': True})
+    await db.coll('domain').insert({'_id': DOMAIN_ID,
+                                    'owner_uid': OWNER_UID,
+                                    'pending': True})
     await domain.add_user_role(DOMAIN_ID, OWNER_UID, BAR_ROLE)
     await domain.add_continue(DOMAIN_ID)
     ddoc = await domain.get(DOMAIN_ID)
