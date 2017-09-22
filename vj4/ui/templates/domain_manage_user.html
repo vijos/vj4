@@ -67,10 +67,11 @@
       <tbody>
         {% for role in roles %}
         {% for rudoc in rudocs[role] %}
+        {% set is_disabled=(rudoc['uid'] == handler.domain['owner_uid']) %}
         <tr data-uid="{{ rudoc['uid'] }}">
           <td class="col--checkbox">
             <label class="compact checkbox">
-              <input type="checkbox" data-checkbox-group="user" data-checkbox-range>
+              <input type="checkbox" data-checkbox-group="user" {% if is_disabled %}disabled{% else %}data-checkbox-range{% endif %}>
             </label>
           </td>
           <td class="col--uid">
@@ -80,7 +81,7 @@
             {{ user.render_inline(udict[rudoc['uid']], badge=false) }}
           </td>
           <td class="col--role">
-            {{ form.select(roles_with_text, 'role', value=rudoc['role'], extra_class='compact') }}
+            {{ form.select(roles_with_text, 'role', value=rudoc['role'], extra_class='compact', disabled=is_disabled) }}
           </td>
         </tr>
         {% endfor %}

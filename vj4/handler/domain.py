@@ -126,7 +126,7 @@ class DomainUserHandler(base.OperationHandler):
   @base.require_csrf_token
   @base.sanitize
   async def post_add_user(self, *, uid: int, role: str):
-    await domain.add_user(self.domain_id, uid, role)
+    await domain.add_user_role(self.domain_id, uid, role)
     self.json_or_redirect(self.url)
 
 
