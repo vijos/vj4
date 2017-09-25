@@ -293,7 +293,8 @@ Properties: 屬性
 Access Control: 訪問控制
 domain_main: 首頁
 domain_manage: 管理域
-domain_manage_edit: 編輯域資訊
+domain_manage_dashboard: 概況
+domain_manage_edit: 編輯域資料
 domain_manage_role: 管理角色
 domain_manage_user: 管理使用者
 domain_manage_permission: 管理許可權
@@ -303,7 +304,6 @@ Your role: 您的角色
 Your permission: 您的許可權
 Edit Domain: 編輯域
 You don't own any domain and don't have privilege to create domain.: 您不擁有任何域也沒有創建域的特權。
-
 An error has occurred.: 發生了一個錯誤。
 Path {0} not found.: 路徑 {0} 不存在。
 Field {0} or {1} validation failed.: 欄位 {0} 或 {1} 驗證失敗。
