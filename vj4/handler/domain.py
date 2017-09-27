@@ -1,7 +1,9 @@
 import asyncio
 import collections
+import datetime
 
 from vj4 import app
+from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import domain
@@ -11,6 +13,8 @@ from vj4.model.adaptor import contest
 from vj4.model.adaptor import training
 from vj4.handler import base
 import vj4.handler.training
+from vj4.util import validator
+
 
 @app.route('/', 'domain_main')
 class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
@@ -90,6 +94,52 @@ class DomainEditHandler(base.Handler):
   @base.sanitize
   async def post(self, *, name: str, gravatar: str, bulletin: str):
     await domain.edit(self.domain_id, name=name, gravatar=gravatar, bulletin=bulletin)
+    self.json_or_redirect(self.url)
+
+
+@app.route('/domain/join_applications', 'domain_manage_join_applications')
+class DomainJoinApplicationsHandler(base.Handler):
+  @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
+  async def get(self):
+    roles = sorted(list(self.domain['roles'].keys()))
+    roles_with_text = [(role, role) for role in roles]
+    join_settings = domain.get_join_settings(self.domain)
+    expirations = [(k, v) for k, v in vj4.constant.domain.JOIN_EXPIRATION_RANGE.items()]
+    if join_settings is None:
+      expirations = expirations[1:]
+    self.render('domain_manage_join_applications.html', roles_with_text=roles_with_text,
+                join_settings=join_settings, expirations=expirations)
+
+  @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, method: int, role_assignment: str=None, expire: int=None,
+                 invitation_code: str=''):
+    current_join_settings = domain.get_join_settings(self.domain)
+    if method not in constant.domain.JOIN_METHOD_RANGE:
+      raise error.ValidationError('method')
+    if method == constant.domain.JOIN_METHOD_NONE:
+      join_settings = None
+    else:
+      if role_assignment not in self.domain['roles']:
+        raise error.ValidationError('role_assignment')
+      if expire not in constant.domain.JOIN_EXPIRATION_RANGE:
+        raise error.ValidationError('expire')
+      if current_join_settings is None and expire == constant.domain.JOIN_EXPIRATION_KEEP_CURRENT:
+        raise error.ValidationError('expire')
+      if method == constant.domain.JOIN_METHOD_CODE:
+        validator.check_domain_invitation_code(invitation_code)
+      join_settings={'method': method, 'role': role_assignment}
+      if method == constant.domain.JOIN_METHOD_CODE:
+        join_settings['code'] = invitation_code
+      if expire == constant.domain.JOIN_EXPIRATION_KEEP_CURRENT:
+        join_settings['expire'] = current_join_settings['expire']
+      elif expire == constant.domain.JOIN_EXPIRATION_UNLIMITED:
+        join_settings['expire'] = None
+      else:
+        join_settings['expire'] = datetime.datetime.utcnow() + datetime.timedelta(hours=expire)
+    await domain.edit(self.domain_id, join=join_settings)
     self.json_or_redirect(self.url)
 
 

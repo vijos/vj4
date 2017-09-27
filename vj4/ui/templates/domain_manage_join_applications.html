@@ -1,0 +1,39 @@
+{% extends "domain_base.html" %}
+{% block domain_content %}
+<div class="section">
+  <div class="section__header">
+    <h1 class="section__title">{{ _('Settings') }}</h1>
+  </div>
+  <div class="section__body">
+    <form method="POST">
+      {{ form.form_radio(
+        options=vj4.constant.domain.JOIN_METHOD_RANGE.items(),
+        label="Method",
+        name="method",
+        value=join_settings['method']|default(vj4.constant.domain.JOIN_METHOD_NONE),
+        columns=8) }}
+      {{ form.form_select(
+        options=roles_with_text,
+        label="Role Assignment",
+        name="role_assignment",
+        help_text="The role to assign when user joining the domain.",
+        value=join_settings['role']|default('')) }}
+      {{ form.form_select(
+        options=expirations,
+        label="Expires in",
+        name="expire",
+        help_text="User will no longer be allowed to join the domain after expiration."
+        ) }}
+      {{ form.form_text(
+        label="Invitation Code",
+        name="invitation_code",
+        help_text="The invitation code to enter to successfully join the domain. You can only use letters and numbers in the code and it should not be longer than 20 characters.",
+        value=join_settings['code']|default('')) }}
+      <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+      <button class="rounded primary button" role="submit">
+        {{ _('Update Settings') }}
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

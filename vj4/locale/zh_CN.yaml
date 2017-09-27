@@ -305,6 +305,7 @@ domain_manage: 管理域
 domain_manage_dashboard: 概况
 domain_manage_discussion: 讨论节点
 domain_manage_edit: 编辑域资料
+domain_manage_join_applications: 加域申请
 domain_manage_role: 管理角色
 domain_manage_user: 管理用户
 domain_manage_permission: 管理权限
@@ -398,7 +399,6 @@ Delete Selected Roles: 删除所选角色
 Owner: 所有者
 Permission: 权限
 Permissions: 权限
-
 View this domain: 查看此域
 Edit permissions of a role: 修改角色权限
 Show MOD badge: 展示 MOD 徽章

@@ -46,6 +46,7 @@ domain_manage: Domain Manage
 domain_manage_dashboard: Dashboard
 domain_manage_discussion: Discussion Nodes
 domain_manage_edit: Edit Info
+domain_manage_join_applications: Join Applications
 domain_manage_role: Domain Role
 domain_manage_user: Domain User
 domain_manage_permission: Domain Permission
