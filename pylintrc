@@ -1,6 +1,0 @@
-[FORMAT]
-indent-string='  '
-indent-after-paren=4
-
-[MESSAGES CONTROL]
-disable=C0111,C0301
