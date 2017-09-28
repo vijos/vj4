@@ -1,5 +1,20 @@
 {% extends "domain_base.html" %}
 {% block domain_content %}
+{% if join_settings != None %}
+<div class="section">
+    <div class="section__header">
+      <h1 class="section__title">{{ _('Information') }}</h1>
+    </div>
+    <div class="section__body typo">
+      <p>{{ _('User can join this domain by visiting the following URL') }}:</p>
+      <pre><code class="language-data">{{ handler.ui_context['url_prefix'] }}{{ reverse_url('domain_join') }}</code></pre>
+    {% if join_settings['method'] == vj4.constant.domain.JOIN_METHOD_CODE %}
+      <p>{{ _('Or, with automatically filled invitation code') }}:</p>
+      <pre><code class="language-data">{{ handler.ui_context['url_prefix'] }}{{ reverse_url('domain_join') }}?code={{ join_settings['code']|urlencode }}</code></pre>
+    {% endif %}
+    </div>
+  </div>
+{% endif %}
 <div class="section">
   <div class="section__header">
     <h1 class="section__title">{{ _('Settings') }}</h1>
