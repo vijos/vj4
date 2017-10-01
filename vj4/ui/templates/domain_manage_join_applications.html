@@ -19,7 +19,7 @@
         help_text="The role to assign when user joining the domain.",
         value=join_settings['role']|default('')) }}
       {{ form.form_select(
-        options=expirations,
+        options=expirations.items(),
         label="Expires in",
         name="expire",
         help_text="User will no longer be allowed to join the domain after expiration."
