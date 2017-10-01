@@ -5,7 +5,6 @@ import random
 from vj4 import app
 from vj4 import constant
 from vj4 import error
-from vj4 import template
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import record
@@ -15,6 +14,7 @@ from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
+from vj4.util import misc
 from vj4.util import options
 from vj4.util import validator
 from vj4.handler import base
@@ -230,7 +230,7 @@ class UserDetailHandler(base.Handler, UserSettingsMixin):
 class UserSearchHandler(base.Handler):
   def modify_udoc(self, udict, key):
     udoc = udict[key]
-    gravatar_url = template.gravatar_url(udoc.get('gravatar'))
+    gravatar_url = misc.gravatar_url(udoc.get('gravatar'))
     if 'gravatar' in udoc and udoc['gravatar']:
       udict[key] = {**udoc,
                     'gravatar_url': gravatar_url,

@@ -64,12 +64,18 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
                 udict=udict, datetime_stamp=self.datetime_stamp)
 
 
-@app.route('/manage', 'domain_manage')
+@app.route('/domain', 'domain_manage')
 class DomainManageHandler(base.Handler):
+  async def get(self):
+    self.redirect(self.reverse_url('domain_manage_dashboard'))
+
+
+@app.route('/domain/dashboard', 'domain_manage_dashboard')
+class DomainDashboardHandler(base.Handler):
   async def get(self):
     if not self.has_perm(builtin.PERM_EDIT_PERM):
        self.check_perm(builtin.PERM_EDIT_DESCRIPTION)
-    self.render('domain_manage.html')
+    self.render('domain_manage_dashboard.html')
 
 
 @app.route('/domain/edit', 'domain_manage_edit')
