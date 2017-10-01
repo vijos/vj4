@@ -145,7 +145,7 @@ class DomainJoinApplicationsHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/join', 'domain_join')
+@app.route('/join', 'domain_join', global_route=True)
 class DomainJoinHandler(base.Handler):
   async def ensure_user_not_member(self):
     dudoc = await domain.get_user(self.domain_id, self.user['_id'])
