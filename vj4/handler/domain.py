@@ -149,7 +149,7 @@ class DomainJoinApplicationsHandler(base.Handler):
 class DomainJoinHandler(base.Handler):
   async def ensure_user_not_member(self):
     dudoc = await domain.get_user(self.domain_id, self.user['_id'])
-    if dudoc != None and 'role' in dudoc:
+    if dudoc and 'role' in dudoc:
       raise error.UserAlreadyDomainMemberError(self.domain_id, self.user['_id'])
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -157,7 +157,7 @@ class DomainJoinHandler(base.Handler):
   @base.sanitize
   async def get(self, *, code: str=''):
     join_settings = domain.get_join_settings(self.domain)
-    if join_settings is None:
+    if not join_settings:
       raise error.DomainJoinForbiddenError(self.domain_id)
     await self.ensure_user_not_member()
     self.render('domain_join.html', join_settings=join_settings, code=code)
@@ -168,7 +168,7 @@ class DomainJoinHandler(base.Handler):
   @base.sanitize
   async def post(self, *, code: str=''):
     join_settings = domain.get_join_settings(self.domain)
-    if join_settings is None:
+    if not join_settings:
       raise error.DomainJoinForbiddenError(self.domain_id)
     await self.ensure_user_not_member()
     if join_settings['method'] == constant.domain.JOIN_METHOD_CODE:
