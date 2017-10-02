@@ -14,7 +14,7 @@ export const JOIN_EXPIRATION_KEEP_CURRENT = 0;
 export const JOIN_EXPIRATION_UNLIMITED = -1;
 
 export const JOIN_EXPIRATION_RANGE = {
-  [JOIN_EXPIRATION_KEEP_CURRENT]: 'Keep current expiration', // this option must be placed at first
+  [JOIN_EXPIRATION_KEEP_CURRENT]: 'Keep current expiration',
   3: '3 hours',
   24: '1 day',
   [24 * 3]: '3 days',
