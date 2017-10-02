@@ -11,7 +11,7 @@ MAIL_RE = re.compile(r'\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*')
 DOMAIN_ID_RE = re.compile(r'[_A-Za-z][_0-9A-Za-z]{3,255}')
 ID_RE = re.compile(r'[^\\/\s\u3000]([^\\/\n\r]*[^\\/\s\u3000])?')
 ROLE_RE = re.compile(r'[_0-9A-Za-z]{1,256}')
-DOMAIN_INVITATION_CODE_RE = re.compile(r'[0-9A-Za-z]{1,20}')
+DOMAIN_INVITATION_CODE_RE = re.compile(r'[0-9A-Za-z]{1,1024}')
 
 
 def is_uid(s):
