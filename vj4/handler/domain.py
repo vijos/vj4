@@ -99,7 +99,6 @@ class DomainEditHandler(base.Handler):
 
 @app.route('/domain/join_applications', 'domain_manage_join_applications')
 class DomainJoinApplicationsHandler(base.Handler):
-  @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     roles = sorted(list(self.domain['roles'].keys()))
@@ -111,7 +110,6 @@ class DomainJoinApplicationsHandler(base.Handler):
     self.render('domain_manage_join_applications.html', roles_with_text=roles_with_text,
                 join_settings=join_settings, expirations=expirations)
 
-  @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.post_argument
   @base.require_csrf_token
