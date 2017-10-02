@@ -15,6 +15,7 @@
             {{ sidemenu.render_item(null, 'domain_manage_dashboard') }}
           {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
             {{ sidemenu.render_item(null, 'domain_manage_edit') }}
+            {{ sidemenu.render_item(null, 'domain_manage_join_applications') }}
             {{ sidemenu.render_item(null, 'domain_manage_discussion') }}
           {% endif %}
             <!-- Ranking Settings -->

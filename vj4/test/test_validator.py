@@ -138,6 +138,10 @@ class Test(unittest.TestCase):
     self.assertTrue(validator.is_description(''))
     self.assertFalse(validator.is_description('x' * 700000))
 
+  def test_domain_invitation_code(self):
+    self.assertTrue(validator.is_domain_invitation_code('helloworld'))
+    self.assertFalse(validator.is_domain_invitation_code(''))
+
 
 if __name__ == '__main__':
   unittest.main()

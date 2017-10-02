@@ -305,6 +305,7 @@ domain_manage: 管理域
 domain_manage_dashboard: 概况
 domain_manage_discussion: 讨论节点
 domain_manage_edit: 编辑域资料
+domain_manage_join_applications: 加域申请
 domain_manage_role: 管理角色
 domain_manage_user: 管理用户
 domain_manage_permission: 管理权限
@@ -398,7 +399,6 @@ Delete Selected Roles: 删除所选角色
 Owner: 所有者
 Permission: 权限
 Permissions: 权限
-
 View this domain: 查看此域
 Edit permissions of a role: 修改角色权限
 Show MOD badge: 展示 MOD 徽章
@@ -682,3 +682,21 @@ Scoreboard: 成绩表
 Scoreboard (Hidden): 成绩表 (隐藏)
 Contributions: 贡献
 Contributed Problems: 贡献的题目
+Method: 方法
+No user is allowed to join this domain: 没有用户可以自助加入此域
+Any user is allowed to join this domain: 任意用户都可以自助加入此域
+Any user is allowed to join this domain with an invitation code: 任意用户都可以通过邀请码自助加入此域
+The role to assign when user joining the domain.: 用户自助加入此域时分配的角色。
+User will no longer be allowed to join the domain after expiration.: 过期后，用户将不能自助加入此域。
+The invitation code to enter to successfully join the domain. You can only use letters and numbers in the code and it should not be longer than 64 characters.: 自助加入此域的邀请码。您只能使用字母和数字，并且不能长于 64 个字符。
+Role Assignment: 角色分配
+Invitation Code: 邀请码
+Update Settings: 更新设置
+Expire: 过期
+Keep current expiration: 保持当前过期设置
+In 3 hours: 三个小时后
+In 1 day: 一天后
+In 3 days: 三天后
+In 1 week: 一周后
+In 1 month: 一个月后
+Never expire: 从不过期
