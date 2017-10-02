@@ -12,6 +12,12 @@
       <p>{{ _('Or, with automatically filled invitation code') }}:</p>
       <pre><code class="language-data">{{ handler.ui_context['url_prefix'] }}{{ reverse_url('domain_join') }}?code={{ join_settings['code']|urlencode }}</code></pre>
     {% endif %}
+    {% if join_settings['expire'] != None %}
+      <br/>
+      <blockquote class="note">
+        {{ ('The link will be expired at {0}'.format(datetime_span(join_settings['expire'], relative=false)))|safe }}
+      </blockquote>
+    {% endif %}
     </div>
   </div>
 {% endif %}
