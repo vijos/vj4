@@ -5,11 +5,11 @@
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">
-          {{ _('Join {0}'.format(handler.domain['name'])) }}
+          {{ _('Join {0}').format(handler.domain['name']) }}
         </h1>
       </div>
       <div class="section__body typo">
-        <p>{{ _('By clicking the button, you will become a member of the domain {0}.'.format(handler.domain['name'])) }}</p>
+        <p>{{ _('By clicking the button, you will become a member of the domain {0}.').format(handler.domain['name']) }}</p>
       </div>
       <div class="section__body typo">
         <form method="post">
@@ -17,7 +17,7 @@
         {% if join_settings['method'] == vj4.constant.domain.JOIN_METHOD_CODE %}
           {{ form.form_text(columns=None, label='Invitation Code', name='code', required=true, help_text='You need to enter the invitation code to join the domain.', value=code, autofocus=True) }}
         {% endif %}
-          <button type="submit" class="primary rounded button">Join Domain</button>
+          <button type="submit" class="primary rounded button">{{ _('Join') }}</button>
         </form>
       </div>
     </div>

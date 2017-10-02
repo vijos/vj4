@@ -15,7 +15,7 @@
     {% if join_settings['expire'] != None %}
       <br/>
       <blockquote class="note">
-        {{ ('The link will be expired at {0}'.format(datetime_span(join_settings['expire'], relative=false)))|safe }}
+        {{ (_('The link will be expired at {0}').format(datetime_span(join_settings['expire'], relative=false)))|safe }}
       </blockquote>
     {% endif %}
     </div>
