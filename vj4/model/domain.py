@@ -217,7 +217,7 @@ async def get_dict_user_by_domain_id(uid, *, fields=None):
   return result
 
 
-def get_join_settings(now, ddoc):
+def get_join_settings(ddoc, now):
   if 'join' not in ddoc:
     return None
   join_settings = ddoc['join']

@@ -110,7 +110,7 @@ class DomainJoinApplicationsHandler(base.Handler):
   async def get(self):
     roles = sorted(list(self.domain['roles'].keys()))
     roles_with_text = [(role, role) for role in roles]
-    join_settings = domain.get_join_settings(self.now, self.domain)
+    join_settings = domain.get_join_settings(self.domain, self.now)
     expirations = vj4.constant.domain.JOIN_EXPIRATION_RANGE.copy()
     if not join_settings:
       del expirations[vj4.constant.domain.JOIN_EXPIRATION_KEEP_CURRENT]
@@ -123,7 +123,7 @@ class DomainJoinApplicationsHandler(base.Handler):
   @base.sanitize
   async def post(self, *, method: int, role: str=None, expire: int=None,
                  invitation_code: str=''):
-    current_join_settings = domain.get_join_settings(self.now, self.domain)
+    current_join_settings = domain.get_join_settings(self.domain, self.now)
     if method not in constant.domain.JOIN_METHOD_RANGE:
       raise error.ValidationError('method')
     if method == constant.domain.JOIN_METHOD_NONE:
