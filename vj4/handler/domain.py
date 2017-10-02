@@ -145,7 +145,7 @@ class DomainJoinApplicationsHandler(base.Handler):
       elif expire == constant.domain.JOIN_EXPIRATION_UNLIMITED:
         join_settings['expire'] = None
       else:
-        join_settings['expire'] = datetime.datetime.utcnow() + datetime.timedelta(hours=expire)
+        join_settings['expire'] = self.now + datetime.timedelta(hours=expire)
     await domain.edit(self.domain_id, join=join_settings)
     self.json_or_redirect(self.referer_or_main)
 
