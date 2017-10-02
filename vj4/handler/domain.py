@@ -1,6 +1,7 @@
 import asyncio
 import collections
 import datetime
+import functools
 
 from vj4 import app
 from vj4 import constant
@@ -99,11 +100,17 @@ class DomainEditHandler(base.Handler):
 
 @app.route('/domain/join_applications', 'domain_manage_join_applications')
 class DomainJoinApplicationsHandler(base.Handler):
+  @property
+  @functools.lru_cache()
+  def now(self):
+    # TODO(twd2): This does not work on multi-machine environment.
+    return datetime.datetime.utcnow()
+
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     roles = sorted(list(self.domain['roles'].keys()))
     roles_with_text = [(role, role) for role in roles]
-    join_settings = domain.get_join_settings(self.domain)
+    join_settings = domain.get_join_settings(self.now, self.domain)
     expirations = vj4.constant.domain.JOIN_EXPIRATION_RANGE.copy()
     if not join_settings:
       del expirations[vj4.constant.domain.JOIN_EXPIRATION_KEEP_CURRENT]
@@ -116,7 +123,7 @@ class DomainJoinApplicationsHandler(base.Handler):
   @base.sanitize
   async def post(self, *, method: int, role: str=None, expire: int=None,
                  invitation_code: str=''):
-    current_join_settings = domain.get_join_settings(self.domain)
+    current_join_settings = domain.get_join_settings(self.now, self.domain)
     if method not in constant.domain.JOIN_METHOD_RANGE:
       raise error.ValidationError('method')
     if method == constant.domain.JOIN_METHOD_NONE:

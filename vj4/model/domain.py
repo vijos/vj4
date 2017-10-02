@@ -217,7 +217,7 @@ async def get_dict_user_by_domain_id(uid, *, fields=None):
   return result
 
 
-def get_join_settings(ddoc):
+def get_join_settings(now, ddoc):
   if 'join' not in ddoc:
     return None
   join_settings = ddoc['join']
@@ -227,7 +227,7 @@ def get_join_settings(ddoc):
     return None
   if join_settings['role'] not in ddoc['roles']:
     return None
-  if join_settings['expire'] != None and join_settings['expire'] < datetime.datetime.utcnow():
+  if join_settings['expire'] != None and join_settings['expire'] < now:
     return None
   return join_settings
 
