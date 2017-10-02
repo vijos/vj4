@@ -699,9 +699,9 @@ Invitation Code: 邀请码
 Update Settings: 更新设置
 Expire: 过期
 Keep current expiration: 保持当前过期设置
-In 3 hours: 于三个小时后
-In 1 day: 于一天后
-In 3 days: 于三天后
-In 1 week: 于一周后
-In 1 month: 于一个月后
+In 3 hours: 三个小时后
+In 1 day: 一天后
+In 3 days: 三天后
+In 1 week: 一周后
+In 1 month: 一个月后
 Never expire: 从不过期

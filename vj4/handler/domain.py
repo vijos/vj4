@@ -1,6 +1,7 @@
 import asyncio
 import collections
 import datetime
+import functools
 
 from vj4 import app
 from vj4 import constant
@@ -99,11 +100,17 @@ class DomainEditHandler(base.Handler):
 
 @app.route('/domain/join_applications', 'domain_manage_join_applications')
 class DomainJoinApplicationsHandler(base.Handler):
+  @property
+  @functools.lru_cache()
+  def now(self):
+    # TODO(twd2): This does not work on multi-machine environment.
+    return datetime.datetime.utcnow()
+
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     roles = sorted(list(self.domain['roles'].keys()))
     roles_with_text = [(role, role) for role in roles]
-    join_settings = domain.get_join_settings(self.domain)
+    join_settings = domain.get_join_settings(self.domain, self.now)
     expirations = vj4.constant.domain.JOIN_EXPIRATION_RANGE.copy()
     if not join_settings:
       del expirations[vj4.constant.domain.JOIN_EXPIRATION_KEEP_CURRENT]
@@ -116,7 +123,7 @@ class DomainJoinApplicationsHandler(base.Handler):
   @base.sanitize
   async def post(self, *, method: int, role: str=None, expire: int=None,
                  invitation_code: str=''):
-    current_join_settings = domain.get_join_settings(self.domain)
+    current_join_settings = domain.get_join_settings(self.domain, self.now)
     if method not in constant.domain.JOIN_METHOD_RANGE:
       raise error.ValidationError('method')
     if method == constant.domain.JOIN_METHOD_NONE:
@@ -138,13 +145,19 @@ class DomainJoinApplicationsHandler(base.Handler):
       elif expire == constant.domain.JOIN_EXPIRATION_UNLIMITED:
         join_settings['expire'] = None
       else:
-        join_settings['expire'] = datetime.datetime.utcnow() + datetime.timedelta(hours=expire)
+        join_settings['expire'] = self.now + datetime.timedelta(hours=expire)
     await domain.edit(self.domain_id, join=join_settings)
     self.json_or_redirect(self.referer_or_main)
 
 
 @app.route('/join', 'domain_join', global_route=True)
 class DomainJoinHandler(base.Handler):
+  @property
+  @functools.lru_cache()
+  def now(self):
+    # TODO(twd2): This does not work on multi-machine environment.
+    return datetime.datetime.utcnow()
+
   async def ensure_user_not_member(self):
     dudoc = await domain.get_user(self.domain_id, self.user['_id'])
     if dudoc and 'role' in dudoc:
@@ -154,7 +167,7 @@ class DomainJoinHandler(base.Handler):
   @base.get_argument
   @base.sanitize
   async def get(self, *, code: str=''):
-    join_settings = domain.get_join_settings(self.domain)
+    join_settings = domain.get_join_settings(self.domain, self.now)
     if not join_settings:
       raise error.DomainJoinForbiddenError(self.domain_id)
     await self.ensure_user_not_member()
@@ -165,7 +178,7 @@ class DomainJoinHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, code: str=''):
-    join_settings = domain.get_join_settings(self.domain)
+    join_settings = domain.get_join_settings(self.domain, self.now)
     if not join_settings:
       raise error.DomainJoinForbiddenError(self.domain_id)
     await self.ensure_user_not_member()
