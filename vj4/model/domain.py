@@ -221,7 +221,7 @@ def get_join_settings(ddoc):
   if 'join' not in ddoc:
     return None
   join_settings = ddoc['join']
-  if join_settings is None:
+  if not join_settings:
     return None
   if join_settings['method'] == constant.domain.JOIN_METHOD_NONE:
     return None

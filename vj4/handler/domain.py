@@ -99,18 +99,18 @@ class DomainEditHandler(base.Handler):
 
 @app.route('/domain/join_applications', 'domain_manage_join_applications')
 class DomainJoinApplicationsHandler(base.Handler):
-  @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
+  @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     roles = sorted(list(self.domain['roles'].keys()))
     roles_with_text = [(role, role) for role in roles]
     join_settings = domain.get_join_settings(self.domain)
-    expirations = [(k, v) for k, v in vj4.constant.domain.JOIN_EXPIRATION_RANGE.items()]
-    if join_settings is None:
-      expirations = expirations[1:]
+    expirations = vj4.constant.domain.JOIN_EXPIRATION_RANGE.copy()
+    if not join_settings:
+      del expirations[vj4.constant.domain.JOIN_EXPIRATION_KEEP_CURRENT]
     self.render('domain_manage_join_applications.html', roles_with_text=roles_with_text,
                 join_settings=join_settings, expirations=expirations)
 
-  @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
+  @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
@@ -126,7 +126,7 @@ class DomainJoinApplicationsHandler(base.Handler):
         raise error.ValidationError('role_assignment')
       if expire not in constant.domain.JOIN_EXPIRATION_RANGE:
         raise error.ValidationError('expire')
-      if current_join_settings is None and expire == constant.domain.JOIN_EXPIRATION_KEEP_CURRENT:
+      if not current_join_settings and expire == constant.domain.JOIN_EXPIRATION_KEEP_CURRENT:
         raise error.ValidationError('expire')
       if method == constant.domain.JOIN_METHOD_CODE:
         validator.check_domain_invitation_code(invitation_code)
@@ -140,7 +140,7 @@ class DomainJoinApplicationsHandler(base.Handler):
       else:
         join_settings['expire'] = datetime.datetime.utcnow() + datetime.timedelta(hours=expire)
     await domain.edit(self.domain_id, join=join_settings)
-    self.json_or_redirect(self.url)
+    self.json_or_redirect(self.referer_or_main)
 
 
 @app.route('/domain/discussion', 'domain_manage_discussion')
