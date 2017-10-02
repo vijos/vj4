@@ -230,6 +230,24 @@ class DomainAlreadyExistError(ForbiddenError):
     return 'Domain {0} already exists.'
 
 
+class DomainJoinForbiddenError(ForbiddenError):
+  @property
+  def message(self):
+    return 'You are not allowed to join the domain. The link is either invalid or expired.'
+
+
+class UserAlreadyDomainMemberError(ForbiddenError):
+  @property
+  def message(self):
+    return 'You are already a member of the domain.'
+
+
+class InvalidJoinInvitationCodeError(ForbiddenError):
+  @property
+  def message(self):
+    return 'The invitation code you provided is invalid.'
+
+
 class ContestAlreadyAttendedError(ForbiddenError):
   @property
   def message(self):

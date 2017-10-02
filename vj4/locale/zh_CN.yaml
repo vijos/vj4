@@ -309,6 +309,11 @@ domain_manage_join_applications: 加域申请
 domain_manage_role: 管理角色
 domain_manage_user: 管理用户
 domain_manage_permission: 管理权限
+domain_join: 加入域
+'Join {0}': '加入 {0}'
+You are not allowed to join the domain. The link is either invalid or expired.: 您无法加入该域，链接无效或已过期。
+You are already a member of the domain.: 您已是该域的成员。
+The invitation code you provided is invalid.: 您提供的邀请码无效。
 Update Permission: 更新权限
 Roles: 角色
 Your role: 您的角色
@@ -684,11 +689,11 @@ Contributions: 贡献
 Contributed Problems: 贡献的题目
 Method: 方法
 No user is allowed to join this domain: 没有用户可以自助加入此域
-Any user is allowed to join this domain: 任意用户都可以自助加入此域
-Any user is allowed to join this domain with an invitation code: 任意用户都可以通过邀请码自助加入此域
-The role to assign when user joining the domain.: 用户自助加入此域时分配的角色。
-User will no longer be allowed to join the domain after expiration.: 过期后，用户将不能自助加入此域。
-The invitation code to enter to successfully join the domain. You can only use letters and numbers in the code and it should not be longer than 64 characters.: 自助加入此域的邀请码。您只能使用字母和数字，并且不能长于 64 个字符。
+Any user is allowed to join this domain: 任意用户都可以加入此域
+Any user is allowed to join this domain with an invitation code: 任意用户都可以通过邀请码加入此域
+The role to assign when user joining the domain.: 用户加入此域时分配的角色。
+User will no longer be allowed to join the domain after expiration.: 过期后，用户将不能加入此域。
+The invitation code to enter to successfully join the domain. You can only use letters and numbers in the code and it should not be longer than 64 characters.: 加入此域的邀请码。您只能使用字母和数字，并且不能长于 64 个字符。
 Role Assignment: 角色分配
 Invitation Code: 邀请码
 Update Settings: 更新设置
@@ -700,3 +705,9 @@ In 3 days: 三天后
 In 1 week: 一周后
 In 1 month: 一个月后
 Never expire: 从不过期
+User can join this domain by visiting the following URL: 用户可以访问此链接来加入此域
+Or, with automatically filled invitation code: 或者，这是可以自动填写邀请码的
+The link will be expired at {0}: 链接将于 {0} 过期
+By clicking the button, you will become a member of the domain {0}.: 点击按钮，您将成为域 {0} 的成员。
+You need to enter the invitation code to join the domain.: 您需要输入邀请码来加入此域。
+Join: 加入

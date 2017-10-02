@@ -3,7 +3,7 @@ import { NamedPage } from 'vj/misc/PageLoader';
 import * as domainEnum from 'vj/constant/domain';
 
 const page = new NamedPage('domain_manage_join_applications', () => {
-  const $role = $('[name="role_assignment"]');
+  const $role = $('[name="role"]');
   const $expire = $('[name="expire"]');
   const $code = $('[name="invitation_code"]');
   function updateFormState() {

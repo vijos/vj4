@@ -150,6 +150,46 @@ class DomainJoinApplicationsHandler(base.Handler):
     self.json_or_redirect(self.referer_or_main)
 
 
+@app.route('/join', 'domain_join', global_route=True)
+class DomainJoinHandler(base.Handler):
+  @property
+  @functools.lru_cache()
+  def now(self):
+    # TODO(twd2): This does not work on multi-machine environment.
+    return datetime.datetime.utcnow()
+
+  async def ensure_user_not_member(self):
+    dudoc = await domain.get_user(self.domain_id, self.user['_id'])
+    if dudoc and 'role' in dudoc:
+      raise error.UserAlreadyDomainMemberError(self.domain_id, self.user['_id'])
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.get_argument
+  @base.sanitize
+  async def get(self, *, code: str=''):
+    join_settings = domain.get_join_settings(self.domain, self.now)
+    if not join_settings:
+      raise error.DomainJoinForbiddenError(self.domain_id)
+    await self.ensure_user_not_member()
+    self.render('domain_join.html', join_settings=join_settings, code=code)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, code: str=''):
+    join_settings = domain.get_join_settings(self.domain, self.now)
+    if not join_settings:
+      raise error.DomainJoinForbiddenError(self.domain_id)
+    await self.ensure_user_not_member()
+    if join_settings['method'] == constant.domain.JOIN_METHOD_CODE:
+      if join_settings['code'] != code:
+        raise error.InvalidJoinInvitationCodeError(self.domain_id)
+    # TODO: should be replaced by domain.add_user_role
+    await domain.set_user_role(self.domain_id, self.user['_id'], join_settings['role'])
+    self.json_or_redirect(self.reverse_url('domain_main'))
+
+
 @app.route('/domain/discussion', 'domain_manage_discussion')
 class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
