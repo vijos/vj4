@@ -15,11 +15,11 @@ export const JOIN_EXPIRATION_UNLIMITED = -1;
 
 export const JOIN_EXPIRATION_RANGE = {
   [JOIN_EXPIRATION_KEEP_CURRENT]: 'Keep current expiration',
-  3: '3 hours',
-  24: '1 day',
-  [24 * 3]: '3 days',
-  [24 * 7]: '1 week',
-  [24 * 30]: '1 month',
-  [JOIN_EXPIRATION_UNLIMITED]: 'No expiration',
+  3: 'In 3 hours',
+  24: 'In 1 day',
+  [24 * 3]: 'In 3 days',
+  [24 * 7]: 'In 1 week',
+  [24 * 30]: 'In 1 month',
+  [JOIN_EXPIRATION_UNLIMITED]: 'Never expire',
 };
 attachObjectMeta(JOIN_EXPIRATION_RANGE, 'intKey', true);

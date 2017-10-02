@@ -30,19 +30,19 @@
       {{ form.form_select(
         options=roles_with_text,
         label="Role Assignment",
-        name="role_assignment",
+        name="role",
         help_text="The role to assign when user joining the domain.",
         value=join_settings['role']|default('')) }}
       {{ form.form_select(
         options=expirations.items(),
-        label="Expires in",
+        label="Expire",
         name="expire",
         help_text="User will no longer be allowed to join the domain after expiration."
         ) }}
       {{ form.form_text(
         label="Invitation Code",
         name="invitation_code",
-        help_text="The invitation code to enter to successfully join the domain. You can only use letters and numbers in the code and it should not be longer than 20 characters.",
+        help_text="The invitation code to enter to successfully join the domain. You can only use letters and numbers in the code and it should not be longer than 64 characters.",
         value=join_settings['code']|default('')) }}
       <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
       <button class="rounded primary button" role="submit">
