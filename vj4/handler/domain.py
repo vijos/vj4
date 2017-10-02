@@ -114,7 +114,7 @@ class DomainJoinApplicationsHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, method: int, role_assignment: str=None, expire: int=None,
+  async def post(self, *, method: int, role: str=None, expire: int=None,
                  invitation_code: str=''):
     current_join_settings = domain.get_join_settings(self.domain)
     if method not in constant.domain.JOIN_METHOD_RANGE:

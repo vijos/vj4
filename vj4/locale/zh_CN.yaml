@@ -688,7 +688,7 @@ Any user is allowed to join this domain: 任意用户都可以自助加入此域
 Any user is allowed to join this domain with an invitation code: 任意用户都可以通过邀请码自助加入此域
 The role to assign when user joining the domain.: 用户自助加入此域时分配的角色。
 User will no longer be allowed to join the domain after expiration.: 过期后，用户将不能自助加入此域。
-The invitation code to enter to successfully join the domain. You can only use letters and numbers in the code and it should not be longer than 1024 characters.: 自助加入此域的邀请码。您只能使用字母和数字，并且不能长于 1024 个字符。
+The invitation code to enter to successfully join the domain. You can only use letters and numbers in the code and it should not be longer than 64 characters.: 自助加入此域的邀请码。您只能使用字母和数字，并且不能长于 64 个字符。
 Role Assignment: 角色分配
 Invitation Code: 邀请码
 Update Settings: 更新设置
