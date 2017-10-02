@@ -122,15 +122,15 @@ class DomainJoinApplicationsHandler(base.Handler):
     if method == constant.domain.JOIN_METHOD_NONE:
       join_settings = None
     else:
-      if role_assignment not in self.domain['roles']:
-        raise error.ValidationError('role_assignment')
+      if role not in self.domain['roles']:
+        raise error.ValidationError('role')
       if expire not in constant.domain.JOIN_EXPIRATION_RANGE:
         raise error.ValidationError('expire')
       if not current_join_settings and expire == constant.domain.JOIN_EXPIRATION_KEEP_CURRENT:
         raise error.ValidationError('expire')
       if method == constant.domain.JOIN_METHOD_CODE:
         validator.check_domain_invitation_code(invitation_code)
-      join_settings={'method': method, 'role': role_assignment}
+      join_settings={'method': method, 'role': role}
       if method == constant.domain.JOIN_METHOD_CODE:
         join_settings['code'] = invitation_code
       if expire == constant.domain.JOIN_EXPIRATION_KEEP_CURRENT:
