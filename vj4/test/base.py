@@ -28,7 +28,7 @@ class DatabaseTestCase(unittest.TestCase):
 
   def tearDown(self):
     db._client.close()
-    wait(db._client.wait_closed())
+    # wait(db._client.wait_closed())
     pymongo.MongoClient(options.db_host).drop_database(options.db_name)
 
 
