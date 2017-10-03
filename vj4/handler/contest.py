@@ -415,9 +415,11 @@ class ContestEditHandler(ContestMixin, base.Handler):
     if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
     dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
+    duration = (tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600
     self.render('contest_edit.html', tdoc=tdoc,
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'),
+                duration=duration,
                 pids=_format_pids(tdoc['pids']))
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
