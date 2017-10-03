@@ -11,7 +11,7 @@
 <div class="row">
 {% endif %}
   <div
-    class="{% if columns %}medium-{{ columns }} {% endif %}columns{% if last_column %} end{% endif %}"
+    class="{% if columns %}medium-{{ columns }} {% endif %}columns form__item{% if last_column %} end{% endif %}"
     {% if hotkeys %}data-hotkey="{{ hotkeys }}"{% endif %}
   >
     {% if not no_label %}

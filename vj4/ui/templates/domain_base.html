@@ -7,18 +7,17 @@
   <div class="medium-3 columns"><div data-sticky="large">
     <div class="section side">
       <ol class="menu">
-        {{ sidemenu.render_item('web', 'domain_manage') }}
         <li class="menu__item">
           <div class="menu__link expandable">
             <span class="icon icon-info"></span> {{ _('Properties') }}
           </div>
           <ol class="menu collapsed">
-        {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
-          {{ sidemenu.render_item(null, 'domain_manage_edit') }}
-        {% endif %}
-        {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
-          {{ sidemenu.render_item(null, 'domain_manage_discussion') }}
-        {% endif %}
+            {{ sidemenu.render_item(null, 'domain_manage_dashboard') }}
+          {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) %}
+            {{ sidemenu.render_item(null, 'domain_manage_edit') }}
+            {{ sidemenu.render_item(null, 'domain_manage_join_applications') }}
+            {{ sidemenu.render_item(null, 'domain_manage_discussion') }}
+          {% endif %}
             <!-- Ranking Settings -->
           </ol>
         </li>

@@ -627,6 +627,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
     dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
+    duration = (tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600
     page_title = self.translate('page.contest_edit.contest.title')
     path_components = self.build_path(
         (self.translate('page.contest_main.contest.title'), self.reverse_url('contest_main', ctype='contest')),
@@ -635,6 +636,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     self.render('contest_edit.html', tdoc=tdoc,
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'),
+                duration=duration,
                 pids=_format_pids(tdoc['pids']),
                 page_title=page_title, path_components=path_components)
 

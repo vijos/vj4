@@ -1,6 +1,9 @@
+import datetime
+
 from pymongo import errors
 from pymongo import ReturnDocument
 
+from vj4 import constant
 from vj4 import db
 from vj4 import error
 from vj4.model import builtin
@@ -212,6 +215,21 @@ async def get_dict_user_by_domain_id(uid, *, fields=None):
   async for dudoc in get_multi_user(uid=uid, fields=fields):
     result[dudoc['domain_id']] = dudoc
   return result
+
+
+def get_join_settings(ddoc, now):
+  if 'join' not in ddoc:
+    return None
+  join_settings = ddoc['join']
+  if not join_settings:
+    return None
+  if join_settings['method'] == constant.domain.JOIN_METHOD_NONE:
+    return None
+  if join_settings['role'] not in ddoc['roles']:
+    return None
+  if join_settings['expire'] != None and join_settings['expire'] < now:
+    return None
+  return join_settings
 
 
 @argmethod.wrap

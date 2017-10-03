@@ -21,7 +21,7 @@ cache:
   - "$HOME/.cache/pip"
   - node_modules
 before_deploy:
-- tar -cJf uibuild.tar.xz vj4/.uibuild
+- tar -cJf uibuild.tar.xz vj4/.uibuild vj4/constant
 deploy:
   provider: releases
   api_key:

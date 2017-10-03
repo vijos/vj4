@@ -7,9 +7,12 @@
       border-radius: 50%
 
   .col--role
-    width: 160px
+    width: rem(160px)
     border-left: 1px solid $table-border-color
 
   .col--action
-    width: 135px
+    width: rem(135px)
 
+  +mobile()
+    .col--icon, .col--role
+      display: none
