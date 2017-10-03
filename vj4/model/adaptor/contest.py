@@ -365,7 +365,7 @@ async def recalc_status(domain_id: str, tid: objectid.ObjectId):
                                        doc_type=document.TYPE_CONTEST,
                                        doc_id=tdoc['doc_id']) as tsdocs:
     async for tsdoc in tsdocs:
-      if 'attend' not in tsdoc or not tsdoc['attend']:
+      if 'journal' not in tsdoc or not tsdoc['journal']:
         continue
       journal = _get_status_journal(tsdoc)
       stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
