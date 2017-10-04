@@ -98,6 +98,8 @@ def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
                       'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
+    if tsdoc['uid'] not in udict:
+      continue
     if 'detail' in tsdoc:
       tsddict = {item['pid']: item for item in tsdoc['detail']}
     else:
@@ -136,6 +138,8 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
                       'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
+    if tsdoc['uid'] not in udict:
+      continue
     if 'detail' in tsdoc:
       tsddict = {item['pid']: item for item in tsdoc['detail']}
     else:
@@ -192,6 +196,8 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
                       'value': '#{0}'.format(index + 1), 'raw': pdict[pid]})
   rows = [columns]
   for rank, tsdoc in ranked_tsdocs:
+    if tsdoc['uid'] not in udict:
+      continue
     if 'detail' in tsdoc:
       tsddict = {item['pid']: item for item in tsdoc['detail']}
     else:
