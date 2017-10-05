@@ -1,7 +1,7 @@
 import { AutoloadPage } from 'vj/misc/PageLoader';
 import DomDialog from 'vj/components/dialog/DomDialog';
 import responsiveCutoff from 'vj/breakpoints.json';
-import { isAbove } from 'vj/utils/mediaQuery';
+import { isBelow } from 'vj/utils/mediaQuery';
 
 const signinDialogPage = new AutoloadPage('signinDialogPage', null, () => {
   const signInDialog = DomDialog.getOrConstruct($('.dialog--signin'), {
@@ -10,9 +10,12 @@ const signinDialogPage = new AutoloadPage('signinDialogPage', null, () => {
   });
 
   // don't show quick login dialog if in mobile
-  if ($('[name="nav_login"]').length > 0 && isAbove(responsiveCutoff.mobile)) {
+  if ($('[name="nav_login"]').length > 0) {
     // nav
     $('[name="nav_login"]').click((ev) => {
+      if (isBelow(responsiveCutoff.mobile)) {
+        return;
+      }
       if (ev.shiftKey || ev.metaKey || ev.ctrlKey) {
         return;
       }
@@ -29,6 +32,12 @@ const signinDialogPage = new AutoloadPage('signinDialogPage', null, () => {
   }
 
   window.showSignInDialog = () => {
+    if (isBelow(responsiveCutoff.mobile)) {
+      if ($('[name="nav_login"]').length > 0) {
+        window.location.href = $('[name="nav_login"]').attr('href');
+        return;
+      }
+    }
     signInDialog.show();
   };
 });
