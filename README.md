@@ -118,7 +118,7 @@ python3 -m vj4.server --listen=unix:/var/run/vj4.sock
 
 * Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
 * Set `--prefork` (default: 1) to specify the number of worker processes.
-* Set `--ip-header` (default: X-Forwarded-For) to use IP address in request headers.
+* Set `--ip-header` (default: '') to use IP address in request headers.
 * Set `--url-prefix` (default: https://vijos.org) to set URL prefix.
 * Set `--cdn-prefix` (default: /) to set CDN prefix.
 * Set `--smtp-host`, `--smtp-user` and `--smtp-password` to specify a SMTP server.
