@@ -11,6 +11,7 @@ MAIL_RE = re.compile(r'\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*')
 DOMAIN_ID_RE = re.compile(r'[_A-Za-z][_0-9A-Za-z]{3,255}')
 ID_RE = re.compile(r'[^\\/\s\u3000]([^\\/\n\r]*[^\\/\s\u3000])?')
 ROLE_RE = re.compile(r'[_0-9A-Za-z]{1,256}')
+DOMAIN_INVITATION_CODE_RE = re.compile(r'[0-9A-Za-z]{1,64}')
 
 
 def is_uid(s):
@@ -142,3 +143,12 @@ def is_lang(i):
 def check_lang(i):
   if not is_lang(i):
     raise error.ValidationError('lang')
+
+
+def is_domain_invitation_code(s):
+  return bool(DOMAIN_INVITATION_CODE_RE.fullmatch(s))
+
+
+def check_domain_invitation_code(s):
+  if not is_domain_invitation_code(s):
+    raise error.ValidationError('invitation_code')

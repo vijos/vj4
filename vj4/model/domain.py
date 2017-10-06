@@ -2,6 +2,7 @@ import datetime
 from pymongo import errors
 from pymongo import ReturnDocument
 
+from vj4 import constant
 from vj4 import db
 from vj4 import error
 from vj4.model import builtin
@@ -278,6 +279,21 @@ def get_all_roles(ddoc):
   builtin_roles = {role: rd.default_permission for role, rd in builtin.BUILTIN_ROLES.items()}
   domain_roles = ddoc['roles']
   return {**builtin_roles, **domain_roles}
+
+
+def get_join_settings(ddoc, now):
+  if 'join' not in ddoc:
+    return None
+  join_settings = ddoc['join']
+  if not join_settings:
+    return None
+  if join_settings['method'] == constant.domain.JOIN_METHOD_NONE:
+    return None
+  if join_settings['role'] not in ddoc['roles']:
+    return None
+  if join_settings['expire'] != None and join_settings['expire'] < now:
+    return None
+  return join_settings
 
 
 @argmethod.wrap

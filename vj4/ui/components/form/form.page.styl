@@ -188,3 +188,12 @@ label
   margin-bottom: 1rem
   font-size: rem($font-size-small)
   color: $help-text-color
+
+.form__item
+  transition: opacity .1s linear
+
+  &.is--disabled
+    opacity: 0.3
+
+  :disabled
+    opacity: 1
