@@ -272,7 +272,7 @@ class Handler(web.View, HandlerBase):
 
   @property
   def page_category(self):
-    return ''
+    return None
 
   @property
   def prefer_json(self):

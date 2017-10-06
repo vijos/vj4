@@ -11,7 +11,7 @@ from vj4.model import oplog
 from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.handler import base
-from vj4.handler import contest
+from vj4.handler import contest as contest_handler
 from vj4.util import pagination
 
 
@@ -24,14 +24,8 @@ def node_url(handler, name, node_or_dtuple):
   return handler.reverse_url(name, **kwargs)
 
 
-class DiscussionPageCategoryMixin(object):
-  @property
-  def page_category(self):
-    return 'discussion'
-
-
 @app.route('/discuss', 'discussion_main')
-class DiscussionMainHandler(DiscussionPageCategoryMixin, base.Handler):
+class DiscussionMainHandler(base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -52,7 +46,7 @@ class DiscussionMainHandler(DiscussionPageCategoryMixin, base.Handler):
 
 @app.route('/discuss/{doc_type:-?\d+}/{doc_id}', 'discussion_node_document_as_node')
 @app.route('/discuss/{doc_id:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
-class DiscussionNodeHandler(DiscussionPageCategoryMixin, base.Handler):
+class DiscussionNodeHandler(contest_handler.ContestStatusMixin, base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -92,7 +86,7 @@ class DiscussionNodeHandler(DiscussionPageCategoryMixin, base.Handler):
 
 @app.route('/discuss/{doc_type:-?\d+}/{doc_id}/create', 'discussion_create_document_as_node')
 @app.route('/discuss/{doc_id}/create', 'discussion_create')
-class DiscussionCreateHandler(DiscussionPageCategoryMixin, base.Handler):
+class DiscussionCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_DISCUSSION)
   @base.route_argument
@@ -142,7 +136,7 @@ class DiscussionCreateHandler(DiscussionPageCategoryMixin, base.Handler):
 
 
 @app.route('/discuss/{did:\w{24}}', 'discussion_detail')
-class DiscussionDetailHandler(DiscussionPageCategoryMixin, base.OperationHandler):
+class DiscussionDetailHandler(base.OperationHandler):
   REPLIES_PER_PAGE = 50
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)
@@ -321,7 +315,7 @@ class DiscussionTailReplyRawHandler(base.Handler):
 
 
 @app.route('/discuss/{did:\w{24}}/edit', 'discussion_edit')
-class DiscussionEditHandler(DiscussionPageCategoryMixin, base.OperationHandler):
+class DiscussionEditHandler(base.OperationHandler):
   DEFAULT_OPERATION = 'update'
 
   @base.route_argument

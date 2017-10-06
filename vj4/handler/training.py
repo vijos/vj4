@@ -37,12 +37,6 @@ def _parse_dag_json(dag):
   return new_dag
 
 
-class TrainingPageCategoryMixin(object):
-  @property
-  def page_category(self):
-    return 'training'
-
-
 class TrainingStatusMixin(object):
   def get_pids(self, tdoc):
     pids = set()
@@ -73,7 +67,7 @@ class TrainingMixin(TrainingStatusMixin):
 
 
 @app.route('/training', 'training_main')
-class TrainingMainHandler(TrainingMixin, TrainingPageCategoryMixin, base.Handler):
+class TrainingMainHandler(TrainingMixin, base.Handler):
   TRAININGS_PER_PAGE = 20
 
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
@@ -108,7 +102,7 @@ class TrainingMainHandler(TrainingMixin, TrainingPageCategoryMixin, base.Handler
 
 
 @app.route('/training/{tid:\w{24}}', 'training_detail')
-class TrainingDetailHandler(TrainingMixin, TrainingPageCategoryMixin, base.OperationHandler):
+class TrainingDetailHandler(TrainingMixin, base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.route_argument
   @base.sanitize
@@ -171,7 +165,7 @@ class TrainingDetailHandler(TrainingMixin, TrainingPageCategoryMixin, base.Opera
 
 
 @app.route('/training/create', 'training_create')
-class TrainingCreateHandler(TrainingMixin, TrainingPageCategoryMixin, base.Handler):
+class TrainingCreateHandler(TrainingMixin, base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_TRAINING)
   async def get(self):
@@ -206,7 +200,7 @@ class TrainingCreateHandler(TrainingMixin, TrainingPageCategoryMixin, base.Handl
 
 
 @app.route('/training/{tid}/edit', 'training_edit')
-class TrainingEditHandler(TrainingMixin, TrainingPageCategoryMixin, base.Handler):
+class TrainingEditHandler(TrainingMixin, base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
   @base.sanitize

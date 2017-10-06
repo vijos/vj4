@@ -15,24 +15,12 @@ from vj4.model.adaptor import discussion
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import training
 from vj4.handler import base
-from vj4.handler import training as trainingHandler
+from vj4.handler import training as training_handler
 from vj4.util import validator
 
 
-class DomainMainPageCategoryMixin(object):
-  @property
-  def page_category(self):
-    return 'domain_main'
-
-
-class DomainManagePageCategoryMixin(object):
-  @property
-  def page_category(self):
-    return 'domain_manage'
-
-
 @app.route('/', 'domain_main')
-class DomainMainHandler(trainingHandler.TrainingStatusMixin, DomainMainPageCategoryMixin, base.Handler):
+class DomainMainHandler(training_handler.TrainingStatusMixin, base.Handler):
   CONTESTS_ON_MAIN = 5
   TRAININGS_ON_MAIN = 5
   DISCUSSIONS_ON_MAIN = 20
@@ -84,7 +72,7 @@ class DomainMainHandler(trainingHandler.TrainingStatusMixin, DomainMainPageCateg
 
 
 @app.route('/domain', 'domain_manage')
-class DomainManageHandler(DomainManagePageCategoryMixin, base.Handler):
+class DomainManageHandler(base.Handler):
   async def get(self):
     self.redirect(self.reverse_url('domain_manage_dashboard'))
 
@@ -98,7 +86,7 @@ class DomainDashboardHandler(base.Handler):
 
 
 @app.route('/domain/edit', 'domain_manage_edit')
-class DomainEditHandler(DomainManagePageCategoryMixin, base.Handler):
+class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   async def get(self):
     self.render('domain_manage_edit.html')
@@ -205,7 +193,7 @@ class DomainJoinHandler(base.Handler):
 
 
 @app.route('/domain/discussion', 'domain_manage_discussion')
-class DomainEditHandler(DomainManagePageCategoryMixin, base.Handler):
+class DomainEditHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_DESCRIPTION)
   async def get(self):
     self.render('domain_manage_discussion.html',
@@ -221,7 +209,7 @@ class DomainEditHandler(DomainManagePageCategoryMixin, base.Handler):
 
 
 @app.route('/domain/user', 'domain_manage_user')
-class DomainUserHandler(DomainManagePageCategoryMixin, base.OperationHandler):
+class DomainUserHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     uids = [self.domain['owner_uid']]
@@ -266,7 +254,7 @@ class DomainUserHandler(DomainManagePageCategoryMixin, base.OperationHandler):
 
 
 @app.route('/domain/permission', 'domain_manage_permission')
-class DomainPermissionHandler(DomainManagePageCategoryMixin, base.Handler):
+class DomainPermissionHandler(base.Handler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     def bitand(a, b):
@@ -291,7 +279,7 @@ class DomainPermissionHandler(DomainManagePageCategoryMixin, base.Handler):
 
 
 @app.route('/domain/role', 'domain_manage_role')
-class DomainRoleHandler(DomainManagePageCategoryMixin, base.OperationHandler):
+class DomainRoleHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
     rucounts = collections.defaultdict(int)

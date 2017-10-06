@@ -52,14 +52,8 @@ async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
                 **kwargs)
 
 
-class ProblemPageCategoryMixin(object):
-  @property
-  def page_category(self):
-    return 'problem'
-
-
 @app.route('/p', 'problem_main')
-class ProblemMainHandler(ProblemPageCategoryMixin, base.OperationHandler):
+class ProblemMainHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
@@ -98,7 +92,7 @@ class ProblemMainHandler(ProblemPageCategoryMixin, base.OperationHandler):
 
 
 @app.route('/p/random', 'problem_random')
-class ProblemRandomHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemRandomHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -114,7 +108,7 @@ class ProblemRandomHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.route('/p/category/{category:[^/]*}', 'problem_category')
-class ProblemCategoryHandler(ProblemPageCategoryMixin, base.OperationHandler):
+class ProblemCategoryHandler(base.OperationHandler):
   PROBLEMS_PER_PAGE = 100
 
   @staticmethod
@@ -175,7 +169,7 @@ class ProblemCategoryHandler(ProblemPageCategoryMixin, base.OperationHandler):
 
 @app.route('/p/category/{category:[^/]*}/random', 'problem_category_random')
 class ProblemCategoryRandomHandler(base.Handler):
-  @base.require_perm(ProblemPageCategoryMixin, builtin.PERM_VIEW_PROBLEM)
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.get_argument
   @base.route_argument
   @base.sanitize
@@ -193,7 +187,7 @@ class ProblemCategoryRandomHandler(base.Handler):
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
-class ProblemDetailHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemDetailHandler(base.Handler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -215,7 +209,7 @@ class ProblemDetailHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
-class ProblemSubmitHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemSubmitHandler(base.Handler):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -263,7 +257,7 @@ class ProblemSubmitHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.route('/p/{pid}/pretest', 'problem_pretest')
-class ProblemPretestHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemPretestHandler(base.Handler):
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
   @base.route_argument
   @base.post_argument
@@ -299,7 +293,7 @@ class ProblemPretestHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.connection_route('/p/{pid}/pretest-conn', 'problem_pretest-conn')
-class ProblemPretestConnection(ProblemPageCategoryMixin, record_handler.RecordVisibilityMixin, base.Connection):
+class ProblemPretestConnection(record_handler.RecordVisibilityMixin, base.Connection):
   async def on_open(self):
     await super(ProblemPretestConnection, self).on_open()
     self.pid = document.convert_doc_id(self.request.match_info['pid'])
@@ -322,7 +316,7 @@ class ProblemPretestConnection(ProblemPageCategoryMixin, record_handler.RecordVi
 
 
 @app.route('/p/{pid}/solution', 'problem_solution')
-class ProblemSolutionHandler(ProblemPageCategoryMixin, base.OperationHandler):
+class ProblemSolutionHandler(base.OperationHandler):
   SOLUTIONS_PER_PAGE = 20
 
   @base.require_perm(builtin.PERM_VIEW_PROBLEM_SOLUTION)
@@ -526,7 +520,7 @@ class ProblemDataHandler(base.Handler):
 
 
 @app.route('/p/create', 'problem_create')
-class ProblemCreateHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemCreateHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
   async def get(self):
@@ -544,7 +538,7 @@ class ProblemCreateHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
-class ProblemEditHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemEditHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
   @base.sanitize
@@ -575,7 +569,7 @@ class ProblemEditHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.route('/p/{pid}/settings', 'problem_settings')
-class ProblemSettingsHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemSettingsHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
   @base.sanitize
@@ -630,7 +624,7 @@ class ProblemSettingsHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.route('/p/{pid}/upload', 'problem_upload')
-class ProblemUploadHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemUploadHandler(base.Handler):
   def get_content_type(self, filename):
     if os.path.splitext(filename)[1].lower() != '.zip':
       raise error.FileTypeNotAllowedError(filename)
@@ -668,7 +662,7 @@ class ProblemUploadHandler(ProblemPageCategoryMixin, base.Handler):
 
 
 @app.route('/p/{pid}/statistics', 'problem_statistics')
-class ProblemStatisticsHandler(ProblemPageCategoryMixin, base.Handler):
+class ProblemStatisticsHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, pid: document.convert_doc_id):

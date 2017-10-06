@@ -1,6 +1,6 @@
 {% macro nav_item(target_page_name, page_category, display_name=None) %}
 <li class="nav__list-item">
-  <a href="{{ reverse_url(target_page_name, **kwargs) }}" class="nav__item{% if handler.page_category == page_category %} nav--active{% endif %}">
+  <a href="{{ reverse_url(target_page_name, **kwargs) }}" class="nav__item{% if handler.page_category == page_category or (handler.page_category is none and page_name.startswith(page_category)) %} nav--active{% endif %}">
     {{ _(display_name or target_page_name) }}
   </a>
 </li>
