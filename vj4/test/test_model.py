@@ -153,7 +153,7 @@ class DomainTest(base.DatabaseTestCase):
     await db.coll('domain').insert_one({'_id': DOMAIN_ID,
                                         'owner_uid': OWNER_UID,
                                         'pending': True})
-    await domain.add_continue(DOMAIN_ID)
+    await domain.add_continue(DOMAIN_ID, OWNER_UID)
     ddoc = await domain.get(DOMAIN_ID)
     self.assertTrue('pending' not in ddoc)
     dudoc = await domain.get_user(DOMAIN_ID, OWNER_UID)
@@ -166,7 +166,7 @@ class DomainTest(base.DatabaseTestCase):
                                         'owner_uid': OWNER_UID,
                                         'pending': True})
     await domain.add_user_role(DOMAIN_ID, OWNER_UID, BAR_ROLE)
-    await domain.add_continue(DOMAIN_ID)
+    await domain.add_continue(DOMAIN_ID, OWNER_UID)
     ddoc = await domain.get(DOMAIN_ID)
     self.assertTrue('pending' not in ddoc)
     dudoc = await domain.get_user(DOMAIN_ID, OWNER_UID)
@@ -178,7 +178,7 @@ class DomainTest(base.DatabaseTestCase):
     await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     await domain.set_user_role(DOMAIN_ID, OWNER_UID, FOO_ROLE)
     with self.assertRaises(error.DomainNotFoundError):
-      await domain.add_continue(DOMAIN_ID)
+      await domain.add_continue(DOMAIN_ID, OWNER_UID)
     ddoc = await domain.get(DOMAIN_ID)
     self.assertTrue('pending' not in ddoc)
     dudoc = await domain.get_user(DOMAIN_ID, OWNER_UID)

@@ -38,11 +38,13 @@ async def add(domain_id: str, owner_uid: int,
   return domain_id
 
 
-async def add_continue(domain_id: str):
+async def add_continue(domain_id: str, ensure_owner_uid: int=None):
   ddoc = await get(domain_id)
   if 'pending' not in ddoc:
     raise error.DomainNotFoundError(domain_id)
   owner_uid = ddoc['owner_uid']
+  if ensure_owner_uid != None and owner_uid != ensure_owner_uid:
+    raise error.DomainNotFoundError(domain_id)
   try:
     await add_user_role(domain_id, owner_uid, builtin.ROLE_ROOT)
   except error.UserAlreadyDomainMemberError:

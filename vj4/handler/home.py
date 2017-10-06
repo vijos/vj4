@@ -251,12 +251,11 @@ class HomeDomainHandler(base.Handler):
           or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
     self.render('home_domain.html', pending_ddocs=pending_ddocs, ddocs=ddocs, dudict=dudict, can_manage=can_manage)
 
-  @base.require_priv(builtin.PRIV_CREATE_DOMAIN)
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, domain_id: str):
-    await domain.add_continue(domain_id)
+    await domain.add_continue(domain_id, self.user['_id'])
     self.json_or_redirect(self.url)
 
 
