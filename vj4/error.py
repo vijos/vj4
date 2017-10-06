@@ -116,12 +116,6 @@ class DocumentNotFoundError(NotFoundError):
     return 'Document {2} not found.'
 
 
-class DomainNotFoundError(NotFoundError):
-  @property
-  def message(self):
-    return 'Domain {0} not found.'
-
-
 class ProblemDataNotFoundError(NotFoundError):
   @property
   def message(self):
