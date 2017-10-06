@@ -26,14 +26,6 @@ async def inc_user_counter():
   return doc['value']
 
 
-@argmethod.wrap
-async def ensure_indexes():
-  coll = db.coll('system')
-  await coll.update_one(filter={'_id': 'user_counter'},
-                        update={'$setOnInsert': {'value': 1}},
-                        upsert=True)
-
-
 async def acquire_lock(lock_name: str):
   lock_value = random.randint(1, 0xFFFFFFFF)
   coll = db.coll('system')
@@ -105,6 +97,27 @@ async def ensure_db_version(allowed_version=None):
   current_version = await get_db_version()
   if current_version != allowed_version:
     raise error.DatabaseVersionMismatchError(current_version, allowed_version)
+
+
+@argmethod.wrap
+async def setup():
+  """
+  Set up for fresh install
+  """
+  coll = db.coll('system')
+  fdoc = await coll.find_one({'_id': 'user_counter'})
+  if fdoc:
+    # skip if not fresh install
+    return
+  await set_db_version(EXPECTED_DB_VERSION)
+
+
+@argmethod.wrap
+async def ensure_indexes():
+  coll = db.coll('system')
+  await coll.update_one(filter={'_id': 'user_counter'},
+                        update={'$setOnInsert': {'value': 1}},
+                        upsert=True)
 
 
 if __name__ == '__main__':
