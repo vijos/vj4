@@ -161,7 +161,7 @@ class DomainJoinHandler(base.Handler):
   async def ensure_user_not_member(self):
     dudoc = await domain.get_user(self.domain_id, self.user['_id'])
     if dudoc and 'role' in dudoc:
-      raise error.UserAlreadyDomainMemberError(self.domain_id, self.user['_id'])
+      raise error.CurrentUserAlreadyDomainMemberError(self.domain_id, self.user['_id'])
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.get_argument
