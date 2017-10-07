@@ -303,7 +303,7 @@ class DomainRoleHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
   @base.sanitize
-  async def post_set(self, *, role: str):
+  async def post_add(self, *, role: str):
     if role in domain.get_all_roles(self.domain):
       raise error.DomainRoleAlreadyExistError(self.domain_id, role)
     await domain.set_role(self.domain_id, role, builtin.DEFAULT_PERMISSIONS)
