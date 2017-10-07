@@ -270,7 +270,7 @@ class DomainTest(base.DatabaseTestCase):
 
   @base.wrap_coro
   async def test_set_roles_2(self):
-    # modify an un-modifiable built-in role
+    # modify an non-modifiable built-in role
     await domain.add(DOMAIN_ID, OWNER_UID, name=DOMAIN_NAME)
     with self.assertRaises(error.ModifyBuiltinRoleError):
       await domain.set_roles(DOMAIN_ID, {builtin.ROLE_ROOT: 777})
