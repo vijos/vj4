@@ -161,7 +161,7 @@ class DomainJoinHandler(base.Handler):
   async def ensure_user_not_member(self):
     dudoc = await domain.get_user(self.domain_id, self.user['_id'])
     if dudoc and 'role' in dudoc:
-      raise error.CurrentUserAlreadyDomainMemberError(self.domain_id, self.user['_id'])
+      raise error.DomainJoinAlreadyMemberError(self.domain_id, self.user['_id'])
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.get_argument
@@ -185,7 +185,10 @@ class DomainJoinHandler(base.Handler):
     if join_settings['method'] == constant.domain.JOIN_METHOD_CODE:
       if join_settings['code'] != code:
         raise error.InvalidJoinInvitationCodeError(self.domain_id)
-    await domain.add_user_role(self.domain_id, self.user['_id'], join_settings['role'])
+    try:
+      await domain.add_user_role(self.domain_id, self.user['_id'], join_settings['role'])
+    except error.UserAlreadyDomainMemberError:
+      raise error.DomainJoinAlreadyMemberError(self.domain_id, self.user['_id']) from None
     self.json_or_redirect(self.reverse_url('domain_main'))
 
 

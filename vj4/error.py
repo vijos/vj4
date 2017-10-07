@@ -236,10 +236,10 @@ class DomainJoinForbiddenError(ForbiddenError):
     return 'You are not allowed to join the domain. The link is either invalid or expired.'
 
 
-class CurrentUserAlreadyDomainMemberError(ForbiddenError):
+class DomainJoinAlreadyMemberError(ForbiddenError):
   @property
   def message(self):
-    return 'You are already a member of the domain.'
+    return 'Failed to join the domain. You are already a member.'
 
 
 class InvalidJoinInvitationCodeError(ForbiddenError):

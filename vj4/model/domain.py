@@ -88,6 +88,8 @@ async def edit(domain_id: str, **kwargs):
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
   coll = db.coll('domain')
+  if 'owner_uid' in kwargs:
+    del kwargs['owner_uid']
   if 'name' in kwargs:
     validator.check_name(kwargs['name'])
   # TODO(twd2): check kwargs

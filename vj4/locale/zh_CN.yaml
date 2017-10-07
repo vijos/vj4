@@ -312,7 +312,7 @@ domain_manage_permission: 管理权限
 domain_join: 加入域
 'Join {0}': '加入 {0}'
 You are not allowed to join the domain. The link is either invalid or expired.: 您无法加入该域，链接无效或已过期。
-You are already a member of the domain.: 您已是该域的成员。
+Failed to join the domain. You are already a member.: 加入域失败，您已是该域的成员。
 The invitation code you provided is invalid.: 您提供的邀请码无效。
 Update Permission: 更新权限
 Roles: 角色
