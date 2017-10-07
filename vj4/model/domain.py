@@ -205,14 +205,12 @@ async def add_user_role(domain_id: str, uid: int, role: str, join_at=None):
     join_at = datetime.datetime.utcnow()
   coll = db.coll('domain.user')
   try:
-    result = await coll.insert_one({'domain_id': domain_id, 'uid': uid,
-                                    'role': role, 'join_at': join_at})
+    await coll.update_one({'domain_id': domain_id, 'uid': uid,
+                           'role': {'$exists': False}},
+                           {'$set': {'role': role, 'join_at': join_at}},
+                           upsert=True)
   except errors.DuplicateKeyError:
-    result = await coll.update_one({'domain_id': domain_id, 'uid': uid,
-                                    'role': {'$exists': False}},
-                                   {'$set': {'role': role, 'join_at': join_at}})
-    if result.matched_count == 0:
-      raise error.UserAlreadyDomainMemberError(domain_id, uid) from None
+    raise error.UserAlreadyDomainMemberError(domain_id, uid) from None
   return True
 
 
