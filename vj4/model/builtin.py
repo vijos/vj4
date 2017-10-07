@@ -225,7 +225,7 @@ BuiltinRoleDescriptor = functools.partial(
                            ['modifiable', 'default_permission', 'description']))
 
 # Built-in roles cannot be deleted.
-BUILTIN_ROLES = {
+BUILTIN_ROLE_DESCRIPTORS = {
     ROLE_ROOT: BuiltinRoleDescriptor(False, PERM_ALL, 'Always granted all privileges'),
     ROLE_GUEST: BuiltinRoleDescriptor(True, BASIC_PERMISSIONS, 'Valid for visitors'),
     ROLE_DEFAULT: BuiltinRoleDescriptor(True, DEFAULT_PERMISSIONS, 'Valid for registered users who are not members of the domain'),

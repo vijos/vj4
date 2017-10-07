@@ -1,4 +1,5 @@
 import datetime
+
 from pymongo import errors
 from pymongo import ReturnDocument
 
@@ -61,7 +62,7 @@ async def get(domain_id: str, fields=None):
       return domain
   coll = db.coll('domain')
   ddoc = await coll.find_one(domain_id, fields)
-  if ddoc is None:
+  if not ddoc:
     raise error.DomainNotFoundError(domain_id)
   return ddoc
 
@@ -110,12 +111,12 @@ async def set_role(domain_id: str, role: str, perm: int):
 
 @argmethod.wrap
 async def set_roles(domain_id: str, roles):
-  roles = {str(role): int(roles[role]) for role in roles}
+  roles = {str(role): int(perm) for role, perm in roles.items()}
   update = {}
   for role in roles:
     validator.check_role(role)
-    if role in builtin.BUILTIN_ROLES:
-      if not builtin.BUILTIN_ROLES[role].modifiable:
+    if role in builtin.BUILTIN_ROLE_DESCRIPTORS:
+      if not builtin.BUILTIN_ROLE_DESCRIPTORS[role].modifiable:
         raise error.ModifyBuiltinRoleError(domain_id, role)
     update['roles.{0}'.format(role)] = roles[role]
   for domain in builtin.DOMAINS:
@@ -136,7 +137,7 @@ async def delete_roles(domain_id: str, roles):
   roles = list(set(roles))
   for role in roles:
     validator.check_role(role)
-    if role in builtin.BUILTIN_ROLES:
+    if role in builtin.BUILTIN_ROLE_DESCRIPTORS:
       raise error.ModifyBuiltinRoleError(domain_id, role)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
@@ -276,7 +277,7 @@ async def get_dict_user_by_domain_id(uid, *, fields=None):
 
 
 def get_all_roles(ddoc):
-  builtin_roles = {role: rd.default_permission for role, rd in builtin.BUILTIN_ROLES.items()}
+  builtin_roles = {role: rd.default_permission for role, rd in builtin.BUILTIN_ROLE_DESCRIPTORS.items()}
   domain_roles = ddoc['roles']
   return {**builtin_roles, **domain_roles}
 

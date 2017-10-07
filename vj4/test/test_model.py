@@ -302,7 +302,7 @@ class DomainTest(base.DatabaseTestCase):
       await domain.delete_roles(DOMAIN_ID, [builtin.ROLE_DEFAULT])
     ddoc = await domain.get(DOMAIN_ID)
     self.assertEqual(ddoc['roles'][builtin.ROLE_DEFAULT],
-                     builtin.BUILTIN_ROLES[builtin.ROLE_DEFAULT].default_permission)
+                     builtin.BUILTIN_ROLE_DESCRIPTORS[builtin.ROLE_DEFAULT].default_permission)
     with self.assertRaises(error.ModifyBuiltinRoleError):
       await domain.delete_roles(DOMAIN_ID, [builtin.ROLE_ROOT])
     ddoc = await domain.get(DOMAIN_ID)

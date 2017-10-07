@@ -42,7 +42,7 @@
         </tr>
       </thead>
       <tbody>
-      {% for role, rd in vj4.model.builtin.BUILTIN_ROLES.items() %}
+      {% for role, rd in vj4.model.builtin.BUILTIN_ROLE_DESCRIPTORS.items() %}
         <tr>
           <td class="col--checkbox">
             <label class="compact checkbox">
@@ -61,7 +61,7 @@
         </tr>
       {% endfor %}
       {% for role in roles %}
-      {% if role not in vj4.model.builtin.BUILTIN_ROLES %}
+      {% if role not in vj4.model.builtin.BUILTIN_ROLE_DESCRIPTORS %}
         <tr data-role="{{ role }}">
           <td class="col--checkbox">
             <label class="compact checkbox">
