@@ -236,20 +236,27 @@ class HomeMessagesConnection(base.Connection):
 class HomeDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
+    pending_ddocs = await domain.get_pending(owner_uid=self.user['_id']) \
+                                .to_list()
     dudict = await domain.get_dict_user_by_domain_id(self.user['_id'])
     dids = list(dudict.keys())
-    ddocs = await domain.get_multi(**{'$or': [{'_id': {'$in': dids}},
-                                              {'owner_uid': self.user['_id']}]}) \
+    ddocs = await domain.get_multi(_id={'$in': dids}) \
                         .to_list()
     can_manage = {}
     for ddoc in builtin.DOMAINS + ddocs:
       role = dudict.get(ddoc['_id'], {}).get('role', builtin.ROLE_DEFAULT)
-      mask = ddoc['roles'].get(role, builtin.PERM_NONE)
+      mask = domain.get_all_roles(ddoc).get(role, builtin.PERM_NONE)
       can_manage[ddoc['_id']] = (
           ((builtin.PERM_EDIT_DESCRIPTION | builtin.PERM_EDIT_PERM) & mask) != 0
-          or ddoc['owner_uid'] == self.user['_id']
           or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
-    self.render('home_domain.html', ddocs=ddocs, dudict=dudict, can_manage=can_manage)
+    self.render('home_domain.html', pending_ddocs=pending_ddocs, ddocs=ddocs, dudict=dudict, can_manage=can_manage)
+
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, domain_id: str):
+    await domain.add_continue(domain_id, self.user['_id'])
+    self.json_or_redirect(self.url)
 
 
 @app.route('/home/domain/create', 'home_domain_create', global_route=True)

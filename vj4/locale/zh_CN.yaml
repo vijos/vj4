@@ -312,7 +312,7 @@ domain_manage_permission: 管理权限
 domain_join: 加入域
 'Join {0}': '加入 {0}'
 You are not allowed to join the domain. The link is either invalid or expired.: 您无法加入该域，链接无效或已过期。
-You are already a member of the domain.: 您已是该域的成员。
+Failed to join the domain. You are already a member.: 加入域失败，您已是该域的成员。
 The invitation code you provided is invalid.: 您提供的邀请码无效。
 Update Permission: 更新权限
 Roles: 角色
@@ -382,12 +382,14 @@ Will be used as the domain icon.: 将被用作域图标。
 My Role: 我的角色
 What's domain?: 什么是域？
 Visit: 查看
-owner: 所有者
 delete: 删除
 User ID: 用户 ID
 '{0}: Users': '{0}: 用户'
 '{0}: Roles': '{0}: 角色'
 '{0}: Permissions': '{0}: 权限'
+You have uncompleted domain creation operation. You can click "Continue" to finish the creation.: 您有未完成的创建域操作。您可以点击“继续”来完成创建。
+Uncompleted: 未完成
+Continue: 继续
 Role: 角色
 Select a role: 选择一个角色
 Add User: 添加用户
@@ -396,14 +398,17 @@ Remove Selected User from Domain: 将所选用户移出域
 Set Roles for Selected User: 设置所选用户的角色
 Create Role: 创建角色
 Role name can only contains numbers, letters and underscores.: 角色名称只能包含数字、字母和下划线。
-'Built-in: Valid for visitors': '内置: 对未登录的游客有效'
-'Built-in: Valid for registered users who are not members of the domain': '内置: 对域外注册用户有效'
+Built-in: 内置
+Always granted all privileges: 总是拥有所有权限
+Valid for visitors: 对未登录的游客有效
+Valid for registered users who are not members of the domain: 对域外注册用户有效
 User-defined role: 用户定义的角色
 Users: 用户
 Delete Selected Roles: 删除所选角色
 Owner: 所有者
 Permission: 权限
 Permissions: 权限
+The user is already a member of the domain.: 该用户已是域的成员。
 View this domain: 查看此域
 Edit permissions of a role: 修改角色权限
 Show MOD badge: 展示 MOD 徽章
@@ -507,6 +512,7 @@ Confirm deleting the selected roles?: 您确定删除所选角色吗？
 Users with those roles will be removed from the domain.: 拥有这些角色的用户将从此域中移除。
 Selected roles have been deleted.: 所选角色已删除。
 Please select at least one role to perform this operation.: 请选择至少一个角色来进行操作。
+'Role {1} already exists in domain {0}.': '域 {0} 中已存在角色 {1}。'
 Domain {0} is bulit-in and cannot be modified.: 域 {0} 为内置，不可修改。
 perm_general: 一般
 perm_problem: 题库

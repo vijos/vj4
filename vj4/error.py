@@ -236,10 +236,10 @@ class DomainJoinForbiddenError(ForbiddenError):
     return 'You are not allowed to join the domain. The link is either invalid or expired.'
 
 
-class UserAlreadyDomainMemberError(ForbiddenError):
+class DomainJoinAlreadyMemberError(ForbiddenError):
   @property
   def message(self):
-    return 'You are already a member of the domain.'
+    return 'Failed to join the domain. You are already a member.'
 
 
 class InvalidJoinInvitationCodeError(ForbiddenError):
@@ -308,6 +308,24 @@ class UsageExceededError(ForbiddenError):
     return 'Usage exceeded.'
 
 
+class DomainRoleAlreadyExistError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Role {1} already exists in domain {0}.'
+
+
+class ModifyBuiltinRoleError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Built-in roles cannot be modified.'
+
+
+class UserAlreadyDomainMemberError(ForbiddenError):
+  @property
+  def message(self):
+    return 'The user is already a member of the domain.'
+
+
 class UnknownArgumentError(BadRequestError):
   @property
   def message(self):
@@ -324,3 +342,21 @@ class NoProblemError(NotFoundError):
   @property
   def message(self):
     return 'No problem.'
+
+
+class UpgradeLockAcquireError(Error):
+  @property
+  def message(self):
+    return 'Failed to acquire the upgrade lock. There may be another ongoing upgrade process, or a previous process is exited unexpectedly.'
+
+
+class UpgradeLockReleaseError(Error):
+  @property
+  def message(self):
+    return 'Failed to release the upgrade lock. The database is malformed during the upgrade.'
+
+
+class DatabaseVersionMismatchError(Error):
+  @property
+  def message(self):
+    return 'Database version mismatch, got {0}, expect {1}. You need to invoke database upgrades.'

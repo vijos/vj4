@@ -80,7 +80,7 @@ class DomainDashboardHandler(base.Handler):
   async def get(self):
     if not self.has_perm(builtin.PERM_EDIT_PERM):
        self.check_perm(builtin.PERM_EDIT_DESCRIPTION)
-    self.render('domain_manage_dashboard.html', owner_udoc=await user.get_by_uid(self.domain['owner_uid']))
+    self.render('domain_manage_dashboard.html')
 
 
 @app.route('/domain/edit', 'domain_manage_edit')
@@ -161,7 +161,7 @@ class DomainJoinHandler(base.Handler):
   async def ensure_user_not_member(self):
     dudoc = await domain.get_user(self.domain_id, self.user['_id'])
     if dudoc and 'role' in dudoc:
-      raise error.UserAlreadyDomainMemberError(self.domain_id, self.user['_id'])
+      raise error.DomainJoinAlreadyMemberError(self.domain_id, self.user['_id'])
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.get_argument
@@ -185,8 +185,10 @@ class DomainJoinHandler(base.Handler):
     if join_settings['method'] == constant.domain.JOIN_METHOD_CODE:
       if join_settings['code'] != code:
         raise error.InvalidJoinInvitationCodeError(self.domain_id)
-    # TODO: should be replaced by domain.add_user_role
-    await domain.set_user_role(self.domain_id, self.user['_id'], join_settings['role'])
+    try:
+      await domain.add_user_role(self.domain_id, self.user['_id'], join_settings['role'])
+    except error.UserAlreadyDomainMemberError:
+      raise error.DomainJoinAlreadyMemberError(self.domain_id, self.user['_id']) from None
     self.json_or_redirect(self.reverse_url('domain_main'))
 
 
@@ -210,7 +212,7 @@ class DomainEditHandler(base.Handler):
 class DomainUserHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_EDIT_PERM)
   async def get(self):
-    uids = [self.domain['owner_uid']]
+    uids = []
     rudocs = collections.defaultdict(list)
     async for dudoc in domain.get_multi_user(domain_id=self.domain_id,
                                              role={'$gte': ''},
@@ -218,11 +220,20 @@ class DomainUserHandler(base.OperationHandler):
       if 'role' in dudoc:
         uids.append(dudoc['uid'])
         rudocs[dudoc['role']].append(dudoc)
-    roles = sorted(list(self.domain['roles'].keys()))
+    roles = sorted(list(domain.get_all_roles(self.domain).keys()))
     roles_with_text = [(role, role) for role in roles]
     udict = await user.get_dict(uids)
     self.render('domain_manage_user.html', roles=roles, roles_with_text=roles_with_text,
                 rudocs=rudocs, udict=udict)
+
+
+  @base.require_perm(builtin.PERM_EDIT_PERM)
+  @base.require_csrf_token
+  @base.sanitize
+  async def post_add_user(self, *, uid: int, role: str):
+    await domain.add_user_role(self.domain_id, uid, role)
+    self.json_or_redirect(self.url)
+
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
@@ -257,6 +268,7 @@ class DomainPermissionHandler(base.Handler):
   async def get(self):
     def bitand(a, b):
       return a & b
+    # unmodifiable roles are not visible in UI so that we are not using get_all_roles() here
     roles = sorted(list(self.domain['roles'].keys()))
     self.render('domain_manage_permission.html', bitand=bitand, roles=roles)
 
@@ -264,15 +276,16 @@ class DomainPermissionHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   async def post(self, **kwargs):
-    new_roles = dict()
+    roles = dict()
+    # unmodifiable roles are not modifiable so that we are not using get_all_roles() here
     for role in self.domain['roles']:
       perms = 0
       for perm in (await self.request.post()).getall(role, []):
        perm = int(perm)
        if perm in builtin.PERMS_BY_KEY:
           perms |= perm
-      new_roles[role] = perms
-    await domain.edit(self.domain_id, roles=new_roles)
+      roles[role] = perms
+    await domain.set_roles(self.domain_id, roles)
     self.json_or_redirect(self.url)
 
 
@@ -286,14 +299,17 @@ class DomainRoleHandler(base.OperationHandler):
                                              fields={'uid': 1, 'role': 1}):
       if 'role' in dudoc:
         rucounts[dudoc['role']] += 1
+    # built-in roles are displayed additionally so that we don't need to use get_all_roles() here
     roles = sorted(list(self.domain['roles'].keys()))
     self.render('domain_manage_role.html', rucounts=rucounts, roles=roles)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
   @base.require_csrf_token
   @base.sanitize
-  async def post_set(self, *, role: str, perm: int=builtin.DEFAULT_PERMISSIONS):
-    await domain.set_role(self.domain_id, role, perm)
+  async def post_add(self, *, role: str):
+    if role in domain.get_all_roles(self.domain):
+      raise error.DomainRoleAlreadyExistError(self.domain_id, role)
+    await domain.set_role(self.domain_id, role, builtin.DEFAULT_PERMISSIONS)
     self.json_or_redirect(self.url)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
