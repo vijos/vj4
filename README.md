@@ -83,7 +83,7 @@ python3 -m vj4.server --debug
 
 > Set `--listen` (default: http://127.0.0.1:8888) to listen on a different address.
 
-As an intuitive example, you may want to add a super administator and a problem to start:
+As an intuitive example, you may want to add a super administrator and a problem to start:
 
 ```bash
 alias pm="python3 -m"
