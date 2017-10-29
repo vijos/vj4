@@ -47,21 +47,6 @@ async def inc(op: str, ident: str, period_secs: int, max_operations: int, operat
 
 
 @argmethod.wrap
-async def force_inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int=1):
-  coll = db.coll('opcount')
-  cur_time = int(time.time())
-  begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)
-  expire_at = begin_at + datetime.timedelta(seconds=period_secs)
-  doc = await coll.find_one_and_update(filter={'ident': ident,
-                                               'begin_at': begin_at,
-                                               'expire_at': expire_at},
-                                       update={'$inc': {op: operations}},
-                                       upsert=True,
-                                       return_document=ReturnDocument.AFTER)
-  return doc
-
-
-@argmethod.wrap
 async def get(op: str, ident: str, period_secs: int, max_operations: int):
   coll = db.coll('opcount')
   cur_time = int(time.time())
