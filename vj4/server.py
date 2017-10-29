@@ -44,7 +44,7 @@ def main():
       break
     else:
       atexit.register(lambda: os.kill(pid, signal.SIGTERM))
-  web.run_app(app.Application(), sock=sock, access_log=None)
+  web.run_app(app.Application(), sock=sock, access_log=None, shutdown_timeout=0)
 
 if __name__ == '__main__':
   sys.exit(main())
