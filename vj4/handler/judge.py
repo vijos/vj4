@@ -40,8 +40,6 @@ async def _send_ac_mail(handler, rdoc):
 
 
 async def _post_judge(handler, rdoc):
-  await opcount.force_inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(rdoc['uid']),
-                          operations=rdoc['time_ms'])
   accept = rdoc['status'] == constant.record.STATUS_ACCEPTED
   bus.publish_throttle('record_change', rdoc, rdoc['_id'])
   post_coros = list()
@@ -146,19 +144,9 @@ class JudgeNotifyConnection(base.Connection):
     self.send(event=e['key'], **domain_id_pid)
 
   async def _on_queue_message(self, tag, *, rid):
-    # TODO(iceboy): Error handling?
     rdoc = await record.begin_judge(rid, self.user['_id'], self.id,
                                     constant.record.STATUS_FETCHED)
     if rdoc:
-      used_time = await opcount.get(**opcount.OPS['run_code'],
-                                    ident=opcount.PREFIX_USER + str(rdoc['uid']))
-      if used_time >= opcount.OPS['run_code']['max_operations']:
-        rdoc, _ = await asyncio.gather(
-            record.end_judge(rid, self.user['_id'], self.id,
-                             constant.record.STATUS_CANCELED, 0, 0, 0),
-            self.channel.basic_client_ack(tag))
-        bus.publish_throttle('record_change', rdoc, rdoc['_id'])
-        return
       self.rids[tag] = rdoc['_id']
       self.send(rid=str(rdoc['_id']), tag=tag, pid=str(rdoc['pid']), domain_id=rdoc['domain_id'],
                 lang=rdoc['lang'], code=rdoc['code'], type=rdoc['type'])

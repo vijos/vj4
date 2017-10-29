@@ -9,7 +9,6 @@ from vj4 import error
 from vj4.util import argmethod
 
 PREFIX_IP = 'ip-'
-PREFIX_USER = 'user-'
 
 OPS = {
   'contest_code': {
@@ -22,11 +21,6 @@ OPS = {
     'period_secs': 3600,
     'max_operations': 60
   },
-  'run_code': {
-    'op': 'run_code',
-    'period_secs': 60,
-    'max_operations': 15000
-  }
 }
 
 PERIOD_REGISTER = 3600
