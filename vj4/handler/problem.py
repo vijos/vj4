@@ -246,7 +246,7 @@ class ProblemSubmitHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
-    await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
+    # TODO(iceboy): rate limit base on ip.
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdoc = await problem.get(self.domain_id, pid)
     if pdoc.get('hidden', False):
@@ -265,7 +265,7 @@ class ProblemPretestHandler(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str,
                  data_input: str, data_output: str):
-    await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
+    # TODO(iceboy): rate limit base on ip.
     pdoc = await problem.get(self.domain_id, pid)
     # don't need to check hidden status
     # create zip file, TODO(twd2): check file size
