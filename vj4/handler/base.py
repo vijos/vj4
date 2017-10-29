@@ -270,7 +270,14 @@ class Handler(web.View, HandlerBase):
 
   @property
   def prefer_json(self):
-    for d in accept.parse(self.request.headers.get('Accept')):
+    accept_header = self.request.headers.get('Accept')
+    try:
+      parse_result = accept.parse(accept_header)
+    except (ValueError, IndexError):
+      # the accept library throws bogus exceptions
+      _logger.warning('Unparsable accept header: %s', accept_header)
+      return False
+    for d in parse_result:
       if d.media_type == 'application/json':
         return True
       elif d.media_type == 'text/html' or d.all_types:
