@@ -8,19 +8,25 @@ import sys
 import urllib.parse
 
 from aiohttp import web
+from coloredlogs import syslog
 from vj4 import app
 from vj4.util import options
 
 options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
 options.define('prefork', default=1, help='Number of prefork workers.')
+options.define('syslog', default=False, help='Use syslog instead of stderr for logging.')
 
 _logger = logging.getLogger(__name__)
 
 
 def main():
-  coloredlogs.install(level=logging.DEBUG if options.debug else logging.INFO,
-                      fmt='[%(levelname).1s %(asctime)s %(module)s:%(lineno)d] %(message)s',
-                      datefmt='%y%m%d %H:%M:%S')
+  if not options.syslog:
+    coloredlogs.install(level=logging.DEBUG if options.debug else logging.INFO,
+                        fmt='[%(levelname).1s %(asctime)s %(module)s:%(lineno)d] %(message)s',
+                        datefmt='%y%m%d %H:%M:%S')
+  else:
+    syslog.enable_system_logging(level=logging.DEBUG if options.debug else logging.INFO,
+                                 fmt='vj4[%(process)d] %(programname)s %(levelname).1s %(message)s')
   logging.getLogger('sockjs').setLevel(logging.WARNING)
   url = urllib.parse.urlparse(options.listen)
   if url.scheme == 'http':
