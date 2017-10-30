@@ -186,11 +186,6 @@ JUDGE_PRIV = (PRIV_USER_PROFILE
               | PRIV_READ_RECORD_CODE
               | PRIV_WRITE_RECORD)
 
-# Roles.
-ROLE_GUEST = 'guest'
-ROLE_DEFAULT = 'default'
-ROLE_ADMIN = 'admin'
-
 # Domains.
 DOMAIN_ID_SYSTEM = 'system'
 BASIC_PERMISSIONS = (
@@ -239,11 +234,31 @@ DEFAULT_PERMISSIONS = (
     PERM_EDIT_TRAINING_SELF
 )
 ADMIN_PERMISSIONS = PERM_ALL
+
+# Roles.
+ROLE_ROOT = 'root'
+ROLE_GUEST = 'guest'
+ROLE_DEFAULT = 'default'
+ROLE_MEMBER = 'member'
+ROLE_ADMIN = 'admin'
+
+BuiltinRoleDescriptor = functools.partial(
+    collections.namedtuple('BuiltinRoleDescriptor',
+                           ['modifiable', 'default_permission', 'description']))
+
+# Built-in roles cannot be deleted.
+BUILTIN_ROLE_DESCRIPTORS = {
+    ROLE_ROOT: BuiltinRoleDescriptor(False, PERM_ALL, 'Always granted all privileges'),
+    ROLE_GUEST: BuiltinRoleDescriptor(True, BASIC_PERMISSIONS, 'Valid for visitors'),
+    ROLE_DEFAULT: BuiltinRoleDescriptor(True, DEFAULT_PERMISSIONS, 'Valid for registered users who are not members of the domain'),
+}
+
 DOMAIN_SYSTEM = {
     '_id': DOMAIN_ID_SYSTEM,
     'owner_uid': 0,
     'roles': {ROLE_GUEST: BASIC_PERMISSIONS,
               ROLE_DEFAULT: DEFAULT_PERMISSIONS,
+              ROLE_MEMBER: DEFAULT_PERMISSIONS,
               ROLE_ADMIN: ADMIN_PERMISSIONS},
     'gravatar': '',
     'name': 'Vijos',

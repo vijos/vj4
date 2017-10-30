@@ -1,6 +1,6 @@
 import atexit
+import coloredlogs
 import logging
-import logging.config
 import os
 import signal
 import socket
@@ -8,46 +8,26 @@ import sys
 import urllib.parse
 
 from aiohttp import web
+from coloredlogs import syslog
 from vj4 import app
 from vj4.util import options
 
 options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
 options.define('prefork', default=1, help='Number of prefork workers.')
-options.define('log_format',
-               default=('%(log_color)s[%(levelname).1s '
-                        '%(asctime)s %(module)s:%(lineno)d]%(reset)s %(message)s'),
-               help='Log format.')
+options.define('syslog', default=False, help='Use syslog instead of stderr for logging.')
 
 _logger = logging.getLogger(__name__)
 
 
 def main():
-  logging.config.dictConfig({
-    'version': 1,
-    'handlers': {
-      'console': {
-        'class': 'logging.StreamHandler',
-        'formatter': 'colored',
-      },
-    },
-    'formatters': {
-      'colored': {
-        '()': 'colorlog.ColoredFormatter',
-        'format': options.log_format,
-        'datefmt': '%y%m%d %H:%M:%S'
-      }
-    },
-    'root': {
-      'level': 'DEBUG' if options.debug else 'INFO',
-      'handlers': ['console'],
-    },
-    'loggers': {
-      'sockjs': {
-        'level': 'WARNING',
-      },
-    },
-    'disable_existing_loggers': False,
-  })
+  if not options.syslog:
+    coloredlogs.install(level=logging.DEBUG if options.debug else logging.INFO,
+                        fmt='[%(levelname).1s %(asctime)s %(module)s:%(lineno)d] %(message)s',
+                        datefmt='%y%m%d %H:%M:%S')
+  else:
+    syslog.enable_system_logging(level=logging.DEBUG if options.debug else logging.INFO,
+                                 fmt='vj4[%(process)d] %(programname)s %(levelname).1s %(message)s')
+  logging.getLogger('sockjs').setLevel(logging.WARNING)
   url = urllib.parse.urlparse(options.listen)
   if url.scheme == 'http':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,7 +50,7 @@ def main():
       break
     else:
       atexit.register(lambda: os.kill(pid, signal.SIGTERM))
-  web.run_app(app.Application(), sock=sock, access_log=None)
+  web.run_app(app.Application(), sock=sock, access_log=None, shutdown_timeout=0)
 
 if __name__ == '__main__':
   sys.exit(main())

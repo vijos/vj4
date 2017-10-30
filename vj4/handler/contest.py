@@ -410,7 +410,7 @@ class ContestDetailProblemSubmitHandler(ContestMixin, ContestPageCategoryMixin, 
   async def post(self, *, ctype: str, tid: objectid.ObjectId, pid: document.convert_doc_id,
                  lang: str, code: str):
     doc_type = constant.contest.CTYPE_TO_DOCTYPE[ctype]
-    await opcount.inc(**opcount.OPS['run_code'], ident=opcount.PREFIX_USER + str(self.user['_id']))
+    # TODO(iceboy): rate limit base on ip.
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, doc_type, tid),
                                       problem.get(self.domain_id, pid))
     tsdoc = await contest.get_status(self.domain_id, doc_type, tdoc['doc_id'], self.user['_id'])

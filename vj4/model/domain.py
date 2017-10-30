@@ -25,11 +25,34 @@ async def add(domain_id: str, owner_uid: int,
       raise error.DomainAlreadyExistError(domain_id)
   coll = db.coll('domain')
   try:
-    return (await coll.insert_one({'_id': domain_id, 'owner_uid': owner_uid,
-                                   'roles': roles, 'name': name,
-                                   'gravatar': gravatar, 'bulletin': bulletin})).inserted_id
+    result = await coll.insert_one({'_id': domain_id,
+                                    'pending': True, 'owner_uid': owner_uid,
+                                    'roles': roles, 'name': name,
+                                    'gravatar': gravatar, 'bulletin': bulletin})
+    domain_id = result.inserted_id
   except errors.DuplicateKeyError:
     raise error.DomainAlreadyExistError(domain_id) from None
+  # grant root role to owner by default
+  await add_user_role(domain_id, owner_uid, builtin.ROLE_ROOT)
+  await coll.update_one({'_id': domain_id},
+                        {'$unset': {'pending': ''}})
+  return domain_id
+
+
+async def add_continue(domain_id: str, ensure_owner_uid: int=None):
+  ddoc = await get(domain_id)
+  if 'pending' not in ddoc:
+    raise error.DomainNotFoundError(domain_id)
+  owner_uid = ddoc['owner_uid']
+  if ensure_owner_uid != None and owner_uid != ensure_owner_uid:
+    raise error.DomainNotFoundError(domain_id)
+  try:
+    await add_user_role(domain_id, owner_uid, builtin.ROLE_ROOT)
+  except error.UserAlreadyDomainMemberError:
+    pass
+  coll = db.coll('domain')
+  await coll.update_one({'_id': domain_id},
+                        {'$unset': {'pending': ''}})
 
 
 @argmethod.wrap
@@ -38,7 +61,10 @@ async def get(domain_id: str, fields=None):
     if domain['_id'] == domain_id:
       return domain
   coll = db.coll('domain')
-  return await coll.find_one(domain_id, fields)
+  ddoc = await coll.find_one(domain_id, fields)
+  if not ddoc:
+    raise error.DomainNotFoundError(domain_id)
+  return ddoc
 
 
 def get_multi(*, fields=None, **kwargs):
@@ -50,6 +76,10 @@ def get_multi(*, fields=None, **kwargs):
 async def get_list(*, fields=None, limit: int=None, **kwargs):
   coll = db.coll('domain')
   return await coll.find(kwargs, fields).limit(limit).to_list(None)
+
+
+def get_pending(**kwargs):
+  return get_multi(pending=True, **kwargs)
 
 
 @argmethod.wrap
@@ -78,13 +108,25 @@ async def unset(domain_id, fields):
 
 @argmethod.wrap
 async def set_role(domain_id: str, role: str, perm: int):
-  validator.check_role(role)
+  return await set_roles(domain_id, {role: perm})
+
+
+@argmethod.wrap
+async def set_roles(domain_id: str, roles):
+  roles = {str(role): int(perm) for role, perm in roles.items()}
+  update = {}
+  for role in roles:
+    validator.check_role(role)
+    if role in builtin.BUILTIN_ROLE_DESCRIPTORS:
+      if not builtin.BUILTIN_ROLE_DESCRIPTORS[role].modifiable:
+        raise error.ModifyBuiltinRoleError(domain_id, role)
+    update['roles.{0}'.format(role)] = roles[role]
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
   coll = db.coll('domain')
   return await coll.find_one_and_update(filter={'_id': domain_id},
-                                        update={'$set': {'roles.{0}'.format(role): perm}},
+                                        update={'$set': update},
                                         return_document=ReturnDocument.AFTER)
 
 
@@ -97,6 +139,8 @@ async def delete_roles(domain_id: str, roles):
   roles = list(set(roles))
   for role in roles:
     validator.check_role(role)
+    if role in builtin.BUILTIN_ROLE_DESCRIPTORS:
+      raise error.ModifyBuiltinRoleError(domain_id, role)
   for domain in builtin.DOMAINS:
     if domain['_id'] == domain_id:
       raise error.BuiltinDomainError(domain_id)
@@ -158,9 +202,26 @@ async def unset_users(domain_id, uids, fields):
 
 
 @argmethod.wrap
+async def add_user_role(domain_id: str, uid: int, role: str, join_at=None):
+  validator.check_role(role)
+  if join_at is None:
+    join_at = datetime.datetime.utcnow()
+  coll = db.coll('domain.user')
+  try:
+    await coll.update_one({'domain_id': domain_id, 'uid': uid,
+                           'role': {'$exists': False}},
+                           {'$set': {'role': role, 'join_at': join_at}},
+                           upsert=True)
+  except errors.DuplicateKeyError:
+    raise error.UserAlreadyDomainMemberError(domain_id, uid) from None
+  return True
+
+
+@argmethod.wrap
 async def set_user_role(domain_id: str, uid: int, role: str):
   validator.check_role(role)
-  return await set_user(domain_id, uid, role=role)
+  # use set_users to utilize "upsert=False"
+  return await set_users(domain_id, [uid], role=role)
 
 
 @argmethod.wrap
@@ -215,6 +276,12 @@ async def get_dict_user_by_domain_id(uid, *, fields=None):
   async for dudoc in get_multi_user(uid=uid, fields=fields):
     result[dudoc['domain_id']] = dudoc
   return result
+
+
+def get_all_roles(ddoc):
+  builtin_roles = {role: rd.default_permission for role, rd in builtin.BUILTIN_ROLE_DESCRIPTORS.items()}
+  domain_roles = ddoc['roles']
+  return {**builtin_roles, **domain_roles}
 
 
 def get_join_settings(ddoc, now):

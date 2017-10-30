@@ -6,7 +6,7 @@ accept
 aioamqp
 git+https://github.com/LukeXuan/aiosmtplib # custom aiosmtlib with ssl support
 pytz
-colorlog
+coloredlogs
 httpagentparser
 geoip2
 GitPython

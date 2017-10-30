@@ -9,7 +9,6 @@ from vj4 import error
 from vj4.util import argmethod
 
 PREFIX_IP = 'ip-'
-PREFIX_USER = 'user-'
 
 OPS = {
   'contest_code': {
@@ -22,11 +21,6 @@ OPS = {
     'period_secs': 3600,
     'max_operations': 60
   },
-  'run_code': {
-    'op': 'run_code',
-    'period_secs': 60,
-    'max_operations': 15000
-  }
 }
 
 PERIOD_REGISTER = 3600
@@ -50,21 +44,6 @@ async def inc(op: str, ident: str, period_secs: int, max_operations: int, operat
     return doc
   except errors.DuplicateKeyError:
     raise error.OpcountExceededError(op, period_secs, max_operations)
-
-
-@argmethod.wrap
-async def force_inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int=1):
-  coll = db.coll('opcount')
-  cur_time = int(time.time())
-  begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)
-  expire_at = begin_at + datetime.timedelta(seconds=period_secs)
-  doc = await coll.find_one_and_update(filter={'ident': ident,
-                                               'begin_at': begin_at,
-                                               'expire_at': expire_at},
-                                       update={'$inc': {op: operations}},
-                                       upsert=True,
-                                       return_document=ReturnDocument.AFTER)
-  return doc
 
 
 @argmethod.wrap

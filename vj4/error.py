@@ -236,10 +236,10 @@ class DomainJoinForbiddenError(ForbiddenError):
     return 'You are not allowed to join the domain. The link is either invalid or expired.'
 
 
-class UserAlreadyDomainMemberError(ForbiddenError):
+class DomainJoinAlreadyMemberError(ForbiddenError):
   @property
   def message(self):
-    return 'You are already a member of the domain.'
+    return 'Failed to join the domain. You are already a member.'
 
 
 class InvalidJoinInvitationCodeError(ForbiddenError):
@@ -330,6 +330,24 @@ class UsageExceededError(ForbiddenError):
   @property
   def message(self):
     return 'Usage exceeded.'
+
+
+class DomainRoleAlreadyExistError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Role {1} already exists in domain {0}.'
+
+
+class ModifyBuiltinRoleError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Built-in roles cannot be modified.'
+
+
+class UserAlreadyDomainMemberError(ForbiddenError):
+  @property
+  def message(self):
+    return 'The user is already a member of the domain.'
 
 
 class UnknownArgumentError(BadRequestError):

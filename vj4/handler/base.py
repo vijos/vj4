@@ -70,9 +70,8 @@ class HandlerBase(setting.SettingMixin):
 
   def has_perm(self, perm):
     role = self.domain_user.get('role', builtin.ROLE_DEFAULT)
-    mask = self.domain['roles'].get(role, builtin.PERM_NONE)
+    mask = domain.get_all_roles(self.domain).get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
-            or self.domain['owner_uid'] == self.user['_id']
             or self.has_priv(builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def check_perm(self, perm):
@@ -91,9 +90,8 @@ class HandlerBase(setting.SettingMixin):
       return False
     # TODO(iceboy): Fix caller when dudoc=None is passed in.
     role = dudoc.get('role', builtin.ROLE_DEFAULT)
-    mask = self.domain['roles'].get(role, builtin.PERM_NONE)
+    mask = domain.get_all_roles(self.domain).get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm
-            or self.domain['owner_uid'] == udoc['_id']
             or self.udoc_has_priv(udoc, builtin.PRIV_MANAGE_ALL_DOMAIN))
 
   def udoc_has_priv(self, udoc, priv):
@@ -276,7 +274,14 @@ class Handler(web.View, HandlerBase):
 
   @property
   def prefer_json(self):
-    for d in accept.parse(self.request.headers.get('Accept')):
+    accept_header = self.request.headers.get('Accept')
+    try:
+      parse_result = accept.parse(accept_header)
+    except (ValueError, IndexError):
+      # the accept library throws bogus exceptions
+      _logger.warning('Unparsable accept header: %s', accept_header)
+      return False
+    for d in parse_result:
       if d.media_type == 'application/json':
         return True
       elif d.media_type == 'text/html' or d.all_types:

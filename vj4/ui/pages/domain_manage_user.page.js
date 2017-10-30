@@ -58,12 +58,16 @@ const page = new NamedPage('domain_manage_user', () => {
     }
     const user = addUserSelector.value();
     const role = addUserDialog.$dom.find('[name="role"]').val();
-    await request.post('', {
-      operation: 'set_user',
-      uid: user._id,
-      role,
-    });
-    window.location.reload();
+    try {
+      await request.post('', {
+        operation: 'add_user',
+        uid: user._id,
+        role,
+      });
+      window.location.reload();
+    } catch (error) {
+      Notification.error(error.message);
+    }
   }
 
   function ensureAndGetSelectedUsers() {
