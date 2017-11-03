@@ -23,7 +23,7 @@ OPS = {
 
 
 @argmethod.wrap
-async def inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int=1):
+async def inc(op: str, ident: str, period_secs: int, max_operations: int):
   coll = db.coll('opcount')
   cur_time = int(time.time())
   begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)
@@ -33,7 +33,7 @@ async def inc(op: str, ident: str, period_secs: int, max_operations: int, operat
                                                  'begin_at': begin_at,
                                                  'expire_at': expire_at,
                                                  op: {'$not': {'$gte': max_operations}}},
-                                         update={'$inc': {op: operations}},
+                                         update={'$inc': {op: 1}},
                                          upsert=True,
                                          return_document=ReturnDocument.AFTER)
     return doc
