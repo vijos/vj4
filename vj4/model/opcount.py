@@ -42,21 +42,6 @@ async def inc(op: str, ident: str, period_secs: int, max_operations: int, operat
 
 
 @argmethod.wrap
-async def get(op: str, ident: str, period_secs: int, max_operations: int):
-  coll = db.coll('opcount')
-  cur_time = int(time.time())
-  begin_at = datetime.datetime.utcfromtimestamp(cur_time - cur_time % period_secs)
-  expire_at = begin_at + datetime.timedelta(seconds=period_secs)
-  doc = await coll.find_one({'ident': ident,
-                             'begin_at': begin_at,
-                             'expire_at': expire_at})
-  if doc and op in doc:
-    return doc[op]
-  else:
-    return 0
-
-
-@argmethod.wrap
 async def ensure_indexes():
   coll = db.coll('opcount')
   await coll.create_index([('ident', 1),
