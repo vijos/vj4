@@ -8,19 +8,6 @@ from vj4 import db
 from vj4 import error
 from vj4.util import argmethod
 
-OPS = {
-  'contest_code': {
-    'op': 'contest_code',
-    'period_secs': 3600,
-    'max_operations': 60
-  },
-  'user_register': {
-    'op': 'user_register',
-    'period_secs': 3600,
-    'max_operations': 60
-  },
-}
-
 
 @argmethod.wrap
 async def inc(op: str, ident: str, period_secs: int, max_operations: int):

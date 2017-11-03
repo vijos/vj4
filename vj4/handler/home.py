@@ -65,6 +65,7 @@ class HomeSecurityHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('send_mail', 3600, 50)
   async def post_change_mail(self, *, current_password: str, mail: str):
     validator.check_mail(mail)
     udoc, mail_holder_udoc = await asyncio.gather(

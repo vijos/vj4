@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import functools
 import io
 import os.path
@@ -18,7 +17,6 @@ from vj4.model import user
 from vj4.model import document
 from vj4.model import domain
 from vj4.model import fs
-from vj4.model import opcount
 from vj4.model import oplog
 from vj4.model import record
 from vj4.model.adaptor import contest
@@ -245,8 +243,8 @@ class ProblemSubmitHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_record', 60, 100)
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str):
-    # TODO(iceboy): rate limit base on ip.
     # TODO(twd2): check status, eg. test, hidden problem, ...
     pdoc = await problem.get(self.domain_id, pid)
     if pdoc.get('hidden', False):
@@ -263,9 +261,9 @@ class ProblemPretestHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_record', 60, 100)
   async def post(self, *, pid: document.convert_doc_id, lang: str, code: str,
                  data_input: str, data_output: str):
-    # TODO(iceboy): rate limit base on ip.
     pdoc = await problem.get(self.domain_id, pid)
     # don't need to check hidden status
     # create zip file, TODO(twd2): check file size

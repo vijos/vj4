@@ -483,11 +483,11 @@ def multipart_argument(coro):
 
   return wrapped
 
-def limit_rate(op):
+def limit_rate(op, period_secs, max_operations):
   def decorate(coro):
     @functools.wraps(coro)
     async def wrapped(self, **kwargs):
-      await opcount.inc(**opcount.OPS[op], ident=self.remote_ip)
+      await opcount.inc(op, self.remote_ip, period_secs, max_operations)
       return await coro(self, **kwargs)
 
     return wrapped
