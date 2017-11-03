@@ -21,9 +21,6 @@ OPS = {
   },
 }
 
-PERIOD_REGISTER = 3600
-MAX_OP_REGISTER = 60
-
 
 @argmethod.wrap
 async def inc(op: str, ident: str, period_secs: int, max_operations: int, operations: int=1):
