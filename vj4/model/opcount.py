@@ -8,8 +8,6 @@ from vj4 import db
 from vj4 import error
 from vj4.util import argmethod
 
-PREFIX_IP = 'ip-'
-
 OPS = {
   'contest_code': {
     'op': 'contest_code',
