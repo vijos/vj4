@@ -198,9 +198,9 @@ class ContestDetailHandler(ContestMixin, base.OperationHandler):
 class ContestCodeHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_READ_RECORD_CODE)
-  @base.limit_rate('contest_code', 3600, 60)
   @base.route_argument
   @base.sanitize
+  @base.limit_rate('contest_code', 3600, 60)
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     rnames = {}
