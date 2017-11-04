@@ -12,7 +12,6 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
-from vj4.model import opcount
 from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import discussion

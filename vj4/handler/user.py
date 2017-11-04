@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-import random
 
 from vj4 import app
 from vj4 import constant
