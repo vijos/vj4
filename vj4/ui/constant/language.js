@@ -12,6 +12,7 @@ export const LANG_TEXTS = {
   hs: 'Haskell',
   js: 'JavaScript',
   go: 'Go',
+  rb: 'Ruby',
 };
 
 export const LANG_HIGHLIGHT_ID = {
@@ -26,6 +27,7 @@ export const LANG_HIGHLIGHT_ID = {
   hs: 'haskell',
   js: 'javascript',
   go: 'go',
+  rb: 'ruby',
 };
 
 export const LANG_CODEMIRROR_MODES = {
@@ -40,5 +42,6 @@ export const LANG_CODEMIRROR_MODES = {
   hs: 'text/x-haskell',
   js: 'text/javascript',
   go: 'text/x-go',
+  rb: 'text/x-ruby',
 };
 attachObjectMeta(LANG_CODEMIRROR_MODES, 'exportToPython', false);
