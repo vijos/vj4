@@ -12,7 +12,6 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
-from vj4.model import opcount
 from vj4.model import record
 from vj4.model import user
 from vj4.model.adaptor import discussion
@@ -198,9 +197,9 @@ class ContestDetailHandler(ContestMixin, base.OperationHandler):
 class ContestCodeHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.require_perm(builtin.PERM_READ_RECORD_CODE)
-  @base.limit_rate('contest_code')
   @base.route_argument
   @base.sanitize
+  @base.limit_rate('contest_code', 3600, 60)
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, tid)
     rnames = {}
@@ -298,9 +297,9 @@ class ContestDetailProblemSubmitHandler(ContestMixin, base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_record', 60, 100)
   async def post(self, *,
                  tid: objectid.ObjectId, pid: document.convert_doc_id, lang: str, code: str):
-    # TODO(iceboy): rate limit base on ip.
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
                                       problem.get(self.domain_id, pid))
     tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])

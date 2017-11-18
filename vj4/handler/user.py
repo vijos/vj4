@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-import random
 
 from vj4 import app
 from vj4 import constant
@@ -44,9 +43,9 @@ class UserRegisterHandler(base.Handler):
     self.render('user_register.html')
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
-  @base.limit_rate('user_register')
   @base.post_argument
   @base.sanitize
+  @base.limit_rate('send_mail', 3600, 50)
   async def post(self, *, mail: str):
     validator.check_mail(mail)
     if await user.get_by_mail(mail):
@@ -96,9 +95,9 @@ class UserLostpassHandler(base.Handler):
     self.render('user_lostpass.html')
 
   @base.require_priv(builtin.PRIV_REGISTER_USER)
-  @base.limit_rate('user_register')
   @base.post_argument
   @base.sanitize
+  @base.limit_rate('send_mail', 3600, 50)
   async def post(self, *, mail: str):
     validator.check_mail(mail)
     udoc = await user.get_by_mail(mail)
