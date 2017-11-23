@@ -21,6 +21,7 @@ import 'prismjs/components/prism-haskell';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-go';
 import 'prismjs/components/prism-ruby';
+import 'prismjs/components/prism-csharp';
 import 'prismjs/plugins/toolbar/prism-toolbar';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 

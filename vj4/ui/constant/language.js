@@ -3,6 +3,7 @@ import attachObjectMeta from './util/objectMeta';
 export const LANG_TEXTS = {
   c: 'C',
   cc: 'C++',
+  cs: 'C#',
   pas: 'Pascal',
   java: 'Java',
   py: 'Python',
@@ -18,6 +19,7 @@ export const LANG_TEXTS = {
 export const LANG_HIGHLIGHT_ID = {
   c: 'c',
   cc: 'cpp',
+  cs: 'csharp',
   pas: 'pascal',
   java: 'java',
   py: 'python',
@@ -33,6 +35,7 @@ export const LANG_HIGHLIGHT_ID = {
 export const LANG_CODEMIRROR_MODES = {
   c: 'text/x-csrc',
   cc: 'text/x-c++src',
+  cs: 'text/x-csharp',
   pas: 'text/x-pascal',
   java: 'text/x-java',
   py: 'text/x-python',
