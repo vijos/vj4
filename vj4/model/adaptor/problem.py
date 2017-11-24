@@ -288,7 +288,7 @@ async def set_hidden(domain_id: str, pid: document.convert_doc_id, hidden: bool)
 
 @argmethod.wrap
 async def get_data_list(last: int):
-  last_datetime = datetime.datetime.fromtimestamp(last)
+  last_datetime = datetime.datetime.utcfromtimestamp(last)
   # TODO(twd2): performance improve, more elegant
   coll = db.coll('document')
   pdocs = coll.find({'doc_type': document.TYPE_PROBLEM})
