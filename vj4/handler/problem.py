@@ -1,7 +1,7 @@
 import asyncio
 import functools
 import io
-import os.path
+import mimetypes
 import zipfile
 from bson import objectid
 from urllib import parse
@@ -624,9 +624,10 @@ class ProblemSettingsHandler(base.Handler):
 @app.route('/p/{pid}/upload', 'problem_upload')
 class ProblemUploadHandler(base.Handler):
   def get_content_type(self, filename):
-    if os.path.splitext(filename)[1].lower() != '.zip':
-      raise error.FileTypeNotAllowedError(filename)
-    return 'application/zip'
+    content_type = mimetypes.guess_type(filename)[0]
+    if not content_type or content_type not in ['application/zip', 'application/x-tar']:
+      raise error.FileTypeNotAllowedError(filename, content_type)
+    return content_type
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument

@@ -12,7 +12,7 @@ from vj4.model.adaptor import userfile
 
 FILE_MAX_LENGTH = 2 ** 27 # 128 MiB
 USER_QUOTA = 2 ** 27 # 128 MiB
-ALLOWED_MIMETYPE_PREFIX = ['image/', 'text/', 'application/zip']
+ALLOWED_MIMETYPE_PREFIX = ['image/', 'text/', 'application/zip', 'application/x-tar']
 
 
 @app.route('/fs/{secret:\w{40}}', 'fs_get', global_route=True)
