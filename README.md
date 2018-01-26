@@ -35,10 +35,38 @@
 
 ## Prerequisites
 
-* [Python 3.5+](https://www.python.org/downloads/)
-* [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
-* [Node.js 6.0+](https://nodejs.org/en/download/package-manager/)
+* [Python 3.5+]
+```bash
+sudo apt-get install python3 python3-pip
+sudo pip3 install --upgrade pip
+```
+* [MongoDB 3.0+]
+```bash
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+echo "deb [ arch=amd64] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list
+sudo apt-get install apt-transport-https
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+sudo service mongod start
+```
+* [Node.js 6.0+]
+```bash
+cd ~/
+git clone https://github.com/creationix/nvm.git .nvm
+cd ~/.nvm 
+git checkout v0.33.8
+. nvm.sh
+cat >>~/.bashrc<<EOF
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" 
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+EOF
+nvm install --lts=carbon
+```
 * [RabbitMQ](http://www.rabbitmq.com/)
+```bash
+sudo apt-get install rabbitmq-server
+```
 
 ## Install requirements
 
