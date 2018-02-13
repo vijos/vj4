@@ -1,6 +1,7 @@
 import logging
 import pkgutil
 from os import path
+from functools import reduce
 
 from vj4.util import argmethod
 
@@ -16,6 +17,10 @@ async def ensure_all_indexes():
       if 'ensure_indexes' in dir(module):
         _logger.info('Ensuring indexes for "%s".' % name)
         await module.ensure_indexes()
+
+
+async def dedupe(list):
+  return reduce(lambda x, y: x if y in x else x + [y], [[], ] + list)
 
 
 if __name__ == '__main__':
