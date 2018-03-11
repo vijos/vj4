@@ -3,14 +3,12 @@ sudo: false
 services:
 - rabbitmq
 - mongodb
-language: 
-- python
-- node_js
+language: python
 python:
 - 3.5
 - 3.6
 node_js:
-- 0.6
+- 8
 install:
 - pip install -r requirements.txt
 - node scripts/fix_abroad_shrinkwrap.js
