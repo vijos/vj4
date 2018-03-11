@@ -13,6 +13,7 @@ from vj4.model.adaptor import training
 from vj4.handler import base
 from vj4.util import json
 from vj4.util import pagination
+from vj4.util import misc
 
 
 def _parse_dag_json(dag):
@@ -29,8 +30,8 @@ def _parse_dag_json(dag):
         raise error.ValidationError('dag')
       new_node = {'_id': int(node['_id']),
                   'title': str(node.get('title', '')),
-                  'require_nids': list(set(map(int, node['require_nids']))),
-                  'pids': list(set(map(document.convert_doc_id, node['pids'])))}
+                  'require_nids': misc.dedupe(map(int, node['require_nids'])),
+                  'pids': misc.dedupe(map(document.convert_doc_id, node['pids']))}
       new_dag.append(new_node)
   except ValueError:
     raise error.ValidationError('dag') from None
