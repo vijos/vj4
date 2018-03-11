@@ -7,10 +7,11 @@ language: python
 python:
 - 3.5
 - 3.6
-node_js:
-- 8
+env:
+- NODE_VERSION="8"
 install:
 - pip install -r requirements.txt
+- nvm install $NODE_VERSION
 - node scripts/fix_abroad_shrinkwrap.js
 - npm install
 script:
