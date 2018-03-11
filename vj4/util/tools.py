@@ -1,7 +1,6 @@
 import logging
 import pkgutil
 from os import path
-from functools import reduce
 
 from vj4.util import argmethod
 
