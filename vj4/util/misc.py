@@ -94,3 +94,14 @@ def format_seconds(seconds):
 def base64_encode(str):
   encoded = base64.b64encode(str.encode())
   return encoded.decode()
+
+
+def dedupe(list):
+  result = []
+  result_set = set()
+  for i in list:
+    if i in result_set:
+      continue
+    result.append(i)
+    result_set.add(i)
+  return result

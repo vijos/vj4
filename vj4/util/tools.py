@@ -19,16 +19,5 @@ async def ensure_all_indexes():
         await module.ensure_indexes()
 
 
-def dedupe(list):
-  result = []
-  result_set = set()
-  for i in list:
-    if i in result_set:
-      continue
-    result.append(i)
-    result_set.add(i)
-  return result
-
-
 if __name__ == '__main__':
   argmethod.invoke_by_args()

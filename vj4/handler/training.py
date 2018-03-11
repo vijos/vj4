@@ -13,7 +13,7 @@ from vj4.model.adaptor import training
 from vj4.handler import base
 from vj4.util import json
 from vj4.util import pagination
-from vj4.util.tools import dedupe
+from vj4.util.misc import dedupe
 
 
 def _parse_dag_json(dag):
