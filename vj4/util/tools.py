@@ -19,8 +19,15 @@ async def ensure_all_indexes():
         await module.ensure_indexes()
 
 
-async def dedupe(list):
-  return reduce(lambda x, y: x if y in x else x + [y], [[], ] + list)
+def dedupe(list):
+  result = []
+  result_set = set()
+  for i in list:
+    if i in result_set:
+      continue
+    result.append(i)
+    result_set.add(i)
+  return result
 
 
 if __name__ == '__main__':
