@@ -111,9 +111,9 @@ class DomainJoinApplicationsHandler(base.Handler):
     roles = sorted(list(self.domain['roles'].keys()))
     roles_with_text = [(role, role) for role in roles]
     join_settings = domain.get_join_settings(self.domain, self.now)
-    expirations = vj4.constant.domain.JOIN_EXPIRATION_RANGE.copy()
+    expirations = constant.domain.JOIN_EXPIRATION_RANGE.copy()
     if not join_settings:
-      del expirations[vj4.constant.domain.JOIN_EXPIRATION_KEEP_CURRENT]
+      del expirations[constant.domain.JOIN_EXPIRATION_KEEP_CURRENT]
     self.render('domain_manage_join_applications.html', roles_with_text=roles_with_text,
                 join_settings=join_settings, expirations=expirations)
 
