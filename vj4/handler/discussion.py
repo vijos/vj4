@@ -132,7 +132,7 @@ class DiscussionCreateHandler(base.Handler):
       self.check_perm(builtin.PERM_HIGHLIGHT_DISCUSSION)
       flags['highlight'] = True
     did = await discussion.add(self.domain_id, node_or_dtuple, self.user['_id'], title, content,
-                               **flags)
+                               self.remote_ip, **flags)
     self.json_or_redirect(self.reverse_url('discussion_detail', did=did), did=did)
 
 
@@ -184,7 +184,8 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.limit_rate('add_discussion', 3600, 30)
   async def post_reply(self, *, did: document.convert_doc_id, content: str):
     ddoc = await discussion.get(self.domain_id, did)
-    await discussion.add_reply(self.domain_id, ddoc['doc_id'], self.user['_id'], content)
+    await discussion.add_reply(self.domain_id, ddoc['doc_id'], self.user['_id'], content,
+                               self.remote_ip)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -199,7 +200,8 @@ class DiscussionDetailHandler(base.OperationHandler):
                             content: str):
     ddoc = await discussion.get(self.domain_id, did)
     drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
-    await discussion.add_tail_reply(self.domain_id, drdoc['doc_id'], self.user['_id'], content)
+    await discussion.add_tail_reply(self.domain_id, drdoc['doc_id'], self.user['_id'], content,
+                                    self.remote_ip)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
