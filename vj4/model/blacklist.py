@@ -7,7 +7,9 @@ from vj4.util import argmethod
 async def add(ip: str):
   coll = db.coll('blacklist')
   expire_at = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-  await coll.insert_one({'_id': ip, 'expire_at': expire_at})
+  await coll.find_one_and_update({'_id': ip},
+                                 {'$set': {'expire_at': expire_at}},
+                                 upsert=True)
 
 
 @argmethod.wrap
