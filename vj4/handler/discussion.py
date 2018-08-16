@@ -114,6 +114,7 @@ class DiscussionCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_discussion', 3600, 10)
   async def post(self, *, doc_type: int=None, doc_id: str, title: str, content: str,
                  highlight: str=None):
     if doc_type is None:
