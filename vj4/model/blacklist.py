@@ -3,12 +3,14 @@ from vj4 import db
 from vj4.util import argmethod
 
 
+@argmethod.wrap
 async def add(ip: str):
   coll = db.coll('blacklist')
   expire_at = datetime.datetime.utcnow() + datetime.timedelta(days=365)
   await coll.insert_one({'_id': ip, 'expire_at': expire_at})
 
 
+@argmethod.wrap
 async def query(ip: str):
   coll = db.coll('blacklist')
   return await coll.find_one({'_id': ip})
