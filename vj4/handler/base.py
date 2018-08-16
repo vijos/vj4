@@ -57,8 +57,6 @@ class HandlerBase(setting.SettingMixin):
     self.translate = locale.get_translate(self.view_lang)
     self.datetime_span = functools.partial(_datetime_span, timezone=self.timezone)
     self.datetime_stamp = _datetime_stamp
-    if bdoc:
-      raise error.BlacklistedError(self.remote_ip)
     if not self.domain:
       not_found_domain_id = self.domain_id
       self.domain_id = builtin.DOMAIN_ID_SYSTEM
@@ -70,6 +68,8 @@ class HandlerBase(setting.SettingMixin):
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                         domain_name=self.domain['name'])
+    if bdoc:
+      raise error.BlacklistedError(self.remote_ip)
     if not self.GLOBAL and not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
       self.check_perm(builtin.PERM_VIEW)
 
