@@ -114,7 +114,7 @@ class DiscussionCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  @base.limit_rate('add_discussion', 3600, 10)
+  @base.limit_rate('add_discussion', 3600, 30)
   async def post(self, *, doc_type: int=None, doc_id: str, title: str, content: str,
                  highlight: str=None):
     if doc_type is None:
@@ -181,6 +181,7 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.route_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_discussion', 3600, 30)
   async def post_reply(self, *, did: document.convert_doc_id, content: str):
     ddoc = await discussion.get(self.domain_id, did)
     await discussion.add_reply(self.domain_id, ddoc['doc_id'], self.user['_id'], content)
@@ -191,6 +192,7 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.route_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_discussion', 3600, 30)
   async def post_tail_reply(self, *,
                             did: document.convert_doc_id,
                             drid: document.convert_doc_id,
