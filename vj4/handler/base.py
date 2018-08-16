@@ -13,6 +13,7 @@ from email import utils
 from vj4 import app
 from vj4 import error
 from vj4 import template
+from vj4.model import blacklist
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import fs
@@ -38,15 +39,17 @@ class HandlerBase(setting.SettingMixin):
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     if 'uid' in self.session:
       uid = self.session['uid']
-      self.user, self.domain, self.domain_user = await asyncio.gather(
-          user.get_by_uid(uid), domain.get(self.domain_id), domain.get_user(self.domain_id, uid))
+      self.user, self.domain, self.domain_user, bdoc = await asyncio.gather(
+          user.get_by_uid(uid), domain.get(self.domain_id),
+          domain.get_user(self.domain_id, uid), blacklist.get(self.remote_ip))
       if not self.user:
         raise error.UserNotFoundError(uid)
       if not self.domain_user:
         self.domain_user = {}
     else:
       self.user = builtin.USER_GUEST
-      self.domain = await domain.get(self.domain_id)
+      self.domain, bdoc = await asyncio.gather(
+          domain.get(self.domain_id), blacklist.get(self.remote_ip))
       self.domain_user = builtin.DOMAIN_USER_GUEST
     self.view_lang = self.get_setting('view_lang')
     # TODO(iceboy): UnknownTimeZoneError
@@ -54,6 +57,8 @@ class HandlerBase(setting.SettingMixin):
     self.translate = locale.get_translate(self.view_lang)
     self.datetime_span = functools.partial(_datetime_span, timezone=self.timezone)
     self.datetime_stamp = _datetime_stamp
+    if bdoc:
+      raise error.BlacklistedError(self.remote_ip)
     if not self.domain:
       not_found_domain_id = self.domain_id
       self.domain_id = builtin.DOMAIN_ID_SYSTEM

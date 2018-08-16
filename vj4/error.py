@@ -69,6 +69,12 @@ class ValidationError(ForbiddenError):
       return 'Field {0} or {1} validation failed.'
 
 
+class BlacklistedError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Address {0} is blacklisted.'
+
+
 class FileTooLongError(ValidationError):
   @property
   def message(self):

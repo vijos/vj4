@@ -11,9 +11,15 @@ async def add(ip: str):
 
 
 @argmethod.wrap
-async def query(ip: str):
+async def get(ip: str):
   coll = db.coll('blacklist')
   return await coll.find_one({'_id': ip})
+
+
+@argmethod.wrap
+async def delete(ip: str):
+  coll = db.coll('blacklist')
+  await coll.delete_one({'_id': ip})
 
 
 @argmethod.wrap
