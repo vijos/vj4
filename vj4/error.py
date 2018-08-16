@@ -366,3 +366,9 @@ class DatabaseVersionMismatchError(Error):
   @property
   def message(self):
     return 'Database version mismatch, got {0}, expect {1}. You need to invoke database upgrades.'
+
+
+class SendMailError(UserFacingError):
+  @property
+  def message(self):
+    return 'Failed to send mail to {0}.'
