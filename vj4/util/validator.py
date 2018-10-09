@@ -6,7 +6,7 @@ from vj4 import error
 
 UID_RE = re.compile(r'-?\d+')
 UNAME_RE = re.compile(r'[^\s\u3000](.{,254}[^\s\u3000])?')
-MAIL_RE = re.compile(r'\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*')
+MAIL_RE = re.compile(r'\w+([-+.\w]+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*')
 # TODO(twd2): unicode char
 DOMAIN_ID_RE = re.compile(r'[_A-Za-z][_0-9A-Za-z]{3,255}')
 ID_RE = re.compile(r'[^\\/\s\u3000]([^\\/\n\r]*[^\\/\s\u3000])?')
