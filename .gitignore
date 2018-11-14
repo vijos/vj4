@@ -39,3 +39,4 @@ vj4/ui/static/locale
 !.gitkeep
 
 data/
+.env

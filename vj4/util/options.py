@@ -23,7 +23,7 @@ class Options(object):
     if self._dirty:
       args_to_parse = sys.argv[1:]
 
-      for k,v in os.environ.items(): # hack for using environments start with `VJ_` as arguments
+      for k,v in os.environ.items(): # using environments start with `VJ_` as arguments
         if k.startswith("VJ_"):
           args_to_parse.append(f"--{k[3:].lower().replace('_','-')}")
           args_to_parse.append(v) # append: use environments first
