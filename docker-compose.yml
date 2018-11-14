@@ -1,0 +1,27 @@
+version: '3'
+services:
+  web:
+    build: .
+    image: vijos/vj4
+    restart: always
+    # set arguments for vj4.server below
+    command: vj4.server --db-host=mongodb --mq-host=rabbitmq --listen=http://0.0.0.0:80
+    ports:
+      - "80:80"
+    links:
+      - mongodb
+      - rabbitmq
+    depends_on:
+      - rabbitmq
+      - mongodb
+
+  rabbitmq:
+    restart: always
+    image: rabbitmq:latest
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq
+  mongodb:
+    restart: always
+    image: mongo:latest
+    volumes:
+      - ./data/mongodb:/data/db

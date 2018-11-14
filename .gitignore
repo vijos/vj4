@@ -37,3 +37,5 @@ vj4/ui/static/locale
 .webpackStats.json
 
 !.gitkeep
+
+data/
