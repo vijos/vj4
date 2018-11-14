@@ -1,7 +1,7 @@
 """A command line parsing module which mimics tornado's interface."""
 import argparse
 import sys
-
+import os
 
 class Options(object):
   _parser = argparse.ArgumentParser()
@@ -21,7 +21,14 @@ class Options(object):
 
   def __getattr__(self, item):
     if self._dirty:
-      self._parser.parse_known_args(args=sys.argv[1:], namespace=self._namespace)
+      args_to_parse = sys.argv[1:]
+
+      for k,v in os.environ.items(): # hack for using environments start with `VJ_` as arguments
+        if k.startswith("VJ_"):
+          args_to_parse.append(f"--{k[3:].lower().replace('_','-')}")
+          args_to_parse.append(v) # append: use environments first
+
+      self._parser.parse_known_args(args=args_to_parse, namespace=self._namespace)
       self._dirty = False
     return getattr(self._namespace, item)
 
