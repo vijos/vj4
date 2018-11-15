@@ -22,10 +22,14 @@ class Options(object):
   def __getattr__(self, item):
     if self._dirty:
       args_to_parse = []
-      for k,v in os.environ.items(): # using environments start with `VJ_` as arguments
+      for k, v in os.environ.items(): # using environments start with `VJ_` as arguments
         if k.startswith("VJ_"):
-          args_to_parse.append('--' + k[3:].lower().replace('_','-'))
-          args_to_parse.append(v)
+          if k == 'VJ_CMDLINE_FLAGS': # for setting bool flags like `--debug` or `--no-pretty`
+            for v in v.split(' '):
+              args_to_parse.append(v)
+          else:
+            args_to_parse.append('--' + k[3:].lower().replace('_','-'))
+            args_to_parse.append(v)
       for v in sys.argv[1:]:
         args_to_parse.append(v) # cmdline args can override one in env
 
