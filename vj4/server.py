@@ -16,9 +16,9 @@ from vj4.util import options
 options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
 options.define('prefork', default=1, help='Number of prefork workers.')
 options.define('syslog', default=False, help='Use syslog instead of stderr for logging.')
-options.define('listen_owner', default=None, help='Owner of the socket when server is listening to a unix socket.')
-options.define('listen_group', default=None, help='Group of the socket when server is listening to a unix socket.')
-options.define('listen_mode', default=None, help='File mode of the socket when server is listening to a unix socket.')
+options.define('listen_owner', help='Owner of the unix socket which is server listening to.')
+options.define('listen_group', help='Group of the unix socket which is server listening to.')
+options.define('listen_mode', help='File mode of the unix socket which is server listening to.')
 
 _logger = logging.getLogger(__name__)
 
@@ -45,7 +45,8 @@ def main():
     except FileNotFoundError:
       pass
     sock.bind(url.path)
-    shutil.chown(url.path, user=options.listen_owner, group=options.listen_group)
+    if options.listen_owner or options.listen_group:
+      shutil.chown(url.path, user=options.listen_owner, group=options.listen_group)
     if options.listen_mode is not None:
       os.chmod(url.path, int(options.listen_mode, 8))
   else:
