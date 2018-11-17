@@ -2,6 +2,7 @@ import atexit
 import coloredlogs
 import logging
 import os
+import shutil
 import signal
 import socket
 import sys
@@ -15,6 +16,9 @@ from vj4.util import options
 options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
 options.define('prefork', default=1, help='Number of prefork workers.')
 options.define('syslog', default=False, help='Use syslog instead of stderr for logging.')
+options.define('listen_owner', default='', help='Owner of the unix socket which is server listening to.')
+options.define('listen_group', default='', help='Group of the unix socket which is server listening to.')
+options.define('listen_mode', default='', help='File mode of the unix socket which is server listening to.')
 
 _logger = logging.getLogger(__name__)
 
@@ -41,6 +45,10 @@ def main():
     except FileNotFoundError:
       pass
     sock.bind(url.path)
+    if options.listen_owner or options.listen_group:
+      shutil.chown(url.path, user=options.listen_owner, group=options.listen_group)
+    if options.listen_mode:
+      os.chmod(url.path, int(options.listen_mode, 8))
   else:
     _logger.error('Invalid listening scheme %s', url.scheme)
     return 1
