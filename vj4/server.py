@@ -46,7 +46,9 @@ def main():
       pass
     sock.bind(url.path)
     if options.listen_owner or options.listen_group:
-      shutil.chown(url.path, user=options.listen_owner, group=options.listen_group)
+      shutil.chown(url.path,
+                   user=options.listen_owner if options.listen_owner else None,
+                   group=options.listen_group if options.listen_group else None)
     if options.listen_mode:
       os.chmod(url.path, int(options.listen_mode, 8))
   else:
