@@ -33,14 +33,22 @@
 - Secure (we are also CTF players)
 - Modern Architecture & User Interface
 
-## Prerequisites
+## Usage
+
+### Pre-built docker package
+
+There is pre-built docker package at `vijos/vj4`. This is maintained by [@moesoha](https://github.com/moesoha). Source code is available at https://github.com/vijos/vj4-docker.
+
+### Manual build
+
+#### Prerequisites
 
 * [Python 3.5+](https://www.python.org/downloads/)
 * [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
 * [Node.js 6.0+](https://nodejs.org/en/download/package-manager/)
 * [RabbitMQ](http://www.rabbitmq.com/)
 
-## Install requirements
+#### Install requirements
 
 In the root of the repository, where `requirements.txt` and `package.json` locates:
 
@@ -62,7 +70,7 @@ apt install python3-dev
 
 to solve the problem.
 
-### IP Geo-Location
+#### IP Geo-Location
 
 To enable IP geo-location translation, you need to obtain a [MaxMind GeoLite City DB](http://dev.maxmind.com/geoip/geoip2/geolite2/) and put it in the project root directory:
 
