@@ -363,11 +363,11 @@ def _get_csrf_token(session_id_binary):
 
 @functools.lru_cache()
 def _reverse_url(name, *, domain_id, **kwargs):
-  """DEPRECATED: This function is deprecated. But we don't have a new one yet."""
+  """DEPRECATED: This function is deprecated. But we don't have a replacement yet."""
+  kwargs = {key: str(value) for key, value in kwargs.items()}
   if domain_id != builtin.DOMAIN_ID_SYSTEM:
     name += '_with_domain_id'
     kwargs['domain_id'] = domain_id
-  kwargs = dict((key, str(value)) for key, value in kwargs.items())
   if kwargs:
     return str(app.Application().router[name].url_for(**kwargs))
   else:
