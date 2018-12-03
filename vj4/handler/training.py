@@ -113,8 +113,8 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
       f = {}
     owner_udoc, pdict = await asyncio.gather(
         user.get_by_uid(tdoc['owner_uid']),
-        problem.get_dict({'$in': [self.domain_id, 'system']}, pids, **f))
-    psdict = await problem.get_dict_status({'$in': [self.domain_id, 'system']},
+        problem.get_dict({'$in': [self.domain_id, builtin.DOMAIN_ID_SYSTEM]}, pids, **f))
+    psdict = await problem.get_dict_status({'$in': [self.domain_id, builtin.DOMAIN_ID_SYSTEM]},
                                            self.user['_id'], pdict.keys())
     done_pids = set()
     prog_pids = set()
@@ -179,7 +179,7 @@ class TrainingCreateHandler(base.Handler, TrainingMixin):
     if not pids:
       # empty plan
       raise error.ValidationError('dag')
-    pdocs = await problem.get_multi(domain_id={'$in': [self.domain_id, 'system']}, doc_id={'$in': pids},
+    pdocs = await problem.get_multi(domain_id={'$in': [self.domain_id, builtin.DOMAIN_ID_SYSTEM]}, doc_id={'$in': pids},
                                     fields={'doc_id': 1, 'hidden': 1}) \
                          .sort('doc_id', 1) \
                          .to_list()
@@ -227,7 +227,7 @@ class TrainingEditHandler(base.Handler, TrainingMixin):
     if not pids:
       # empty plan
       raise error.ValidationError('dag')
-    pdocs = await problem.get_multi(domain_id={'$in': [self.domain_id, 'system']}, doc_id={'$in': pids},
+    pdocs = await problem.get_multi(domain_id={'$in': [self.domain_id, builtin.DOMAIN_ID_SYSTEM]}, doc_id={'$in': pids},
                                     fields={'doc_id': 1, 'hidden': 1}) \
                          .sort('doc_id', 1) \
                          .to_list()
