@@ -2,6 +2,7 @@ import asyncio
 import datetime
 from bson import objectid
 from pymongo import ReturnDocument
+from typing import Union
 
 from vj4 import constant
 from vj4 import db
@@ -101,7 +102,7 @@ async def get_count(begin_id: objectid.ObjectId=None):
 
 
 @argmethod.wrap
-def get_problem_multi(domain_id: str, pid: document.convert_doc_id,
+def get_problem_multi(domain_id: Union[str, dict], pid: document.convert_doc_id,
                       get_hidden: bool=False, type: int=None, *, fields=None):
   coll = db.coll('record')
   query = {'hidden': False if not get_hidden else {'$gte': False},
@@ -112,7 +113,7 @@ def get_problem_multi(domain_id: str, pid: document.convert_doc_id,
 
 
 @argmethod.wrap
-def get_user_in_problem_multi(uid: int, domain_id: str, pid: document.convert_doc_id,
+def get_user_in_problem_multi(uid: int, domain_id: Union[str, dict], pid: document.convert_doc_id,
                               get_hidden: bool=False, type: int=None, *, fields=None):
   coll = db.coll('record')
   query = {'hidden': False if not get_hidden else {'$gte': False},

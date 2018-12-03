@@ -1,6 +1,7 @@
 import itertools
 from bson import objectid
 from pymongo import ReturnDocument
+from typing import Union
 
 from vj4 import db
 from vj4.util import argmethod
@@ -39,7 +40,7 @@ def convert_doc_id(doc_id):
 
 
 @argmethod.wrap
-async def add(domain_id: str, content: str, owner_uid: int,
+async def add(domain_id: Union[str, dict], content: str, owner_uid: int,
               doc_type: int, doc_id: convert_doc_id = None,
               parent_doc_type: int = None, parent_doc_id: convert_doc_id = None, **kwargs):
   """Add a document. Returns the document id."""
@@ -60,14 +61,14 @@ async def add(domain_id: str, content: str, owner_uid: int,
 
 
 @argmethod.wrap
-async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id, fields=None):
+async def get(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, fields=None):
   coll = db.coll('document')
   return await coll.find_one({'domain_id': domain_id,
                               'doc_type': doc_type,
                               'doc_id': doc_id}, projection=fields)
 
 
-async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
+async def set(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, **kwargs):
   coll = db.coll('document')
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
@@ -77,7 +78,7 @@ async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
   return doc
 
 
-async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
+async def delete(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id):
   # TODO(twd2): delete status?
   coll = db.coll('document')
   return await coll.delete_one({'domain_id': domain_id,
@@ -85,7 +86,7 @@ async def delete(domain_id: str, doc_type: int, doc_id: convert_doc_id):
                                 'doc_id': doc_id})
 
 
-async def delete_multi(domain_id: str, doc_type: int, **kwargs):
+async def delete_multi(domain_id: Union[str, dict], doc_type: int, **kwargs):
   # TODO(twd2): delete status?
   coll = db.coll('document')
   return await coll.delete_many({'domain_id': domain_id,
@@ -98,7 +99,7 @@ def get_multi(*, fields=None, **kwargs):
   return coll.find(kwargs, projection=fields)
 
 
-async def get_dict(domain_id: str, dtuples, *, fields=None):
+async def get_dict(domain_id: Union[str, dict], dtuples, *, fields=None):
   query = {'$or': []}
   for doc_type, doc_tuples in itertools.groupby(sorted(dtuples), key=lambda e: e[0]):
     query['$or'].append({'domain_id': domain_id, 'doc_type': doc_type,
@@ -114,7 +115,7 @@ async def get_dict(domain_id: str, dtuples, *, fields=None):
 
 
 @argmethod.wrap
-async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, value: int):
+async def inc(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, key: str, value: int):
   coll = db.coll('document')
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
                                                'doc_type': doc_type,
@@ -125,7 +126,7 @@ async def inc(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str, v
 
 
 @argmethod.wrap
-async def inc_and_set(domain_id: str, doc_type: int, doc_id: convert_doc_id,
+async def inc_and_set(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id,
                       inc_key: str, inc_value: int, set_key: str, set_value: lambda _: _):
   coll = db.coll('document')
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
@@ -138,7 +139,7 @@ async def inc_and_set(domain_id: str, doc_type: int, doc_id: convert_doc_id,
 
 
 @argmethod.wrap
-async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
+async def push(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, key: str,
                content: str, owner_uid: int, **kwargs):
   coll = db.coll('document')
   obj_id = objectid.ObjectId()
@@ -154,7 +155,7 @@ async def push(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
 
 
 @argmethod.wrap
-async def delete_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
+async def delete_sub(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, key: str,
                      sub_id: objectid.ObjectId):
   coll = db.coll('document')
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
@@ -166,7 +167,7 @@ async def delete_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key:
 
 
 @argmethod.wrap
-async def get_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
+async def get_sub(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, key: str,
                   sub_id: objectid.ObjectId):
   coll = db.coll('document')
   doc = await coll.find_one({'domain_id': domain_id,
@@ -182,7 +183,7 @@ async def get_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: st
 
 
 @argmethod.wrap
-async def set_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: str,
+async def set_sub(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, key: str,
                   sub_id: objectid.ObjectId, **kwargs):
   coll = db.coll('document')
   mod = dict(('{0}.$.{1}'.format(key, k), v) for k, v in kwargs.items())
@@ -196,7 +197,7 @@ async def set_sub(domain_id: str, doc_type: int, doc_id: convert_doc_id, key: st
 
 
 @argmethod.wrap
-async def add_to_set(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: str,
+async def add_to_set(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, set_key: str,
                      content):
   coll = db.coll('document')
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
@@ -208,7 +209,7 @@ async def add_to_set(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_
 
 
 @argmethod.wrap
-async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: str,
+async def pull(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, set_key: str,
                contents):
   coll = db.coll('document')
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
@@ -220,7 +221,7 @@ async def pull(domain_id: str, doc_type: int, doc_id: convert_doc_id, set_key: s
 
 
 @argmethod.wrap
-async def get_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int,
+async def get_status(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, uid: int,
                      *, fields=None):
   coll = db.coll('document.status')
   return await coll.find_one({'domain_id': domain_id, 'doc_type': doc_type,
@@ -246,7 +247,7 @@ async def set_status(domain_id, doc_type, doc_id, uid, **kwargs):
 
 
 @argmethod.wrap
-async def set_if_not_status(domain_id: str, doc_type: int, doc_id: convert_doc_id,
+async def set_if_not_status(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id,
                             uid: int, key: str, value: int, if_not: int, **kwargs):
   coll = db.coll('document.status')
   return await coll.find_one_and_update(filter={'domain_id': domain_id,
@@ -260,7 +261,7 @@ async def set_if_not_status(domain_id: str, doc_type: int, doc_id: convert_doc_i
 
 
 @argmethod.wrap
-async def capped_inc_status(domain_id: str,
+async def capped_inc_status(domain_id: Union[str, dict],
                             doc_type: int,
                             doc_id: convert_doc_id,
                             uid: int,
@@ -286,7 +287,7 @@ async def capped_inc_status(domain_id: str,
 
 
 @argmethod.wrap
-async def inc_status(domain_id: str, doc_type: int, doc_id: convert_doc_id, uid: int,
+async def inc_status(domain_id: Union[str, dict], doc_type: int, doc_id: convert_doc_id, uid: int,
                      key: str, value: int):
   coll = db.coll('document.status')
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,

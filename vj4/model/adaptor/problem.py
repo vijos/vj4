@@ -4,6 +4,7 @@ import itertools
 import random
 from bson import objectid
 from pymongo import errors
+from typing import Union
 
 from vj4 import constant
 from vj4 import db
@@ -47,7 +48,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
 
 
 @argmethod.wrap
-async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
+async def get(domain_id: Union[str, dict], pid: document.convert_doc_id, uid: int = None):
   pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
   if not pdoc:
     raise error.ProblemNotFoundError(domain_id, pid)
@@ -73,7 +74,7 @@ async def edit(domain_id: str, pid: document.convert_doc_id, **kwargs):
 
 
 @argmethod.wrap
-async def count(domain_id: str, **kwargs):
+async def count(domain_id: Union[str, dict], **kwargs):
   return await document.get_multi(domain_id=domain_id, doc_type=document.TYPE_PROBLEM,
                                   **kwargs).count()
 
@@ -83,7 +84,7 @@ def get_multi(*, fields=None, **kwargs):
 
 
 @argmethod.wrap
-async def get_random_id(domain_id: str, **kwargs):
+async def get_random_id(domain_id: Union[str, dict], **kwargs):
   pdocs = document.get_multi(domain_id=domain_id, doc_type=document.TYPE_PROBLEM, **kwargs)
   pcount = await pdocs.count()
   if pcount:
@@ -116,7 +117,7 @@ async def get_dict_multi_domain(pdom_and_ids, *, fields=None):
 
 
 @argmethod.wrap
-async def get_status(domain_id: str, pid: document.convert_doc_id, uid: int, fields=None):
+async def get_status(domain_id: Union[str, dict], pid: document.convert_doc_id, uid: int, fields=None):
   return await document.get_status(domain_id, document.TYPE_PROBLEM, pid, uid, fields=fields)
 
 
@@ -153,7 +154,7 @@ async def add_solution(domain_id: str, pid: document.convert_doc_id, uid: int, c
 
 
 @argmethod.wrap
-async def get_solution(domain_id: str, psid: document.convert_doc_id, pid=None):
+async def get_solution(domain_id: Union[str, dict], psid: document.convert_doc_id, pid=None):
   psdoc = await document.get(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
   if not psdoc or (pid and psdoc['parent_doc_id'] != pid):
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM_SOLUTION, psid)
@@ -169,7 +170,7 @@ async def set_solution(domain_id: str, psid: document.convert_doc_id, content: s
   return psdoc
 
 
-def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None):
+def get_multi_solution(domain_id: Union[str, dict], pid: document.convert_doc_id, fields=None):
   return document.get_multi(domain_id=domain_id,
                             doc_type=document.TYPE_PROBLEM_SOLUTION,
                             parent_doc_type=document.TYPE_PROBLEM,
@@ -178,7 +179,7 @@ def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None
                  .sort([('vote', -1), ('doc_id', -1)])
 
 
-def get_multi_solution_by_uid(domain_id: str, uid: int, fields=None):
+def get_multi_solution_by_uid(domain_id: Union[str, dict], uid: int, fields=None):
   return document.get_multi(domain_id=domain_id,
                             doc_type=document.TYPE_PROBLEM_SOLUTION,
                             owner_uid=uid,
@@ -195,7 +196,7 @@ async def delete_solution(domain_id: str, psid: document.convert_doc_id):
 
 
 @argmethod.wrap
-async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
+async def get_list_solution(domain_id: Union[str, dict], pid: document.convert_doc_id,
                             fields=None, skip: int = 0, limit: int = 0):
   return await document.get_multi(domain_id=domain_id,
                                   doc_type=document.TYPE_PROBLEM_SOLUTION,
@@ -209,7 +210,7 @@ async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
 
 
 @argmethod.wrap
-async def get_solution_status(domain_id: str, psid: document.convert_doc_id, uid: int):
+async def get_solution_status(domain_id: Union[str, dict], psid: document.convert_doc_id, uid: int):
   return await document.get_status(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, uid)
 
 
@@ -246,7 +247,7 @@ async def reply_solution(domain_id: str, psid: document.convert_doc_id, uid: int
 
 
 @argmethod.wrap
-def get_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: objectid.ObjectId):
+def get_solution_reply(domain_id: Union[str, dict], psid: document.convert_doc_id, psrid: objectid.ObjectId):
   return document.get_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid)
 
 

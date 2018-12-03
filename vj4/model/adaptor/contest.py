@@ -5,6 +5,7 @@ import itertools
 
 from bson import objectid
 from pymongo import errors
+from typing import Union
 
 from vj4 import constant
 from vj4 import error
@@ -260,7 +261,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, rule: in
 
 
 @argmethod.wrap
-async def get(domain_id: str, tid: objectid.ObjectId):
+async def get(domain_id: Union[str, dict], tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
   if not tdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_CONTEST, tid)
@@ -281,7 +282,7 @@ async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
   return await document.set(domain_id, document.TYPE_CONTEST, tid, **kwargs)
 
 
-def get_multi(domain_id: str, fields=None, **kwargs):
+def get_multi(domain_id: Union[str, dict], fields=None, **kwargs):
   # TODO(twd2): projection.
   return document.get_multi(domain_id=domain_id,
                             doc_type=document.TYPE_CONTEST,
@@ -302,7 +303,7 @@ async def attend(domain_id: str, tid: objectid.ObjectId, uid: int):
 
 
 @argmethod.wrap
-async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=None):
+async def get_status(domain_id: Union[str, dict], tid: objectid.ObjectId, uid: int, fields=None):
   return await document.get_status(domain_id, document.TYPE_CONTEST, doc_id=tid,
                                    uid=uid, fields=fields)
 
@@ -322,7 +323,7 @@ async def get_dict_status(domain_id, uid, tids, *, fields=None):
 
 
 @argmethod.wrap
-async def get_and_list_status(domain_id: str, tid: objectid.ObjectId, fields=None):
+async def get_and_list_status(domain_id: Union[str, dict], tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.
   tdoc = await get(domain_id, tid)
   tsdocs = await document.get_multi_status(domain_id=domain_id,
@@ -341,7 +342,7 @@ def _get_status_journal(tsdoc):
 
 
 @argmethod.wrap
-async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
+async def update_status(domain_id: Union[str, dict], tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
                         pid: document.convert_doc_id, accept: bool, score: int):
   """This method returns None when the modification has been superseded by a parallel operation."""
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
@@ -359,7 +360,7 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
 
 
 @argmethod.wrap
-async def recalc_status(domain_id: str, tid: objectid.ObjectId):
+async def recalc_status(domain_id: Union[str, dict], tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, document.TYPE_CONTEST, tid)
   async with document.get_multi_status(domain_id=domain_id,
                                        doc_type=document.TYPE_CONTEST,

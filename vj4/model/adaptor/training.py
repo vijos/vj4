@@ -1,5 +1,6 @@
 from bson import objectid
 from pymongo import errors
+from typing import Union
 
 from vj4 import error
 from vj4.model import document
@@ -22,7 +23,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int, dag=[], 
 
 
 @argmethod.wrap
-async def get(domain_id: str, tid: objectid.ObjectId):
+async def get(domain_id: Union[str, dict], tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, document.TYPE_TRAINING, tid)
   if not tdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_TRAINING, tid)
@@ -46,7 +47,7 @@ async def edit(domain_id: str, tid: objectid.ObjectId, **kwargs):
 
 
 @argmethod.wrap
-async def get_status(domain_id: str, tid: objectid.ObjectId, uid: int, fields=None):
+async def get_status(domain_id: Union[str, dict], tid: objectid.ObjectId, uid: int, fields=None):
   return await document.get_status(domain_id, document.TYPE_TRAINING, tid, uid, fields=fields)
 
 
@@ -68,7 +69,7 @@ async def get_dict_status(domain_id, uid, tids, *, fields=None):
   return result
 
 
-def get_multi(domain_id: str, *, fields=None, **kwargs):
+def get_multi(domain_id: Union[str, dict], *, fields=None, **kwargs):
   return document.get_multi(domain_id=domain_id, doc_type=document.TYPE_TRAINING,
                             fields=fields, **kwargs)
 
