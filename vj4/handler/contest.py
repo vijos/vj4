@@ -87,14 +87,14 @@ class ContestCommonOperationMixin(object):
     if not self.can_show_scoreboard(tdoc):
       raise error.ContestScoreboardHiddenError(self.domain_id, tid)
     udict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
-                                        problem.get_dict(self.domain_id, tdoc['pids']))
+                                        problem.get_dict({'$in': [self.domain_id, 'system']}, tdoc['pids']))
     ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
     rows = contest.RULES[tdoc['rule']].scoreboard_func(is_export, self.translate, tdoc,
                                                        ranked_tsdocs, udict, pdict)
     return tdoc, rows
 
   async def verify_problems(self, pids):
-    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
+    pdocs = await problem.get_multi(domain_id={'$in': [self.domain_id, 'system']}, doc_id={'$in': pids},
                                     fields={'doc_id': 1}) \
                          .sort('doc_id', 1) \
                          .to_list()
@@ -107,7 +107,10 @@ class ContestCommonOperationMixin(object):
 
   async def hide_problems(self, pids):
     for pid in pids:
-      await problem.set_hidden(self.domain_id, pid, True)
+      try:
+        await problem.set_hidden(self.domain_id, pid, True)
+      except error.DocumentNotFoundError: # the existance is checked previously so it's safe to catch this error
+        pass
 
 
 class ContestMixin(ContestStatusMixin, ContestVisibilityMixin, ContestCommonOperationMixin):
@@ -148,7 +151,7 @@ class ContestDetailHandler(ContestMixin, base.OperationHandler):
     tdoc = await contest.get(self.domain_id, tid)
     tsdoc, pdict = await asyncio.gather(
         contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
-        problem.get_dict(self.domain_id, tdoc['pids']))
+        problem.get_dict({'$in': [self.domain_id, 'system']}, tdoc['pids']))
     psdict = dict()
     rdict = dict()
     if tsdoc:
@@ -229,7 +232,7 @@ class ContestDetailProblemHandler(ContestMixin, base.Handler):
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
-                                      problem.get(self.domain_id, pid, uid))
+                                      problem.get({'$in': [self.domain_id, 'system']}, pid, uid))
     tsdoc, udoc = await asyncio.gather(
         contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
         user.get_by_uid(tdoc['owner_uid']))
@@ -259,7 +262,7 @@ class ContestDetailProblemSubmitHandler(ContestMixin, base.Handler):
   async def get(self, *, tid: objectid.ObjectId, pid: document.convert_doc_id):
     uid = self.user['_id'] if self.has_priv(builtin.PRIV_USER_PROFILE) else None
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
-                                      problem.get(self.domain_id, pid, uid))
+                                      problem.get({'$in': [self.domain_id, 'system']}, pid, uid))
     tsdoc, udoc = await asyncio.gather(
         contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id']),
         user.get_by_uid(tdoc['owner_uid']))
@@ -301,7 +304,7 @@ class ContestDetailProblemSubmitHandler(ContestMixin, base.Handler):
   async def post(self, *,
                  tid: objectid.ObjectId, pid: document.convert_doc_id, lang: str, code: str):
     tdoc, pdoc = await asyncio.gather(contest.get(self.domain_id, tid),
-                                      problem.get(self.domain_id, pid))
+                                      problem.get({'$in': [self.domain_id, 'system']}, pid))
     tsdoc = await contest.get_status(self.domain_id, tdoc['doc_id'], self.user['_id'])
     if not tsdoc or tsdoc.get('attend') != 1:
       raise error.ContestNotAttendedError(tdoc['doc_id'])
