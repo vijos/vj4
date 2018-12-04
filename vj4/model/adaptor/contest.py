@@ -209,6 +209,8 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudi
                 'raw': udict[tsdoc['uid']]})
     row.append({'type': 'name_alias',
                 'value': dudict[tsdoc['uid']]['name_alias'] if 'name_alias' in dudict[tsdoc['uid']] else ''})
+    row.append({'type': 'string',
+                'value': tsdoc.get('penalty_score', 0)})
     if is_export: row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
     row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
     for pid in tdoc['pids']:
