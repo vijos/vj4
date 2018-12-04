@@ -14,8 +14,8 @@ from vj4.util import locale
 Setting = functools.partial(
     collections.namedtuple('Setting',
                            ['family', 'key', 'factory', 'range', 'default', 'ui', 'name', 'desc',
-                            'image_class']),
-    range=None, default=None, ui='text', name='', desc='', image_class='')
+                            'image_class', 'unique']),
+    range=None, default=None, ui='text', name='', desc='', image_class='', unique=False)
 
 # Setting keys should not duplicate with user keys or session keys.
 PREFERENCE_SETTINGS = [
@@ -60,10 +60,11 @@ ACCOUNT_SETTINGS = [
             desc='Choose the background image in your profile page.',
             image_class='user-profile-bg--thumbnail-{0}')]
 
+
 DOMAIN_USER_SETTINGS = [
     Setting('setting_info_domain', 'domain_user_name_alias', str,
-            name='Alias/Real name')]
-DOMAIN_USER_SETTINGS_KEYS = set([s.key for s in DOMAIN_USER_SETTINGS])
+            name='Alias/Real name', unique=True)]
+DOMAIN_USER_SETTINGS_KEYS = set(s.key for s in DOMAIN_USER_SETTINGS)
 
 SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_USER_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
@@ -88,20 +89,39 @@ class SettingMixin(object):
   async def set_settings(self, **kwargs):
     user_setting = {}
     domain_user_setting = {}
+    user_unique_check = {}
+    domain_user_unique_check = {}
     for key, value in kwargs.items():
       if key not in SETTINGS_BY_KEY:
         raise error.UnknownFieldError(key)
       setting = SETTINGS_BY_KEY[key]
-      kwargs[key] = setting.factory(value)
+      kwargs[key] = setting.factory(value.strip())
+
       if key in DOMAIN_USER_SETTINGS_KEYS:
-        domain_user_setting[key.replace('domain_user_', '')] = kwargs[key]
+        dbkey = key.replace('domain_user_', '')
+        domain_user_setting[dbkey] = kwargs[key]
+        if setting.unique:
+          domain_user_unique_check[dbkey] = kwargs[key]
       else:
         user_setting[key] = kwargs[key]
+        if setting.unique:
+          user_unique_check[dbkey] = kwargs[key]
       if setting.range and kwargs[key] not in setting.range:
         raise error.ValidationError(key)
+    if user_unique_check:
+      not_unique = await user.is_unique(self.user['_id'], user_unique_check)
+      if not_unique:
+        raise error.DataNotUniqueError(user_unique_check[not_unique])
+    if domain_user_unique_check:
+      not_unique = await domain.is_unique(self.domain_id, self.user['_id'], domain_user_unique_check)
+      if not_unique:
+        raise error.DataNotUniqueError(domain_user_unique_check[not_unique])
+
     if self.has_priv(builtin.PRIV_USER_PROFILE):
-      await user.set_by_uid(self.user['_id'], **user_setting)
-      await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
+      if user_setting:
+        await user.set_by_uid(self.user['_id'], **user_setting)
+      if domain_user_setting:
+        await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
     else:
       await self.update_session(**kwargs)
 

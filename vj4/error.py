@@ -372,3 +372,9 @@ class SendMailError(UserFacingError):
   @property
   def message(self):
     return 'Failed to send mail to {0}.'
+
+
+class DataNotUniqueError(ForbiddenError):
+  @property
+  def message(self):
+    return '`{0}` already exists.'

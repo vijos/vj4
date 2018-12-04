@@ -127,7 +127,20 @@ class UserChangemailWithCodeHandler(base.Handler):
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    self.render('home_settings.html', category='account', settings=setting.DOMAIN_USER_SETTINGS + setting.ACCOUNT_SETTINGS)
+    self.render('home_settings.html', category='account', settings=setting.ACCOUNT_SETTINGS)
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.post_argument
+  @base.require_csrf_token
+  async def post(self, **kwargs):
+    await self.set_settings(**kwargs)
+    self.json_or_redirect(self.url)
+
+
+@app.route('/home/at_domain', 'home_at_domain', global_route=True)
+class HomeAccountHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  async def get(self):
+    self.render('home_settings.html', category='at_domain', settings=setting.DOMAIN_USER_SETTINGS)
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument
   @base.require_csrf_token
