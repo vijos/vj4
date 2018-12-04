@@ -36,7 +36,7 @@
             {%- for column in row -%}
               <td class="col--{{ rows[0][loop.index0]['type'] }}">
               {% if column['type'] == 'user' %}
-                {{ user.render_inline(column['raw'], dudoc=dudict[column['raw']['_id']], badge=false) }}
+                {{ user.render_inline(column['raw'], badge=false) }}
               {% elif column['type'] == 'record' %}
               {% if column['raw'] %}
                 <a href="{{ reverse_url('record_detail', rid=column['raw']) }}">{{ column['value']|nl2br }}</a>
