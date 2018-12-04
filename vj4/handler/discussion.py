@@ -74,8 +74,8 @@ class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
     uids = set(ddoc['owner_uid'] for ddoc in ddocs)
     if 'owner_uid' in vnode:
       uids.add(vnode['owner_uid'])
-    udict = await user.get_dict(uids)
-    dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=uids),
+    udict, dudict = await asyncio.gather(user.get_dict(uids),
+                                         domain.get_dict_user_by_uid(self.domain_id, uids))
     vndict = {node_or_dtuple: vnode}
     vncontext = {} # TODO(twd2): eg. psdoc, tsdoc, ...
     path_components = self.build_path(
