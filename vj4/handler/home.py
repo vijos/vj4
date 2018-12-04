@@ -127,8 +127,10 @@ class UserChangemailWithCodeHandler(base.Handler):
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    self.render('home_settings.html', category='account', settings=setting.ACCOUNT_SETTINGS)
-
+    settings = setting.ACCOUNT_SETTINGS.copy()
+    if self.domain_id != builtin.DOMAIN_ID_SYSTEM:
+      settings += setting.DOMAIN_USER_SETTINGS
+    self.render('home_settings.html', category='account', settings=settings)
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument
   @base.require_csrf_token

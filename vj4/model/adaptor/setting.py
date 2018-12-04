@@ -6,6 +6,7 @@ from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
 from vj4.model import user
+from vj4.model import domain
 from vj4.model.adaptor import defaults
 from vj4.util import options
 from vj4.util import locale
@@ -59,7 +60,12 @@ ACCOUNT_SETTINGS = [
             desc='Choose the background image in your profile page.',
             image_class='user-profile-bg--thumbnail-{0}')]
 
-SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS
+DOMAIN_USER_SETTINGS = [
+    Setting('setting_info_domain', 'domain_user_name_alias', str,
+            name='Alias/Real name')]
+DOMAIN_USER_SETTINGS_KEYS = [s.key for s in DOMAIN_USER_SETTINGS]
+
+SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_USER_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
 
 
@@ -67,6 +73,8 @@ class SettingMixin(object):
   def get_setting(self, key):
     if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.user:
       return self.user[key]
+    if self.has_priv(builtin.PRIV_USER_PROFILE) and key.replace('domain_user_', '') in self.domain_user:
+      return self.domain_user[key.replace('domain_user_', '')]
     if self.session and key in self.session:
       return self.session[key]
     setting = SETTINGS_BY_KEY[key]
@@ -78,15 +86,23 @@ class SettingMixin(object):
     return setting.factory()
 
   async def set_settings(self, **kwargs):
+    user_setting = {}
+    domain_user_setting = {}
     for key, value in kwargs.items():
       if key not in SETTINGS_BY_KEY:
         raise error.UnknownFieldError(key)
       setting = SETTINGS_BY_KEY[key]
       kwargs[key] = setting.factory(value)
+      if key in DOMAIN_USER_SETTINGS_KEYS:
+        domain_user_setting[key.replace('domain_user_', '')] = kwargs[key]
+      else:
+        user_setting[key] = kwargs[key]
       if setting.range and kwargs[key] not in setting.range:
         raise error.ValidationError(key)
     if self.has_priv(builtin.PRIV_USER_PROFILE):
-      await user.set_by_uid(self.user['_id'], **kwargs)
+      await user.set_by_uid(self.user['_id'], **user_setting)
+      if self.domain_id != builtin.DOMAIN_ID_SYSTEM:
+        await domain.set_user(domain_id=self.domain_id, uid=self.domain_user['uid'], **domain_user_setting)
     else:
       await self.update_session(**kwargs)
 
