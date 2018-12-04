@@ -63,7 +63,7 @@ ACCOUNT_SETTINGS = [
 DOMAIN_USER_SETTINGS = [
     Setting('setting_info_domain', 'domain_user_name_alias', str,
             name='Alias/Real name')]
-DOMAIN_USER_SETTINGS_KEYS = [s.key for s in DOMAIN_USER_SETTINGS]
+DOMAIN_USER_SETTINGS_KEYS = set([s.key for s in DOMAIN_USER_SETTINGS])
 
 SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_USER_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
@@ -101,8 +101,7 @@ class SettingMixin(object):
         raise error.ValidationError(key)
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       await user.set_by_uid(self.user['_id'], **user_setting)
-      if self.domain_id != builtin.DOMAIN_ID_SYSTEM:
-        await domain.set_user(domain_id=self.domain_id, uid=self.domain_user['uid'], **domain_user_setting)
+      await domain.set_user(domain_id=self.domain_id, uid=self.domain_user['uid'], **domain_user_setting)
     else:
       await self.update_session(**kwargs)
 
