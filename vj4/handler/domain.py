@@ -63,10 +63,11 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
     (tdocs, tsdict), (trdocs, trsdict), (ddocs, vndict) = await asyncio.gather(
         self.prepare_contest(), self.prepare_training(), self.prepare_discussion())
     udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
+    dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=(ddoc['owner_uid'] for ddoc in ddocs))
     self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id),
                 tdocs=tdocs, tsdict=tsdict, trdocs=trdocs, trsdict=trsdict,
                 ddocs=ddocs, vndict=vndict,
-                udict=udict, datetime_stamp=self.datetime_stamp)
+                udict=udict, dudict=dudict, datetime_stamp=self.datetime_stamp)
 
 
 @app.route('/domain', 'domain_manage')
@@ -216,7 +217,7 @@ class DomainUserHandler(base.OperationHandler):
     rudocs = collections.defaultdict(list)
     async for dudoc in domain.get_multi_user(domain_id=self.domain_id,
                                              role={'$gte': ''},
-                                             fields={'uid': 1, 'role': 1}):
+                                             fields={'uid': 1, 'role': 1, 'name_alias': 1}):
       if 'role' in dudoc:
         uids.append(dudoc['uid'])
         rudocs[dudoc['role']].append(dudoc)

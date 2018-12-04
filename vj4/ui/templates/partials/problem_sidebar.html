@@ -1,6 +1,6 @@
 {% if tdoc %}
   {% include "partials/problem_sidebar_contest.html" %}
-  {% with owner_udoc=udoc %}
+  {% with owner_udoc=udoc, owner_dudoc=dudoc %}
     {% include "partials/contest_sidebar.html" %}
   {% endwith %}
 {% else %}

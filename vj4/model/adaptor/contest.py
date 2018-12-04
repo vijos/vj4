@@ -84,7 +84,7 @@ def _oi_equ_func(a, b):
   return a.get('score', 0) == b.get('score', 0)
 
 
-def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
+def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
@@ -104,8 +104,10 @@ def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
+    use_name_alias = dudict and dudict[tsdoc['uid']]['name_alias']
     row.append({'type': 'user',
-                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+                'value': dudict[tsdoc['uid']]['name_alias'] if use_name_alias else udict[tsdoc['uid']]['uname'],
+                'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
     for pid in tdoc['pids']:
       row.append({'type': 'record',
@@ -115,7 +117,7 @@ def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   return rows
 
 
-def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
+def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
@@ -142,8 +144,10 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
+    use_name_alias = dudict and dudict[tsdoc['uid']]['name_alias']
     row.append({'type': 'user',
-                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+                'value': dudict[tsdoc['uid']]['name_alias'] if use_name_alias else udict[tsdoc['uid']]['uname'],
+                'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string',
                 'value': tsdoc.get('accept', 0)})
     if is_export:
@@ -171,7 +175,7 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
   return rows
 
 
-def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
+def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
@@ -198,8 +202,10 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict):
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
+    use_name_alias = dudict and dudict[tsdoc['uid']]['name_alias']
     row.append({'type': 'user',
-                'value': udict[tsdoc['uid']]['uname'], 'raw': udict[tsdoc['uid']]})
+                'value': dudict[tsdoc['uid']]['name_alias'] if use_name_alias else udict[tsdoc['uid']]['uname'],
+                'raw': udict[tsdoc['uid']]})
     row.append({'type': 'string',
                 'value': tsdoc.get('penalty_score', 0)})
     if is_export: row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
