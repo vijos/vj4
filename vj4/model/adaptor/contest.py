@@ -88,6 +88,7 @@ def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'name_alias', 'value': _('Alias/Real name')})
   columns.append({'type': 'total_score', 'value': _('Total Score')})
   for index, pid in enumerate(tdoc['pids']):
     if is_export:
@@ -104,10 +105,9 @@ def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
-    use_name_alias = dudict and dudict[tsdoc['uid']]['name_alias']
-    row.append({'type': 'user',
-                'value': dudict[tsdoc['uid']]['name_alias'] if use_name_alias else udict[tsdoc['uid']]['uname'],
+    row.append({'type': 'user', 'value': udict[tsdoc['uid']]['uname'],
                 'raw': udict[tsdoc['uid']]})
+    row.append({'type': 'name_alias', 'value': dudict[tsdoc['uid']]['name_alias']})
     row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
     for pid in tdoc['pids']:
       row.append({'type': 'record',
@@ -121,6 +121,7 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'name_alias', 'value': _('Alias/Real name')})
   columns.append({'type': 'solved_problems', 'value': _('Solved Problems')})
   if is_export:
     columns.append({'type': 'total_time', 'value': _('Total Time (Seconds)')})
@@ -144,10 +145,9 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
-    use_name_alias = dudict and dudict[tsdoc['uid']]['name_alias']
-    row.append({'type': 'user',
-                'value': dudict[tsdoc['uid']]['name_alias'] if use_name_alias else udict[tsdoc['uid']]['uname'],
+    row.append({'type': 'user', 'value': udict[tsdoc['uid']]['uname'],
                 'raw': udict[tsdoc['uid']]})
+    row.append({'type': 'name', 'value': dudict[tsdoc['uid']]['name_alias']})
     row.append({'type': 'string',
                 'value': tsdoc.get('accept', 0)})
     if is_export:
@@ -179,6 +179,7 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudi
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
+  columns.append({'type': 'name_alias', 'value': _('Alias/Real name')})
   columns.append({'type': 'total_score', 'value': _('Score')})
   if is_export: columns.append({'type': 'total_original_score',
                                 'value': _('Original Score')})
@@ -202,12 +203,9 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudi
       tsddict = {}
     row = []
     row.append({'type': 'string', 'value': rank})
-    use_name_alias = dudict and dudict[tsdoc['uid']]['name_alias']
-    row.append({'type': 'user',
-                'value': dudict[tsdoc['uid']]['name_alias'] if use_name_alias else udict[tsdoc['uid']]['uname'],
+    row.append({'type': 'user', 'value': udict[tsdoc['uid']]['uname'],
                 'raw': udict[tsdoc['uid']]})
-    row.append({'type': 'string',
-                'value': tsdoc.get('penalty_score', 0)})
+    row.append({'type': 'name', 'value': dudict[tsdoc['uid']]['name_alias']})
     if is_export: row.append({'type': 'string', 'value': tsdoc.get('score', 0)})
     row.append({'type': 'string', 'value': tsdoc.get('time', 0.0)})
     for pid in tdoc['pids']:
