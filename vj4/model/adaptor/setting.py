@@ -101,7 +101,7 @@ class SettingMixin(object):
         raise error.ValidationError(key)
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       await user.set_by_uid(self.user['_id'], **user_setting)
-      await domain.set_user(domain_id=self.domain_id, uid=self.domain_user['uid'], **domain_user_setting)
+      await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
     else:
       await self.update_session(**kwargs)
 

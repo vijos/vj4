@@ -82,7 +82,7 @@
             {{ user.render_inline(udict[rudoc['uid']], badge=false) }}
           </td>
           <td class="col--name-alias">
-            {{ rudoc['name_alias'] if 'name_alias' in rudoc else '' }}
+            {{ rudoc['name_alias']|default('') }}
           </td>
           <td class="col--role">
             {{ form.select(roles_with_text, 'role', value=rudoc['role'], extra_class='compact', disabled=is_disabled) }}
