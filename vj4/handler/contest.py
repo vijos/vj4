@@ -88,7 +88,9 @@ class ContestCommonOperationMixin(object):
     if not self.can_show_scoreboard(tdoc):
       raise error.ContestScoreboardHiddenError(self.domain_id, tid)
     udict, dudict, pdict = await asyncio.gather(user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
-                                                domain.get_dict_user_by_uid(domain_id=self.domain_id,uids=[tsdoc['uid'] for tsdoc in tsdocs]),
+                                                domain.get_dict_user_by_uid(
+                                                  self.domain_id,
+                                                  [tsdoc['uid'] for tsdoc in tsdocs]),
                                                 problem.get_dict(self.domain_id, tdoc['pids']))
     ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
     rows = contest.RULES[tdoc['rule']].scoreboard_func(is_export, self.translate, tdoc,
