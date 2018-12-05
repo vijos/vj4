@@ -62,7 +62,7 @@ ACCOUNT_SETTINGS = [
 
 
 DOMAIN_USER_SETTINGS = [
-    Setting('setting_info_domain', 'domain_user_name_alias', str,
+    Setting('setting_info_domain', 'domain_user_display_name', str,
             name='Alias/Real name', unique=True)]
 DOMAIN_USER_SETTINGS_KEYS = set(s.key for s in DOMAIN_USER_SETTINGS)
 

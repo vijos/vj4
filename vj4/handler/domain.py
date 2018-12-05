@@ -219,7 +219,7 @@ class DomainUserHandler(base.OperationHandler):
     rudocs = collections.defaultdict(list)
     async for dudoc in domain.get_multi_user(domain_id=self.domain_id,
                                              role={'$gte': ''},
-                                             fields={'uid': 1, 'role': 1, 'name_alias': 1}):
+                                             fields={'uid': 1, 'role': 1, 'display_name': 1}):
       if 'role' in dudoc:
         uids.append(dudoc['uid'])
         rudocs[dudoc['role']].append(dudoc)
