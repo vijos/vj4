@@ -65,7 +65,7 @@ ACCOUNT_SETTINGS = [
 
 DOMAIN_USER_SETTINGS = [
     Setting('setting_info_domain', 'domain_user_display_name', str,
-            name='Alias/Real name')]
+            name='Display Name')]
 DOMAIN_USER_SETTINGS_KEYS = set(s.key for s in DOMAIN_USER_SETTINGS)
 
 SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_USER_SETTINGS

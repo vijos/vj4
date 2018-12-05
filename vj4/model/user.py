@@ -75,19 +75,6 @@ async def get_by_uname(uname: str, fields=PROJECTION_VIEW):
 
 
 @argmethod.wrap
-async def is_unique(user_id: int, fields: dict):
-  coll = db.coll('user')
-  result = await coll.find_one(fields, PROJECTION_VIEW)
-  if result:
-    if result['uid'] != user_id:
-      for k, v in fields.items():
-        if k in result:
-          if result[k] == v:
-            return k
-    return None
-
-
-@argmethod.wrap
 async def get_by_mail(mail: str, fields=PROJECTION_VIEW):
   """Get a user by mail."""
   mail_lower = mail.strip().lower()

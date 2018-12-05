@@ -263,22 +263,6 @@ def get_multi_user(*, fields=None, **kwargs):
   return coll.find(kwargs, fields)
 
 
-@argmethod.wrap
-async def is_unique(domain_id, uid, fields: dict):
-  fields['domain_id'] = domain_id
-  coll = db.coll('domain.user')
-  result = await coll.find_one(fields)
-  if result:
-    if result['uid'] != uid:
-      for k, v in fields.items():
-        if k == 'domain_id':
-          continue
-        if k in result:
-          if result[k] == v:
-            return k
-  return None
-
-
 async def get_dict_user_by_uid(domain_id, uids, *, fields=None):
   result = dict()
   async for dudoc in get_multi_user(
