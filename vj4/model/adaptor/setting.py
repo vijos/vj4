@@ -2,6 +2,8 @@ import collections
 import functools
 import pytz
 
+from pymongo import errors as mongo_errors
+
 from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
@@ -14,8 +16,8 @@ from vj4.util import locale
 Setting = functools.partial(
     collections.namedtuple('Setting',
                            ['family', 'key', 'factory', 'range', 'default', 'ui', 'name', 'desc',
-                            'image_class', 'unique']),
-    range=None, default=None, ui='text', name='', desc='', image_class='', unique=False)
+                            'image_class']),
+    range=None, default=None, ui='text', name='', desc='', image_class='')
 
 # Setting keys should not duplicate with user keys or session keys.
 PREFERENCE_SETTINGS = [
@@ -63,7 +65,7 @@ ACCOUNT_SETTINGS = [
 
 DOMAIN_USER_SETTINGS = [
     Setting('setting_info_domain', 'domain_user_display_name', str,
-            name='Alias/Real name', unique=True)]
+            name='Alias/Real name')]
 DOMAIN_USER_SETTINGS_KEYS = set(s.key for s in DOMAIN_USER_SETTINGS)
 
 SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_USER_SETTINGS
@@ -89,8 +91,6 @@ class SettingMixin(object):
   async def set_settings(self, **kwargs):
     user_setting = {}
     domain_user_setting = {}
-    user_unique_check = {}
-    domain_user_unique_check = {}
     for key, value in kwargs.items():
       if key not in SETTINGS_BY_KEY:
         raise error.UnknownFieldError(key)
@@ -100,28 +100,20 @@ class SettingMixin(object):
       if key in DOMAIN_USER_SETTINGS_KEYS:
         dbkey = key.replace('domain_user_', '')
         domain_user_setting[dbkey] = kwargs[key]
-        if setting.unique:
-          domain_user_unique_check[dbkey] = kwargs[key]
       else:
         user_setting[key] = kwargs[key]
-        if setting.unique:
-          user_unique_check[dbkey] = kwargs[key]
       if setting.range and kwargs[key] not in setting.range:
         raise error.ValidationError(key)
-    if user_unique_check:
-      not_unique = await user.is_unique(self.user['_id'], user_unique_check)
-      if not_unique:
-        raise error.DataNotUniqueError(user_unique_check[not_unique])
-    if domain_user_unique_check:
-      not_unique = await domain.is_unique(self.domain_id, self.user['_id'], domain_user_unique_check)
-      if not_unique:
-        raise error.DataNotUniqueError(domain_user_unique_check[not_unique])
 
     if self.has_priv(builtin.PRIV_USER_PROFILE):
-      if user_setting:
-        await user.set_by_uid(self.user['_id'], **user_setting)
-      if domain_user_setting:
-        await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
+      try:
+        if user_setting:
+          await user.set_by_uid(self.user['_id'], **user_setting)
+        if domain_user_setting:
+          await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
+      except mongo_errors.DuplicateKeyError as e:
+        msg = e.details['errmsg']
+        raise error.DataNotUniqueError(msg[msg.index('{'):])
     else:
       await self.update_session(**kwargs)
 
