@@ -12,6 +12,7 @@ from vj4.model import domain
 from vj4.model.adaptor import defaults
 from vj4.util import options
 from vj4.util import locale
+from vj4.util import tools
 
 Setting = functools.partial(
     collections.namedtuple('Setting',
@@ -112,8 +113,12 @@ class SettingMixin(object):
         if domain_user_setting:
           await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
       except mongo_errors.DuplicateKeyError as e:
-        msg = e.details['errmsg']
-        raise error.DataNotUniqueError(msg[msg.index('{'):])
+        err_info = tools.extract_duplicate_key_errmsg(e.details['errmsg'])
+        (k, v) = list(err_info.items())[-1]
+        if k == 'display_name':
+          raise error.DisplayNameDuplicateError(k, v, err_info)
+        else:
+          raise error.DataNotUniqueError(k, v, err_info)
     else:
       await self.update_session(**kwargs)
 

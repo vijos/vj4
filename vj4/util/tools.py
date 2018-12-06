@@ -3,6 +3,7 @@ import pkgutil
 from os import path
 
 from vj4.util import argmethod
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -16,6 +17,14 @@ async def ensure_all_indexes():
       if 'ensure_indexes' in dir(module):
         _logger.info('Ensuring indexes for "%s".' % name)
         await module.ensure_indexes()
+
+
+@argmethod.wrap
+def extract_duplicate_key_errmsg(msg):
+  vals = re.findall('"(.+?)"', msg)
+  index_name = msg[msg.find('index:') + 6:msg.find('dup key:')].strip()
+  keys = re.findall('_(\w+?)_\d', '_' + index_name)
+  return dict(zip(keys, vals))
 
 
 if __name__ == '__main__':

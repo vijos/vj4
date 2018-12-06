@@ -377,4 +377,10 @@ class SendMailError(UserFacingError):
 class DataNotUniqueError(ForbiddenError):
   @property
   def message(self):
-    return '`{0}` already exists.'
+    return 'The value `{1}` of {0} already exists.'
+
+
+class DisplayNameDuplicateError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Display name {1} you want to set is used by others.'
