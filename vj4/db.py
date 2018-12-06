@@ -10,19 +10,19 @@ options.define('db_username', default='', help='Database username.')
 options.define('db_password', default='', help='Database password.')
 
 
-def _escape(s):
-  return urllib.parse.quote(s, safe='')
-
-
 async def init():
   global _client, _db
+
+  def escape(s):
+    return urllib.parse.quote(s, safe='')
+
   if not options.db_username:
-    uri = 'mongodb://{}'.format(_escape(options.db_host))
+    uri = 'mongodb://{}'.format(escape(options.db_host))
   else:
-    uri = 'mongodb://{}:{}@{}/?authSource={}'.format(_escape(options.db_username),
-                                                     _escape(options.db_password),
-                                                     _escape(options.db_host),
-                                                     _escape(options.db_name))
+    uri = 'mongodb://{}:{}@{}/?authSource={}'.format(escape(options.db_username),
+                                                     escape(options.db_password),
+                                                     escape(options.db_host),
+                                                     escape(options.db_name))
   _client = await aiomongo.create_client(uri)
   _db = _client.get_database(options.db_name)
 
