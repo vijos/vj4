@@ -102,11 +102,9 @@ def connection_route(prefix, name, global_route=False):
         session.close(4000, {'error': e.to_dict()})
 
     class Manager(sockjs.SessionManager):
-      def get(self, id, create=False, request=None):
-        if id not in self and create:
-          self[id] = self._add(conn(id, self.handler, request,
-                                    timeout=self.timeout, loop=self.loop, debug=self.debug))
-        return self[id]
+      def __init__(self, *args):
+        super(Manager, self).__init__(*args)
+        self.factory = conn
 
     loop = asyncio.get_event_loop()
     sockjs.add_endpoint(Application(), handler, name=name, prefix=prefix,
