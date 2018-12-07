@@ -104,7 +104,7 @@ def connection_route(prefix, name, global_route=False):
     class Manager(sockjs.SessionManager):
       def get(self, id, create=False, request=None):
         if id not in self and create:
-          self[id] = self._add(conn(request, id, self.handler,
+          self[id] = self._add(conn(id, self.handler, request,
                                     timeout=self.timeout, loop=self.loop, debug=self.debug))
         return self[id]
 

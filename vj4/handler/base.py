@@ -338,8 +338,8 @@ class OperationHandler(Handler):
 
 
 class Connection(sockjs.Session, HandlerBase):
-  def __init__(self, request, *args, **kwargs):
-    super(Connection, self).__init__(*args, **kwargs)
+  def __init__(self, id, handler, request, **kwargs):
+    super(Connection, self).__init__(id, handler, request, **kwargs)
     self.request = request
     self.response = web.Response()  # dummy response
 
