@@ -221,12 +221,11 @@ class HandlerBase(setting.SettingMixin):
 
 
 class Handler(web.View, HandlerBase):
-  @asyncio.coroutine
-  def __iter__(self):
+  def __await__(self):
     try:
       self.response = web.Response()
-      yield from HandlerBase.prepare(self)
-      yield from super(Handler, self).__iter__()
+      yield from HandlerBase.prepare(self).__await__()
+      yield from super(Handler, self).__await__()
     except asyncio.CancelledError:
       raise
     except error.UserFacingError as e:
@@ -339,9 +338,8 @@ class OperationHandler(Handler):
 
 
 class Connection(sockjs.Session, HandlerBase):
-  def __init__(self, request, *args, **kwargs):
+  def __init__(self, *args, **kwargs):
     super(Connection, self).__init__(*args, **kwargs)
-    self.request = request
     self.response = web.Response()  # dummy response
 
   async def on_open(self):
@@ -364,13 +362,15 @@ def _get_csrf_token(session_id_binary):
 
 @functools.lru_cache()
 def _reverse_url(name, *, domain_id, **kwargs):
+  """DEPRECATED: This function is deprecated. But we don't have a replacement yet."""
+  kwargs = {key: str(value) for key, value in kwargs.items()}
   if domain_id != builtin.DOMAIN_ID_SYSTEM:
     name += '_with_domain_id'
     kwargs['domain_id'] = domain_id
   if kwargs:
-    return app.Application().router[name].url(parts=kwargs)
+    return str(app.Application().router[name].url_for(**kwargs))
   else:
-    return app.Application().router[name].url()
+    return str(app.Application().router[name].url_for())
 
 
 @functools.lru_cache()

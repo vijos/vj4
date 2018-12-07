@@ -56,12 +56,10 @@ class FsGetHandler(base.Handler):
       remaining = grid_out.length
       chunk = await grid_out.readchunk()
       while chunk and remaining >= len(chunk):
-        self.response.write(chunk)
         remaining -= len(chunk)
-        _, chunk = await asyncio.gather(self.response.drain(), grid_out.readchunk())
+        _, chunk = await asyncio.gather(self.response.write(chunk), grid_out.readchunk())
       if chunk:
-        self.response.write(chunk[:remaining])
-        await self.response.drain()
+        await self.response.write(chunk[:remaining])
       await self.response.write_eof()
 
   head = functools.partialmethod(stream_data, headers_only=True)
