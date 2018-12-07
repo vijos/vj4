@@ -23,8 +23,8 @@ async def init():
     uri = 'mongodb://{}:{}@{}/?authSource={}'.format(escape(options.db_username),
                                                      escape(options.db_password),
                                                      escape(options.db_host),
-                                                     escape(options.db_auth) if options.db_auth
-                                                       else escape(options.db_name))
+                                                     escape(options.db_auth if options.db_auth
+                                                       else options.db_name))
   _client = await aiomongo.create_client(uri)
   _db = _client.get_database(options.db_name)
 
