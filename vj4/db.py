@@ -8,7 +8,7 @@ options.define('db_host', default='localhost', help='Database hostname or IP add
 options.define('db_name', default='test', help='Database name.')
 options.define('db_username', default='', help='Database username.')
 options.define('db_password', default='', help='Database password.')
-options.define('db_auth', default='', help='Database name which stores the user’s credential.')
+options.define('db_auth', default='', help='Database name which stores the user\'s credential.')
 
 
 async def init():
