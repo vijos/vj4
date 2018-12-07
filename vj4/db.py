@@ -8,6 +8,7 @@ options.define('db_host', default='localhost', help='Database hostname or IP add
 options.define('db_name', default='test', help='Database name.')
 options.define('db_username', default='', help='Database username.')
 options.define('db_password', default='', help='Database password.')
+options.define('db_auth', default='', help='Database name which stores the user’s credential.')
 
 
 async def init():
@@ -22,7 +23,8 @@ async def init():
     uri = 'mongodb://{}:{}@{}/?authSource={}'.format(escape(options.db_username),
                                                      escape(options.db_password),
                                                      escape(options.db_host),
-                                                     escape(options.db_name))
+                                                     escape(options.db_auth) if options.db_auth
+                                                       else escape(options.db_name))
   _client = await aiomongo.create_client(uri)
   _db = _client.get_database(options.db_name)
 
