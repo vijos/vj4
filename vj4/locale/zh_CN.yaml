@@ -718,8 +718,8 @@ By clicking the button, you will become a member of the domain {0}.: 点击按�
 You need to enter the invitation code to join the domain.: 您需要输入邀请码来加入此域。
 Join: 加入
 setting_info_domain: 个人信息
-Display Name: 别名/姓名
-display_name: 别名/姓名
+Display Name: 显示名
+display_name: 显示名
 home_in_domain: 当前域的设置
 'The value `{1}` of {0} already exists.': '{0} 的值 `{1}` 已经存在。'
-Display name {1} you want to set is used by others.: 你想要设置的显示名 {1} 已经被其他人使用了。
+Display name {1} you want to set is used by others.: 您想要设置的显示名 {1} 已经被其他人使用了。
