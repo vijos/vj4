@@ -270,7 +270,7 @@ class Handler(web.View, HandlerBase):
       self.response.headers.add('Content-Disposition',
                                 'attachment; filename="{}"'.format(file_name))
     await self.response.prepare(self.request)
-    self.response.write(data)
+    await self.response.write(data)
 
   @property
   def prefer_json(self):
