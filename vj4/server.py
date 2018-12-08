@@ -31,6 +31,7 @@ def main():
   else:
     syslog.enable_system_logging(level=logging.DEBUG if options.debug else logging.INFO,
                                  fmt='vj4[%(process)d] %(programname)s %(levelname).1s %(message)s')
+  logging.getLogger('aioamqp').setLevel(logging.WARNING)
   logging.getLogger('sockjs').setLevel(logging.WARNING)
   url = urllib.parse.urlparse(options.listen)
   if url.scheme == 'http':
