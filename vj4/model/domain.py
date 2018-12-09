@@ -308,8 +308,7 @@ async def ensure_indexes():
   await user_coll.create_index([('domain_id', 1),
                                 ('uid', 1)], unique=True)
   await user_coll.create_index([('domain_id', 1),
-                                ('display_name', 1)], unique=True,
-                                partialFilterExpression={'display_name': {'$exists': True}})
+                                ('display_name', 1)], unique=True, sparse=True)
   await user_coll.create_index([('domain_id', 1),
                                 ('role', 1)], sparse=True)
   await user_coll.create_index([('domain_id', 1),
