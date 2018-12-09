@@ -1,7 +1,6 @@
 import aiomongo
 import functools
-import urllib.parse
-from yarl import URL
+import yarl
 
 from vj4.util import options
 
@@ -24,14 +23,14 @@ async def init():
     'port': options.db_port,
     'user': options.db_username,
     'password': options.db_password,
-    'query': {}
+    'query': {},
   }
   if options.db_auth_source:
     url_parts['query']['authSource'] = options.db_auth_source
-  url = URL.build(**url_parts)
+  url = yarl.URL.build(**url_parts)
 
   _client = await aiomongo.create_client(str(url))
-  _db = _client.get_database(options.db_name)
+  _db = _client.get_default_database()
 
 
 @functools.lru_cache()
