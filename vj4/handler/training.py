@@ -145,11 +145,11 @@ class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
                                       done_nids=list(done_nids), done_pids=list(done_pids),
                                       done=len(done_nids) == len(tdoc['dag']))
     path_components = self.build_path(
-      (self.translate('training_main'), self.reverse_url('training_main')),
-      (tdoc['title'], None))
-    self.render('training_detail.html', tdoc=tdoc, tsdoc=tsdoc, pids=pids, pdict=pdict,
-                psdict=psdict,
-                ndict=ndict, nsdict=nsdict, owner_udoc=owner_udoc, owner_dudoc=owner_dudoc,
+        (self.translate('training_main'), self.reverse_url('training_main')),
+        (tdoc['title'], None))
+    self.render('training_detail.html', tdoc=tdoc, tsdoc=tsdoc, pids=pids,
+                pdict=pdict, psdict=psdict, ndict=ndict, nsdict=nsdict,
+                owner_udoc=owner_udoc, owner_dudoc=owner_dudoc,
                 page_title=tdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
