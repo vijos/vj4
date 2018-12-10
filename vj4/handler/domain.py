@@ -62,10 +62,9 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
   async def get(self):
     (tdocs, tsdict), (trdocs, trsdict), (ddocs, vndict) = await asyncio.gather(
         self.prepare_contest(), self.prepare_training(), self.prepare_discussion())
-    udict, dudict = await asyncio.gather(user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
-                                         domain.get_dict_user_by_uid(
-                                           self.domain_id,
-                                           (ddoc['owner_uid'] for ddoc in ddocs)))
+    udict, dudict = await asyncio.gather(
+        user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
+        domain.get_dict_user_by_uid(self.domain_id, (ddoc['owner_uid'] for ddoc in ddocs)))
     self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id),
                 tdocs=tdocs, tsdict=tsdict, trdocs=trdocs, trsdict=trsdict,
                 ddocs=ddocs, vndict=vndict,
