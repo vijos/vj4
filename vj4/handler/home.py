@@ -136,11 +136,11 @@ class HomeAccountHandler(base.Handler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/home/in_domain', 'home_in_domain', global_route=True)
+@app.route('/home/domain_account', 'home_domain_account', global_route=True)
 class HomeInDomainHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
-    self.render('home_settings.html', category='in_domain', settings=setting.DOMAIN_USER_SETTINGS)
+    self.render('home_settings.html', category='domain_account', settings=setting.DOMAIN_USER_SETTINGS)
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument
   @base.require_csrf_token

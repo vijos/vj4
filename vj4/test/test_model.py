@@ -185,7 +185,7 @@ class DomainTest(base.DatabaseTestCase):
     self.assertEqual(dudoc['role'], FOO_ROLE)
 
   @base.wrap_coro
-  async def test_user_in_domain(self):
+  async def test_user_domain_account(self):
     await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     await domain.set_user(DOMAIN_ID, UID, test_field='test tset', num=1)
     dudoc = await domain.get_user(DOMAIN_ID, UID)
@@ -199,7 +199,7 @@ class DomainTest(base.DatabaseTestCase):
     self.assertEqual(dudoc['num'], 3)
 
   @base.wrap_coro
-  async def test_user_in_domain_projection(self):
+  async def test_user_domain_account_projection(self):
     await domain.add(DOMAIN_ID, OWNER_UID, ROLES, name=DOMAIN_NAME)
     await domain.set_user(DOMAIN_ID, UID, test_field='test tset', num=1)
     dudoc = await domain.get_user(DOMAIN_ID, UID)

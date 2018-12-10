@@ -215,7 +215,7 @@ discussion_main: 討論
 discussion_node: 討論
 error: 錯誤
 home_account: 賬戶設定
-home_in_domain: 當前域的設定
+home_domain_account: 當前域的設定
 home_preference: 偏好設定
 home_messages: 站內訊息
 home_security: 安全設定
