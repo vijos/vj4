@@ -92,6 +92,7 @@ class SettingMixin(object):
   async def set_settings(self, **kwargs):
     user_setting = {}
     domain_user_setting = {}
+    domain_user_unset_keys = []
     for key, value in kwargs.items():
       if key not in SETTINGS_BY_KEY:
         raise error.UnknownFieldError(key)
@@ -100,7 +101,10 @@ class SettingMixin(object):
 
       if key in DOMAIN_USER_SETTINGS_KEYS:
         dbkey = key.replace('domain_user_', '')
-        domain_user_setting[dbkey] = kwargs[key]
+        if kwargs[key]:
+          domain_user_setting[dbkey] = kwargs[key]
+        else:
+          domain_user_unset_keys.append(dbkey)
       else:
         user_setting[key] = kwargs[key]
       if setting.range and kwargs[key] not in setting.range:
@@ -112,6 +116,8 @@ class SettingMixin(object):
           await user.set_by_uid(self.user['_id'], **user_setting)
         if domain_user_setting:
           await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
+        if domain_user_unset_keys:
+          await domain.unset_user(self.domain_id, self.user['_id'], domain_user_unset_keys)
       except mongo_errors.DuplicateKeyError as e:
         err_info = tools.extract_duplicate_key_errmsg(e.details['errmsg'])
         (k, v) = list(err_info.items())[-1]
