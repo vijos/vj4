@@ -91,10 +91,11 @@ class RecordMainHandler(RecordMixin, base.Handler):
     url_prefix = '/d/{}'.format(urllib.parse.quote(self.domain_id))
     query_string = urllib.parse.urlencode(
       [('uid_or_name', uid_or_name), ('pid', pid), ('tid', tid)])
-    self.render('record_main.html', rdocs=rdocs, udict=udict, dudict=dudict, pdict=pdict, statistics=statistics,
-                filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid,
-                socket_url=url_prefix + '/records-conn?' + query_string, # FIXME(twd2): magic
-                query_string=query_string)
+    self.render(
+        'record_main.html', rdocs=rdocs, udict=udict, dudict=dudict, pdict=pdict,
+        statistics=statistics, filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid,
+        socket_url=url_prefix + '/records-conn?' + query_string, # FIXME(twd2): magic
+        query_string=query_string)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
