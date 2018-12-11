@@ -64,12 +64,13 @@ ACCOUNT_SETTINGS = [
             image_class='user-profile-bg--thumbnail-{0}')]
 
 
-DOMAIN_USER_SETTINGS = [
-    Setting('setting_info_domain', 'domain_user_display_name', str,
+DOMAIN_ACCCOUNT_SETTINGS = [
+    Setting('setting_info_domain', 'display_name', str,
             name='Display Name')]
-DOMAIN_USER_SETTINGS_KEYS = set(s.key for s in DOMAIN_USER_SETTINGS)
 
-SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_USER_SETTINGS
+DOMAIN_SETTINGS_KEYS = set(s.key for s in DOMAIN_ACCCOUNT_SETTINGS)
+
+SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_ACCCOUNT_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
 
 
@@ -77,8 +78,8 @@ class SettingMixin(object):
   def get_setting(self, key):
     if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.user:
       return self.user[key]
-    if self.has_priv(builtin.PRIV_USER_PROFILE) and key.replace('domain_user_', '') in self.domain_user:
-      return self.domain_user[key.replace('domain_user_', '')]
+    if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.domain_user:
+      return self.domain_user[key]
     if self.session and key in self.session:
       return self.session[key]
     setting = SETTINGS_BY_KEY[key]
@@ -99,12 +100,11 @@ class SettingMixin(object):
       setting = SETTINGS_BY_KEY[key]
       kwargs[key] = setting.factory(value.strip())
 
-      if key in DOMAIN_USER_SETTINGS_KEYS:
-        dbkey = key.replace('domain_user_', '')
+      if key in DOMAIN_SETTINGS_KEYS:
         if kwargs[key]:
-          domain_user_setting[dbkey] = kwargs[key]
+          domain_user_setting[key] = kwargs[key]
         else:
-          domain_user_unset_keys.append(dbkey)
+          domain_user_unset_keys.append(key)
       else:
         user_setting[key] = kwargs[key]
       if setting.range and kwargs[key] not in setting.range:

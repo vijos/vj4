@@ -19,13 +19,5 @@ async def ensure_all_indexes():
         await module.ensure_indexes()
 
 
-@argmethod.wrap
-def extract_duplicate_key_errmsg(msg):
-  vals = re.findall('"(.+?)"', msg)
-  index_name = msg[msg.find('index:') + 6:msg.find('dup key:')].strip()
-  keys = re.findall('_(\w+?)_\d', '_' + index_name)
-  return dict(zip(keys, vals))
-
-
 if __name__ == '__main__':
   argmethod.invoke_by_args()
