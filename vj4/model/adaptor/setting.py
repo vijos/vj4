@@ -91,7 +91,6 @@ class SettingMixin(object):
     return setting.factory()
 
   async def set_settings(self, **kwargs):
-    user_setting = {}
     domain_user_setting = {}
     domain_user_unset_keys = []
     for key, value in kwargs.items():
@@ -99,32 +98,22 @@ class SettingMixin(object):
         raise error.UnknownFieldError(key)
       setting = SETTINGS_BY_KEY[key]
       kwargs[key] = setting.factory(value.strip())
+      if setting.range and kwargs[key] not in setting.range:
+        raise error.ValidationError(key)
 
       if key in DOMAIN_SETTINGS_KEYS:
         if kwargs[key]:
           domain_user_setting[key] = kwargs[key]
         else:
           domain_user_unset_keys.append(key)
-      else:
-        user_setting[key] = kwargs[key]
-      if setting.range and kwargs[key] not in setting.range:
-        raise error.ValidationError(key)
-
+        kwargs.pop(key) # now only settings to `user` are left
     if self.has_priv(builtin.PRIV_USER_PROFILE):
-      try:
-        if user_setting:
-          await user.set_by_uid(self.user['_id'], **user_setting)
-        if domain_user_setting:
-          await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
-        if domain_user_unset_keys:
-          await domain.unset_user(self.domain_id, self.user['_id'], domain_user_unset_keys)
-      except mongo_errors.DuplicateKeyError as e:
-        err_info = tools.extract_duplicate_key_errmsg(e.details['errmsg'])
-        (k, v) = list(err_info.items())[-1]
-        if k == 'display_name':
-          raise error.DisplayNameDuplicateError(k, v, err_info)
-        else:
-          raise error.DataNotUniqueError(k, v, err_info)
+      if kwargs:
+        await user.set_by_uid(self.user['_id'], **kwargs)
+      if domain_user_setting:
+        await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
+      if domain_user_unset_keys:
+        await domain.unset_user(self.domain_id, self.user['_id'], domain_user_unset_keys)
     else:
       await self.update_session(**kwargs)
 
