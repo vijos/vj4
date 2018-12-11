@@ -91,6 +91,7 @@ class SettingMixin(object):
     return setting.factory()
 
   async def set_settings(self, **kwargs):
+    user_setting = {}
     domain_user_setting = {}
     domain_user_unset_keys = []
     for key, value in kwargs.items():
@@ -106,10 +107,12 @@ class SettingMixin(object):
           domain_user_setting[key] = kwargs[key]
         else:
           domain_user_unset_keys.append(key)
-        kwargs.pop(key) # now only settings to `user` are left
+      else:
+        user_setting[key] = kwargs[key]
+
     if self.has_priv(builtin.PRIV_USER_PROFILE):
-      if kwargs:
-        await user.set_by_uid(self.user['_id'], **kwargs)
+      if user_setting:
+        await user.set_by_uid(self.user['_id'], **user_setting)
       if domain_user_setting:
         await domain.set_user(domain_id=self.domain_id, uid=self.user['_id'], **domain_user_setting)
       if domain_user_unset_keys:
