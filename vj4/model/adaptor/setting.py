@@ -64,13 +64,13 @@ ACCOUNT_SETTINGS = [
             image_class='user-profile-bg--thumbnail-{0}')]
 
 
-DOMAIN_ACCCOUNT_SETTINGS = [
+DOMAIN_ACCOUNT_SETTINGS = [
     Setting('setting_info_domain', 'display_name', str,
             name='Display Name')]
 
-DOMAIN_SETTINGS_KEYS = set(s.key for s in DOMAIN_ACCCOUNT_SETTINGS)
+DOMAIN_SETTINGS_KEYS = set(s.key for s in DOMAIN_ACCOUNT_SETTINGS)
 
-SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_ACCCOUNT_SETTINGS
+SETTINGS = PREFERENCE_SETTINGS + ACCOUNT_SETTINGS + DOMAIN_ACCOUNT_SETTINGS
 SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTINGS))
 
 
