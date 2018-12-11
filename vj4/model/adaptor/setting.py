@@ -98,12 +98,13 @@ class SettingMixin(object):
       if key not in SETTINGS_BY_KEY:
         raise error.UnknownFieldError(key)
       setting = SETTINGS_BY_KEY[key]
-      kwargs[key] = setting.factory(value.strip())
+      value = value.strip()
+      kwargs[key] = setting.factory(value)
       if setting.range and kwargs[key] not in setting.range:
         raise error.ValidationError(key)
 
       if key in DOMAIN_SETTINGS_KEYS:
-        if kwargs[key]:
+        if value:
           domain_user_setting[key] = kwargs[key]
         else:
           domain_user_unset_keys.append(key)

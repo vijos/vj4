@@ -3,7 +3,6 @@ import pkgutil
 from os import path
 
 from vj4.util import argmethod
-import re
 
 _logger = logging.getLogger(__name__)
 
