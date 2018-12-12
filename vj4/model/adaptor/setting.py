@@ -2,8 +2,6 @@ import collections
 import functools
 import pytz
 
-from pymongo import errors as mongo_errors
-
 from vj4 import constant
 from vj4 import error
 from vj4.model import builtin
