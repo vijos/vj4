@@ -10,7 +10,6 @@ from vj4.model import domain
 from vj4.model.adaptor import defaults
 from vj4.util import options
 from vj4.util import locale
-from vj4.util import tools
 
 Setting = functools.partial(
     collections.namedtuple('Setting',
