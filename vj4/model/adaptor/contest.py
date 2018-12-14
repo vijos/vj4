@@ -84,7 +84,7 @@ def _oi_equ_func(a, b):
   return a.get('score', 0) == b.get('score', 0)
 
 
-def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
+def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, dudict, pdict):
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
@@ -118,7 +118,7 @@ def _oi_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
   return rows
 
 
-def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
+def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, dudict, pdict):
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})
@@ -177,7 +177,7 @@ def _acm_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
   return rows
 
 
-def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, pdict, dudict):
+def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, dudict, pdict):
   columns = []
   columns.append({'type': 'rank', 'value': _('Rank')})
   columns.append({'type': 'user', 'value': _('User')})

@@ -93,7 +93,7 @@ class ContestCommonOperationMixin(object):
         problem.get_dict(self.domain_id, tdoc['pids']))
     ranked_tsdocs = contest.RULES[tdoc['rule']].rank_func(tsdocs)
     rows = contest.RULES[tdoc['rule']].scoreboard_func(is_export, self.translate, tdoc,
-                                                       ranked_tsdocs, udict, pdict, dudict=dudict)
+                                                       ranked_tsdocs, udict, dudict, pdict)
     return tdoc, rows, udict
 
   async def verify_problems(self, pids):
