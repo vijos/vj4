@@ -122,7 +122,7 @@
       {% endwith %}
     </div>
     {% if vnode['doc_type'] == vj4.model.document.TYPE_PROBLEM %}
-      {% with pdoc=vnode, owner_udoc=udict[vnode['owner_uid']] %}
+      {% with pdoc=vnode, owner_udoc=udict[vnode['owner_uid']], owner_dudoc=dudict[vnode['owner_uid']] %}
       {% include "partials/problem_sidebar.html" %}
       {% endwith %}
     {% endif %}

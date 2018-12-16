@@ -73,7 +73,7 @@
   {% endif %}
   </div>
   <div class="medium-3 columns">
-  {% with owner_udoc=udict[tdoc['owner_uid']] %}
+  {% with owner_udoc=udict[tdoc['owner_uid']], owner_dudoc=dudict[tdoc['owner_uid']] %}
     {% include "partials/contest_sidebar.html" %}
   {% endwith %}
   </div>

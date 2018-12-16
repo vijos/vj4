@@ -95,7 +95,7 @@
       <dt>{{ _('Start at') }}</dt><dd>{{ contest.render_time(tdoc['begin_at']) }}</dd>
       <dt>{{ _('End at') }}</dt><dd>{{ contest.render_time(tdoc['end_at']) }}</dd>
       <dt>{{ _('Duration') }}</dt><dd>{{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}</dd>
-      <dt>{{ _('Host') }}</dt><dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
+      <dt>{{ _('Host') }}</dt><dd>{{ user.render_inline(owner_udoc, dudoc=owner_dudoc, badge=false) }}</dd>
       <dt>{{ _('Partic.') }}</dt>
       <dd>
         {{ tdoc['attend']|default(0) }}

@@ -21,7 +21,15 @@
     *
   {% endif %}
   </td>
-  <td class="col--submit-by"><a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">{{ udoc['uname'] }}</a></td>
+  <td class="col--submit-by">
+    <a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">
+      {% if 'display_name' in dudoc %}
+        {{ dudoc['display_name'] }} ({{ udoc['uname'] }})
+      {% else %}
+        {{ udoc['uname'] }}
+      {% endif %}
+    </a>
+  </td>
   <td class="col--time">{% if rdoc['status'] == vj4.constant.record.STATUS_TIME_LIMIT_EXCEEDED or rdoc['status'] == vj4.constant.record.STATUS_MEMORY_LIMIT_EXCEEDED or rdoc['status'] == vj4.constant.record.STATUS_OUTPUT_LIMIT_EXCEEDED %}&ge;{% endif %}{{ rdoc['time_ms'] }}ms</td>
   <td class="col--memory">{% if rdoc['status'] == vj4.constant.record.STATUS_TIME_LIMIT_EXCEEDED or rdoc['status'] == vj4.constant.record.STATUS_MEMORY_LIMIT_EXCEEDED or rdoc['status'] == vj4.constant.record.STATUS_OUTPUT_LIMIT_EXCEEDED %}&ge;{% endif %}{{ rdoc['memory_kb']|format_size(1024) }}</td>
   <td class="col--lang">{{ vj4.constant.language.LANG_TEXTS[rdoc['lang']] }}</td>

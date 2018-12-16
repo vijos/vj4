@@ -11,7 +11,15 @@
               <img src="{{ udoc['gravatar']|gravatar_url }}" width="120" height="120" class="large user-profile-avatar">
             </div>
             <div class="media__body profile-header__main">
-              <h1>{{ udoc['uname'] }} <small>({{ _('UID') }}: {{ udoc['_id'] }})</small></h1>
+              <h1>
+                {% if 'display_name' in dudoc %}
+                  {{ dudoc['display_name'] }}
+                  <small>{{ udoc['uname'] }}</small>
+                {% else %}
+                  {{ udoc['uname'] }}
+                {% endif %}
+                <small>({{ _('UID') }}: {{ udoc['_id'] }})</small>
+              </h1>
               <p>
                 {{ _('Registered at') }} {{ datetime_span(udoc['regat']) }},
                 {{ _('last login at') }} {{ datetime_span(udoc['loginat']) }},

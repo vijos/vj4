@@ -9,7 +9,13 @@
 {% if avatar %}
   <img class="small user-profile-avatar v-center" src="{{ udoc['gravatar']|default('')|gravatar_url }}" width="20" height="20">
 {% endif %}
-  <a class="user-profile-name" href="{{ reverse_url('user_detail', uid=udoc['_id']|default(0)) }}">{{ udoc['uname']|default('') }}</a>
+  <a class="user-profile-name" href="{{ reverse_url('user_detail', uid=udoc['_id']|default(0)) }}">
+    {% if 'display_name' in dudoc %}
+      {{ dudoc['display_name'] }} ({{ udoc['uname'] }})
+    {% else %}
+      {{ udoc['uname'] }}
+    {% endif %}
+  </a>
 {% if badge %}
   <a class="user-profile-badge v-center badge--lv{{ dudoc['level']|default(0) }}" href="{{ reverse_url('user_detail', uid=udoc['_id']|default(0)) }}" title="LV {{ dudoc['level']|default(0) }}: Top {{ vj4.model.builtin.LEVELS[dudoc['level']|default(0)]|default('N/A') }}%">LV {{ dudoc['level']|default(0) }}</a>
 {% if modbadge and handler.dudoc_has_perm(udoc, dudoc, vj4.model.builtin.PERM_MOD_BADGE) %}

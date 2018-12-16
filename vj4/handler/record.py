@@ -68,8 +68,9 @@ class RecordMainHandler(RecordMixin, base.Handler):
     rdocs = await record.get_all_multi(**query, end_id=start,
       get_hidden=self.has_priv(builtin.PRIV_VIEW_HIDDEN_RECORD)).sort([('_id', -1)]).limit(50).to_list()
     # TODO(iceboy): projection.
-    udict, pdict = await asyncio.gather(
+    udict, dudict, pdict = await asyncio.gather(
         user.get_dict(rdoc['uid'] for rdoc in rdocs),
+        domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=(rdoc['uid'] for rdoc in rdocs)),
         problem.get_dict_multi_domain((rdoc['domain_id'], rdoc['pid']) for rdoc in rdocs))
     # statistics
     statistics = None
@@ -90,10 +91,11 @@ class RecordMainHandler(RecordMixin, base.Handler):
     url_prefix = '/d/{}'.format(urllib.parse.quote(self.domain_id))
     query_string = urllib.parse.urlencode(
       [('uid_or_name', uid_or_name), ('pid', pid), ('tid', tid)])
-    self.render('record_main.html', rdocs=rdocs, udict=udict, pdict=pdict, statistics=statistics,
-                filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid,
-                socket_url=url_prefix + '/records-conn?' + query_string, # FIXME(twd2): magic
-                query_string=query_string)
+    self.render(
+        'record_main.html', rdocs=rdocs, udict=udict, dudict=dudict, pdict=pdict,
+        statistics=statistics, filter_uid_or_name=uid_or_name, filter_pid=pid, filter_tid=tid,
+        socket_url=url_prefix + '/records-conn?' + query_string, # FIXME(twd2): magic
+        query_string=query_string)
 
 
 @app.connection_route('/records-conn', 'record_main-conn')
@@ -115,13 +117,14 @@ class RecordMainConnection(RecordMixin, base.Connection):
       if not show_status:
         return
     # TODO(iceboy): projection.
-    udoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
-                                      problem.get(rdoc['domain_id'], rdoc['pid']))
+    udoc, dudoc, pdoc = await asyncio.gather(user.get_by_uid(rdoc['uid']),
+                                             domain.get_user(self.domain_id, rdoc['uid']),
+                                             problem.get(rdoc['domain_id'], rdoc['pid']))
     # check permission for visibility: hidden problem
     if pdoc.get('hidden', False) and (pdoc['domain_id'] != self.domain_id
                                       or not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)):
       pdoc = None
-    self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, pdoc=pdoc))
+    self.send(html=self.render_html('record_main_tr.html', rdoc=rdoc, udoc=udoc, dudoc=dudoc, pdoc=pdoc))
 
   async def on_close(self):
     bus.unsubscribe(self.on_record_change)

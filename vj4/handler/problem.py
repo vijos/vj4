@@ -194,7 +194,8 @@ class ProblemDetailHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid, uid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    udoc = await user.get_by_uid(pdoc['owner_uid'])
+    udoc, dudoc = await asyncio.gather(user.get_by_uid(pdoc['owner_uid']),
+                                       domain.get_user(self.domain_id, pdoc['owner_uid']))
     tdocs = await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list() \
             if self.has_perm(builtin.PERM_VIEW_TRAINING) else None
     ctdocs = await contest.get_multi(self.domain_id, pids=pid).to_list() \
@@ -203,7 +204,7 @@ class ProblemDetailHandler(base.Handler):
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], None))
     self.render('problem_detail.html', pdoc=pdoc, udoc=udoc, tdocs=tdocs, ctdocs=ctdocs,
-                page_title=pdoc['title'], path_components=path_components)
+                dudoc=dudoc, page_title=pdoc['title'], path_components=path_components)
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
@@ -217,7 +218,8 @@ class ProblemSubmitHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid, uid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    udoc = await user.get_by_uid(pdoc['owner_uid'])
+    udoc, dudoc = await asyncio.gather(user.get_by_uid(pdoc['owner_uid']),
+                                       domain.get_user(self.domain_id, pdoc['owner_uid']))
     if uid == None:
       rdocs = []
     else:
@@ -232,7 +234,7 @@ class ProblemSubmitHandler(base.Handler):
           (self.translate('problem_main'), self.reverse_url('problem_main')),
           (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
           (self.translate('problem_submit'), None))
-      self.render('problem_submit.html', pdoc=pdoc, udoc=udoc, rdocs=rdocs,
+      self.render('problem_submit.html', pdoc=pdoc, udoc=udoc, rdocs=rdocs, dudoc=dudoc,
                   page_title=pdoc['title'], path_components=path_components)
     else:
       self.json({'rdocs': rdocs})
@@ -545,12 +547,13 @@ class ProblemEditHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid, uid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
-    udoc = await user.get_by_uid(pdoc['owner_uid'])
+    udoc, dudoc = await asyncio.gather(user.get_by_uid(pdoc['owner_uid']),
+                                       domain.get_user(self.domain_id, pdoc['owner_uid']))
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
         (self.translate('problem_edit'), None))
-    self.render('problem_edit.html', pdoc=pdoc, udoc=udoc,
+    self.render('problem_edit.html', pdoc=pdoc, udoc=udoc, dudoc=dudoc,
                 page_title=pdoc['title'], path_components=path_components)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -576,12 +579,14 @@ class ProblemSettingsHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid, uid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
-    udoc = await user.get_by_uid(pdoc['owner_uid'])
+    udoc, dudoc = await asyncio.gather(user.get_by_uid(pdoc['owner_uid']),
+                                       domain.get_user(self.domain_id, pdoc['owner_uid']))
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
         (self.translate('problem_settings'), None))
-    self.render('problem_settings.html', pdoc=pdoc, udoc=udoc, categories=problem.get_categories(),
+    self.render('problem_settings.html', pdoc=pdoc, udoc=udoc, dudoc=dudoc,
+                categories=problem.get_categories(),
                 page_title=pdoc['title'], path_components=path_components)
 
   def split_tags(self, s):
@@ -669,12 +674,13 @@ class ProblemStatisticsHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid, uid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    udoc = await user.get_by_uid(pdoc['owner_uid'])
+    udoc, dudoc = await asyncio.gather(user.get_by_uid(pdoc['owner_uid']),
+                                       domain.get_user(self.domain_id, pdoc['owner_uid']))
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], self.reverse_url('problem_detail', pid=pdoc['doc_id'])),
         (self.translate('problem_statistics'), None))
-    self.render('problem_statistics.html', pdoc=pdoc, udoc=udoc,
+    self.render('problem_statistics.html', pdoc=pdoc, udoc=udoc, dudoc=dudoc,
                 page_title=pdoc['title'], path_components=path_components)
 
 

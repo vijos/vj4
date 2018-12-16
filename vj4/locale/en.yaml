@@ -8,6 +8,7 @@ discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
 home_account: Account Settings
+home_domain_account: Profile @ Domain
 home_preference: Preference
 home_messages: Messages
 home_security: Security
@@ -69,3 +70,5 @@ home_file: My Files
 fs_upload: File Upload
 page.training_detail.invalid_when_not_enrolled: You cannot view problem details unless enrolled.
 page.problem_detail.sidebar.show_category: Click to Show
+setting_info_domain: Personal Info
+display_name: Display Name

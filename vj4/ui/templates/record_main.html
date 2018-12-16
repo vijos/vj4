@@ -73,7 +73,7 @@
           </thead>
           <tbody>
           {% for rdoc in rdocs %}
-          {% with udoc = udict[rdoc['uid']], pdoc = pdict[(rdoc['domain_id'], rdoc['pid'])] %}
+          {% with udoc = udict[rdoc['uid']], dudoc = dudict[rdoc['uid']], pdoc = pdict[(rdoc['domain_id'], rdoc['pid'])] %}
             {% include 'record_main_tr.html' %}
           {% endwith %}
           {% endfor %}

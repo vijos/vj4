@@ -215,6 +215,7 @@ discussion_main: 討論
 discussion_node: 討論
 error: 錯誤
 home_account: 賬戶設定
+home_domain_account: 當前域的設定
 home_preference: 偏好設定
 home_messages: 站內訊息
 home_security: 安全設定
@@ -520,3 +521,4 @@ Oh, the user hasn't provide any discussions yet!: 啊哦，此用戶尚未參與
 Resent Discussions: 最近討論
 Scoreboard: 成績表
 Scoreboard (Hidden): 成績表 (隱藏)
+setting_info_domain: 個人資訊

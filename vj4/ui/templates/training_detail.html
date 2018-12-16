@@ -196,7 +196,7 @@
           {% endif %}
           <dt>{{ _('Enrollees') }}</dt><dd>{{ tdoc['enroll']|default(0) }}</dd>
           <dt>{{ _('Created By') }}</dt>
-          <dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
+          <dd>{{ user.render_inline(owner_udoc, owner_dudoc, badge=false) }}</dd>
         </dl>
       </div>
     </div>

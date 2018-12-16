@@ -144,7 +144,7 @@
       <dd>{% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</dd>
     {% if pdoc['owner_uid'] != 0 %}
       <dt>{{ _('Uploaded By') }}</dt>
-      <dd>{{ user.render_inline(owner_udoc, badge=false) }}</dd>
+      <dd>{{ user.render_inline(owner_udoc, owner_dudoc, badge=false) }}</dd>
     {% endif %}
     </dl>
   </div>

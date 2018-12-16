@@ -137,6 +137,20 @@ class HomeAccountHandler(base.Handler):
     self.json_or_redirect(self.url)
 
 
+@app.route('/home/domain/account', 'home_domain_account', global_route=False)
+class HomeDomainAccountHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  async def get(self):
+    self.render('home_settings.html', category='domain_account', settings=setting.DOMAIN_ACCOUNT_SETTINGS)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.post_argument
+  @base.require_csrf_token
+  async def post(self, **kwargs):
+    await self.set_settings(**kwargs)
+    self.json_or_redirect(self.url)
+
+
 @app.route('/home/preference', 'home_preference', global_route=True)
 class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
