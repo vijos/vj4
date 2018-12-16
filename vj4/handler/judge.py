@@ -26,7 +26,7 @@ async def _send_ac_mail(handler, rdoc):
   udoc = await user.get_by_uid(rdoc['uid'])
   if not udoc:
     return
-  u = setting.UserSetting(udoc)
+  u = setting.UserSetting(udoc, dict())  # no need to pass dudoc here
   if not u.get_setting('send_code'):
     return
   if rdoc.get('hidden') and not handler.udoc_has_priv(udoc, builtin.PRIV_VIEW_HIDDEN_RECORD):
