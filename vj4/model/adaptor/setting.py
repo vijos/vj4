@@ -130,9 +130,10 @@ class SettingMixin(object):
 
 
 class UserSetting(SettingMixin):
-  def __init__(self, udoc):
+  def __init__(self, udoc, dudoc):
     self.session = None
     self.user = udoc
+    self.domain_user = dudoc
 
   def has_priv(self, p):
     return True

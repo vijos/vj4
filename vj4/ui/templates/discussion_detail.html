@@ -84,7 +84,7 @@
   <div class="medium-3 columns">
     {% with udoc = udict[ddoc['owner_uid']] %}
     <div class="section side">
-      <div class="profile__bg user-profile-bg--{{ vj4.model.adaptor.setting.UserSetting(udoc).get_setting('background_img') }}"></div>
+      <div class="profile__bg user-profile-bg--{{ vj4.model.adaptor.setting.UserSetting(udoc, dudoc).get_setting('background_img') }}"></div>
       <div class="section__body">
         <div class="media sidebar-user-profile">
           <div class="media__left">
