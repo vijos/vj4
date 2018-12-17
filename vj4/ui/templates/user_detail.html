@@ -12,7 +12,7 @@
             </div>
             <div class="media__body profile-header__main">
               <h1>
-                {% if 'display_name' in dudoc %}
+                {% if dudoc['display_name'] %}
                   {{ dudoc['display_name'] }}
                   <small>{{ udoc['uname'] }}</small>
                 {% else %}
