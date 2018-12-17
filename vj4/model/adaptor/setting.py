@@ -75,7 +75,7 @@ class SettingMixin(object):
   def get_setting(self, key):
     if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.user:
       return self.user[key]
-    if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.domain_user:
+    if self.has_priv(builtin.PRIV_USER_PROFILE) and self.domain_user and key in self.domain_user:
       return self.domain_user[key]
     if self.session and key in self.session:
       return self.session[key]
