@@ -23,7 +23,7 @@
   </td>
   <td class="col--submit-by">
     <a href="{{ reverse_url('user_detail', uid=rdoc['uid']) }}">
-      {% if 'display_name' in dudoc %}
+      {% if dudoc['display_name'] %}
         {{ dudoc['display_name'] }} ({{ udoc['uname'] }})
       {% else %}
         {{ udoc['uname'] }}
