@@ -73,10 +73,11 @@ SETTINGS_BY_KEY = collections.OrderedDict(zip((s.key for s in SETTINGS), SETTING
 
 class SettingMixin(object):
   def get_setting(self, key):
-    if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.user:
-      return self.user[key]
-    if self.has_priv(builtin.PRIV_USER_PROFILE) and key in self.domain_user:
-      return self.domain_user[key]
+    if self.has_priv(builtin.PRIV_USER_PROFILE):
+      if key in self.user:
+        return self.user[key]
+      if key in self.domain_user:
+        return self.domain_user[key]
     if self.session and key in self.session:
       return self.session[key]
     setting = SETTINGS_BY_KEY[key]
@@ -134,6 +135,8 @@ class UserSetting(SettingMixin):
     self.session = None
     self.user = udoc
     self.domain_user = dudoc
+    if not self.domain_user:
+      self.domain_user = {}
 
   def has_priv(self, p):
     return True
