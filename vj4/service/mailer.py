@@ -28,7 +28,7 @@ async def send_mail(to: str, subject: str, content: str):
       await server.ehlo()
       await server.login(options.smtp_user, options.smtp_password)
       await server.sendmail(options.mail_from, to, msg.as_string())
-  except aiosmtplib.errors.SMTPResponseException as e:
+  except aiosmtplib.errors.SMTPException as e:
     _logger.exception(e)
     raise error.SendMailError(to)
 
