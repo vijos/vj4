@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 from os import path
 
@@ -105,6 +106,7 @@ def connection_route(prefix, name, global_route=False):
       def __init__(self, *args):
         super(Manager, self).__init__(*args)
         self.factory = conn
+        self.timeout = datetime.timedelta(60)
 
     loop = asyncio.get_event_loop()
     sockjs.add_endpoint(Application(), handler, name=name, prefix=prefix,
