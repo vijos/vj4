@@ -16,19 +16,16 @@ options.define('db_auth_source', default='',
 async def init():
   global _client, _db
 
-  url_parts = {
-    'scheme': 'mongodb',
-    'host': options.db_host,
-    'path': options.db_name,
-    'port': options.db_port,
-    'user': options.db_username,
-    'password': options.db_password,
-    'query': {},
-  }
+  query = dict()
   if options.db_auth_source:
-    url_parts['query']['authSource'] = options.db_auth_source
-  url = yarl.URL.build(**url_parts)
-
+    query['authSource'] = options.db_auth_source
+  url = yarl.URL.build(scheme='mongodb',
+                       host=options.db_host,
+                       path='/' + options.db_name,
+                       port=options.db_port,
+                       user=options.db_username,
+                       password=options.db_password,
+                       query=query)
   _client = await aiomongo.create_client(str(url))
   _db = _client.get_default_database()
 
