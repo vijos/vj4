@@ -205,7 +205,7 @@ class DomainEditHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *kwargs):
+  async def post(self):
     await discussion.initialize(self.domain_id)
     self.json_or_redirect(self.url)
 
@@ -275,14 +275,15 @@ class DomainPermissionHandler(base.Handler):
     self.render('domain_manage_permission.html', bitand=bitand, roles=roles)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
-  @base.post_argument
-  @base.require_csrf_token
-  async def post(self, **kwargs):
+  async def post(self):
+    args = await self.request.post()
+    if self.csrf_token and self.csrf_token != args.get('csrf_token', ''):
+      raise error.CsrfTokenError()
     roles = dict()
     # unmodifiable roles are not modifiable so that we are not using get_all_roles() here
     for role in self.domain['roles']:
       perms = 0
-      for perm in (await self.request.post()).getall(role, []):
+      for perm in args.getall(role, []):
        perm = int(perm)
        if perm in builtin.PERMS_BY_KEY:
           perms |= perm
