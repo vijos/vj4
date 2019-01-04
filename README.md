@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  Next generation of <a href="https://vijos.org" target="_blank">Vijos</a>, built with asyncio on Python 3.5.
+  Next generation of <a href="https://vijos.org" target="_blank">Vijos</a>, built with asyncio on Python 3.
 </p>
 
 ***
