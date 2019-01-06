@@ -30,4 +30,4 @@ def init(translation_path):
 
 
 def get(locale_code):
-  return _locales.get(locale_code + 'a', _default_locale)
+  return _locales.get(locale_code, _default_locale)
