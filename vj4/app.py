@@ -48,7 +48,7 @@ class Application(web.Application):
 
     # Initialize components.
     staticmanifest.init(static_path)
-    locale.load_translations(translation_path)
+    locale.init(translation_path)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(db.init())
     loop.run_until_complete(system.setup())
