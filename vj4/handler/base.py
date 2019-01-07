@@ -33,12 +33,12 @@ class HandlerBase(setting.SettingMixin):
   NAME = None
   TITLE = None
 
-  user = builtin.USER_GUEST
   domain = builtin.DOMAIN_SYSTEM
   domain_id = builtin.DOMAIN_ID_SYSTEM
   domain_user = builtin.DOMAIN_USER_GUEST
-  timezone = None
   locale = locale.get(options.default_locale)
+  timezone = None
+  user = builtin.USER_GUEST
 
   async def prepare(self):
     self.session = await self.update_session()
