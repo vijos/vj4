@@ -11,7 +11,8 @@ options.define('default_locale', default='zh_CN', help='Default locale.')
 _locales = {}
 
 
-def init(translation_path):
+def _init():
+  translation_path = os.path.join(os.path.dirname(__file__), '..', 'locale')
   langs = []
   for filename in os.listdir(translation_path):
     if not filename.endswith(".yaml"):
@@ -31,3 +32,5 @@ def init(translation_path):
 
 def get(locale_code):
   return _locales.get(locale_code, _default_locale)
+
+_init()
