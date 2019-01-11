@@ -8,19 +8,19 @@
     <div class="section">
       <div class="section__body typo">
         {{ tdoc['content']|markdown }}
-      {% if handler.is_ongoing(tdoc) %}
+      {% if handler.is_live(tdoc) %}
         <blockquote class="warn">
           <p>{{ _('We will check code similarity after this contest.') }}</p>
         </blockquote>
       {% endif %}
       </div>
     </div>
-  {% if not handler.is_not_started(tdoc) %}
+  {% if handler.is_live(tdoc) or handler.is_done(tdoc) %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Problem') }}</h1>
       </div>
-    {% if attended or handler.is_finished(tdoc) %}
+    {% if attended or handler.is_done(tdoc) %}
       <div class="section__body no-padding">
         <table class="data-table">
           <colgroup>

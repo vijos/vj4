@@ -69,7 +69,7 @@ class TrainingMixin(TrainingStatusMixin):
 
 
 @app.route('/training', 'training_main')
-class TrainingMainHandler(TrainingMixin, base.Handler):
+class TrainingMainHandler(base.Handler, TrainingMixin):
   TRAININGS_PER_PAGE = 20
 
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
@@ -104,7 +104,7 @@ class TrainingMainHandler(TrainingMixin, base.Handler):
 
 
 @app.route('/training/{tid:\w{24}}', 'training_detail')
-class TrainingDetailHandler(TrainingMixin, base.OperationHandler):
+class TrainingDetailHandler(base.OperationHandler, TrainingMixin):
   @base.require_perm(builtin.PERM_VIEW_TRAINING)
   @base.route_argument
   @base.sanitize
@@ -168,7 +168,7 @@ class TrainingDetailHandler(TrainingMixin, base.OperationHandler):
 
 
 @app.route('/training/create', 'training_create')
-class TrainingCreateHandler(TrainingMixin, base.Handler):
+class TrainingCreateHandler(base.Handler, TrainingMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_TRAINING)
   async def get(self):
@@ -203,7 +203,7 @@ class TrainingCreateHandler(TrainingMixin, base.Handler):
 
 
 @app.route('/training/{tid}/edit', 'training_edit')
-class TrainingEditHandler(TrainingMixin, base.Handler):
+class TrainingEditHandler(base.Handler, TrainingMixin):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.route_argument
   @base.sanitize

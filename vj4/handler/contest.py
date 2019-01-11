@@ -82,6 +82,9 @@ class ContestStatusMixin(object):
     ready_at = tdoc['begin_at'] - datetime.timedelta(days=1)
     return ready_at <= self.now < tdoc['begin_at']
 
+  def is_not_started(self, tdoc):
+    return self.now < tdoc['begin_at']
+
   def is_live(self, tdoc):
     return tdoc['begin_at'] <= self.now < tdoc['end_at']
 
@@ -100,6 +103,14 @@ class ContestStatusMixin(object):
       return 'Live...'
     else:
       return 'Done'
+
+  def get_status(self, tdoc):
+    if self.is_not_started(tdoc):
+      return 'not_started'
+    elif self.is_ongoing(tdoc):
+      return 'ongoing'
+    else:
+      return 'finished'
 
 
 class ContestVisibilityMixin(object):
@@ -469,7 +480,7 @@ class ContestScoreboardHandler(ContestMixin, ContestPageCategoryMixin, base.Hand
         (tdoc['title'], self.reverse_url('contest_detail', ctype=ctype, tid=tdoc['doc_id'])),
         (page_title, None))
     dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=udict.keys())
-    self.render('contest_scoreboard.html', tdoc=tdoc, rows=rows, dudict=dudict
+    self.render('contest_scoreboard.html', tdoc=tdoc, rows=rows, dudict=dudict,
                 page_title=page_title, path_components=path_components)
 
 

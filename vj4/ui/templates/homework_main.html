@@ -48,7 +48,7 @@
                     {{ _('page.contest_main.homework.item.supplementary.open_since') }}: {{ datetime_span(tdoc['begin_at']) }}
                   </li>
                   <li>
-                  {% if handler.is_homework_extended(tdoc) or handler.is_finished(tdoc) %}
+                  {% if handler.is_homework_extended(tdoc) or handler.is_done(tdoc) %}
                     {{ _('page.contest_main.homework.item.supplementary.hard_deadline') }}: {{ datetime_span(tdoc['end_at']) }}
                   {% else %}
                     {{ _('page.contest_main.homework.item.supplementary.deadline') }}: {{ datetime_span(tdoc['penalty_since']) }}
