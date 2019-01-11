@@ -273,6 +273,10 @@ class Handler(web.View, HandlerBase):
     await self.response.write(data)
 
   @property
+  def page_category(self):
+    return None
+
+  @property
   def prefer_json(self):
     accept_header = self.request.headers.get('Accept')
     try:
@@ -397,11 +401,15 @@ def _datetime_stamp(dt):
 
 
 # Decorators
-def require_perm(perm):
+def require_perm(perm, when=None):
   def decorate(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
-      self.check_perm(perm)
+      if when != None:
+        if when(*args, **kwargs):
+          self.check_perm(perm)
+      else:
+        self.check_perm(perm)
       return func(self, *args, **kwargs)
 
     return wrapper

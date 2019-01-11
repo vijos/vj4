@@ -1,10 +1,11 @@
-{% macro nav_item(target_page_name, target_page_prefix) %}
+{% macro nav_item(target_page_name, page_category, display_name=None) %}
 <li class="nav__list-item">
-  <a href="{{ reverse_url(target_page_name) }}" class="nav__item{% if page_name.startswith(target_page_prefix) %} nav--active{% endif %}">
-    {{ _(target_page_name) }}
+  <a href="{{ reverse_url(target_page_name, **kwargs) }}" class="nav__item{% if handler.page_category == page_category or (handler.page_category is none and page_name.startswith(page_category)) %} nav--active{% endif %}">
+    {{ _(display_name or target_page_name) }}
   </a>
 </li>
 {% endmacro %}
+
 <nav class="nav slideout-menu" id="menu">
   <div class="row"><div class="columns clearfix">
     <ol class="nav__list nav__list--main clearfix">
@@ -22,7 +23,10 @@
       {{ nav_item('discussion_main', 'discussion') }}
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST) %}
-      {{ nav_item('contest_main', 'contest') }}
+      {{ nav_item('contest_main', 'contest', display_name='page.contest_main.contest.title', ctype='contest') }}
+    {% endif %}
+    {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_HOMEWORK) %}
+      {{ nav_item('contest_main', 'homework', display_name='page.contest_main.homework.title', ctype='homework') }}
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) or handler.has_perm(vj4.model.builtin.PERM_EDIT_PERM) %}
       {{ nav_item('domain_manage', 'domain_manage') }}

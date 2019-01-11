@@ -5,8 +5,8 @@
     'problemId': pdoc['doc_id'],
     'socketUrl': '{}-conn'.format(reverse_url('problem_pretest', pid=pdoc['doc_id'])),
     'postPretestUrl': reverse_url('problem_pretest', pid=pdoc['doc_id']),
-    'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['doc_id']) if not tdoc else reverse_url('contest_detail_problem_submit', tid=tdoc['doc_id'], pid=pdoc['doc_id']),
-    'getSubmissionsUrl': reverse_url('problem_submit', pid=pdoc['doc_id']) if not tdoc else reverse_url('contest_detail_problem_submit', tid=tdoc['doc_id'], pid=pdoc['doc_id']),
+    'postSubmitUrl': reverse_url('problem_submit', pid=pdoc['doc_id']) if not tdoc else reverse_url('contest_detail_problem_submit', ctype=vj4.constant.contest.DOCTYPE_TO_CTYPE[tdoc['doc_type']], tid=tdoc['doc_id'], pid=pdoc['doc_id']),
+    'getSubmissionsUrl': reverse_url('problem_submit', pid=pdoc['doc_id']) if not tdoc else reverse_url('contest_detail_problem_submit', ctype=vj4.constant.contest.DOCTYPE_TO_CTYPE[tdoc['doc_type']], tid=tdoc['doc_id'], pid=pdoc['doc_id']),
     'getRecordDetailUrl': reverse_url('record_detail', rid='{rid}'),
     'code_lang': handler.get_setting('code_lang'),
     'code_template': handler.get_code_template(),
@@ -25,11 +25,25 @@
             <p>{{ _('No dataset at present.') }}</p>
           </blockquote>
         {% endif %}
-        {% if tdoc and handler.is_done(tdoc) %}
+        {% if tdoc %}
+        {% if tdoc['doc_type'] == vj4.model.document.TYPE_CONTEST %}
+        {% if handler.is_finished(tdoc) %}
           <blockquote class="note">
             <p>{{ _('You cannot submit for this problem because the contest is ended. You can click "Open in Problem Set" to view this problem in normal mode.') }}</p>
           </blockquote>
-        {% endif %}
+        {% endif %}{# handler.is_finished(tdoc) #}
+        {% else %}{# tdoc['doc_type'] == vj4.model.document.TYPE_CONTEST #}
+        {% if handler.is_homework_extended(tdoc) %}
+          <blockquote class="note">
+            <p>{{ _('The homework\'s deadline is due but in extension. You can still submit for this problem but your score will be panelled.') }}</p>
+          </blockquote>
+        {% elif handler.is_finished(tdoc) %}{# handler.is_homework_extended(tdoc) #}
+          <blockquote class="note">
+            <p>{{ _('You cannot submit for this problem because the homework\'s deadline is due.') }}</p>
+          </blockquote>
+        {% endif %}{# handler.is_homework_extended(tdoc) #}
+        {% endif %}{# tdoc['doc_type'] == vj4.model.document.TYPE_CONTEST #}
+        {% endif %}{# tdoc #}
           {{ pdoc['content']|markdown }}
         </div>
       </div></div>

@@ -31,7 +31,7 @@
     </div>
     <div class="media__right middle">
       <div class="section__body">
-        <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" class="detail-button">{{ _('View Details') }}</a>
+        <a href="{{ reverse_url('contest_detail', ctype='contest', tid=tdoc['doc_id']) }}" class="detail-button">{{ _('View Details') }}</a>
         <div class="typo text-center">
         {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
           <p><span class="icon icon-check"></span> {{ _('Attended') }}</p>
@@ -48,9 +48,9 @@
 <div class="row">
   <div class="medium-9 columns">
   {% for tdoc in tdocs %}
-  {% if handler.is_live(tdoc) %}
+  {% if handler.is_ongoing(tdoc) %}
     {{ render_important_contest('live', 'Live...', tdoc) }}
-  {% elif handler.is_ready(tdoc) %}
+  {% elif handler.is_upcoming(tdoc) %}
     {{ render_important_contest('ready', 'Ready (☆▽☆)', tdoc) }}
   {% endif %}
   {% endfor %}
@@ -72,44 +72,46 @@
           </form>
         </div>
       </div>
-    {% if not tdocs %}
-      {{ nothing.render('There are no contests...') }}
-    {% else %}
-      <ol class="section__list contest__list">
-      {% for tdoc in tdocs %}
-        <li class="section__list__item contest__item contest-type--{{ vj4.constant.contest.RULE_ID[tdoc['rule']] }}">
-          <div class="media">
-            <div class="media__left medium">
-              <div class="contest__date numbox">
-                <div class="numbox__num large">{{ datetime_span(tdoc['begin_at'], false, '%d') }}</div>
-                <div class="numbox__text">{{ datetime_span(tdoc['begin_at'], false, '%Y-%m') }}</div>
+      <div class="section__body no-padding">
+      {% if not tdocs %}
+        {{ nothing.render('There are no contests...') }}
+      {% else %}
+        <ol class="section__list contest__list">
+        {% for tdoc in tdocs %}
+          <li class="section__list__item contest__item contest-type--{{ vj4.constant.contest.RULE_ID[tdoc['rule']] }}">
+            <div class="media">
+              <div class="media__left medium">
+                <div class="contest__date numbox">
+                  <div class="numbox__num large">{{ datetime_span(tdoc['begin_at'], false, '%d') }}</div>
+                  <div class="numbox__text">{{ datetime_span(tdoc['begin_at'], false, '%Y-%m') }}</div>
+                </div>
+              </div>
+              <div class="media__body medium">
+                <h1 class="contest__title"><a href="{{ reverse_url('contest_detail', ctype='contest', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+                <ul class="supplementary list">
+                  <li>
+                    <a href="?rule={{ tdoc['rule'] }}" class="contest-type-tag"><span class="icon icon-award"></span>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</a>
+                  </li>
+                  <li>
+                    <span class="icon icon-schedule--fill text-blue"></span> {{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}
+                  </li>
+                  <li>
+                    <span class="icon icon-user--multiple"></span> {{ tdoc['attend']|default(0) }}
+                  </li>
+                {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
+                  <li class="contest__info-attended">
+                    <span class="icon icon-check"></span> {{ _('Attended') }}
+                  </li>
+                {% endif %}
+                </ul>
               </div>
             </div>
-            <div class="media__body medium">
-              <h1 class="contest__title"><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
-              <ul class="supplementary list">
-                <li>
-                  <a href="?rule={{ tdoc['rule'] }}" class="contest-type-tag"><span class="icon icon-award"></span>{{ vj4.constant.contest.RULE_TEXTS[tdoc['rule']] }}</a>
-                </li>
-                <li>
-                  <span class="icon icon-schedule--fill text-blue"></span> {{ contest.render_duration(tdoc) }} {{ _('hour(s)') }}
-                </li>
-                <li>
-                  <span class="icon icon-user--multiple"></span> {{ tdoc['attend']|default(0) }}
-                </li>
-              {% if tsdict[tdoc['doc_id']]['attend'] == 1 %}
-                <li class="contest__info-attended">
-                  <span class="icon icon-check"></span> {{ _('Attended') }}
-                </li>
-              {% endif %}
-              </ul>
-            </div>
-          </div>
-        </li>
-      {% endfor %}
-      </ol>
-      {{ paginator.render(page, tpcount, add_qs=qs) }}
-    {% endif %}
+          </li>
+        {% endfor %}
+        </ol>
+        {{ paginator.render(page, tpcount, add_qs=qs) }}
+      {% endif %}
+      </div>
     </div>
   </div>
   <div class="medium-3 columns">
@@ -121,7 +123,7 @@
         </h1>
       </div>
       <div class="section__body">
-        <p><a href="{{ reverse_url('contest_create') }}" class="expanded primary button">{{ _('Create a contest') }}</a></p>
+        <p><a href="{{ reverse_url('contest_create', ctype='contest') }}" class="expanded primary button">{{ _('Create a contest') }}</a></p>
       </div>
     </div>
   {% endif %}
