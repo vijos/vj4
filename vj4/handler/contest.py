@@ -107,7 +107,7 @@ class ContestStatusMixin(object):
   def get_status(self, tdoc):
     if self.is_not_started(tdoc):
       return 'not_started'
-    elif self.is_ongoing(tdoc):
+    elif self.is_live(tdoc):
       return 'ongoing'
     else:
       return 'finished'
