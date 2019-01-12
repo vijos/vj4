@@ -461,11 +461,11 @@ class ContestDetailProblemSubmitHandler(ContestMixin, ContestPageCategoryMixin, 
 
 @app.route('/{ctype:contest|homework}/{tid}/scoreboard', 'contest_scoreboard')
 class ContestScoreboardHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
+  @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST,            when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_CONTEST_SCOREBOARD, when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK,            when=lambda ctype, **kwargs: ctype == 'homework')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK_SCOREBOARD, when=lambda ctype, **kwargs: ctype == 'homework')
-  @base.route_argument
   @base.sanitize
   async def get(self, *, ctype: str, tid: objectid.ObjectId):
     tdoc, rows, udict = await self.get_scoreboard(constant.contest.CTYPE_TO_DOCTYPE[ctype], tid)
@@ -490,11 +490,11 @@ class ContestScoreboardDownloadHandler(ContestMixin, base.Handler):
   def _export_status_as_html(self, rows):
     return self.render_html('contest_scoreboard_download_html.html', rows=rows).encode()
 
+  @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST,            when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_CONTEST_SCOREBOARD, when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK,            when=lambda ctype, **kwargs: ctype == 'homework')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK_SCOREBOARD, when=lambda ctype, **kwargs: ctype == 'homework')
-  @base.route_argument
   @base.sanitize
   async def get(self, *, ctype: str, tid: objectid.ObjectId, ext: str):
     get_status_content = {

@@ -291,7 +291,7 @@ async def add(domain_id: str, doc_type: int,
 
 
 @argmethod.wrap
-async def get(domain_id: str, doc_type: int, tid: objectid.ObjectId):
+async def get(domain_id: str, doc_type, tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, doc_type, tid)
   if not tdoc:
     raise error.DocumentNotFoundError(domain_id, doc_type, tid)
