@@ -7,7 +7,7 @@
 {% endif %}
   <div>
     <ol class="menu">
-    {% if handler.is_live(tdoc) or handler.is_homework_extended(tdoc) %}
+    {% if handler.is_ongoing(tdoc) or handler.is_homework_extended(tdoc) %}
     {% if page_name == 'contest_detail_problem' %}
       <li class="menu__item scratchpad--hide"><a class="menu__link highlight" name="problem-sidebar__open-scratchpad" href="javascript:;" data-global-hotkey="alt+e">
         <span class="icon icon-enlarge"></span> {{ _('Open Scratchpad') }} (Alt+E)

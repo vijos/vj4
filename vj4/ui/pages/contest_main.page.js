@@ -16,7 +16,7 @@ const page = new NamedPage('contest_main', () => {
       endAt: doc.end_at * 1000,
       title: doc.title,
       maskFrom: doc.penalty_since ? doc.penalty_since * 1000 : null,
-      maskTitle: i18n('page.contest_main.homework.banner.extension'),
+      maskTitle: i18n('Time Extension'),
       colorIndex: parseMongoId(doc.id).timestamp % 12,
       link: doc.url,
     }));

@@ -48,9 +48,9 @@
 <div class="row">
   <div class="medium-9 columns">
   {% for tdoc in tdocs %}
-  {% if handler.is_live(tdoc) %}
+  {% if handler.is_ongoing(tdoc) %}
     {{ render_important_contest('live', 'Live...', tdoc) }}
-  {% elif handler.is_ready(tdoc) %}
+  {% elif handler.is_upcoming(tdoc) %}
     {{ render_important_contest('ready', 'Ready (☆▽☆)', tdoc) }}
   {% endif %}
   {% endfor %}

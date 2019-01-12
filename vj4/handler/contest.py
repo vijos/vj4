@@ -78,14 +78,14 @@ class ContestStatusMixin(object):
     ready_at = tdoc['begin_at'] - datetime.timedelta(days=1)
     return self.now < ready_at
 
-  def is_ready(self, tdoc):
+  def is_upcoming(self, tdoc):
     ready_at = tdoc['begin_at'] - datetime.timedelta(days=1)
     return ready_at <= self.now < tdoc['begin_at']
 
   def is_not_started(self, tdoc):
     return self.now < tdoc['begin_at']
 
-  def is_live(self, tdoc):
+  def is_ongoing(self, tdoc):
     return tdoc['begin_at'] <= self.now < tdoc['end_at']
 
   def is_done(self, tdoc):
@@ -97,9 +97,9 @@ class ContestStatusMixin(object):
   def status_text(self, tdoc):
     if self.is_new(tdoc):
       return 'New'
-    elif self.is_ready(tdoc):
+    elif self.is_upcoming(tdoc):
       return 'Ready (☆▽☆)'
-    elif self.is_live(tdoc):
+    elif self.is_ongoing(tdoc):
       return 'Live...'
     else:
       return 'Done'
@@ -107,7 +107,7 @@ class ContestStatusMixin(object):
   def get_status(self, tdoc):
     if self.is_not_started(tdoc):
       return 'not_started'
-    elif self.is_live(tdoc):
+    elif self.is_ongoing(tdoc):
       return 'ongoing'
     else:
       return 'finished'
@@ -205,7 +205,7 @@ class ContestMainHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                           (tdoc['doc_id'] for tdoc in tdocs))
-    page_title = self.translate('page.contest_main.contest.title')
+    page_title = self.translate('contest_main.contest')
     path_components = self.build_path((page_title, None))
     self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs, rule=rule,
                 tdocs=tdocs, tsdict=tsdict,
@@ -227,7 +227,7 @@ class ContestMainHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
       else:
         cal_tdoc['end_at'] = self.datetime_stamp(tdoc['penalty_since'])
       calendar_tdocs.append(cal_tdoc)
-    page_title = self.translate('page.contest_main.homework.title')
+    page_title = self.translate('contest_main.homework')
     path_components = self.build_path((page_title, None))
     self.render('homework_main.html', tdocs=tdocs, calendar_tdocs=calendar_tdocs,
                 page_title=page_title, path_components=path_components)
@@ -273,7 +273,7 @@ class ContestDetailHandler(ContestMixin, ContestPageCategoryMixin, base.Operatio
     udict = await user.get_dict(uids)
     dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=uids)
     path_components = self.build_path(
-        (self.translate('page.contest_main.{0}.title'.format(ctype)), self.reverse_url('contest_main', ctype=ctype)),
+        (self.translate('contest_main.{0}'.format(ctype)), self.reverse_url('contest_main', ctype=ctype)),
         (tdoc['title'], None))
     self.render('{0}_detail.html'.format(ctype), tdoc=tdoc, tsdoc=tsdoc, attended=attended, udict=udict,
                 dudict=dudict, pdict=pdict, psdict=psdict, rdict=rdict,
@@ -349,7 +349,7 @@ class ContestDetailProblemHandler(ContestMixin, ContestPageCategoryMixin, base.H
           raise error.HomeworkNotAttendedError(tdoc['doc_id'])
         else:
           raise error.InvalidArgumentError('ctype')
-      if not self.is_live(tdoc):
+      if not self.is_ongoing(tdoc):
         if ctype == 'contest':
           raise error.ContestNotLiveError(tdoc['doc_id'])
         elif ctype == 'homework':
@@ -359,7 +359,7 @@ class ContestDetailProblemHandler(ContestMixin, ContestPageCategoryMixin, base.H
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
     path_components = self.build_path(
-        (self.translate('page.contest_main.{0}.title'.format(ctype)), self.reverse_url('contest_main', ctype=ctype)),
+        (self.translate('contest_main.{0}'.format(ctype)), self.reverse_url('contest_main', ctype=ctype)),
         (tdoc['title'], self.reverse_url('contest_detail', ctype=ctype, tid=tid)),
         (pdoc['title'], None))
     self.render('problem_detail.html', tdoc=tdoc, pdoc=pdoc, tsdoc=tsdoc, udoc=udoc,
@@ -390,7 +390,7 @@ class ContestDetailProblemSubmitHandler(ContestMixin, ContestPageCategoryMixin, 
         raise error.HomeworkNotAttendedError(tdoc['doc_id'])
       else:
         raise error.InvalidArgumentError('ctype')
-    if not self.is_live(tdoc):
+    if not self.is_ongoing(tdoc):
       if ctype == 'contest':
         raise error.ContestNotLiveError(tdoc['doc_id'])
       elif ctype == 'homework':
@@ -408,10 +408,10 @@ class ContestDetailProblemSubmitHandler(ContestMixin, ContestPageCategoryMixin, 
       rdocs = []
     if not self.prefer_json:
       path_components = self.build_path(
-          (self.translate('page.contest_main.{0}.title'.format(ctype)), self.reverse_url('contest_main', ctype=ctype)),
+          (self.translate('contest_main.{0}'.format(ctype)), self.reverse_url('contest_main', ctype=ctype)),
           (tdoc['title'], self.reverse_url('contest_detail', ctype=ctype, tid=tid)),
           (pdoc['title'], self.reverse_url('contest_detail_problem', ctype=ctype, tid=tid, pid=pid)),
-          (self.translate('page.contest_detail_problem_submit.{0}.title'.format(ctype)), None))
+          (self.translate('contest_detail_problem_submit.{0}'.format(ctype)), None))
       self.render('problem_submit.html', tdoc=tdoc, pdoc=pdoc, rdocs=rdocs,
                   tsdoc=tsdoc, udoc=udoc, attended=attended,
                   page_title=pdoc['title'], path_components=path_components)
@@ -445,7 +445,7 @@ class ContestDetailProblemSubmitHandler(ContestMixin, ContestPageCategoryMixin, 
         raise error.HomeworkNotAttendedError(tdoc['doc_id'])
       else:
         raise error.InvalidArgumentError('ctype')
-    if not self.is_live(tdoc):
+    if not self.is_ongoing(tdoc):
       if ctype == 'contest':
         raise error.ContestNotLiveError(tdoc['doc_id'])
       elif ctype == 'homework':
@@ -474,9 +474,9 @@ class ContestScoreboardHandler(ContestMixin, ContestPageCategoryMixin, base.Hand
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK_SCOREBOARD, when=lambda ctype, **kwargs: ctype == 'homework')
   async def get(self, *, ctype: str, tid: objectid.ObjectId):
     tdoc, rows, udict = await self.get_scoreboard(constant.contest.CTYPE_TO_DOCTYPE[ctype], tid)
-    page_title = self.translate('page.contest_scoreboard.{0}.title'.format(ctype))
+    page_title = self.translate('contest_scoreboard'.format(ctype))
     path_components = self.build_path(
-        (self.translate('page.contest_main.{0}.title'.format(ctype)), self.reverse_url('contest_main', ctype=ctype)),
+        (self.translate('contest_main.{0}'.format(ctype)), self.reverse_url('contest_main', ctype=ctype)),
         (tdoc['title'], self.reverse_url('contest_detail', ctype=ctype, tid=tdoc['doc_id'])),
         (page_title, None))
     dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=udict.keys())
@@ -536,7 +536,7 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
     # find next quarter
     ts = ts - ts % (15 * 60) + 15 * 60
     dt = datetime.datetime.fromtimestamp(ts, self.timezone)
-    page_title = self.translate('page.contest_create.contest.title')
+    page_title = self.translate('contest_create.contest')
     path_components = self.build_path((page_title, None))
     self.render('contest_edit.html',
                 date_text=dt.strftime('%Y-%m-%d'),
@@ -550,7 +550,7 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
   async def _get_homework(self):
     begin_at = self.now.replace(tzinfo=pytz.utc).astimezone(self.timezone) + datetime.timedelta(days=1)
     penalty_since = begin_at + datetime.timedelta(days=7)
-    page_title = self.translate('page.contest_create.homework.title')
+    page_title = self.translate('contest_create.homework')
     path_components = self.build_path((page_title, None))
     self.render('homework_edit.html',
                 date_begin_text=begin_at.strftime('%Y-%m-%d'),
@@ -654,9 +654,9 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
     dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
     duration = (tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600
-    page_title = self.translate('page.contest_edit.contest.title')
+    page_title = self.translate('contest_edit.contest')
     path_components = self.build_path(
-        (self.translate('page.contest_main.contest.title'), self.reverse_url('contest_main', ctype='contest')),
+        (self.translate('contest_main.contest'), self.reverse_url('contest_main', ctype='contest')),
         (tdoc['title'], self.reverse_url('contest_detail', ctype='contest', tid=tdoc['doc_id'])),
         (page_title, None))
     self.render('contest_edit.html', tdoc=tdoc,
@@ -677,9 +677,9 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     penalty_since = pytz.utc.localize(tdoc['penalty_since']).astimezone(self.timezone)
     end_at = pytz.utc.localize(tdoc['end_at']).astimezone(self.timezone)
     extension_days = round((end_at - penalty_since).total_seconds() / 60 / 60 / 24, ndigits=2)
-    page_title = self.translate('page.contest_create.homework.title')
+    page_title = self.translate('contest_create.homework')
     path_components = self.build_path(
-        (self.translate('page.contest_main.homework.title'), self.reverse_url('contest_main', ctype='homework')),
+        (self.translate('contest_main.homework'), self.reverse_url('contest_main', ctype='homework')),
         (tdoc['title'], self.reverse_url('contest_detail', ctype='homework', tid=tdoc['doc_id'])),
         (page_title, None))
     self.render('homework_edit.html', tdoc=tdoc,
