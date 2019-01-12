@@ -181,8 +181,6 @@ class ContestMixin(ContestStatusMixin, ContestVisibilityMixin, ContestCommonOper
 class ContestMainHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
   CONTESTS_PER_PAGE = 20
 
-  @base.require_perm(builtin.PERM_VIEW_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
-  @base.require_perm(builtin.PERM_VIEW_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.route_argument
   async def get(self, *, ctype: str):
     if ctype == 'homework':
@@ -192,6 +190,7 @@ class ContestMainHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     else:
       raise error.InvalidArgumentError('ctype')
 
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
   @base.get_argument
   @base.sanitize
   async def _get_contest(self, *, rule: int=0, page: int=1):
@@ -212,6 +211,7 @@ class ContestMainHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
                 tdocs=tdocs, tsdict=tsdict,
                 page_title=page_title, path_components=path_components)
 
+  @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
   async def _get_homework(self):
     tdocs = await contest.get_multi(self.domain_id, document.TYPE_HOMEWORK).to_list()
     calendar_tdocs = []
@@ -237,10 +237,10 @@ class ContestMainHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
 class ContestDetailHandler(ContestMixin, ContestPageCategoryMixin, base.OperationHandler):
   DISCUSSIONS_PER_PAGE = 15
 
+  @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.get_argument
-  @base.route_argument
   @base.sanitize
   async def get(self, *, ctype: str, tid: objectid.ObjectId, page: int=1):
     doc_type = constant.contest.CTYPE_TO_DOCTYPE[ctype]
@@ -280,10 +280,10 @@ class ContestDetailHandler(ContestMixin, ContestPageCategoryMixin, base.Operatio
                 datetime_stamp=self.datetime_stamp,
                 page_title=tdoc['title'], path_components=path_components)
 
+  @base.route_argument
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_ATTEND_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_ATTEND_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
-  @base.route_argument
   @base.require_csrf_token
   @base.sanitize
   async def post_attend(self, *, ctype: str, tid: objectid.ObjectId):
@@ -297,11 +297,11 @@ class ContestDetailHandler(ContestMixin, ContestPageCategoryMixin, base.Operatio
 
 @app.route('/{ctype:contest|homework}/{tid:\w{24}}/code', 'contest_code')
 class ContestCodeHandler(base.OperationHandler):
+  @base.limit_rate('contest_code', 3600, 60)
+  @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.require_perm(builtin.PERM_READ_RECORD_CODE)
-  @base.limit_rate('contest_code', 3600, 60)
-  @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc, tsdocs = await contest.get_and_list_status(self.domain_id, {'$in': [document.TYPE_CONTEST, document.TYPE_HOMEWORK]}, tid)
@@ -325,10 +325,10 @@ class ContestCodeHandler(base.OperationHandler):
 
 @app.route('/{ctype:contest|homework}/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
 class ContestDetailProblemHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
+  @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
-  @base.route_argument
   @base.sanitize
   async def get(self, *, ctype: str, tid: objectid.ObjectId, pid: document.convert_doc_id):
     doc_type = constant.contest.CTYPE_TO_DOCTYPE[ctype]
@@ -368,10 +368,10 @@ class ContestDetailProblemHandler(ContestMixin, ContestPageCategoryMixin, base.H
 
 @app.route('/{ctype:contest|homework}/{tid}/{pid}/submit', 'contest_detail_problem_submit')
 class ContestDetailProblemSubmitHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
+  @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
-  @base.route_argument
   @base.sanitize
   async def get(self, *, ctype: str, tid: objectid.ObjectId, pid: document.convert_doc_id):
     doc_type = constant.contest.CTYPE_TO_DOCTYPE[ctype]
@@ -417,12 +417,12 @@ class ContestDetailProblemSubmitHandler(ContestMixin, ContestPageCategoryMixin, 
     else:
       self.json({'rdocs': rdocs})
 
+  @base.limit_rate('add_record', 60, 100)
+  @base.route_argument
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.require_perm(builtin.PERM_SUBMIT_PROBLEM)
-  @base.limit_rate('add_record', 60, 100)
-  @base.route_argument
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
@@ -512,8 +512,6 @@ class ContestScoreboardDownloadHandler(ContestMixin, base.Handler):
 @app.route('/{ctype:contest|homework}/create', 'contest_create')
 class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_CREATE_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
-  @base.require_perm(builtin.PERM_CREATE_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.route_argument
   async def get(self, *, ctype: str):
     if ctype == 'homework':
@@ -523,6 +521,7 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
     else:
       raise error.InvalidArgumentError('ctype')
 
+  @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def _get_contest(self):
     dt = self.now.replace(tzinfo=pytz.utc).astimezone(self.timezone)
     ts = calendar.timegm(dt.utctimetuple())
@@ -537,6 +536,7 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
                 pids=_format_pids([1000, 1001]),
                 page_title=page_title, path_components=path_components)
 
+  @base.require_perm(builtin.PERM_CREATE_HOMEWORK)
   async def _get_homework(self):
     begin_at = self.now.replace(tzinfo=pytz.utc).astimezone(self.timezone) + datetime.timedelta(days=1)
     penalty_since = begin_at + datetime.timedelta(days=7)
@@ -553,8 +553,6 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
-  @base.require_perm(builtin.PERM_CREATE_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
-  @base.require_perm(builtin.PERM_CREATE_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.route_argument
   async def post(self, *, ctype: str, **kwargs):
     if ctype == 'homework':
@@ -564,6 +562,7 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
     else:
       raise error.InvalidArgumentError('ctype')
 
+  @base.require_perm(builtin.PERM_CREATE_CONTEST)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
@@ -586,6 +585,7 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
     await self.hide_problems(pids)
     self.json_or_redirect(self.reverse_url('contest_detail', ctype='contest', tid=tid))
 
+  @base.require_perm(builtin.PERM_CREATE_HOMEWORK)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
@@ -623,8 +623,6 @@ class ContestCreateHandler(ContestMixin, ContestPageCategoryMixin, base.Handler)
 @app.route('/{ctype:contest|homework}/{tid}/edit', 'contest_edit')
 class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_CREATE_CONTEST, when=lambda ctype, **kwargs: ctype == 'contest')
-  @base.require_perm(builtin.PERM_CREATE_HOMEWORK, when=lambda ctype, **kwargs: ctype == 'homework')
   @base.route_argument
   async def get(self, *, ctype: str, **kwargs):
     if ctype == 'homework':
@@ -634,6 +632,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     else:
       raise error.InvalidArgumentError('ctype')
 
+  @base.require_perm(builtin.PERM_CREATE_CONTEST)
   @base.sanitize
   async def _get_contest(self, *, tid: objectid.ObjectId):
     tdoc = await contest.get(self.domain_id, document.TYPE_CONTEST, tid)
@@ -653,6 +652,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
                 pids=_format_pids(tdoc['pids']),
                 page_title=page_title, path_components=path_components)
 
+  @base.require_perm(builtin.PERM_CREATE_HOMEWORK)
   @base.sanitize
   async def _get_homework(self, *, tid: objectid.ObjectId):
     tdoc = await contest.get(self.domain_id, document.TYPE_HOMEWORK, tid)
@@ -688,6 +688,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
     else:
       raise error.InvalidArgumentError('ctype')
 
+  @base.require_perm(builtin.PERM_CREATE_CONTEST)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
@@ -718,6 +719,7 @@ class ContestEditHandler(ContestMixin, ContestPageCategoryMixin, base.Handler):
       await contest.recalc_status(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('contest_detail', ctype='contest', tid=tdoc['doc_id']))
 
+  @base.require_perm(builtin.PERM_CREATE_HOMEWORK)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
