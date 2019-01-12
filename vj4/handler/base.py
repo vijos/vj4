@@ -273,10 +273,6 @@ class Handler(web.View, HandlerBase):
     await self.response.write(data)
 
   @property
-  def page_category(self):
-    return None
-
-  @property
   def prefer_json(self):
     accept_header = self.request.headers.get('Accept')
     try:
