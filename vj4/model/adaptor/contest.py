@@ -5,6 +5,7 @@ import itertools
 
 from bson import objectid
 from pymongo import errors
+from typing import Union, Dict
 
 from vj4 import constant
 from vj4 import error
@@ -291,7 +292,7 @@ async def add(domain_id: str, doc_type: int,
 
 
 @argmethod.wrap
-async def get(domain_id: str, doc_type, tid: objectid.ObjectId):
+async def get(domain_id: str, doc_type: Union[int, Dict], tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, doc_type, tid)
   if not tdoc:
     raise error.DocumentNotFoundError(domain_id, doc_type, tid)
@@ -323,7 +324,7 @@ async def edit(domain_id: str, doc_type: int, tid: objectid.ObjectId, **kwargs):
   return await document.set(domain_id, doc_type, tid, **kwargs)
 
 
-def get_multi(domain_id: str, doc_type: int, fields=None, **kwargs):
+def get_multi(domain_id: str, doc_type: Union[int, Dict], fields=None, **kwargs):
   # TODO(twd2): projection.
   return document.get_multi(domain_id=domain_id,
                             doc_type=doc_type,
@@ -388,24 +389,24 @@ def _get_status_journal(tsdoc):
 
 
 @argmethod.wrap
-async def update_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
+async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
                         pid: document.convert_doc_id, accept: bool, score: int):
   """This method returns None when the modification has been superseded by a parallel operation."""
-  tdoc = await document.get(domain_id, doc_type, tid)
+  tdoc = await document.get(domain_id, {'$in': [document.TYPE_CONTEST, document.TYPE_HOMEWORK]}, tid)
   tsdoc = await document.rev_push_status(
-    domain_id, doc_type, tdoc['doc_id'], uid,
+    domain_id, tdoc['doc_type'], tdoc['doc_id'], uid,
     'journal', {'rid': rid, 'pid': pid, 'accept': accept, 'score': score})
   if 'attend' not in tsdoc or not tsdoc['attend']:
-    if doc_type == document.TYPE_CONTEST:
+    if tdoc['doc_type'] == document.TYPE_CONTEST:
       raise error.ContestNotAttendedError(domain_id, tid, uid)
-    elif doc_type == document.TYPE_HOMEWORK:
+    elif tdoc['doc_type'] == document.TYPE_HOMEWORK:
       raise error.HomeworkNotAttendedError(domain_id, tid, uid)
     else:
       raise error.InvalidArgumentError('doc_type')
 
   journal = _get_status_journal(tsdoc)
   stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
-  tsdoc = await document.rev_set_status(domain_id, doc_type, tid, uid, tsdoc['rev'],
+  tsdoc = await document.rev_set_status(domain_id, tdoc['doc_type'], tid, uid, tsdoc['rev'],
                                         journal=journal, **stats)
   return tsdoc
 
