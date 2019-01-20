@@ -1,5 +1,4 @@
 from vj4 import app
-from vj4 import template
 from vj4.handler import base
 from vj4.util import misc
 

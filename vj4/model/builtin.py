@@ -84,9 +84,8 @@ PERM_EDIT_TRAINING_SELF = 1 << 49
 
 PERM_ALL = -1
 
-Permission = functools.partial(
-    collections.namedtuple('Permission',
-                           ['family', 'key', 'desc']))
+Permission = collections.namedtuple('Permission',
+                                    ['family', 'key', 'desc'])
 
 PERMS = [
     Permission('perm_general', PERM_VIEW, 'View this domain'),

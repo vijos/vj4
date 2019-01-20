@@ -22,7 +22,7 @@
         <span class="icon icon-homework"></span> {{ _('View Homework') }}
       </a></li>
     {% endif %}
-    {% if not attended and not handler.is_finished(tdoc) %}
+    {% if not attended and not handler.is_done(tdoc) %}
       <li class="menu__item">
     {% if handler.has_perm(vj4.model.builtin.PERM_ATTEND_HOMEWORK) and handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
         <form action="{{ reverse_url('contest_detail', ctype='homework', tid=tdoc['doc_id']) }}" method="POST">
@@ -72,12 +72,11 @@
   </div>
   <div class="section__body typo">
     <dl class="large horizontal">
-      {% set tdoc_status = handler.get_status(tdoc) %}
-      <dt>{{ _('page.contest_detail.homework.info.status') }}</dt><dd><span class="homework-status--text {{ tdoc_status }}">{{ _('model.contest.homework.status.{0}'.format(tdoc_status)) }}</span></dd>
-      <dt>{{ _('page.contest_detail.homework.info.problems') }}</dt><dd>{{ tdoc['pids']|length }}</dd>
-      <dt>{{ _('page.contest_detail.homework.info.open_since') }}</dt><dd>{{ homework.render_time(tdoc['begin_at']) }}</dd>
-      <dt>{{ _('page.contest_detail.homework.info.deadline') }}</dt><dd>{{ homework.render_time(tdoc['penalty_since']) }}</dd>
-      <dt>{{ _('page.contest_detail.homework.info.extension') }}</dt><dd>{{ homework.render_extension(tdoc) }} {{ _('hour(s)') }}</dd>
+      <dt>{{ _('Status') }}</dt><dd><span class="homework-status--text {{ handler.get_status(tdoc) }}">{{ _(handler.status_text(tdoc)) }}</span></dd>
+      <dt>{{ _('Problem') }}</dt><dd>{{ tdoc['pids']|length }}</dd>
+      <dt>{{ _('Open Since') }}</dt><dd>{{ homework.render_time(tdoc['begin_at']) }}</dd>
+      <dt>{{ _('Deadline') }}</dt><dd>{{ homework.render_time(tdoc['penalty_since']) }}</dd>
+      <dt>{{ _('Can be Extended For') }}</dt><dd>{{ homework.render_extension(tdoc) }} {{ _('hour(s)') }}</dd>
     </dl>
   </div>
 </div>

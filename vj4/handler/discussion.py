@@ -37,11 +37,12 @@ class DiscussionMainHandler(base.Handler):
         discussion.get_nodes(self.domain_id),
         # TODO(twd2): exclude problem/contest discussions?
         pagination.paginate(discussion.get_multi(self.domain_id), page, self.DISCUSSIONS_PER_PAGE))
-    udict, vndict = await asyncio.gather(
+    udict, dudict, vndict = await asyncio.gather(
         user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
+        domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=(ddoc['owner_uid'] for ddoc in ddocs)),
         discussion.get_dict_vnodes(self.domain_id, map(discussion.node_id, ddocs)))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, ddocs=ddocs,
-                udict=udict, vndict=vndict, page=page, dpcount=dpcount)
+                udict=udict, dudict=dudict, vndict=vndict, page=page, dpcount=dpcount)
 
 
 @app.route('/discuss/{doc_type:-?\d+}/{doc_id}', 'discussion_node_document_as_node')
@@ -73,14 +74,15 @@ class DiscussionNodeHandler(contest_handler.ContestStatusMixin, base.Handler):
     uids = set(ddoc['owner_uid'] for ddoc in ddocs)
     if 'owner_uid' in vnode:
       uids.add(vnode['owner_uid'])
-    udict = await user.get_dict(uids)
+    udict, dudict = await asyncio.gather(user.get_dict(uids),
+                                         domain.get_dict_user_by_uid(self.domain_id, uids))
     vndict = {node_or_dtuple: vnode}
     vncontext = {} # TODO(twd2): eg. psdoc, tsdoc, ...
     path_components = self.build_path(
         (self.translate('discussion_main'), self.reverse_url('discussion_main')),
         (vnode['title'], None))
     self.render('discussion_main_or_node.html', discussion_nodes=nodes, vnode=vnode, ddocs=ddocs,
-                udict=udict, vndict=vndict, page=page, dpcount=dpcount, **vncontext,
+                udict=udict, dudict=dudict, vndict=vndict, page=page, dpcount=dpcount, **vncontext,
                 path_components=path_components)
 
 
@@ -114,6 +116,7 @@ class DiscussionCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_discussion', 3600, 30)
   async def post(self, *, doc_type: int=None, doc_id: str, title: str, content: str,
                  highlight: str=None):
     if doc_type is None:
@@ -131,7 +134,7 @@ class DiscussionCreateHandler(base.Handler):
       self.check_perm(builtin.PERM_HIGHLIGHT_DISCUSSION)
       flags['highlight'] = True
     did = await discussion.add(self.domain_id, node_or_dtuple, self.user['_id'], title, content,
-                               **flags)
+                               self.remote_ip, **flags)
     self.json_or_redirect(self.reverse_url('discussion_detail', did=did), did=did)
 
 
@@ -180,9 +183,11 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.route_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_discussion', 3600, 30)
   async def post_reply(self, *, did: document.convert_doc_id, content: str):
     ddoc = await discussion.get(self.domain_id, did)
-    await discussion.add_reply(self.domain_id, ddoc['doc_id'], self.user['_id'], content)
+    await discussion.add_reply(self.domain_id, ddoc['doc_id'], self.user['_id'], content,
+                               self.remote_ip)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -190,13 +195,15 @@ class DiscussionDetailHandler(base.OperationHandler):
   @base.route_argument
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('add_discussion', 3600, 30)
   async def post_tail_reply(self, *,
                             did: document.convert_doc_id,
                             drid: document.convert_doc_id,
                             content: str):
     ddoc = await discussion.get(self.domain_id, did)
     drdoc = await discussion.get_reply(self.domain_id, drid, ddoc['doc_id'])
-    await discussion.add_tail_reply(self.domain_id, drdoc['doc_id'], self.user['_id'], content)
+    await discussion.add_tail_reply(self.domain_id, drdoc['doc_id'], self.user['_id'], content,
+                                    self.remote_ip)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)

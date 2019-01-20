@@ -131,14 +131,14 @@ async def get_vnode(domain_id: str, node_or_dtuple: str):
 
 @argmethod.wrap
 async def add(domain_id: str, node_or_dtuple: str, owner_uid: int, title: str, content: str,
-              **flags):
+              ip: str=None, **flags):
   validator.check_title(title)
   validator.check_content(content)
   vnode = await get_vnode(domain_id, node_or_dtuple)
   if not vnode:
       raise error.DiscussionNodeNotFoundError(domain_id, node_or_dtuple)
   return await document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION,
-                            title=title, num_replies=0, views=0, **flags,
+                            title=title, num_replies=0, views=0, ip=ip, **flags,
                             update_at=datetime.datetime.utcnow(),
                             parent_doc_type=vnode['doc_type'], parent_doc_id=vnode['doc_id'])
 
@@ -190,10 +190,11 @@ def get_multi(domain_id: str, *, fields=None, **kwargs):
 
 
 @argmethod.wrap
-async def add_reply(domain_id: str, did: document.convert_doc_id, owner_uid: int, content: str):
+async def add_reply(domain_id: str, did: document.convert_doc_id, owner_uid: int, content: str,
+                    ip: str=None):
   validator.check_content(content)
   drdoc, _ = await asyncio.gather(
-    document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION_REPLY,
+    document.add(domain_id, content, owner_uid, document.TYPE_DISCUSSION_REPLY, ip=ip,
                  parent_doc_type=document.TYPE_DISCUSSION, parent_doc_id=did),
     document.inc_and_set(domain_id, document.TYPE_DISCUSSION, did,
                          'num_replies', 1, 'update_at', datetime.datetime.utcnow()))
@@ -248,10 +249,10 @@ def get_multi_reply(domain_id: str, did: document.convert_doc_id, *, fields=None
 
 @argmethod.wrap
 async def add_tail_reply(domain_id: str, drid: document.convert_doc_id,
-                         owner_uid: int, content: str):
+                         owner_uid: int, content: str, ip: str=None):
   validator.check_content(content)
   drdoc, sid = await document.push(domain_id, document.TYPE_DISCUSSION_REPLY, drid,
-                                   'reply', content, owner_uid)
+                                   'reply', content, owner_uid, ip=ip)
   await document.set(domain_id, document.TYPE_DISCUSSION, drdoc['parent_doc_id'],
                      update_at=datetime.datetime.utcnow())
   return drdoc, sid

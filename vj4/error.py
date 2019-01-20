@@ -69,6 +69,12 @@ class ValidationError(ForbiddenError):
       return 'Field {0} or {1} validation failed.'
 
 
+class BlacklistedError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Address {0} is blacklisted.'
+
+
 class FileTooLongError(ValidationError):
   @property
   def message(self):
@@ -384,3 +390,9 @@ class DatabaseVersionMismatchError(Error):
   @property
   def message(self):
     return 'Database version mismatch, got {0}, expect {1}. You need to invoke database upgrades.'
+
+
+class SendMailError(UserFacingError):
+  @property
+  def message(self):
+    return 'Failed to send mail to {0}.'

@@ -65,6 +65,7 @@ class HomeSecurityHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_csrf_token
   @base.sanitize
+  @base.limit_rate('send_mail', 3600, 30)
   async def post_change_mail(self, *, current_password: str, mail: str):
     validator.check_mail(mail)
     udoc, mail_holder_udoc = await asyncio.gather(
@@ -127,6 +128,20 @@ class HomeAccountHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   async def get(self):
     self.render('home_settings.html', category='account', settings=setting.ACCOUNT_SETTINGS)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.post_argument
+  @base.require_csrf_token
+  async def post(self, **kwargs):
+    await self.set_settings(**kwargs)
+    self.json_or_redirect(self.url)
+
+
+@app.route('/home/domain/account', 'home_domain_account', global_route=False)
+class HomeDomainAccountHandler(base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  async def get(self):
+    self.render('home_settings.html', category='domain_account', settings=setting.DOMAIN_ACCOUNT_SETTINGS)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.post_argument

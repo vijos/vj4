@@ -9,7 +9,6 @@ python:
 - 3.6
 install:
 - pip install -r requirements.txt
-- node scripts/fix_abroad_shrinkwrap.js
 - npm install
 script:
 - npm run build:production

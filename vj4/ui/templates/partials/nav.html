@@ -23,10 +23,10 @@
       {{ nav_item('discussion_main', 'discussion') }}
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_CONTEST) %}
-      {{ nav_item('contest_main', 'contest', display_name='page.contest_main.contest.title', ctype='contest') }}
+      {{ nav_item('contest_main', 'contest', display_name='Contest', ctype='contest') }}
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_HOMEWORK) %}
-      {{ nav_item('contest_main', 'homework', display_name='page.contest_main.homework.title', ctype='homework') }}
+      {{ nav_item('contest_main', 'homework', display_name='Homework', ctype='homework') }}
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) or handler.has_perm(vj4.model.builtin.PERM_EDIT_PERM) %}
       {{ nav_item('domain_manage', 'domain_manage') }}
@@ -38,7 +38,7 @@
       <li class="nav__list-item"><a href="{{ reverse_url('user_register') }}" class="nav__item--round">{{ _('Sign Up') }}</a></li>
     {% else %}
       <li class="nav__list-item" data-dropdown-pos="bottom right" data-dropdown-target="#menu-nav-user" data-dropdown-trigger-desktop-only>
-        <a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="nav__item">{{ handler.user['uname'] }} <span class="icon icon-expand_more nojs--hide"></span></a>
+        <a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="nav__item">{{ handler.domain_user['display_name']|default(handler.user['uname'], true) }} <span class="icon icon-expand_more nojs--hide"></span></a>
         <ol class="dropdown-target menu" id="menu-nav-user">
           <li class="menu__item">
             <a href="{{ reverse_url('user_detail', uid=handler.user['_id']) }}" class="menu__link">
@@ -54,6 +54,11 @@
           <li class="menu__item">
             <a href="{{ reverse_url('home_account') }}" class="menu__link">
               <span class="icon icon-wrench"></span> {{ _('home_account') }}
+            </a>
+          </li>
+          <li class="menu__item">
+            <a href="{{ reverse_url('home_domain_account') }}" class="menu__link">
+              <span class="icon icon-web"></span> @ {{ handler.domain['name'] }}
             </a>
           </li>
           <li class="menu__item">

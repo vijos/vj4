@@ -15,12 +15,12 @@
       {% endif %}
       </div>
     </div>
-  {% if not handler.is_not_started(tdoc) %}
+  {% if handler.is_ongoing(tdoc) or handler.is_done(tdoc) %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Problem') }}</h1>
       </div>
-    {% if attended or handler.is_finished(tdoc) %}
+    {% if attended or handler.is_done(tdoc) %}
       <div class="section__body no-padding">
         <table class="data-table">
           <colgroup>
@@ -73,7 +73,7 @@
   {% endif %}
   </div>
   <div class="medium-3 columns">
-  {% with owner_udoc=udict[tdoc['owner_uid']] %}
+  {% with owner_udoc=udict[tdoc['owner_uid']], owner_dudoc=dudict[tdoc['owner_uid']] %}
     {% include "partials/contest_sidebar.html" %}
   {% endwith %}
   </div>

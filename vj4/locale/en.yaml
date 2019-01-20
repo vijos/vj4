@@ -4,6 +4,7 @@ discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
 home_account: Account Settings
+home_domain_account: Profile @ Domain
 home_preference: Preference
 home_messages: Messages
 home_security: Security
@@ -21,6 +22,13 @@ problem_solution: Problem Solution
 problem_submit: Problem Submit
 problem_settings: Problem Settings
 problem_statistics: Problem Statistics
+contest_main.homework: Homework
+contest_main.contest: Contest
+contest_create.contest: Contest Create
+contest_create.homework: Homework Create
+contest_edit.contest: Contest Edit
+contest_edit.homework: Homework Edit
+contest_scoreboard: Scoreboard
 record_detail: Record Detail
 record_main: Judging Queue
 setting_function: Function
@@ -65,16 +73,8 @@ home_file: My Files
 fs_upload: File Upload
 page.training_detail.invalid_when_not_enrolled: You cannot view problem details unless enrolled.
 page.problem_detail.sidebar.show_category: Click to Show
-model.contest.homework.status.not_started: Not Started
-model.contest.homework.status.ongoing: Open
-model.contest.homework.status.finished: Finished
-page.contest_main.homework.banner.extension: Extension
-page.contest_main.homework.item.supplementary.status: Status
-page.contest_main.homework.item.supplementary.open_since: Open Since
-page.contest_main.homework.item.supplementary.hard_deadline: Hard DDL
-page.contest_main.homework.item.supplementary.deadline: DDL
-page.contest_detail.homework.info.status: Status
-page.contest_detail.homework.info.problems: Problems
-page.contest_detail.homework.info.open_since: Open Since
-page.contest_detail.homework.info.deadline: DDL
-page.contest_detail.homework.info.extension: Extension
+setting_info_domain: Personal Info
+display_name: Display Named
+Hard Deadline: Hard DDL
+Deadline: DDL
+Can be Extended For: Extension

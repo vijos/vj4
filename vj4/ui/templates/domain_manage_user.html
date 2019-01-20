@@ -61,6 +61,7 @@
           </th>
           <th class="col--uid">{{ _('User ID') }}</th>
           <th class="col--user">{{ _('Username') }}</th>
+          <th class="col--user">{{ _('Display Name') }}</th>
           <th class="col--role">{{ _('Role') }}</th>
         </tr>
       </thead>
@@ -79,6 +80,9 @@
           </td>
           <td class="col--user">
             {{ user.render_inline(udict[rudoc['uid']], badge=false) }}
+          </td>
+          <td class="col--name-alias">
+            {{ rudoc['display_name']|default('') }}
           </td>
           <td class="col--role">
             {{ form.select(roles_with_text, 'role', value=rudoc['role'], extra_class='compact', disabled=is_disabled) }}

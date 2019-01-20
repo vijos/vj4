@@ -13,6 +13,7 @@ from email import utils
 from vj4 import app
 from vj4 import error
 from vj4 import template
+from vj4.model import blacklist
 from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import fs
@@ -38,15 +39,17 @@ class HandlerBase(setting.SettingMixin):
     self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
     if 'uid' in self.session:
       uid = self.session['uid']
-      self.user, self.domain, self.domain_user = await asyncio.gather(
-          user.get_by_uid(uid), domain.get(self.domain_id), domain.get_user(self.domain_id, uid))
+      self.user, self.domain, self.domain_user, bdoc = await asyncio.gather(
+          user.get_by_uid(uid), domain.get(self.domain_id),
+          domain.get_user(self.domain_id, uid), blacklist.get(self.remote_ip))
       if not self.user:
         raise error.UserNotFoundError(uid)
       if not self.domain_user:
         self.domain_user = {}
     else:
       self.user = builtin.USER_GUEST
-      self.domain = await domain.get(self.domain_id)
+      self.domain, bdoc = await asyncio.gather(
+          domain.get(self.domain_id), blacklist.get(self.remote_ip))
       self.domain_user = builtin.DOMAIN_USER_GUEST
     self.view_lang = self.get_setting('view_lang')
     # TODO(iceboy): UnknownTimeZoneError
@@ -65,6 +68,8 @@ class HandlerBase(setting.SettingMixin):
     self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
     self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
                                         domain_name=self.domain['name'])
+    if bdoc:
+      raise error.BlacklistedError(self.remote_ip)
     if not self.GLOBAL and not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
       self.check_perm(builtin.PERM_VIEW)
 
@@ -216,12 +221,11 @@ class HandlerBase(setting.SettingMixin):
 
 
 class Handler(web.View, HandlerBase):
-  @asyncio.coroutine
-  def __iter__(self):
+  def __await__(self):
     try:
       self.response = web.Response()
-      yield from HandlerBase.prepare(self)
-      yield from super(Handler, self).__iter__()
+      yield from HandlerBase.prepare(self).__await__()
+      yield from super(Handler, self).__await__()
     except asyncio.CancelledError:
       raise
     except error.UserFacingError as e:
@@ -266,11 +270,7 @@ class Handler(web.View, HandlerBase):
       self.response.headers.add('Content-Disposition',
                                 'attachment; filename="{}"'.format(file_name))
     await self.response.prepare(self.request)
-    self.response.write(data)
-
-  @property
-  def page_category(self):
-    return None
+    await self.response.write(data)
 
   @property
   def prefer_json(self):
@@ -338,9 +338,8 @@ class OperationHandler(Handler):
 
 
 class Connection(sockjs.Session, HandlerBase):
-  def __init__(self, request, *args, **kwargs):
+  def __init__(self, *args, **kwargs):
     super(Connection, self).__init__(*args, **kwargs)
-    self.request = request
     self.response = web.Response()  # dummy response
 
   async def on_open(self):
@@ -363,13 +362,15 @@ def _get_csrf_token(session_id_binary):
 
 @functools.lru_cache()
 def _reverse_url(name, *, domain_id, **kwargs):
+  """DEPRECATED: This function is deprecated. But we don't have a replacement yet."""
+  kwargs = {key: str(value) for key, value in kwargs.items()}
   if domain_id != builtin.DOMAIN_ID_SYSTEM:
     name += '_with_domain_id'
     kwargs['domain_id'] = domain_id
   if kwargs:
-    return app.Application().router[name].url(parts=kwargs)
+    return str(app.Application().router[name].url_for(**kwargs))
   else:
-    return app.Application().router[name].url()
+    return str(app.Application().router[name].url_for())
 
 
 @functools.lru_cache()
@@ -491,11 +492,11 @@ def multipart_argument(coro):
 
   return wrapped
 
-def limit_rate(op):
+def limit_rate(op, period_secs, max_operations):
   def decorate(coro):
     @functools.wraps(coro)
     async def wrapped(self, **kwargs):
-      await opcount.inc(**opcount.OPS[op], ident=opcount.PREFIX_IP + self.remote_ip)
+      await opcount.inc(op, self.remote_ip, period_secs, max_operations)
       return await coro(self, **kwargs)
 
     return wrapped

@@ -1,6 +1,7 @@
 import itertools
 from bson import objectid
 from pymongo import ReturnDocument
+from typing import Union, Dict
 
 from vj4 import db
 from vj4.util import argmethod
@@ -61,7 +62,7 @@ async def add(domain_id: str, content: str, owner_uid: int,
 
 
 @argmethod.wrap
-async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id, fields=None):
+async def get(domain_id: str, doc_type: Union[int, Dict], doc_id: convert_doc_id, fields=None):
   coll = db.coll('document')
   return await coll.find_one({'domain_id': domain_id,
                               'doc_type': doc_type,

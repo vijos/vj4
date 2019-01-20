@@ -64,11 +64,13 @@ class DomainMainHandler(training_handler.TrainingStatusMixin, base.Handler):
   async def get(self):
     (tdocs, tsdict), (trdocs, trsdict), (ddocs, vndict) = await asyncio.gather(
         self.prepare_contest(), self.prepare_training(), self.prepare_discussion())
-    udict = await user.get_dict(ddoc['owner_uid'] for ddoc in ddocs)
+    udict, dudict = await asyncio.gather(
+        user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
+        domain.get_dict_user_by_uid(self.domain_id, (ddoc['owner_uid'] for ddoc in ddocs)))
     self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id),
                 tdocs=tdocs, tsdict=tsdict, trdocs=trdocs, trsdict=trsdict,
                 ddocs=ddocs, vndict=vndict,
-                udict=udict, datetime_stamp=self.datetime_stamp)
+                udict=udict, dudict=dudict, datetime_stamp=self.datetime_stamp)
 
 
 @app.route('/domain', 'domain_manage')
@@ -113,9 +115,9 @@ class DomainJoinApplicationsHandler(base.Handler):
     roles = sorted(list(self.domain['roles'].keys()))
     roles_with_text = [(role, role) for role in roles]
     join_settings = domain.get_join_settings(self.domain, self.now)
-    expirations = vj4.constant.domain.JOIN_EXPIRATION_RANGE.copy()
+    expirations = constant.domain.JOIN_EXPIRATION_RANGE.copy()
     if not join_settings:
-      del expirations[vj4.constant.domain.JOIN_EXPIRATION_KEEP_CURRENT]
+      del expirations[constant.domain.JOIN_EXPIRATION_KEEP_CURRENT]
     self.render('domain_manage_join_applications.html', roles_with_text=roles_with_text,
                 join_settings=join_settings, expirations=expirations)
 
@@ -205,7 +207,7 @@ class DomainEditHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *kwargs):
+  async def post(self):
     await discussion.initialize(self.domain_id)
     self.json_or_redirect(self.url)
 
@@ -218,7 +220,7 @@ class DomainUserHandler(base.OperationHandler):
     rudocs = collections.defaultdict(list)
     async for dudoc in domain.get_multi_user(domain_id=self.domain_id,
                                              role={'$gte': ''},
-                                             fields={'uid': 1, 'role': 1}):
+                                             fields={'uid': 1, 'role': 1, 'display_name': 1}):
       if 'role' in dudoc:
         uids.append(dudoc['uid'])
         rudocs[dudoc['role']].append(dudoc)
@@ -275,14 +277,15 @@ class DomainPermissionHandler(base.Handler):
     self.render('domain_manage_permission.html', bitand=bitand, roles=roles)
 
   @base.require_perm(builtin.PERM_EDIT_PERM)
-  @base.post_argument
-  @base.require_csrf_token
-  async def post(self, **kwargs):
+  async def post(self):
+    args = await self.request.post()
+    if self.csrf_token and self.csrf_token != args.get('csrf_token', ''):
+      raise error.CsrfTokenError()
     roles = dict()
     # unmodifiable roles are not modifiable so that we are not using get_all_roles() here
     for role in self.domain['roles']:
       perms = 0
-      for perm in (await self.request.post()).getall(role, []):
+      for perm in args.getall(role, []):
        perm = int(perm)
        if perm in builtin.PERMS_BY_KEY:
           perms |= perm
