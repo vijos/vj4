@@ -13,7 +13,6 @@ from vj4.service import bus
 from vj4.service import smallcache
 from vj4.service import staticmanifest
 from vj4.util import json
-from vj4.util import locale
 from vj4.util import options
 from vj4.util import tools
 
@@ -44,11 +43,9 @@ class Application(web.Application):
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     static_path = path.join(path.dirname(__file__), '.uibuild')
-    translation_path = path.join(path.dirname(__file__), 'locale')
 
     # Initialize components.
     staticmanifest.init(static_path)
-    locale.load_translations(translation_path)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(db.init())
     loop.run_until_complete(system.setup())
