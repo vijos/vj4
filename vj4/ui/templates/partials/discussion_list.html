@@ -15,7 +15,7 @@
               </div>
             </div>
             <div class="media__body top">
-              <h1 class="discussion__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}#{{ handler.datetime_stamp(ddoc['update_at']) if ddoc['update_at'] else '' }}" data-emoji-enabled>{{ ddoc['title'] }}</a></h1>
+              <h1 class="discussion__title"><a href="{{ reverse_url('discussion_detail', did=ddoc['doc_id']) }}#{{ datetime_stamp(ddoc['update_at']) if ddoc['update_at'] else '' }}" data-emoji-enabled>{{ ddoc['title'] }}</a></h1>
               <ul class="supplementary list">
                 <li>
                   <a class="discussion-node-tag" href="{{ vj4.handler.discussion.node_url(handler, 'discussion_node', vj4.model.adaptor.discussion.node_id(ddoc)) }}">
@@ -32,7 +32,7 @@
                 <li>
                   {{ user.render_inline(udict[ddoc['owner_uid']], dudoc=dudoc if dudoc else dudict[ddoc['owner_uid']], badge=false) }}
                   @
-                  {{ handler.datetime_span(ddoc['update_at'] or ddoc['_id'].generation_time) }}
+                  {{ datetime_span(ddoc['update_at'] or ddoc['_id'].generation_time) }}
                 </li>
               </ul>
             </div>
