@@ -33,41 +33,38 @@ class HandlerBase(setting.SettingMixin):
   NAME = None
   TITLE = None
 
+  domain = builtin.DOMAIN_SYSTEM
+  domain_id = builtin.DOMAIN_ID_SYSTEM
+  domain_user = builtin.DOMAIN_USER_GUEST
+  locale = locale.get(options.default_locale)
+  timezone = None
+  user = builtin.USER_GUEST
+
   async def prepare(self):
-    self.translate = locale.get_translate(options.default_locale)  # Default translate for errors.
     self.session = await self.update_session()
-    self.domain_id = self.request.match_info.pop('domain_id', builtin.DOMAIN_ID_SYSTEM)
+    if 'domain_id' in self.request.match_info:
+      self.domain_id = self.request.match_info.pop('domain_id')
     if 'uid' in self.session:
       uid = self.session['uid']
       self.user, self.domain, self.domain_user, bdoc = await asyncio.gather(
-          user.get_by_uid(uid), domain.get(self.domain_id),
-          domain.get_user(self.domain_id, uid), blacklist.get(self.remote_ip))
+          user.get_by_uid(uid),
+          domain.get(self.domain_id),
+          domain.get_user(self.domain_id, uid),
+          blacklist.get(self.remote_ip))
       if not self.user:
         raise error.UserNotFoundError(uid)
       if not self.domain_user:
         self.domain_user = {}
     else:
-      self.user = builtin.USER_GUEST
       self.domain, bdoc = await asyncio.gather(
           domain.get(self.domain_id), blacklist.get(self.remote_ip))
-      self.domain_user = builtin.DOMAIN_USER_GUEST
     self.view_lang = self.get_setting('view_lang')
-    # TODO(iceboy): UnknownTimeZoneError
-    self.timezone = pytz.timezone(self.get_setting('timezone'))
-    self.translate = locale.get_translate(self.view_lang)
-    self.datetime_span = functools.partial(_datetime_span, timezone=self.timezone)
+    try:
+      self.timezone = pytz.timezone(self.get_setting('timezone'))
+    except pytz.UnknownTimeZoneError:
+      pass
+    self.locale = locale.get(self.view_lang)
     self.datetime_stamp = _datetime_stamp
-    if not self.domain:
-      not_found_domain_id = self.domain_id
-      self.domain_id = builtin.DOMAIN_ID_SYSTEM
-      self.domain = builtin.DOMAIN_SYSTEM
-      self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
-      self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
-                                          domain_name=self.domain['name'])
-      raise error.DomainNotFoundError(not_found_domain_id)
-    self.reverse_url = functools.partial(_reverse_url, domain_id=self.domain_id)
-    self.build_path = functools.partial(_build_path, domain_id=self.domain_id,
-                                        domain_name=self.domain['name'])
     if bdoc:
       raise error.BlacklistedError(self.remote_ip)
     if not self.GLOBAL and not self.has_priv(builtin.PRIV_VIEW_ALL_DOMAIN):
@@ -187,6 +184,16 @@ class HandlerBase(setting.SettingMixin):
     else:
       return ''
 
+  def build_path(self, *args):
+    return [(self.domain['name'], self.reverse_url('domain_main')), *args]
+
+  def reverse_url(self, name, **kwargs):
+    kwargs.setdefault('domain_id', self.domain_id)
+    return _reverse_url(name, **kwargs)
+
+  def translate(self, text):
+    return self.locale.get(text, text)
+
   def render_html(self, template_name, **kwargs):
     kwargs['handler'] = self
     if '_' not in kwargs:
@@ -200,7 +207,7 @@ class HandlerBase(setting.SettingMixin):
     if 'path_components' not in kwargs:
       kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
     kwargs['reverse_url'] = self.reverse_url
-    kwargs['datetime_span'] = self.datetime_span
+    kwargs['datetime_span'] = functools.partial(_datetime_span, timezone=self.timezone)
     return template.Environment().get_template(template_name).render(kwargs)
 
   def render_title(self, page_title=None):
@@ -371,11 +378,6 @@ def _reverse_url(name, *, domain_id, **kwargs):
     return str(app.Application().router[name].url_for(**kwargs))
   else:
     return str(app.Application().router[name].url_for())
-
-
-@functools.lru_cache()
-def _build_path(*args, domain_id, domain_name):
-  return [(domain_name, _reverse_url('domain_main', domain_id=domain_id)), *args]
 
 
 @functools.lru_cache()
