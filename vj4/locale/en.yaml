@@ -25,10 +25,11 @@ problem_statistics: Problem Statistics
 contest_main: Contest
 contest_create: Contest Create
 contest_edit: Contest Edit
+contest_scoreboard: Scoreboard
 homework_main: Homework
 homework_create: Homework Create
 homework_edit: Homework Edit
-contest_scoreboard: Scoreboard
+homework_scoreboard: Scoreboard
 record_detail: Record Detail
 record_main: Judging Queue
 setting_function: Function

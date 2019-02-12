@@ -1,3 +1,4 @@
+import asyncio
 import collections
 import datetime
 import functools
@@ -9,7 +10,11 @@ from typing import Union, Dict
 
 from vj4 import constant
 from vj4 import error
+from vj4.model import builtin
 from vj4.model import document
+from vj4.model import user
+from vj4.model import domain
+from vj4.model.adaptor import problem
 from vj4.util import argmethod
 from vj4.util import misc
 from vj4.util import rank
@@ -424,6 +429,126 @@ async def recalc_status(domain_id: str, doc_type: int, tid: objectid.ObjectId):
       stats = RULES[tdoc['rule']].stat_func(tdoc, journal)
       await document.rev_set_status(domain_id, doc_type, tid, tsdoc['uid'], tsdoc['rev'],
                                     return_doc=False, journal=journal, **stats)
+
+
+def _parse_pids(pids_str):
+  pids = list(set(map(document.convert_doc_id, pids_str.split(','))))
+  return pids
+
+
+def _format_pids(pids_list):
+  return ','.join([str(pid) for pid in pids_list])
+
+
+
+class ContestStatusMixin(object):
+  @property
+  @functools.lru_cache()
+  def now(self):
+    # TODO(iceboy): This does not work on multi-machine environment.
+    return datetime.datetime.utcnow()
+
+  def is_new(self, tdoc):
+    ready_at = tdoc['begin_at'] - datetime.timedelta(days=1)
+    return self.now < ready_at
+
+  def is_upcoming(self, tdoc):
+    ready_at = tdoc['begin_at'] - datetime.timedelta(days=1)
+    return ready_at <= self.now < tdoc['begin_at']
+
+  def is_not_started(self, tdoc):
+    return self.now < tdoc['begin_at']
+
+  def is_ongoing(self, tdoc):
+    return tdoc['begin_at'] <= self.now < tdoc['end_at']
+
+  def is_done(self, tdoc):
+    return tdoc['end_at'] <= self.now
+
+  def is_homework_extended(self, tdoc):
+    return tdoc['penalty_since'] <= self.now < tdoc['end_at']
+
+  def status_text(self, tdoc):
+    if self.is_new(tdoc):
+      return 'New'
+    elif self.is_upcoming(tdoc):
+      return 'Ready (☆▽☆)'
+    elif self.is_ongoing(tdoc):
+      return 'Live...'
+    else:
+      return 'Done'
+
+  def get_status(self, tdoc):
+    if self.is_not_started(tdoc):
+      return 'not_started'
+    elif self.is_ongoing(tdoc):
+      return 'ongoing'
+    else:
+      return 'finished'
+
+
+class ContestVisibilityMixin(object):
+  def can_view_hidden_scoreboard(self, tdoc):
+    if tdoc['doc_type'] == document.TYPE_CONTEST:
+      return self.has_perm(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
+    elif tdoc['doc_type'] == document.TYPE_HOMEWORK:
+      return self.has_perm(builtin.PERM_VIEW_HOMEWORK_HIDDEN_SCOREBOARD)
+    else:
+      return False
+
+  def can_show_record(self, tdoc, allow_perm_override=True):
+    if RULES[tdoc['rule']].show_record_func(tdoc, datetime.datetime.utcnow()):
+      return True
+    if allow_perm_override and self.can_view_hidden_scoreboard(tdoc):
+      return True
+    return False
+
+  def can_show_scoreboard(self, tdoc, allow_perm_override=True):
+    if RULES[tdoc['rule']].show_scoreboard_func(tdoc, datetime.datetime.utcnow()):
+      return True
+    if allow_perm_override and self.can_view_hidden_scoreboard(tdoc):
+      return True
+    return False
+
+
+class ContestCommonOperationMixin(object):
+  async def get_scoreboard(self, doc_type: int, tid: objectid.ObjectId, is_export: bool=False):
+    tdoc, tsdocs = await get_and_list_status(self.domain_id, doc_type, tid)
+    if not self.can_show_scoreboard(tdoc):
+      if doc_type == document.TYPE_CONTEST:
+        raise error.ContestScoreboardHiddenError(self.domain_id, tid)
+      elif doc_type == document.TYPE_HOMEWORK:
+        raise error.HomeworkScoreboardHiddenError(self.domain_id, tid)
+      else:
+        raise error.InvalidArgumentError('doc_type')
+    udict, dudict, pdict = await asyncio.gather(
+        user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
+        domain.get_dict_user_by_uid(self.domain_id, [tsdoc['uid'] for tsdoc in tsdocs]),
+        problem.get_dict(self.domain_id, tdoc['pids']))
+    ranked_tsdocs = RULES[tdoc['rule']].rank_func(tsdocs)
+    rows = RULES[tdoc['rule']].scoreboard_func(is_export, self.translate, tdoc,
+                                                       ranked_tsdocs, udict, dudict, pdict)
+    return tdoc, rows, udict
+
+  async def verify_problems(self, pids):
+    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
+                                    fields={'doc_id': 1}) \
+                         .sort('doc_id', 1) \
+                         .to_list()
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(self.domain_id, pid)
+    return pids
+
+  async def hide_problems(self, pids):
+    for pid in pids:
+      await problem.set_hidden(self.domain_id, pid, True)
+
+
+class ContestMixin(ContestStatusMixin, ContestVisibilityMixin, ContestCommonOperationMixin):
+  pass
 
 
 if __name__ == '__main__':

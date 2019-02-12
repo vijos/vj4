@@ -239,10 +239,11 @@ problem_statistics: 题目统计
 contest_main: 比赛
 contest_create: 创建比赛
 contest_edit: 编辑比赛
+contest_scoreboard: 成绩表
 homework_main: 作业
 homework_create: 创建作业
 homework_edit: 编辑作业
-contest_scoreboard: 成绩表
+homework_scoreboard: 成绩表
 record_detail: 记录详情
 record_main: 评测队列
 reply: 回复
