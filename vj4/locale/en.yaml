@@ -1,5 +1,9 @@
 #English
 ---
+contest_main: Contest
+contest_create: Contest Create
+contest_edit: Contest Edit
+contest_scoreboard: Scoreboard
 discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
@@ -9,6 +13,10 @@ home_preference: Preference
 home_messages: Messages
 home_security: Security
 home_domain: My Domains
+homework_main: Homework
+homework_create: Homework Create
+homework_edit: Homework Edit
+homework_scoreboard: Scoreboard
 judge_playground: Judge Playground
 main: Home
 pager_first: « First
@@ -22,14 +30,6 @@ problem_solution: Problem Solution
 problem_submit: Problem Submit
 problem_settings: Problem Settings
 problem_statistics: Problem Statistics
-contest_main: Contest
-contest_create: Contest Create
-contest_edit: Contest Edit
-contest_scoreboard: Scoreboard
-homework_main: Homework
-homework_create: Homework Create
-homework_edit: Homework Edit
-homework_scoreboard: Scoreboard
 record_detail: Record Detail
 record_main: Judging Queue
 setting_function: Function

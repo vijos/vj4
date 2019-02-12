@@ -35,6 +35,10 @@ Comments: 评论
 Contact Us: 联系我们
 Content: 内容
 Contest Scoreboard: 比赛成绩表
+contest_main: 比赛
+contest_create: 创建比赛
+contest_edit: 编辑比赛
+contest_scoreboard: 比赛成绩表
 Create: 创建
 Create Contest: 创建比赛
 Create Discussion: 创建讨论
@@ -221,6 +225,10 @@ home_preference: 偏好设置
 home_messages: 站内消息
 home_security: 安全设置
 home_domain: 我的域
+homework_main: 作业
+homework_create: 创建作业
+homework_edit: 编辑作业
+homework_scoreboard: 作业成绩表
 judge_playground: 评测游乐场
 last active at: 最后活动于
 last login at: 最后登录于
@@ -236,14 +244,6 @@ problem_solution: 题解
 problem_submit: 递交代码
 problem_settings: 题目设置
 problem_statistics: 题目统计
-contest_main: 比赛
-contest_create: 创建比赛
-contest_edit: 编辑比赛
-contest_scoreboard: 成绩表
-homework_main: 作业
-homework_create: 创建作业
-homework_edit: 编辑作业
-homework_scoreboard: 成绩表
 record_detail: 记录详情
 record_main: 评测队列
 reply: 回复
@@ -710,7 +710,7 @@ Create Homework: 创建作业
 Calendar View: 日历视图
 List View: 列表视图
 My Recent Submissions: 我的最近递交记录
-The homework's deadline is due but in extension. You can still submit for this problem but your score will be panelled.: 作业已超过截止时间，在仍在延期时间内。您递交题目将无法获得全部分数。
+The homework's deadline is due but in extension. You can still submit for this problem but your score will be panelled.: 作业已超过截止时间，但仍在延期时间内。您递交题目将无法获得全部分数。
 You cannot submit for this problem because the homework's deadline is due.: 作业已超过截止时间，您无法递交本题目。
 End Date: 结束日期
 End Time: 结束时间
