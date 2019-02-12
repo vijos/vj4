@@ -164,7 +164,7 @@
   {% if ctdocs %}
     <p>{{ _('In following contests') }}: </p>
     {% for tdoc in ctdocs %}
-    <p><a href="{{ reverse_url('contest_detail', ctype='contest', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a></p>
+    <p><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a></p>
     {% endfor %}
   {% endif %}
   </div>

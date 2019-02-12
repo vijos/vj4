@@ -19,7 +19,7 @@
             </select>
           </span>
         {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_HOMEWORK) %}
-          <a class="compact button" href="{{ reverse_url('contest_create', ctype='homework') }}">{{ _('Create Homework') }}</a>
+          <a class="compact button" href="{{ reverse_url('homework_create') }}">{{ _('Create Homework') }}</a>
         {% endif %}
         </div>
       </div>
@@ -38,7 +38,7 @@
                 </div>
               </div>
               <div class="media__body medium">
-                <h1 class="homework__title"><a href="{{ reverse_url('contest_detail', ctype='homework', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
+                <h1 class="homework__title"><a href="{{ reverse_url('homework_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
                 <ul class="supplementary list">
                   <li>
                     {{ _('Status') }}: <span class="homework-status--text {{ handler.get_status(tdoc) }}">{{ handler.status_text(tdoc) }}</span>

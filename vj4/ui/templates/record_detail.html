@@ -66,12 +66,15 @@
         {% if tdoc %}
         {% if tdoc['doc_type'] == vj4.model.document.TYPE_CONTEST %}
           <dt>{{ _('Contest') }}</dt>
+          <dd>
+            <a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a>
+          </dd>
         {% else %}{# tdoc['doc_type'] == vj4.model.document.TYPE_CONTEST #}
           <dt>{{ _('Homework') }}</dt>
-        {% endif %}{# tdoc['doc_type'] == vj4.model.document.TYPE_CONTEST #}
           <dd>
-            <a href="{{ reverse_url('contest_detail', ctype=vj4.constant.contest.DOCTYPE_TO_CTYPE[tdoc['doc_type']], tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a>
+            <a href="{{ reverse_url('homework_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a>
           </dd>
+        {% endif %}{# tdoc['doc_type'] == vj4.model.document.TYPE_CONTEST #}
         {% endif %}{# tdoc #}
         {% if rdoc['type'] == vj4.constant.record.TYPE_PRETEST and (handler.own(rdoc, priv=vj4.model.builtin.PRIV_READ_PRETEST_DATA_SELF, field='uid') or handler.has_priv(vj4.model.builtin.PRIV_READ_PRETEST_DATA)) %}
           <dt>{{ _('Pretest Data') }}</dt>

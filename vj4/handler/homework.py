@@ -63,7 +63,7 @@ class HomeworkMainHandler(contest.ContestMixin, base.Handler):
                   'title': tdoc['title'],
                   'status': self.status_text(tdoc),
                   'url': self.reverse_url('homework_detail', tid=tdoc['doc_id'])}
-      if self.is_homework_extended(tdoc) or self.is_finished(tdoc):
+      if self.is_homework_extended(tdoc) or self.is_done(tdoc):
         cal_tdoc['end_at'] = self.datetime_stamp(tdoc['end_at'])
         cal_tdoc['penalty_since'] = self.datetime_stamp(tdoc['penalty_since'])
       else:
