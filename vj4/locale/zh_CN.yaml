@@ -236,12 +236,12 @@ problem_solution: 题解
 problem_submit: 递交代码
 problem_settings: 题目设置
 problem_statistics: 题目统计
-contest_main.homework: 作业
-contest_main.contest: 比赛
-contest_create.contest: 创建比赛
-contest_create.homework: 创建作业
-contest_edit.contest: 编辑比赛
-contest_edit.homework: 编辑作业
+contest_main: 比赛
+contest_create: 创建比赛
+contest_edit: 编辑比赛
+homework_main: 作业
+homework_create: 创建作业
+homework_edit: 编辑作业
 contest_scoreboard: 成绩表
 record_detail: 记录详情
 record_main: 评测队列
@@ -694,7 +694,6 @@ Export as CSV: 导出为 CSV
 Export as HTML: 导出为 HTML
 Export All Code: 导出所有代码
 Solved Problems: 解决题目
-homework_main: 作业
 All Homeworks: 所有作业
 Calendar: 日历
 Time Extension: 延期
@@ -716,8 +715,6 @@ End Date: 结束日期
 End Time: 结束时间
 Extension (days): 最长延期 (日)
 Extension Score Penalty: 延期递交扣分规则
-homework_create: 创建作业
-homework_edit: 编辑作业
 Edit Homework: 编辑作业
 This homework is not open and you cannot view problems.: 该作业还未到开放时间，您无法查看作业题目。
 homework_status: 作业成绩表

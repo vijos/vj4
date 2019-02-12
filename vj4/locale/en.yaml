@@ -22,12 +22,12 @@ problem_solution: Problem Solution
 problem_submit: Problem Submit
 problem_settings: Problem Settings
 problem_statistics: Problem Statistics
-contest_main.homework: Homework
-contest_main.contest: Contest
-contest_create.contest: Contest Create
-contest_create.homework: Homework Create
-contest_edit.contest: Contest Edit
-contest_edit.homework: Homework Edit
+contest_main: Contest
+contest_create: Contest Create
+contest_edit: Contest Edit
+homework_main: Homework
+homework_create: Homework Create
+homework_edit: Homework Edit
 contest_scoreboard: Scoreboard
 record_detail: Record Detail
 record_main: Judging Queue
