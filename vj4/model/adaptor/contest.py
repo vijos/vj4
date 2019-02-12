@@ -6,7 +6,6 @@ import itertools
 
 from bson import objectid
 from pymongo import errors
-from typing import Union, Dict
 
 from vj4 import constant
 from vj4 import error
@@ -297,7 +296,7 @@ async def add(domain_id: str, doc_type: int,
 
 
 @argmethod.wrap
-async def get(domain_id: str, doc_type: Union[int, Dict], tid: objectid.ObjectId):
+async def get(domain_id: str, doc_type: int, tid: objectid.ObjectId):
   tdoc = await document.get(domain_id, doc_type, tid)
   if not tdoc:
     raise error.DocumentNotFoundError(domain_id, doc_type, tid)
@@ -329,7 +328,7 @@ async def edit(domain_id: str, doc_type: int, tid: objectid.ObjectId, **kwargs):
   return await document.set(domain_id, doc_type, tid, **kwargs)
 
 
-def get_multi(domain_id: str, doc_type: Union[int, Dict], fields=None, **kwargs):
+def get_multi(domain_id: str, doc_type: int, fields=None, **kwargs):
   # TODO(twd2): projection.
   return document.get_multi(domain_id=domain_id,
                             doc_type=doc_type,
