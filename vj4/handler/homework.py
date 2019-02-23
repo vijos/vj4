@@ -247,8 +247,8 @@ class HomeworkDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
     if pid not in tdoc['pids']:
       raise error.ProblemNotFoundError(self.domain_id, pid, tdoc['doc_id'])
     rid = await record.add(self.domain_id, pdoc['doc_id'], constant.record.TYPE_SUBMISSION,
-                           self.user['_id'], lang, code, tid=tdoc['doc_id'], hidden=True)
-    await contest.update_status(self.domain_id, tdoc['doc_id'], self.user['_id'],
+                           self.user['_id'], lang, code, document.TYPE_HOMEWORK, tid=tdoc['doc_id'], hidden=True)
+    await contest.update_status(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'], self.user['_id'],
                                 rid, pdoc['doc_id'], False, 0)
     if not self.can_show_record(tdoc):
       self.json_or_redirect(self.reverse_url('homework_detail', tid=tdoc['doc_id']))

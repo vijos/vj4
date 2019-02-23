@@ -23,8 +23,7 @@ from vj4.util import options
 
 class RecordVisibilityMixin(contest.ContestVisibilityMixin):
   async def rdoc_contest_visible(self, rdoc):
-    # TODO(soha): use contest.get
-    tdoc = await document.get(rdoc['domain_id'], {'$in': [document.TYPE_CONTEST, document.TYPE_HOMEWORK]}, rdoc['tid'])
+    tdoc = await contest.get(rdoc['domain_id'], rdoc.get('ttype', document.TYPE_CONTEST), rdoc['tid'])
     return self.can_show_record(tdoc), tdoc
 
 
