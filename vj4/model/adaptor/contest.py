@@ -542,8 +542,7 @@ class ContestCommonOperationMixin(object):
     return pids
 
   async def hide_problems(self, pids):
-    for pid in pids:
-      await problem.set_hidden(self.domain_id, pid, True)
+    await asyncio.gather(*[problem.set_hidden(self.domain_id, pid, True) for pid in pids])
 
 
 class ContestMixin(ContestStatusMixin, ContestVisibilityMixin, ContestCommonOperationMixin):
