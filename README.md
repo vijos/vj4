@@ -57,7 +57,7 @@ python3 -m pip install -r requirements.txt
 npm install   # cnpm install
 ```
 
-You don't need root privilege to run `npm install`. It installs stuffs in the project directory. We recommend using the Node 8. Node 10 brings breaking changes that can break our backward dependencies.
+You don't need root privilege to run `npm install`. It installs stuffs in the project directory. We recommend using Node 8. Node 10 brings breaking changes, which can break our deprecated dependencies.
 
 You may want to use [cnpm](https://npm.taobao.org/) and [tuna](https://pypi.tuna.tsinghua.edu.cn/)
 if you are in China. Make sure to use `cnpm` by adding `alias` to `npm` instead of installing cnpm cli-tool.
