@@ -41,7 +41,7 @@
                 <h1 class="homework__title"><a href="{{ reverse_url('homework_detail', tid=tdoc['doc_id']) }}" data-emoji-enabled>{{ tdoc['title'] }}</a></h1>
                 <ul class="supplementary list">
                   <li>
-                    {{ _('Status') }}: <span class="homework-status--text {{ handler.get_status(tdoc) }}">{{ handler.status_text(tdoc) }}</span>
+                    {{ _('Status') }}: <span class="homework-status--text {{ handler.get_status(tdoc) }}">{{ _(handler.status_text(tdoc)) }}</span>
                   </li>
                   <li>
                     {{ _('Open Since') }}: {{ datetime_span(tdoc['begin_at']) }}
