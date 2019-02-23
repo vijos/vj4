@@ -6,7 +6,9 @@
     {% endwith %}
   {% else %}
     {% include "partials/problem_sidebar_homework.html" %}
-    {% include "partials/homework_sidebar.html" %}
+    {% with owner_udoc=udoc, owner_dudoc=dudoc %}
+      {% include "partials/homework_sidebar.html" %}
+    {% endwith %}
   {% endif %}
 {% else %}
   {% include "partials/problem_sidebar_normal.html" %}
