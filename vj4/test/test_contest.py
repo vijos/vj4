@@ -283,15 +283,15 @@ class InnerTest(base.DatabaseTestCase):
   async def test_update_status_none(self):
     rid = objectid.ObjectId()
     with self.assertRaises(error.ContestNotAttendedError):
-      await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_777_AC)
+      await contest.update_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID, **SUBMIT_777_AC)
 
   @base.wrap_coro
   async def test_update_status(self):
     await contest.attend(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID)
-    await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_777_AC)
-    await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_777_NAC)
-    await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_778_AC)
-    tsdoc = await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_780_AC)
+    await contest.update_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID, **SUBMIT_777_AC)
+    await contest.update_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID, **SUBMIT_777_NAC)
+    await contest.update_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID, **SUBMIT_778_AC)
+    tsdoc = await contest.update_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID, **SUBMIT_780_AC)
     self.assertEqual(len(tsdoc['journal']), 4)
     self.assertEqual(tsdoc['journal'][0], SUBMIT_777_AC)
     self.assertEqual(tsdoc['journal'][1], SUBMIT_777_NAC)
@@ -308,7 +308,7 @@ class InnerTest(base.DatabaseTestCase):
   @base.wrap_coro
   async def test_recalc_status(self):
     await contest.attend(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID)
-    await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_777_AC)
+    await contest.update_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID, **SUBMIT_777_AC)
     await contest.edit(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, begin_at=NOW - datetime.timedelta(seconds=3))
     await contest.recalc_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID)
@@ -318,7 +318,7 @@ class InnerTest(base.DatabaseTestCase):
     self.assertEqual(tsdoc['time'], 5)
     self.assertEqual(len(tsdoc['detail']), 1)
     self.assertEqual(tsdoc['detail'][0]['time'], 5)
-    await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_777_NAC)
+    await contest.update_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID, **SUBMIT_777_NAC)
     await contest.edit(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, begin_at=NOW - datetime.timedelta(seconds=5))
     await contest.recalc_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID)
@@ -330,7 +330,7 @@ class InnerTest(base.DatabaseTestCase):
     self.assertEqual(len(tsdoc['detail']), 2)
     self.assertEqual(tsdoc['detail'][0]['time'], 7)
     self.assertEqual(tsdoc['detail'][1]['time'], 8)
-    await contest.update_status(DOMAIN_ID_DUMMY, self.tid, ATTEND_UID, **SUBMIT_778_AC)
+    await contest.update_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID, **SUBMIT_778_AC)
     await contest.edit(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, begin_at=NOW - datetime.timedelta(seconds=3))
     await contest.recalc_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid)
     tsdoc = await contest.get_status(DOMAIN_ID_DUMMY, document.TYPE_CONTEST, self.tid, ATTEND_UID)
