@@ -35,7 +35,7 @@
         {% else %}{# tdoc['doc_type'] == vj4.model.document.TYPE_CONTEST #}
         {% if handler.is_homework_extended(tdoc) %}
           <blockquote class="note">
-            <p>{{ _('The homework\'s deadline is due but in extension. You can still submit for this problem but your score will be panelled.') }}</p>
+            <p>{{ _('The homework\'s deadline is due but in extension. You can still submit for this problem but your score will be penalized.') }}</p>
           </blockquote>
         {% elif handler.is_done(tdoc) %}{# handler.is_homework_extended(tdoc) #}
           <blockquote class="note">
