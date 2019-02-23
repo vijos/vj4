@@ -43,11 +43,8 @@ class ContestMainHandler(contest.ContestMixin, base.Handler):
     tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
     tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
                                           (tdoc['doc_id'] for tdoc in tdocs))
-    page_title = self.translate('contest_main')
-    path_components = self.build_path((page_title, None))
     self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs, rule=rule,
-                tdocs=tdocs, tsdict=tsdict,
-                page_title=page_title, path_components=path_components)
+                tdocs=tdocs, tsdict=tsdict)
 
 
 @app.route('/contest/{tid:\w{24}}', 'contest_detail')
@@ -86,11 +83,14 @@ class ContestDetailHandler(contest.ContestMixin, base.OperationHandler):
     uids.add(tdoc['owner_uid'])
     udict = await user.get_dict(uids)
     dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=uids)
+    path_components = self.build_path(
+      (self.translate('contest_main'), self.reverse_url('contest_main')),
+      (tdoc['title'], None))
     self.render('contest_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udict=udict,
                 dudict=dudict, pdict=pdict, psdict=psdict, rdict=rdict,
                 ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount,
                 datetime_stamp=self.datetime_stamp,
-                page_title=tdoc['title'])
+                page_title=tdoc['title'], path_components=path_components)
 
   @base.route_argument
   @base.require_priv(builtin.PRIV_USER_PROFILE)

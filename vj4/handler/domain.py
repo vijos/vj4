@@ -20,7 +20,7 @@ from vj4.util import validator
 
 
 @app.route('/', 'domain_main')
-class DomainMainHandler(training_handler.TrainingStatusMixin, base.Handler):
+class DomainMainHandler(training_handler.TrainingMixin, base.Handler):
   CONTESTS_ON_MAIN = 5
   TRAININGS_ON_MAIN = 5
   DISCUSSIONS_ON_MAIN = 20

@@ -109,8 +109,8 @@ class HomeworkDetailHandler(contest.ContestMixin, base.OperationHandler):
     udict = await user.get_dict(uids)
     dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=uids)
     path_components = self.build_path(
-        (self.translate('homework_main'), self.reverse_url('homework_main'),
-        (tdoc['title'], None)))
+      (self.translate('homework_main'), self.reverse_url('homework_main')),
+      (tdoc['title'], None))
     self.render('homework_detail.html', tdoc=tdoc, tsdoc=tsdoc, attended=attended, udict=udict,
                 dudict=dudict, pdict=pdict, psdict=psdict, rdict=rdict,
                 ddocs=ddocs, page=page, dpcount=dpcount, dcount=dcount,
