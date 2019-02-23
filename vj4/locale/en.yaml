@@ -4,6 +4,7 @@ contest_main: Contest
 contest_create: Contest Create
 contest_edit: Contest Edit
 contest_scoreboard: Scoreboard
+contest_detail_problem_submit: Submit Contest Problem
 discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
@@ -17,6 +18,7 @@ homework_main: Homework
 homework_create: Homework Create
 homework_edit: Homework Edit
 homework_scoreboard: Scoreboard
+homework_detail_problem_submit: Submit Homework Problem
 judge_playground: Judge Playground
 main: Home
 pager_first: « First

@@ -33,8 +33,8 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
          'uid': uid,
          'lang': lang,
          'code': code,
-         'tid': tid,
          'ttype': ttype,
+         'tid': tid,
          'data_id': data_id,
          'type': type}
   rid = (await coll.insert_one(doc)).inserted_id

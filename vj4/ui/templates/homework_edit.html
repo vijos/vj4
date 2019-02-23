@@ -24,7 +24,7 @@
           {{ form.form_textarea(columns=None, label='Content', name='content', value=tdoc['content']|default(''), markdown=True) }}
           <div class="row"><div class="columns">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-          {% if page_name == 'contest_edit' %}
+          {% if page_name == 'homework_edit' %}
             <button type="submit" class="rounded primary button">
               {{ _('Update') }}
             </button>

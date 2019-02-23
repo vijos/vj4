@@ -39,6 +39,7 @@ contest_main: 比赛
 contest_create: 创建比赛
 contest_edit: 编辑比赛
 contest_scoreboard: 比赛成绩表
+contest_detail_problem_submit: 递交比赛题目
 Create: 创建
 Create Contest: 创建比赛
 Create Discussion: 创建讨论
@@ -230,6 +231,7 @@ homework_main: 作业
 homework_create: 创建作业
 homework_edit: 编辑作业
 homework_scoreboard: 作业成绩表
+homework_detail_problem_submit: 递交作业题目
 judge_playground: 评测游乐场
 last active at: 最后活动于
 last login at: 最后登录于
