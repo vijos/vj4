@@ -39,7 +39,7 @@ def _parse_dag_json(dag):
   return new_dag
 
 
-class TrainingStatusMixin(object):
+class TrainingMixin(object):
   def get_pids(self, tdoc):
     pids = set()
     for node in tdoc['dag']:
@@ -62,10 +62,6 @@ class TrainingStatusMixin(object):
 
   def is_invalid(self, node, done_nids):
     return not set(done_nids) >= set(node['require_nids'])
-
-
-class TrainingMixin(TrainingStatusMixin):
-  pass
 
 
 @app.route('/training', 'training_main')
