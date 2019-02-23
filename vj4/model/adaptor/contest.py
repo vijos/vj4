@@ -47,7 +47,7 @@ def _acm_stat(tdoc, journal):
   def time(jdoc):
     real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
     penalty = datetime.timedelta(minutes=20) * naccept[jdoc['pid']]
-    return int((real + penalty).total_seconds())
+    return (real + penalty).total_seconds()
 
   detail = [{**j, 'naccept': naccept[j['pid']], 'time': time(j)} for j in effective.values()]
   return {'accept': sum(int(d['accept']) for d in detail),
@@ -63,7 +63,7 @@ def _assignment_stat(tdoc, journal):
 
   def time(jdoc):
     real = jdoc['rid'].generation_time.replace(tzinfo=None) - tdoc['begin_at']
-    return int(real.total_seconds())
+    return real.total_seconds()
 
   def penalty_score(jdoc):
     score = jdoc['score']
