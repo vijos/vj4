@@ -241,7 +241,7 @@ export default class Calendar {
         if (bannerEnd.isAfter(bannerEndMax, 'day')) {
           [bannerEnd, bannerEndTruncated] = [bannerEndMax, true];
         }
-        const weekIndex = bannerBegin.diff(beginDate, 'week');
+        const weekIndex = bannerBegin.clone().startOf('day').diff(beginDate.clone().startOf('day'), 'week');
         bannersByWeek[weekIndex].push({
           beginAt: bannerBegin.startOf('day'),
           beginTrunc: bannerBeginTruncated,
