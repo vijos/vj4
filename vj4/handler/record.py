@@ -23,7 +23,7 @@ from vj4.util import options
 
 class RecordVisibilityMixin(contest.ContestVisibilityMixin):
   async def rdoc_contest_visible(self, rdoc):
-    tdoc = await contest.get(rdoc['domain_id'], rdoc['doc_type'] if 'doc_type' in rdoc else document.TYPE_CONTEST, rdoc['tid'])
+    tdoc = await contest.get(rdoc['domain_id'], rdoc.get('ttype', document.TYPE_CONTEST), rdoc['tid'])
     return self.can_show_record(tdoc), tdoc
 
 
