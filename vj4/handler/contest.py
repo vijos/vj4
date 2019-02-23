@@ -41,7 +41,7 @@ class ContestMainHandler(contest.ContestMixin, base.Handler):
       tdocs = contest.get_multi(self.domain_id, document.TYPE_CONTEST, rule=rule)
       qs = 'rule={0}'.format(rule)
     tdocs, tpcount, _ = await pagination.paginate(tdocs, page, self.CONTESTS_PER_PAGE)
-    tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
+    tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'], document.TYPE_CONTEST,
                                           (tdoc['doc_id'] for tdoc in tdocs))
     self.render('contest_main.html', page=page, tpcount=tpcount, qs=qs, rule=rule,
                 tdocs=tdocs, tsdict=tsdict)

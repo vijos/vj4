@@ -269,18 +269,21 @@ async def add(domain_id: str, doc_type: int,
               begin_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               end_at: lambda i: datetime.datetime.utcfromtimestamp(int(i)),
               pids=[], **kwargs):
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   validator.check_title(title)
   validator.check_content(content)
+
   if doc_type == document.TYPE_CONTEST:
     if rule not in constant.contest.CONTEST_RULES:
       raise error.ValidationError('rule')
   elif doc_type == document.TYPE_HOMEWORK:
     if rule not in constant.contest.HOMEWORK_RULES:
       raise error.ValidationError('rule')
-  else:
-    raise error.InvalidArgumentError('doc_type')
+
   if begin_at >= end_at:
     raise error.ValidationError('begin_at', 'end_at')
+
   if doc_type == document.TYPE_HOMEWORK:
     if 'penalty_since' not in kwargs:
       raise error.ValidationError('penalty_since')
@@ -297,6 +300,8 @@ async def add(domain_id: str, doc_type: int,
 
 @argmethod.wrap
 async def get(domain_id: str, doc_type: int, tid: objectid.ObjectId):
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   tdoc = await document.get(domain_id, doc_type, tid)
   if not tdoc:
     raise error.DocumentNotFoundError(domain_id, doc_type, tid)
@@ -304,6 +309,8 @@ async def get(domain_id: str, doc_type: int, tid: objectid.ObjectId):
 
 
 async def edit(domain_id: str, doc_type: int, tid: objectid.ObjectId, **kwargs):
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   if 'title' in kwargs:
       validator.check_title(kwargs['title'])
   if 'content' in kwargs:
@@ -315,8 +322,6 @@ async def edit(domain_id: str, doc_type: int, tid: objectid.ObjectId, **kwargs):
     elif doc_type == document.TYPE_HOMEWORK:
       if kwargs['rule'] not in constant.contest.HOMEWORK_RULES:
         raise error.ValidationError('rule')
-    else:
-      raise error.InvalidArgumentError('doc_type')
   if 'begin_at' in kwargs and 'end_at' in kwargs:
     if kwargs['begin_at'] >= kwargs['end_at']:
       raise error.ValidationError('begin_at', 'end_at')
@@ -330,6 +335,8 @@ async def edit(domain_id: str, doc_type: int, tid: objectid.ObjectId, **kwargs):
 
 def get_multi(domain_id: str, doc_type: int, fields=None, **kwargs):
   # TODO(twd2): projection.
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   return document.get_multi(domain_id=domain_id,
                             doc_type=doc_type,
                             fields=fields,
@@ -340,6 +347,8 @@ def get_multi(domain_id: str, doc_type: int, fields=None, **kwargs):
 @argmethod.wrap
 async def attend(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int):
   # TODO(iceboy): check time.
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   try:
     await document.capped_inc_status(domain_id, doc_type, tid,
                                      uid, 'attend', 1, 0, 1)
@@ -348,25 +357,31 @@ async def attend(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int
       raise error.ContestAlreadyAttendedError(domain_id, tid, uid) from None
     elif doc_type == document.TYPE_HOMEWORK:
       raise error.HomeworkAlreadyAttendedError(domain_id, tid, uid) from None
-    else:
-      raise error.InvalidArgumentError('doc_type')
   return await document.inc(domain_id, doc_type, tid, 'attend', 1)
 
 
 @argmethod.wrap
 async def get_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int, fields=None):
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   return await document.get_status(domain_id, doc_type, doc_id=tid,
                                    uid=uid, fields=fields)
 
 
-def get_multi_status(*, fields=None, **kwargs):
-  return document.get_multi_status(fields=fields, **kwargs)
+def get_multi_status(doc_type: int, *, fields=None, **kwargs):
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
+  return document.get_multi_status(doc_type=doc_type,
+                                   fields=fields, **kwargs)
 
 
-async def get_dict_status(domain_id, uid, tids, *, fields=None):
+async def get_dict_status(domain_id, uid, doc_type, tids, *, fields=None):
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   result = dict()
   async for tsdoc in get_multi_status(domain_id=domain_id,
                                       uid=uid,
+                                      doc_type=doc_type,
                                       doc_id={'$in': list(set(tids))},
                                       fields=fields):
     result[tsdoc['doc_id']] = tsdoc
@@ -376,6 +391,8 @@ async def get_dict_status(domain_id, uid, tids, *, fields=None):
 @argmethod.wrap
 async def get_and_list_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, fields=None):
   # TODO(iceboy): projection, pagination.
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   tdoc = await get(domain_id, doc_type, tid)
   tsdocs = await document.get_multi_status(domain_id=domain_id,
                                            doc_type=doc_type,
@@ -417,6 +434,8 @@ async def update_status(domain_id: str, tid: objectid.ObjectId, uid: int, rid: o
 
 @argmethod.wrap
 async def recalc_status(domain_id: str, doc_type: int, tid: objectid.ObjectId):
+  if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+    raise error.InvalidArgumentError('doc_type')
   tdoc = await document.get(domain_id, doc_type, tid)
   async with document.get_multi_status(domain_id=domain_id,
                                        doc_type=doc_type,
@@ -512,14 +531,14 @@ class ContestVisibilityMixin(object):
 
 class ContestCommonOperationMixin(object):
   async def get_scoreboard(self, doc_type: int, tid: objectid.ObjectId, is_export: bool=False):
+    if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
+      raise error.InvalidArgumentError('doc_type')
     tdoc, tsdocs = await get_and_list_status(self.domain_id, doc_type, tid)
     if not self.can_show_scoreboard(tdoc):
       if doc_type == document.TYPE_CONTEST:
         raise error.ContestScoreboardHiddenError(self.domain_id, tid)
       elif doc_type == document.TYPE_HOMEWORK:
         raise error.HomeworkScoreboardHiddenError(self.domain_id, tid)
-      else:
-        raise error.InvalidArgumentError('doc_type')
     udict, dudict, pdict = await asyncio.gather(
         user.get_dict([tsdoc['uid'] for tsdoc in tsdocs]),
         domain.get_dict_user_by_uid(self.domain_id, [tsdoc['uid'] for tsdoc in tsdocs]),

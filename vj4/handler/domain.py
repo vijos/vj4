@@ -31,6 +31,7 @@ class DomainMainHandler(training_handler.TrainingMixin, base.Handler):
                            .limit(self.CONTESTS_ON_MAIN) \
                            .to_list()
       tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
+                                             document.TYPE_CONTEST,
                                              (tdoc['doc_id'] for tdoc in tdocs))
     else:
       tdocs = []
