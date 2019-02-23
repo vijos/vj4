@@ -321,7 +321,7 @@ class ContestCreateHandler(contest.ContestMixin, base.Handler):
 class ContestEditHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_CREATE_CONTEST)
+  @base.require_perm(builtin.PERM_EDIT_CONTEST)
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
     tdoc = await contest.get(self.domain_id, document.TYPE_CONTEST, tid)
@@ -343,7 +343,7 @@ class ContestEditHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
-  @base.require_perm(builtin.PERM_CREATE_CONTEST)
+  @base.require_perm(builtin.PERM_EDIT_CONTEST)
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize

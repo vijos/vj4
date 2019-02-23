@@ -359,7 +359,7 @@ class HomeworkCreateHandler(contest.ContestMixin, base.Handler):
 @app.route('/homework/{tid}/edit', 'homework_edit')
 class HomeworkEditHandler(contest.ContestMixin, base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_CREATE_HOMEWORK)
+  @base.require_perm(builtin.PERM_EDIT_HOMEWORK)
   @base.route_argument
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
@@ -387,7 +387,7 @@ class HomeworkEditHandler(contest.ContestMixin, base.Handler):
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_PROBLEM)
-  @base.require_perm(builtin.PERM_CREATE_HOMEWORK)
+  @base.require_perm(builtin.PERM_EDIT_HOMEWORK)
   @base.route_argument
   @base.post_argument
   @base.require_csrf_token
