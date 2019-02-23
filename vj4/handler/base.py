@@ -399,15 +399,11 @@ def _datetime_stamp(dt):
 
 
 # Decorators
-def require_perm(perm, when=None):
+def require_perm(perm):
   def decorate(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
-      if when != None:
-        if when(*args, **kwargs):
-          self.check_perm(perm)
-      else:
-        self.check_perm(perm)
+      self.check_perm(perm)
       return func(self, *args, **kwargs)
 
     return wrapper
