@@ -167,6 +167,12 @@
     <p><a href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a></p>
     {% endfor %}
   {% endif %}
+  {% if htdocs %}
+    <p>{{ _('In following homework') }}: </p>
+    {% for tdoc in htdocs %}
+    <p><a href="{{ reverse_url('homework_detail', tid=tdoc['doc_id']) }}">{{ tdoc['title'] }}</a></p>
+    {% endfor %}
+  {% endif %}
   </div>
 </div>
 {% endif %}

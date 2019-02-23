@@ -200,11 +200,14 @@ class ProblemDetailHandler(base.Handler):
             if self.has_perm(builtin.PERM_VIEW_TRAINING) else None
     ctdocs = await contest.get_multi(self.domain_id, document.TYPE_CONTEST, pids=pid).to_list() \
              if self.has_perm(builtin.PERM_VIEW_CONTEST) else None
+    htdocs = await contest.get_multi(self.domain_id, document.TYPE_HOMEWORK, pids=pid).to_list() \
+             if self.has_perm(builtin.PERM_VIEW_HOMEWORK) else None
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], None))
-    self.render('problem_detail.html', pdoc=pdoc, udoc=udoc, tdocs=tdocs, ctdocs=ctdocs,
-                dudoc=dudoc, page_title=pdoc['title'], path_components=path_components)
+    self.render('problem_detail.html', pdoc=pdoc, udoc=udoc, dudoc=dudoc,
+                tdocs=tdocs, ctdocs=ctdocs, htdocs=htdocs,
+                page_title=pdoc['title'], path_components=path_components)
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
