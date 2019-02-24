@@ -154,7 +154,10 @@ class RecordDetailHandler(RecordMixin, base.Handler):
         and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
       del rdoc['code']
     if not show_status and 'code' not in rdoc:
-      raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
+      if tdoc['doc_type'] == document.TYPE_CONTEST:
+        raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
+      else: # TYPE_HOMEWORK
+        raise error.PermissionError(builtin.PERM_VIEW_HOMEWORK_HIDDEN_SCOREBOARD)
     udoc, dudoc = await asyncio.gather(
         user.get_by_uid(rdoc['uid']),
         domain.get_user(self.domain_id, rdoc['uid']))
