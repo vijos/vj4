@@ -24,7 +24,10 @@ from vj4.util import options
 class RecordVisibilityMixin(contest.ContestVisibilityMixin):
   async def rdoc_contest_visible(self, rdoc):
     tdoc = await contest.get(rdoc['domain_id'], rdoc.get('ttype', document.TYPE_CONTEST), rdoc['tid'])
-    return self.can_show_record(tdoc), tdoc
+    if self.user['_id'] == rdoc['uid']:
+      return self.can_show_record(tdoc), tdoc
+    else:
+      return self.can_show_scoreboard(tdoc), tdoc
 
 
 class RecordCommonOperationMixin(object):
