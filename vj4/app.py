@@ -5,6 +5,7 @@ from os import path
 
 import sockjs
 from aiohttp import web
+from aiohttp_sentry import SentryMiddleware as SentryMiddlewareOriginal
 
 from vj4 import db
 from vj4 import error
@@ -33,13 +34,41 @@ options.define('changemail_token_expire_seconds', default=3600,
                help='Expire time for changemail token, in seconds.')
 options.define('url_prefix', default='https://vijos.org', help='URL prefix.')
 options.define('cdn_prefix', default='/', help='CDN prefix.')
+options.define('sentry_dsn', default='', help='Sentry integration DSN.')
 
 _logger = logging.getLogger(__name__)
 
 
+class SentryMiddleware(SentryMiddlewareOriginal): # For getting a correct IP
+  async def get_extra_data(self, request):
+    return {
+      'request': {
+        'query_string': request.query_string,
+        'cookies': request.headers.get('Cookie', ''),
+        'headers': dict(request.headers),
+        'url': request.path,
+        'method': request.method,
+        'scheme': request.scheme,
+        'env': {
+          'REMOTE_ADDR': request.headers.get(options.ip_header) if options.ip_header else request.transport.get_extra_info('peername')[0]
+        }
+      }
+    }
+
+
 class Application(web.Application):
   def __init__(self):
-    super(Application, self).__init__(debug=options.debug)
+    middlewares = []
+    if options.sentry_dsn:
+      middlewares.append(SentryMiddleware({
+        'dsn': options.sentry_dsn,
+        'environment': 'vijos/vj4'
+      }))
+
+    super(Application, self).__init__(
+      debug=options.debug,
+      middlewares=middlewares
+    )
     globals()[self.__class__.__name__] = lambda: self  # singleton
 
     static_path = path.join(path.dirname(__file__), '.uibuild')
