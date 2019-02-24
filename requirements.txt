@@ -13,3 +13,4 @@ GitPython
 PyYAML
 aiomongo
 yarl
+aiohttp-sentry
