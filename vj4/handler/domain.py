@@ -6,29 +6,46 @@ import functools
 from vj4 import app
 from vj4 import constant
 from vj4 import error
+from vj4 import constant
 from vj4.model import builtin
+from vj4.model import document
 from vj4.model import domain
 from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.model.adaptor import contest
 from vj4.model.adaptor import training
 from vj4.handler import base
-import vj4.handler.training
+from vj4.handler import training as training_handler
 from vj4.util import validator
 
 
 @app.route('/', 'domain_main')
-class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
+class DomainMainHandler(contest.ContestStatusMixin, base.Handler):
   CONTESTS_ON_MAIN = 5
+  HOMEWORK_ON_MAIN = 5
   TRAININGS_ON_MAIN = 5
   DISCUSSIONS_ON_MAIN = 20
 
   async def prepare_contest(self):
     if self.has_perm(builtin.PERM_VIEW_CONTEST):
-      tdocs = await contest.get_multi(self.domain_id) \
+      tdocs = await contest.get_multi(self.domain_id, document.TYPE_CONTEST) \
                            .limit(self.CONTESTS_ON_MAIN) \
                            .to_list()
       tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
+                                             document.TYPE_CONTEST,
+                                             (tdoc['doc_id'] for tdoc in tdocs))
+    else:
+      tdocs = []
+      tsdict = {}
+    return tdocs, tsdict
+
+  async def prepare_homework(self):
+    if self.has_perm(builtin.PERM_VIEW_HOMEWORK):
+      tdocs = await contest.get_multi(self.domain_id, document.TYPE_HOMEWORK) \
+                           .limit(self.HOMEWORK_ON_MAIN) \
+                           .to_list()
+      tsdict = await contest.get_dict_status(self.domain_id, self.user['_id'],
+                                             document.TYPE_HOMEWORK,
                                              (tdoc['doc_id'] for tdoc in tdocs))
     else:
       tdocs = []
@@ -60,13 +77,18 @@ class DomainMainHandler(base.Handler, vj4.handler.training.TrainingMixin):
     return ddocs, vndict
 
   async def get(self):
-    (tdocs, tsdict), (trdocs, trsdict), (ddocs, vndict) = await asyncio.gather(
-        self.prepare_contest(), self.prepare_training(), self.prepare_discussion())
+    (tdocs, tsdict), (htdocs, htsdict),\
+    (trdocs, trsdict), (ddocs, vndict) = await asyncio.gather(
+        self.prepare_contest(), self.prepare_homework(),
+        self.prepare_training(), self.prepare_discussion())
     udict, dudict = await asyncio.gather(
         user.get_dict(ddoc['owner_uid'] for ddoc in ddocs),
         domain.get_dict_user_by_uid(self.domain_id, (ddoc['owner_uid'] for ddoc in ddocs)))
     self.render('domain_main.html', discussion_nodes=await discussion.get_nodes(self.domain_id),
-                tdocs=tdocs, tsdict=tsdict, trdocs=trdocs, trsdict=trsdict,
+                tdocs=tdocs, tsdict=tsdict,
+                htdocs=htdocs, htsdict=htsdict,
+                trdocs=trdocs, trsdict=trsdict,
+                training=training_handler.TrainingMixin(),
                 ddocs=ddocs, vndict=vndict,
                 udict=udict, dudict=dudict, datetime_stamp=self.datetime_stamp)
 

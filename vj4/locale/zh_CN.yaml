@@ -35,6 +35,11 @@ Comments: 评论
 Contact Us: 联系我们
 Content: 内容
 Contest Scoreboard: 比赛成绩表
+contest_main: 比赛
+contest_create: 创建比赛
+contest_edit: 编辑比赛
+contest_scoreboard: 比赛成绩表
+contest_detail_problem_submit: 递交比赛题目
 Create: 创建
 Create Contest: 创建比赛
 Create Discussion: 创建讨论
@@ -83,6 +88,7 @@ Hide categorical tags: 隐藏分类标签
 If enabled, source code will be emailed to you after the submission is accepted.: 如果启用，在您通过题目后，源代码会以
   Email 的形式发送给您。
 In following training plans: 在下列训练计划中
+In following homework: 在以下作业中
 Information: 信息
 It works!: 它成了！
 Judged At: 评测时间
@@ -210,10 +216,6 @@ Write Your Comment: 发表您的评论
 Write Your Solution: 发表您的题解
 author: 作者
 content: 内容
-contest_create: 创建比赛
-contest_edit: 编辑比赛
-contest_main: 比赛
-contest_scoreboard: 比赛成绩表
 current domain: 当前域
 currently offline: 目前离线
 discussion_create: 创建讨论
@@ -225,6 +227,11 @@ home_preference: 偏好设置
 home_messages: 站内消息
 home_security: 安全设置
 home_domain: 我的域
+homework_main: 作业
+homework_create: 创建作业
+homework_edit: 编辑作业
+homework_scoreboard: 作业成绩表
+homework_detail_problem_submit: 递交作业题目
 judge_playground: 评测游乐场
 last active at: 最后活动于
 last login at: 最后登录于
@@ -288,6 +295,7 @@ Comment: 评论
 Share: 分享
 Delete: 删除
 Highlight: 高亮讨论
+Begin at: 开始于
 End at: 结束于
 Action: 动作
 Rejudge: 重测
@@ -367,11 +375,11 @@ Live...: 正在进行…
 Ready (☆▽☆): 马上开始 (☆▽☆)
 View Details: 查看详情
 All Contests: 所有比赛
+Edit Contest: 编辑比赛
 No Submissions: 没有递交
 Do not discuss solutions otherwise you will be regarded as cheating and then lose qualifications.: 请勿讨论解法，否则以作弊论处并且将失去参赛资格。
 Please attend contest to see the problems.: 请参加比赛来查看题目。
 This contest is not live.: 比赛没有开始。
-contest_detail_problem_submit: 递交比赛代码
 Host: 主持人
 Rank: 排名
 Solve: 解决
@@ -520,6 +528,7 @@ perm_record: 记录
 perm_problem_solution: 题解
 perm_discussion: 讨论
 perm_contest: 比赛
+perm_homework: 作业
 perm_training: 训练
 discussion_edit: 编辑讨论
 At least 4 characters: 至少 4 个字符
@@ -558,6 +567,7 @@ Judge Status: 评测状态
 Compile Error: 编译错误
 Training: 训练
 Contest: 比赛
+Homework: 作业
 RP Algorithm: RP 算法
 Difficulty Algorithm: 难度算法
 Dataset Format: 测试数据集格式
@@ -688,9 +698,50 @@ Export as CSV: 导出为 CSV
 Export as HTML: 导出为 HTML
 Export All Code: 导出所有代码
 Solved Problems: 解决题目
+All Homeworks: 所有作业
+Calendar: 日历
+Time Extension: 延期
+Homework Introduction: 作业介绍
+Claim Homework: 认领作业
+Please claim the assignment to see the problems.: 认领作业后才可以查看作业内容。
+Login to Claim Homework: 登录后认领作业
+No Permission to Claim Homework: 您没有权限认领作业
+View Homework: 查看作业
+Claimed: 已认领
+Not Claimed: 未认领
+Create Homework: 创建作业
+Calendar View: 日历视图
+List View: 列表视图
+My Recent Submissions: 我的最近递交记录
+The homework's deadline is due but in extension. You can still submit for this problem but your score will be penalized.: 作业已超过截止时间，但仍在延期时间内。您递交题目将无法获得全部分数。
+You cannot submit for this problem because the homework's deadline is due.: 作业已超过截止时间，您无法递交本题目。
+End Date: 结束日期
+End Time: 结束时间
+Extension (days): 最长延期 (日)
+Extension Score Penalty: 延期递交扣分规则
+Edit Homework: 编辑作业
+This homework is not open and you cannot view problems.: 该作业还未到开放时间，您无法查看作业题目。
+homework_status: 作业成绩表
 Total Score: 总分数
+Original Score: 原始分数
 Scoreboard: 成绩表
 Scoreboard (Hidden): 成绩表 (隐藏)
+View homework: 查看作业
+View homework scoreboard: 查看作业成绩表
+View hidden homework submission status and scoreboard: 查看隐藏的作业递交状态和成绩表
+Create homework: 创建作业
+Claim homework: 认领作业
+Edit any homework: 修改任意的作业
+Edit own homework: 修改自己的作业
+Can be Extended For: 可延期
+Open Since: 开始时间
+Hard Deadline: 最终截止时间
+Deadline: 截止时间
+There is no homework so far ╰(*°▽°*)╯: 目前还没有作业 ╰(*°▽°*)╯
+Homework scoreboard is not visible.: 目前无法查看作业成绩表。
+This homework is not open.: 该作业还未开放递交。
+You've already claimed this homework.: 您已认领过该作业。
+You haven't claimed this homework yet.: 您还未认领过该作业。
 Contributions: 贡献
 Contributed Problems: 贡献的题目
 Method: 方法

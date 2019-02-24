@@ -67,6 +67,15 @@ PERM_ATTEND_CONTEST = 1 << 45
 PERM_EDIT_CONTEST = 1 << 50
 PERM_EDIT_CONTEST_SELF = 1 << 51
 
+# Homework.
+PERM_VIEW_HOMEWORK = 1 << 52
+PERM_VIEW_HOMEWORK_SCOREBOARD = 1 << 53
+PERM_VIEW_HOMEWORK_HIDDEN_SCOREBOARD = 1 << 54
+PERM_CREATE_HOMEWORK = 1 << 55
+PERM_ATTEND_HOMEWORK = 1 << 56
+PERM_EDIT_HOMEWORK = 1 << 57
+PERM_EDIT_HOMEWORK_SELF = 1 << 58
+
 # Training.
 PERM_VIEW_TRAINING = 1 << 46
 PERM_CREATE_TRAINING = 1 << 47
@@ -127,6 +136,13 @@ PERMS = [
     Permission('perm_contest', PERM_ATTEND_CONTEST, 'Attend contests'),
     Permission('perm_contest', PERM_EDIT_CONTEST, 'Edit any contests'),
     Permission('perm_contest', PERM_EDIT_CONTEST_SELF, 'Edit own contests'),
+    Permission('perm_homework', PERM_VIEW_HOMEWORK, 'View homework'),
+    Permission('perm_homework', PERM_VIEW_HOMEWORK_SCOREBOARD, 'View homework scoreboard'),
+    Permission('perm_homework', PERM_VIEW_HOMEWORK_HIDDEN_SCOREBOARD, 'View hidden homework submission status and scoreboard'),
+    Permission('perm_homework', PERM_CREATE_HOMEWORK, 'Create homework'),
+    Permission('perm_homework', PERM_ATTEND_HOMEWORK, 'Claim homework'),
+    Permission('perm_homework', PERM_EDIT_HOMEWORK, 'Edit any homework'),
+    Permission('perm_homework', PERM_EDIT_HOMEWORK_SELF, 'Edit own homework'),
     Permission('perm_training', PERM_VIEW_TRAINING, 'View training plans'),
     Permission('perm_training', PERM_CREATE_TRAINING, 'Create training plans'),
     Permission('perm_training', PERM_EDIT_TRAINING, 'Edit training plans'),
@@ -178,6 +194,8 @@ BASIC_PERMISSIONS = (
     PERM_VIEW_DISCUSSION |
     PERM_VIEW_CONTEST |
     PERM_VIEW_CONTEST_SCOREBOARD |
+    PERM_VIEW_HOMEWORK |
+    PERM_VIEW_HOMEWORK_SCOREBOARD |
     PERM_VIEW_TRAINING
 )
 DEFAULT_PERMISSIONS = (
@@ -206,6 +224,10 @@ DEFAULT_PERMISSIONS = (
     PERM_VIEW_CONTEST_SCOREBOARD |
     PERM_ATTEND_CONTEST |
     PERM_EDIT_CONTEST_SELF |
+    PERM_VIEW_HOMEWORK |
+    PERM_VIEW_HOMEWORK_SCOREBOARD |
+    PERM_ATTEND_HOMEWORK |
+    PERM_EDIT_HOMEWORK_SELF |
     PERM_VIEW_TRAINING |
     PERM_CREATE_TRAINING |
     PERM_EDIT_TRAINING_SELF

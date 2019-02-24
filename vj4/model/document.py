@@ -14,6 +14,7 @@ TYPE_DISCUSSION_REPLY = 22
 TYPE_CONTEST = 30
 TYPE_TRAINING = 40
 TYPE_USERFILE = 50
+TYPE_HOMEWORK = 60
 
 DOC_ID_DISCUSSION_NODES = 1
 
@@ -402,9 +403,6 @@ async def ensure_indexes():
                            ('doc_type', 1),
                            ('rule', 1),
                            ('doc_id', -1)], sparse=True)
-  await coll.create_index([('domain_id', 1),
-                           ('doc_type', 1),
-                           ('pids', 1)], sparse=True)
   # for training
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),

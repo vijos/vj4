@@ -10,8 +10,8 @@ from vj4.model import domain
 from vj4.model import oplog
 from vj4.model import user
 from vj4.model.adaptor import discussion
+from vj4.model.adaptor import contest
 from vj4.handler import base
-from vj4.handler import contest
 from vj4.util import pagination
 
 
@@ -47,7 +47,7 @@ class DiscussionMainHandler(base.Handler):
 
 @app.route('/discuss/{doc_type:-?\d+}/{doc_id}', 'discussion_node_document_as_node')
 @app.route('/discuss/{doc_id:\w{1,23}|\w{25,}|[^/]*[^/\w][^/]*}', 'discussion_node')
-class DiscussionNodeHandler(base.Handler, contest.ContestStatusMixin):
+class DiscussionNodeHandler(contest.ContestStatusMixin, base.Handler):
   DISCUSSIONS_PER_PAGE = 15
 
   @base.require_perm(builtin.PERM_VIEW_DISCUSSION)

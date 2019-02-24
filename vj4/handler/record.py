@@ -9,7 +9,6 @@ from vj4 import app
 from vj4 import constant
 from vj4 import error
 from vj4.handler import base
-from vj4.handler import contest as contest_handler
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
@@ -22,10 +21,13 @@ from vj4.service import bus
 from vj4.util import options
 
 
-class RecordVisibilityMixin(contest_handler.ContestVisibilityMixin):
+class RecordVisibilityMixin(contest.ContestVisibilityMixin):
   async def rdoc_contest_visible(self, rdoc):
-    tdoc = await contest.get(rdoc['domain_id'], rdoc['tid'])
-    return self.can_show_record(tdoc), tdoc
+    tdoc = await contest.get(rdoc['domain_id'], rdoc.get('ttype', document.TYPE_CONTEST), rdoc['tid'])
+    if self.user['_id'] == rdoc['uid']:
+      return self.can_show_record(tdoc), tdoc
+    else:
+      return self.can_show_scoreboard(tdoc), tdoc
 
 
 class RecordCommonOperationMixin(object):
@@ -152,7 +154,10 @@ class RecordDetailHandler(RecordMixin, base.Handler):
         and not self.has_priv(builtin.PRIV_READ_RECORD_CODE)):
       del rdoc['code']
     if not show_status and 'code' not in rdoc:
-      raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
+      if tdoc['doc_type'] == document.TYPE_CONTEST:
+        raise error.PermissionError(builtin.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD)
+      else: # TYPE_HOMEWORK
+        raise error.PermissionError(builtin.PERM_VIEW_HOMEWORK_HIDDEN_SCOREBOARD)
     udoc, dudoc = await asyncio.gather(
         user.get_by_uid(rdoc['uid']),
         domain.get_user(self.domain_id, rdoc['uid']))

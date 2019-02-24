@@ -1,6 +1,7 @@
 {% macro form_begin() %}
 {% set label = kwargs.pop('label') %}
 {% set columns = kwargs.pop('columns') %}
+{% set last_column = kwargs.pop('last_column', true) %}
 {% set required = kwargs.pop('required', false) %}
 {% set hotkeys = kwargs.pop('hotkeys', none) %}
 {% set row = kwargs.pop('row', true) %}
@@ -10,7 +11,7 @@
 <div class="row">
 {% endif %}
   <div
-    class="{% if columns %}medium-{{ columns }} {% endif %}columns form__item"
+    class="{% if columns %}medium-{{ columns }} {% endif %}columns form__item{% if last_column %} end{% endif %}"
     {% if hotkeys %}data-hotkey="{{ hotkeys }}"{% endif %}
   >
     {% if not no_label %}

@@ -9,6 +9,7 @@ from vj4 import constant
 from vj4 import job
 from vj4.handler import base
 from vj4.model import builtin
+from vj4.model import document
 from vj4.model import domain
 from vj4.model import record
 from vj4.model import user
@@ -47,8 +48,10 @@ async def _post_judge(handler, rdoc):
     if accept:
       post_coros.append(_send_ac_mail(handler, rdoc))
     if rdoc['tid']:
-      post_coros.append(contest.update_status(rdoc['domain_id'], rdoc['tid'], rdoc['uid'],
-                                              rdoc['_id'], rdoc['pid'], accept, rdoc['score']))
+      post_coros.append(contest.update_status(rdoc['domain_id'],
+                                              rdoc.get('ttype', document.TYPE_CONTEST), rdoc['tid'],
+                                              rdoc['uid'], rdoc['_id'], rdoc['pid'],
+                                              accept, rdoc['score']))
     if not rdoc.get('rejudged'):
       if await problem.update_status(rdoc['domain_id'], rdoc['pid'], rdoc['uid'],
                                      rdoc['_id'], rdoc['status']):

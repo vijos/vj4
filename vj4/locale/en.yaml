@@ -1,9 +1,10 @@
 #English
 ---
+contest_main: Contest
 contest_create: Contest Create
 contest_edit: Contest Edit
-contest_main: Contest
-contest_scoreboard: Contest Scoreboard
+contest_scoreboard: Scoreboard
+contest_detail_problem_submit: Submit Contest Problem
 discussion_create: Create Discussion
 discussion_main: Discussion
 discussion_node: Discussion
@@ -13,6 +14,11 @@ home_preference: Preference
 home_messages: Messages
 home_security: Security
 home_domain: My Domains
+homework_main: Homework
+homework_create: Homework Create
+homework_edit: Homework Edit
+homework_scoreboard: Scoreboard
+homework_detail_problem_submit: Submit Homework Problem
 judge_playground: Judge Playground
 main: Home
 pager_first: « First
@@ -72,3 +78,4 @@ page.training_detail.invalid_when_not_enrolled: You cannot view problem details 
 page.problem_detail.sidebar.show_category: Click to Show
 setting_info_domain: Personal Info
 display_name: Display Name
+Can be Extended For: Extension

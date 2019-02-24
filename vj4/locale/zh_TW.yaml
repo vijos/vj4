@@ -32,9 +32,15 @@ Code: 程式碼
 Comments: 評論
 Contact Us: 聯絡我們
 Content: 內容
+Contest: 比賽
 Contest Scoreboard: 比賽成績表
+contest_main: 比賽
+contest_create: 創建比賽
+contest_edit: 編輯比賽
+contest_scoreboard: 比賽成績表
 Create: 創建
 Create Contest: 創建比賽
+Create Homework: 創建功課
 Create Discussion: 創建討論
 Create Discussion in {0}: 在 {0} 下創建討論
 Create Problem: 創建題目
@@ -81,6 +87,7 @@ Hide categorical tags: 隱藏分類標籤
 If enabled, source code will be emailed to you after the submission is accepted.: 如果啟用，在您通過題目後，原始碼會以
   Email 的形式傳送給您。
 In following training plans: 在下列訓練計劃中
+In following homework: 在以下功課中
 Information: 資訊
 It works!: 它成了！
 Judged At: 評測時間
@@ -205,9 +212,6 @@ Write Your Comment: 發表您的評論
 Write Your Solution: 發表您的題解
 author: 作者
 content: 內容
-contest_create: 創建比賽
-contest_main: 比賽
-contest_scoreboard: 比賽成績表
 current domain: 當前域
 currently offline: 目前離線
 discussion_create: 創建討論
@@ -220,6 +224,12 @@ home_preference: 偏好設定
 home_messages: 站內訊息
 home_security: 安全設定
 home_domain: 我的域
+Homework: 功課
+Homework Introduction: 功課介紹
+homework_main: 功課
+homework_create: 創建功課
+homework_edit: 編輯功課
+homework_scoreboard: 成績表
 judge_playground: 評測遊樂場
 last active at: 最後活動於
 last login at: 最後登入於
@@ -353,6 +363,7 @@ Live...: 正在進行…
 Ready (☆▽☆): 馬上開始 (☆▽☆)
 View Details: 檢視詳情
 All Contests: 所有比賽
+All Homeworks: 所有功課
 No Submissions: 沒有遞交
 Do not discuss solutions otherwise you will be regarded as cheating and then lose qualifications.: 請勿討論解法，否則以作弊論處並且將失去參賽資格。
 Please attend contest to see the problems.: 請參加比賽來檢視題目。
@@ -522,3 +533,41 @@ Resent Discussions: 最近討論
 Scoreboard: 成績表
 Scoreboard (Hidden): 成績表 (隱藏)
 setting_info_domain: 個人資訊
+Calendar View: 日曆視圖
+List View: 列表視圖
+Time Extension: 延期
+Claim Homework: 認領功課
+Please claim the assignment to see the problems.: 認領功課后方可查看題目。
+Login to Claim Homework: 登錄以認領功課
+No Permission to Claim Homework: 您沒有權限認領功課
+View Homework: 翻閲功課
+Claimed: 已認領
+Not Claimed: 未認領
+My Recent Submissions: 我最近的遞交記錄
+The homework's deadline is due but in extension. You can still submit for this problem but your score will be penalized.: 功課已經截止，但處於延期時間内。您此時遞交的題目無法獲得全部分數。
+You cannot submit for this problem because the homework's deadline is due.: 功課已到達截止時間，您無法遞交了。
+End Date: 結束日期
+End Time: 結束時間
+Extension (days): 最長延期（日）
+Extension Score Penalty: 延期遞交扣分規則
+Edit Homework: 編輯功課
+This homework is not open and you cannot view problems.: 功課尚未開放，不能查看題目。
+Total Score: 總分
+Original Score: 原始得分
+View homework: 翻閲功課
+View homework scoreboard: 翻閲功課成績表
+View hidden homework submission status and scoreboard: 翻閲隱藏的功課遞交狀態和成績表
+Create homework: 創建功課
+Claim homework: 認領功課
+Edit any homework: 修改任意功課
+Edit own homework: 修改自己的功課
+Can be Extended For: 可延期
+Open Since: 開始時間
+Hard Deadline: 最終截止時間
+Deadline: 截止時間
+There is no homework so far ╰(*°▽°*)╯: 目前沒有功課 ╰(*°▽°*)╯
+Homework scoreboard is not visible.: 目前無法查看功課成績表。
+This homework is not open.: 功課尚未開放遞交。
+You've already claimed this homework.: 您已認領該功課。
+You haven't claimed this homework yet.: 您還未認領該功課。
+Export All Code: 導出所有原始碼

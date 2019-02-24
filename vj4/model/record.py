@@ -19,8 +19,8 @@ PROJECTION_ALL = None
 
 @argmethod.wrap
 async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
-              lang: str, code: str, data_id: objectid.ObjectId=None, tid: objectid.ObjectId=None,
-              hidden=False):
+              lang: str, code: str, data_id: objectid.ObjectId=None,
+              ttype=None, tid: objectid.ObjectId=None, hidden=False):
   validator.check_lang(lang)
   coll = db.coll('record')
   doc = {'hidden': hidden,
@@ -33,6 +33,7 @@ async def add(domain_id: str, pid: document.convert_doc_id, type: int, uid: int,
          'uid': uid,
          'lang': lang,
          'code': code,
+         'ttype': ttype,
          'tid': tid,
          'data_id': data_id,
          'type': type}

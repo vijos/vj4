@@ -1,25 +1,24 @@
 {% extends "layout/basic.html" %}
-{% import "components/contest.html" as contest with context %}
 {% import "components/record.html" as record with context %}
 {% import "components/problem.html" as problem with context %}
 {% block content %}
 <div class="row">
   <div class="medium-9 columns">
     <div class="section">
+      <div class="section__header">
+        <h1 class="section__title">{{ _('Homework Introduction') }}</h1>
+      </div>
       <div class="section__body typo">
         {{ tdoc['content']|markdown }}
-      {% if handler.is_ongoing(tdoc) %}
-        <blockquote class="warn">
-          <p>{{ _('We will check code similarity after this contest.') }}</p>
-        </blockquote>
-      {% endif %}
       </div>
     </div>
-  {% if handler.is_ongoing(tdoc) or handler.is_done(tdoc) %}
     <div class="section">
       <div class="section__header">
         <h1 class="section__title">{{ _('Problem') }}</h1>
       </div>
+    {% if handler.is_not_started(tdoc) %}
+      {{ nothing.render('This homework is not open and you cannot view problems.') }}
+    {% else %}
     {% if attended or handler.is_done(tdoc) %}
       <div class="section__body no-padding">
         <table class="data-table">
@@ -67,15 +66,13 @@
         </table>
       </div>
     {% else %}
-      {{ nothing.render('Please attend contest to see the problems.') }}
-    {% endif %}
+      {{ nothing.render('Please claim the assignment to see the problems.') }}
+    {% endif %}{# attended or handler.is_done(tdoc) #}
+    {% endif %}{# handler.is_not_started(tdoc) #}
     </div>
-  {% endif %}
   </div>
   <div class="medium-3 columns">
-  {% with owner_udoc=udict[tdoc['owner_uid']], owner_dudoc=dudict[tdoc['owner_uid']] %}
-    {% include "partials/contest_sidebar.html" %}
-  {% endwith %}
+    {% include "partials/homework_sidebar.html" %}
   </div>
 </div>
 {% endblock %}

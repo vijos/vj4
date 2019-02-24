@@ -278,6 +278,30 @@ class ContestNotLiveError(ForbiddenError):
     return 'This contest is not live.'
 
 
+class HomeworkScoreboardHiddenError(ForbiddenError):
+  @property
+  def message(self):
+    return 'Homework scoreboard is not visible.'
+
+
+class HomeworkNotLiveError(ForbiddenError):
+  @property
+  def message(self):
+    return 'This homework is not open.'
+
+
+class HomeworkAlreadyAttendedError(ForbiddenError):
+  @property
+  def message(self):
+    return "You've already claimed this homework."
+
+
+class HomeworkNotAttendedError(ForbiddenError):
+  @property
+  def message(self):
+    return "You haven't claimed this homework yet."
+
+
 class ProblemNotFoundError(DocumentNotFoundError):
   @property
   def message(self):
