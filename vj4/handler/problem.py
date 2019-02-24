@@ -186,6 +186,21 @@ class ProblemCategoryRandomHandler(base.Handler):
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
 class ProblemDetailHandler(base.Handler):
+  async def _get_related_trainings(self, pid):
+    if self.has_perm(builtin.PERM_VIEW_TRAINING):
+      return await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list()
+    return None
+
+  async def _get_related_contests(self, pid):
+    if self.has_perm(builtin.PERM_VIEW_CONTEST):
+      return await contest.get_multi(self.domain_id, document.TYPE_CONTEST, pids=pid).to_list()
+    return None
+
+  async def _get_related_homework(self, pid):
+    if self.has_perm(builtin.PERM_VIEW_HOMEWORK):
+      return await contest.get_multi(self.domain_id, document.TYPE_HOMEWORK, pids=pid).to_list()
+    return None
+
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.route_argument
   @base.sanitize
@@ -196,12 +211,9 @@ class ProblemDetailHandler(base.Handler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     udoc, dudoc = await asyncio.gather(user.get_by_uid(pdoc['owner_uid']),
                                        domain.get_user(self.domain_id, pdoc['owner_uid']))
-    tdocs = await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list() \
-            if self.has_perm(builtin.PERM_VIEW_TRAINING) else None
-    ctdocs = await contest.get_multi(self.domain_id, document.TYPE_CONTEST, pids=pid).to_list() \
-             if self.has_perm(builtin.PERM_VIEW_CONTEST) else None
-    htdocs = await contest.get_multi(self.domain_id, document.TYPE_HOMEWORK, pids=pid).to_list() \
-             if self.has_perm(builtin.PERM_VIEW_HOMEWORK) else None
+    tdocs, ctdocs, htdocs = await asyncio.gather(self._get_related_trainings(pid),
+                                                 self._get_related_contests(pid),
+                                                 self._get_related_homework(pid))
     path_components = self.build_path(
         (self.translate('problem_main'), self.reverse_url('problem_main')),
         (pdoc['title'], None))
