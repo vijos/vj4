@@ -5,7 +5,7 @@ from os import path
 
 import sockjs
 from aiohttp import web
-from aiohttp_sentry import SentryMiddleware as SentryMiddlewareOriginal
+import aiohttp_sentry
 
 from vj4 import db
 from vj4 import error
@@ -39,7 +39,7 @@ options.define('sentry_dsn', default='', help='Sentry integration DSN.')
 _logger = logging.getLogger(__name__)
 
 
-class SentryMiddleware(SentryMiddlewareOriginal): # For getting a correct IP
+class SentryMiddleware(aiohttp_sentry.SentryMiddleware): # For getting a correct IP
   async def get_extra_data(self, request):
     return {
       'request': {
