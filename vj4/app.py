@@ -3,9 +3,9 @@ import datetime
 import logging
 from os import path
 
+import aiohttp_sentry
 import sockjs
 from aiohttp import web
-import aiohttp_sentry
 
 from vj4 import db
 from vj4 import error
@@ -44,13 +44,12 @@ class SentryMiddleware(aiohttp_sentry.SentryMiddleware): # For getting a correct
     return {
       'request': {
         'query_string': request.query_string,
-        'cookies': request.headers.get('Cookie', ''),
         'headers': dict(request.headers),
         'url': request.path,
         'method': request.method,
         'scheme': request.scheme,
         'env': {
-          'REMOTE_ADDR': request.headers.get(options.ip_header) if options.ip_header else request.transport.get_extra_info('peername')[0]
+          'REMOTE_ADDR': tools.get_remote_ip(request),
         }
       }
     }
@@ -62,7 +61,8 @@ class Application(web.Application):
     if options.sentry_dsn:
       middlewares.append(SentryMiddleware({
         'dsn': options.sentry_dsn,
-        'environment': 'vijos/vj4'
+        'environment': 'vj4',
+        'debug': options.debug,
       }))
 
     super(Application, self).__init__(

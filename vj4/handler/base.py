@@ -25,6 +25,7 @@ from vj4.service import mailer
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
+from vj4.util import tools
 
 _logger = logging.getLogger(__name__)
 
@@ -172,10 +173,7 @@ class HandlerBase(setting.SettingMixin):
 
   @property
   def remote_ip(self):
-    if options.ip_header:
-      return self.request.headers.get(options.ip_header)
-    else:
-      return self.request.transport.get_extra_info('peername')[0]
+    return tools.get_remote_ip(self.request)
 
   @property
   def csrf_token(self):
