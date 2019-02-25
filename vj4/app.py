@@ -39,7 +39,7 @@ options.define('sentry_dsn', default='', help='Sentry integration DSN.')
 _logger = logging.getLogger(__name__)
 
 
-class SentryMiddleware(aiohttp_sentry.SentryMiddleware): # For getting a correct IP
+class SentryMiddleware(aiohttp_sentry.SentryMiddleware): # For getting a correct client IP
   async def get_extra_data(self, request):
     return {
       'request': {
