@@ -55,17 +55,15 @@ class SentryMiddleware(aiohttp_sentry.SentryMiddleware): # For getting a correct
       }
     }
 
-class Application(web.Application):
-  sentry_middleware = None
 
+class Application(web.Application):
   def __init__(self):
     middlewares = []
     if options.sentry_dsn:
-      self.sentry_middleware = SentryMiddleware({
+      middlewares.append(SentryMiddleware({
         'dsn': options.sentry_dsn,
-        'environment': 'vj4'
-      })
-      middlewares.append(self.sentry_middleware)
+        'environment': 'vijos/vj4'
+      }))
 
     super(Application, self).__init__(
       debug=options.debug,
