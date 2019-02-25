@@ -55,15 +55,17 @@ class SentryMiddleware(SentryMiddlewareOriginal): # For getting a correct IP
       }
     }
 
-
 class Application(web.Application):
+  sentry_middleware = None
+
   def __init__(self):
     middlewares = []
     if options.sentry_dsn:
-      middlewares.append(SentryMiddleware({
+      self.sentry_middleware = SentryMiddleware({
         'dsn': options.sentry_dsn,
-        'environment': 'vijos/vj4'
-      }))
+        'environment': 'vj4'
+      })
+      middlewares.append(self.sentry_middleware)
 
     super(Application, self).__init__(
       debug=options.debug,

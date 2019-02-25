@@ -51,6 +51,11 @@ class HandlerBase(setting.SettingMixin):
           domain.get(self.domain_id),
           domain.get_user(self.domain_id, uid),
           blacklist.get(self.remote_ip))
+      sentry = app.Application().sentry_middleware
+      if sentry:
+        sentry.client.user_context({
+          '_id': uid
+        })
       if not self.user:
         raise error.UserNotFoundError(uid)
       if not self.domain_user:
