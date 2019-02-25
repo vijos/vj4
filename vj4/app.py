@@ -3,9 +3,9 @@ import datetime
 import logging
 from os import path
 
+import aiohttp_sentry
 import sockjs
 from aiohttp import web
-import aiohttp_sentry
 
 from vj4 import db
 from vj4 import error
@@ -54,6 +54,20 @@ class SentryMiddleware(aiohttp_sentry.SentryMiddleware): # For getting a correct
         }
       }
     }
+
+  async def __call__(self, request, handler):
+    try:
+      return await handler(request)
+    except:
+      extra_data = await self.get_extra_data(request)
+      extra_data.update({
+        'user': {
+          'id': handler.user['_id'],
+          'username': handler.user['uname']
+        }
+      })
+      self.client.captureException(data=extra_data)
+      raise
 
 
 class Application(web.Application):
