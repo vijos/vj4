@@ -107,8 +107,8 @@ async def unset(domain_id, fields):
 
 
 @argmethod.wrap
-async def inc_problem_counter(domain_id):
-  """Increments the problem counter.
+async def inc_pid_counter(domain_id):
+  """Increments the problem ID counter.
 
   Returns:
     Integer value after increment.
@@ -119,10 +119,10 @@ async def inc_problem_counter(domain_id):
                                        upsert=True,
                                        return_document=ReturnDocument.AFTER)
   if doc['pid_counter'] == 1:
-    doc = await coll.update_one(filter={'_id': domain_id},
-                                update={'$set': {'pid_counter': 1000}},
-                                upsert=True,
-                                return_document=ReturnDocument.AFTER)
+    await coll.update_one(filter={'_id': domain_id},
+                          update={'$set': {'pid_counter': 1000}},
+                          upsert=True)
+    return 1000
   return doc['pid_counter']
 
 
