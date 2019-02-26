@@ -452,7 +452,7 @@ async def recalc_status(domain_id: str, doc_type: int, tid: objectid.ObjectId):
 
 
 def _parse_pids(pids_str):
-  pids = list(set(map(document.convert_doc_id, pids_str.split(','))))
+  pids = misc.dedupe(map(document.convert_doc_id, pids_str.split(',')))
   return pids
 
 
