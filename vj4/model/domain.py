@@ -107,6 +107,26 @@ async def unset(domain_id, fields):
 
 
 @argmethod.wrap
+async def inc_problem_counter(domain_id):
+  """Increments the problem counter.
+
+  Returns:
+    Integer value after increment.
+  """
+  coll = db.coll('domain')
+  doc = await coll.find_one_and_update(filter={'_id': domain_id},
+                                       update={'$inc': {'problem_counter': 1}},
+                                       upsert=True,
+                                       return_document=ReturnDocument.AFTER)
+  if doc['problem_counter'] == 1:
+    doc = await coll.update_one(filter={'_id': domain_id},
+                                update={'$set': {'problem_counter': 1000}},
+                                upsert=True,
+                                return_document=ReturnDocument.AFTER)
+  return doc['problem_counter']
+
+
+@argmethod.wrap
 async def set_role(domain_id: str, role: str, perm: int):
   return await set_roles(domain_id, {role: perm})
 
