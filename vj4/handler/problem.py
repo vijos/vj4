@@ -546,9 +546,12 @@ class ProblemCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, title: str, content: str, hidden: bool=False):
+  async def post(self, *, title: str, content: str, hidden: bool=False, numeric_pid: bool=False):
+    pid = None
+    if numeric_pid:
+      pid = await domain.inc_pid_counter(self.domain_id)
     pid = await problem.add(self.domain_id, title, content, self.user['_id'],
-                            hidden=hidden)
+                            hidden=hidden, pid=pid)
     self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
 
 

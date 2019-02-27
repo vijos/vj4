@@ -13,9 +13,17 @@
               </label>
             </div>
             {% if page_name == 'problem_create' %}
-            <div class="medium-4 columns">
+            <div class="medium-2 columns">
               <label>
                 {{ _('Settings') }}
+                <br>
+                <label class="checkbox">
+                  <input type="checkbox" name="numeric_pid" value="on" checked>{{ _('Numeric PID') }}
+                </label>
+              </label>
+            </div>
+            <div class="medium-2 columns">
+              <label>
                 <br>
                 <label class="checkbox">
                   <input type="checkbox" name="hidden" value="on"{% if pdoc['hidden'] %} checked{% endif %}>{{ _('Hidden') }}
