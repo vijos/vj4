@@ -114,15 +114,11 @@ async def inc_pid_counter(domain_id):
     Integer value after increment.
   """
   coll = db.coll('domain')
+  await coll.update_one(filter={'_id': domain_id, 'pid_counter': {'$exists': False}},
+                        update={'$set': {'pid_counter': 999}})
   doc = await coll.find_one_and_update(filter={'_id': domain_id},
                                        update={'$inc': {'pid_counter': 1}},
-                                       upsert=True,
                                        return_document=ReturnDocument.AFTER)
-  if doc['pid_counter'] == 1:
-    await coll.update_one(filter={'_id': domain_id},
-                          update={'$set': {'pid_counter': 1000}},
-                          upsert=True)
-    return 1000
   return doc['pid_counter']
 
 
