@@ -111,7 +111,7 @@ async def inc_pid_counter(domain_id):
   """Increments the problem ID counter.
 
   Returns:
-    Integer value after increment.
+    Integer value before increment.
   """
   coll = db.coll('domain')
   await coll.update_one(filter={'_id': domain_id, 'pid_counter': {'$exists': False}},
