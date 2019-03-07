@@ -7,6 +7,7 @@ from vj4 import constant
 from vj4 import db
 from vj4 import error
 from vj4.model import builtin
+from vj4.model import system
 from vj4.util import argmethod
 from vj4.util import validator
 
@@ -107,12 +108,15 @@ async def unset(domain_id, fields):
 
 
 @argmethod.wrap
-async def inc_pid_counter(domain_id):
+async def inc_pid_counter(domain_id: str):
   """Increments the problem ID counter.
 
   Returns:
     Integer value before increment.
   """
+  for domain in builtin.DOMAINS:
+    if domain['_id'] == domain_id:
+      return await system.inc_pid_counter()
   coll = db.coll('domain')
   await coll.update_one(filter={'_id': domain_id, 'pid_counter': {'$exists': False}},
                         update={'$set': {'pid_counter': 1000}})
