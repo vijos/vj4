@@ -26,6 +26,21 @@ async def inc_user_counter():
   return doc['value']
 
 
+@argmethod.wrap
+async def inc_pid_counter():
+  """Increments the problem ID counter.
+
+  Returns:
+    Integer value before increment.
+  """
+  coll = db.coll('system')
+  await coll.update_one(filter={'_id': 'pid_counter'},
+                        update={'$setOnInsert': {'value': 1000}}, upsert=True)
+  doc = await coll.find_one_and_update(filter={'_id': 'pid_counter'},
+                                       update={'$inc': {'value': 1}})
+  return doc['value']
+
+
 async def acquire_lock(lock_name: str):
   lock_value = random.randint(1, 0xFFFFFFFF)
   coll = db.coll('system')
