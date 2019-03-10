@@ -236,7 +236,8 @@ def _assignment_scoreboard(is_export, _, tdoc, ranked_tsdocs, udict, dudict, pdi
         row.append({'type': 'string', 'value': col_time_str})
       else:
         row.append({'type': 'record',
-                    'value':'{0} / {1}\n{2}'.format(col_score, col_original_score, col_time_str), 'raw': rdoc})
+                    'value': '{0} / {1}\n{2}'.format(col_score, col_original_score, col_time_str),
+                    'raw': rdoc})
     rows.append(row)
   return rows
 
@@ -255,7 +256,7 @@ RULES = {
                                   functools.partial(enumerate, start=1),
                                   _acm_scoreboard),
   constant.contest.RULE_ASSIGNMENT: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
-                                         lambda tdoc, now: False,   # TODO: show scoreboard according to assignment preference
+                                         lambda tdoc, now: False, # TODO: show scoreboard according to assignment preference
                                          _assignment_stat,
                                          [('penalty_score', -1), ('time', 1)],
                                          functools.partial(enumerate, start=1),
@@ -410,8 +411,9 @@ def _get_status_journal(tsdoc):
 
 
 @argmethod.wrap
-async def update_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int, rid: objectid.ObjectId,
-                        pid: document.convert_doc_id, accept: bool, score: int):
+async def update_status(domain_id: str, doc_type: int, tid: objectid.ObjectId, uid: int,
+                        rid: objectid.ObjectId, pid: document.convert_doc_id,
+                        accept: bool, score: int):
   """This method returns None when the modification has been superseded by a parallel operation."""
   if doc_type not in [document.TYPE_CONTEST, document.TYPE_HOMEWORK]:
     raise error.InvalidArgumentError('doc_type')
