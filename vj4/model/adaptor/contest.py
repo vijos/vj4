@@ -256,7 +256,7 @@ RULES = {
                                   functools.partial(enumerate, start=1),
                                   _acm_scoreboard),
   constant.contest.RULE_ASSIGNMENT: Rule(lambda tdoc, now: now >= tdoc['begin_at'],
-                                         lambda tdoc, now: False, # TODO: show scoreboard according to assignment preference
+                                         lambda tdoc, now: False,  # TODO: show scoreboard according to assignment preference
                                          _assignment_stat,
                                          [('penalty_score', -1), ('time', 1)],
                                          functools.partial(enumerate, start=1),
