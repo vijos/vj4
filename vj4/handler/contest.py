@@ -284,12 +284,14 @@ class ContestCreateHandler(contest.ContestMixin, base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_CONTEST)
   async def get(self):
+    rules = list(map(lambda i: (i, constant.contest.RULE_TEXTS[i]),
+                     constant.contest.CONTEST_RULES))
     dt = self.now.replace(tzinfo=pytz.utc).astimezone(self.timezone)
     ts = calendar.timegm(dt.utctimetuple())
     # find next quarter
     ts = ts - ts % (15 * 60) + 15 * 60
     dt = datetime.datetime.fromtimestamp(ts, self.timezone)
-    self.render('contest_edit.html',
+    self.render('contest_edit.html', rules=rules,
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'),
                 pids=contest._format_pids([1000, 1001]))
@@ -326,6 +328,8 @@ class ContestEditHandler(contest.ContestMixin, base.Handler):
   @base.require_perm(builtin.PERM_EDIT_CONTEST)
   @base.sanitize
   async def get(self, *, tid: objectid.ObjectId):
+    rules = list(map(lambda i: (i, constant.contest.RULE_TEXTS[i]),
+                     constant.contest.CONTEST_RULES))
     tdoc = await contest.get(self.domain_id, document.TYPE_CONTEST, tid)
     if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
       self.check_perm(builtin.PERM_EDIT_CONTEST)
@@ -335,7 +339,7 @@ class ContestEditHandler(contest.ContestMixin, base.Handler):
         (self.translate('contest_main'), self.reverse_url('contest_main')),
         (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
         (self.translate('contest_edit'), None))
-    self.render('contest_edit.html', tdoc=tdoc,
+    self.render('contest_edit.html', rules=rules, tdoc=tdoc,
                 date_text=dt.strftime('%Y-%m-%d'),
                 time_text=dt.strftime('%H:%M'),
                 duration=duration,
