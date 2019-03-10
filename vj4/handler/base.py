@@ -333,7 +333,9 @@ class OperationHandler(Handler):
   DEFAULT_OPERATION = 'default'
 
   async def post(self):
-    arguments = (await self.request.post()).copy()
+    # Multidicts might cause TypeError (got multiple values) when call the method,
+    # so we should convert it to normal dict, and process these multiple values manually.
+    arguments = dict(await self.request.post())
     operation = arguments.pop('operation', self.DEFAULT_OPERATION)
     try:
       method = getattr(self, 'post_' + operation)
@@ -450,7 +452,9 @@ def get_argument(func):
 def post_argument(coro):
   @functools.wraps(coro)
   async def wrapped(self, **kwargs):
-    return await coro(self, **kwargs, **await self.request.post())
+    # Multidicts might cause TypeError (got multiple values) when call the coro,
+    # so we should convert it to normal dict, and process these multiple values manually.
+    return await coro(self, **kwargs, **dict(await self.request.post()))
 
   return wrapped
 
