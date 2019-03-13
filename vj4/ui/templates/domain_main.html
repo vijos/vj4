@@ -164,7 +164,9 @@
   {% endif %}
   </div>
   <div class="large-3 columns">
+  {% if handler.has_perm(vj4.model.builtin.PERM_VIEW_DISCUSSION) %}
     {% include 'discussion_nodes_widget.html' %}
+  {% endif %}
   {% if domain_id == vj4.model.builtin.DOMAIN_ID_SYSTEM %}
     <div class="section side">
       <div class="section__header">
