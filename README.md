@@ -159,6 +159,8 @@ Indentation: 2 spaces
 
 [JavaScript Style Guide](https://github.com/airbnb/javascript)
 
+No commercial use, except get permission from us.
+
 ## References
 
 * [aiohttp](http://aiohttp.readthedocs.org/en/stable/)
