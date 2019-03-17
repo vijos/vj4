@@ -3,6 +3,7 @@ import asyncio
 import calendar
 import functools
 import hmac
+import inspect
 import logging
 import markupsafe
 import pytz
@@ -502,13 +503,16 @@ def limit_rate(op, period_secs, max_operations):
 def sanitize(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
+    accept_kwargs = inspect.getfullargspec(func).varkw != None
+    new_kwargs = {}
     for key, value in kwargs.items():
       try:
-        kwargs[key] = func.__annotations__[key](value)
+        new_kwargs[key] = func.__annotations__[key](value)
       except KeyError:
-        pass
+        if accept_kwargs:
+          new_kwargs[key] = value
       except Exception:
         raise error.InvalidArgumentError(key)
-    return func(self, **kwargs)
+    return func(self, **new_kwargs)
 
   return wrapped
