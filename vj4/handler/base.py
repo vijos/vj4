@@ -333,9 +333,7 @@ class OperationHandler(Handler):
   DEFAULT_OPERATION = 'default'
 
   async def post(self):
-    # Multidicts might cause TypeError (got multiple values) when call the method,
-    # so we should convert it to normal dict, and process these multiple values manually.
-    arguments = dict(await self.request.post())
+    arguments = {**await self.request.post()}
     operation = arguments.pop('operation', self.DEFAULT_OPERATION)
     try:
       method = getattr(self, 'post_' + operation)
@@ -436,7 +434,7 @@ def require_csrf_token(func):
 def route_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
-    return func(self, **kwargs, **self.request.match_info)
+    return func(self, **{**kwargs, **self.request.match_info})
 
   return wrapped
 
@@ -444,7 +442,7 @@ def route_argument(func):
 def get_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
-    return func(self, **kwargs, **self.request.query)
+    return func(self, **{**kwargs, **self.request.query})
 
   return wrapped
 
@@ -452,9 +450,7 @@ def get_argument(func):
 def post_argument(coro):
   @functools.wraps(coro)
   async def wrapped(self, **kwargs):
-    # Multidicts might cause TypeError (got multiple values) when call the coro,
-    # so we should convert it to normal dict, and process these multiple values manually.
-    return await coro(self, **kwargs, **dict(await self.request.post()))
+    return await coro(self, **{**kwargs, **await self.request.post()})
 
   return wrapped
 
@@ -510,7 +506,7 @@ def sanitize(func):
       try:
         kwargs[key] = func.__annotations__[key](value)
       except KeyError:
-        raise error.UnknownArgumentError(key)
+        pass
       except Exception:
         raise error.InvalidArgumentError(key)
     return func(self, **kwargs)
