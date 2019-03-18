@@ -503,14 +503,12 @@ def limit_rate(op, period_secs, max_operations):
 def sanitize(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
-    accept_kwargs = inspect.getfullargspec(func).varkw != None
     new_kwargs = {}
     for key, value in kwargs.items():
       try:
         new_kwargs[key] = func.__annotations__[key](value)
       except KeyError:
-        if accept_kwargs:
-          new_kwargs[key] = value
+        pass
       except Exception:
         raise error.InvalidArgumentError(key)
     return func(self, **new_kwargs)
