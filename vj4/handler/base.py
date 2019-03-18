@@ -333,7 +333,7 @@ class OperationHandler(Handler):
   DEFAULT_OPERATION = 'default'
 
   async def post(self):
-    arguments = (await self.request.post()).copy()
+    arguments = {**await self.request.post()}
     operation = arguments.pop('operation', self.DEFAULT_OPERATION)
     try:
       method = getattr(self, 'post_' + operation)
@@ -434,7 +434,7 @@ def require_csrf_token(func):
 def route_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
-    return func(self, **kwargs, **self.request.match_info)
+    return func(self, **{**kwargs, **self.request.match_info})
 
   return wrapped
 
@@ -442,7 +442,7 @@ def route_argument(func):
 def get_argument(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
-    return func(self, **kwargs, **self.request.query)
+    return func(self, **{**kwargs, **self.request.query})
 
   return wrapped
 
@@ -450,7 +450,7 @@ def get_argument(func):
 def post_argument(coro):
   @functools.wraps(coro)
   async def wrapped(self, **kwargs):
-    return await coro(self, **kwargs, **await self.request.post())
+    return await coro(self, **{**kwargs, **await self.request.post()})
 
   return wrapped
 
@@ -502,13 +502,14 @@ def limit_rate(op, period_secs, max_operations):
 def sanitize(func):
   @functools.wraps(func)
   def wrapped(self, **kwargs):
+    new_kwargs = {}
     for key, value in kwargs.items():
       try:
-        kwargs[key] = func.__annotations__[key](value)
+        new_kwargs[key] = func.__annotations__[key](value)
       except KeyError:
-        raise error.UnknownArgumentError(key)
+        pass
       except Exception:
         raise error.InvalidArgumentError(key)
-    return func(self, **kwargs)
+    return func(self, **new_kwargs)
 
   return wrapped

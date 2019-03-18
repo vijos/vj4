@@ -62,7 +62,10 @@ class RecordMainHandler(RecordMixin, base.Handler):
     if not self.has_priv(builtin.PRIV_VIEW_JUDGE_STATISTICS):
       start = ''
     if start:
-      start = objectid.ObjectId(start)
+      try:
+        start = objectid.ObjectId(start)
+      except Exception:
+        raise error.InvalidArgumentError('start')
     else:
       start = None
     query = await self.get_filter_query(uid_or_name, pid, tid)

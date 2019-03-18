@@ -356,12 +356,6 @@ class UserAlreadyDomainMemberError(ForbiddenError):
     return 'The user is already a member of the domain.'
 
 
-class UnknownArgumentError(BadRequestError):
-  @property
-  def message(self):
-    return 'Argument {0} is unknown.'
-
-
 class InvalidArgumentError(BadRequestError):
   @property
   def message(self):

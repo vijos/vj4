@@ -357,8 +357,8 @@ class DiscussionEditHandler(base.OperationHandler):
 
   @base.route_argument
   @base.require_csrf_token
-  async def post_delete(self, *, did: document.convert_doc_id, **kwargs):
-    did = document.convert_doc_id(did)
+  @base.sanitize
+  async def post_delete(self, *, did: document.convert_doc_id):
     ddoc = await discussion.get(self.domain_id, did)
     if not ddoc:
       raise error.DiscussionNotFoundError(self.domain_id, did)
