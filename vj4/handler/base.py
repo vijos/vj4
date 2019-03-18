@@ -3,7 +3,6 @@ import asyncio
 import calendar
 import functools
 import hmac
-import inspect
 import logging
 import markupsafe
 import pytz
