@@ -1,5 +1,20 @@
 {% extends "layout/basic.html" %}
 {% block content %}
+<div style="display: none" class="dialog__body--copy-to">
+  <div>
+    <div class="row"><div class="columns">
+      <h1>{{ _('Copy Problem To') }}</h1>
+    </div></div>
+    <div class="row">
+      <div class="medium-12 columns">
+        <label>
+          {{ _('Destination Domain') }}
+          <input name="domain_id" placeholder="Domain ID" type="text" class="textbox" autocomplete="off" data-autofocus>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
   var Context = {{ {
     'problemId': pdoc['doc_id'],

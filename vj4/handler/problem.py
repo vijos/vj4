@@ -221,6 +221,28 @@ class ProblemDetailHandler(base.Handler):
                 tdocs=tdocs, ctdocs=ctdocs, htdocs=htdocs,
                 page_title=pdoc['title'], path_components=path_components)
 
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.require_csrf_token
+  @base.route_argument
+  @base.sanitize
+  async def post_copy_to_domain(self, *, pid: document.convert_doc_id, domain_id: int):
+    if not self.has_priv(builtin.PRIV_USER_PROFILE):
+      raise error.PermissionError
+    uid = self.user['_id']
+    pdoc = await problem.get(self.domain_id, pid, uid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    # try:
+    #   uids = map(int, (await self.request.post()).getall('uid'))
+    # except ValueError:
+    #   raise error.ValidationError('uid')
+    # if role:
+    #   # user must exist.
+    #   await domain.set_users_role(self.domain_id, uids, role)
+    # else:
+    #   await domain.unset_users_role(self.domain_id, uids)
+    # self.json_or_redirect(self.url)
+
 
 @app.route('/p/{pid}/submit', 'problem_submit')
 class ProblemSubmitHandler(base.Handler):

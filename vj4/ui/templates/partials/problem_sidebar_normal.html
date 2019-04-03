@@ -64,6 +64,12 @@
         <span class="icon icon-comment--text"></span> {{ _('Solutions') }}
       </a></li>
     {% endif %}
+    {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+      <li class="menu__seperator"></li>
+      <li class="menu__item"><a class="menu__link" name="problem-sidebar__copy-to" href="javascript:;">
+        <span class="icon icon-copy"></span> {{ _('Copy Problem') }}
+      </a></li>
+    {% endif %}
     {% if handler.own(pdoc, vj4.model.builtin.PERM_EDIT_PROBLEM_SELF) or handler.has_perm(vj4.model.builtin.PERM_EDIT_PROBLEM) %}
       <li class="menu__seperator"></li>
       <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">

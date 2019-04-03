@@ -1,6 +1,7 @@
 import Tether from 'tether';
 import { NamedPage } from 'vj/misc/PageLoader';
 import Navigation from 'vj/components/navigation';
+import { ConfirmDialog, ActionDialog } from 'vj/components/dialog';
 import loadReactRedux from 'vj/utils/loadReactRedux';
 import delay from 'vj/utils/delay';
 
@@ -206,6 +207,42 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     $('.loader-container').hide();
   }
 
+  const copyProblemToDialog = new ActionDialog({
+    $body: $('.dialog__body--copy-to > div'),
+    onDispatch(action) {
+      const $domainId = copyProblemToDialog.$dom.find('[name="domain_id"]');
+      if (action === 'ok' && $domainId.val() === '') {
+        $domainId.focus();
+        return false;
+      }
+      return true;
+    },
+  });
+  copyProblemToDialog.clear = function () {
+    this.$dom.find('[name="domain_id"]').val('');
+    return this;
+  };
+
+  async function handleClickCopyProblem() {
+    const action = await copyProblemToDialog.clear().open();
+    if (action !== 'ok') {
+      return;
+    }
+    const domainId = copyProblemToDialog.$dom.find('[name="domain_id"]').val();
+    // try {
+    //   await request.post('', {
+    //     operation: 'set_users',
+    //     uid: selectedUsers,
+    //     role,
+    //   });
+    //   Notification.success(i18n('Role has been updated to {0} for selected users.', role));
+    //   await delay(2000);
+    //   window.location.reload();
+    // } catch (error) {
+    //   Notification.error(error.message);
+    // }
+  }
+
   async function enterScratchpadMode() {
     await extender.extend();
     await loadReact();
@@ -229,6 +266,10 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
   });
   $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', (ev) => {
     leaveScratchpadMode();
+    ev.preventDefault();
+  });
+  $(document).on('click', '[name="problem-sidebar__copy-to"]', (ev) => {
+    handleClickCopyProblem();
     ev.preventDefault();
   });
   $(document).on('click', '[name="problem-sidebar__show-category"]', (ev) => {
