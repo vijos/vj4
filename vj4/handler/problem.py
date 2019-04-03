@@ -221,17 +221,22 @@ class ProblemDetailHandler(base.Handler):
                 tdocs=tdocs, ctdocs=ctdocs, htdocs=htdocs,
                 page_title=pdoc['title'], path_components=path_components)
 
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.require_csrf_token
   @base.route_argument
   @base.sanitize
-  async def post_copy_to_domain(self, *, pid: document.convert_doc_id, domain_id: int):
-    if not self.has_priv(builtin.PRIV_USER_PROFILE):
-      raise error.PermissionError
+  async def post_copy_to_domain(self, *, pid: document.convert_doc_id, domain_id: str):
     uid = self.user['_id']
     pdoc = await problem.get(self.domain_id, pid, uid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+
+    dudoc = await domain.get_user(domain_id, uid)
+    if not self.dudoc_has_perm(self.user, dudoc, builtin.PERM_CREATE_PROBLEM):
+      raise error.PermissionError
+
+
     # try:
     #   uids = map(int, (await self.request.post()).getall('uid'))
     # except ValueError:
