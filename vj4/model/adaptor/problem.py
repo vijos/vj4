@@ -36,15 +36,26 @@ def get_categories():
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int,
               pid: document.convert_doc_id=None, data: objectid.ObjectId=None,
-              category: list=[], hidden: bool=False):
+              category: list=[], hidden: bool=False, **kwargs):
   validator.check_title(title)
   validator.check_content(content)
   pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
                            pid, title=title, data=data, category=category,
-                           hidden=hidden, num_submit=0, num_accept=0)
+                           hidden=hidden, num_submit=0, num_accept=0, **kwargs)
   await domain.inc_user(domain_id, owner_uid, num_problems=1)
   return pid
 
+async def copy(pdoc, dest_domain_id: str, owner_uid: int,
+               pid: document.convert_doc_id=None, hidden: bool=False):
+  pid = await add(domain_id=dest_domain_id, owner_uid=owner_uid,
+                  title=pdoc.title, content=pdoc.content,
+                  pid=pid, hidden=hidden,
+                  data=pdoc.data, category=pdoc.category,
+                  data_from={
+                    'domain': pdoc.domain_id,
+                    'pid': pdoc.doc_id
+                  })
+  return pid
 
 @argmethod.wrap
 async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):

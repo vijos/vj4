@@ -226,27 +226,25 @@ class ProblemDetailHandler(base.Handler):
   @base.require_csrf_token
   @base.route_argument
   @base.sanitize
-  async def post_copy_to_domain(self, *, pid: document.convert_doc_id, domain_id: str):
+  async def post_copy_to_domain(self, *,
+                                pid: document.convert_doc_id, domain_id: str,
+                                numeric_pid: bool, hidden: bool):
     uid = self.user['_id']
     pdoc = await problem.get(self.domain_id, pid, uid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-
-    dudoc = await domain.get_user(domain_id, uid)
-    if not self.dudoc_has_perm(self.user, dudoc, builtin.PERM_CREATE_PROBLEM):
+    ddoc, dudoc = await asyncio.gather(domain.get(domain_id),
+                                       domain.get_user(domain_id, uid))
+    if not ddoc:
+      raise error.DomainNotFoundError
+    if not self.dudoc_has_perm(dudoc=dudoc, perm=builtin.PERM_CREATE_PROBLEM, ddoc=ddoc, udoc=self.user):
       raise error.PermissionError
 
-
-    # try:
-    #   uids = map(int, (await self.request.post()).getall('uid'))
-    # except ValueError:
-    #   raise error.ValidationError('uid')
-    # if role:
-    #   # user must exist.
-    #   await domain.set_users_role(self.domain_id, uids, role)
-    # else:
-    #   await domain.unset_users_role(self.domain_id, uids)
-    # self.json_or_redirect(self.url)
+    pid = None
+    if numeric_pid:
+      pid = await domain.inc_pid_counter(self.domain_id)
+    pid = await problem.copy(pdoc, domain_id, self.user['_id'], pid, hidden)
+    self.json_or_redirect(self.reverse_url('problem_settings', pid=pid, domain_id=domain_id))
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
