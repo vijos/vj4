@@ -551,7 +551,7 @@ class ProblemDataHandler(base.Handler):
     # problem owner will have PERM_READ_PROBLEM_DATA_SELF.
     pdoc = await problem.get(self.domain_id, pid)
     if type(pdoc['data']) is dict:
-      self.redirect(self.reverse_url('problem_data',
+      return self.redirect(self.reverse_url('problem_data',
                                      domain_id=pdoc['data']['domain'],
                                      pid=pdoc['data']['pid']))
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
