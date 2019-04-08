@@ -5,14 +5,31 @@
     <div class="row"><div class="columns">
       <h1>{{ _('Copy Problem To') }}</h1>
     </div></div>
-    <div class="row">
-      <div class="medium-12 columns">
-        <label>
-          {{ _('Destination Domain') }}
-          <input name="domain_id" placeholder="Domain ID" type="text" class="textbox" autocomplete="off" data-autofocus>
-        </label>
+    <form method="post">
+      <div class="row">
+        <div class="medium-12 columns">
+          <input type="hidden" name="operation" value="copy_to_domain">
+          <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
+          <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
+          <label>
+            {{ _('Destination Domain') }}
+            <input name="domain_id" placeholder="Domain ID" type="text" class="textbox" autocomplete="off" data-autofocus>
+          </label>
+        </div>
       </div>
-    </div>
+      <div class="row">
+        <div class="medium-12 columns">
+          <label>
+            <label class="checkbox">
+              <input type="checkbox" name="numeric_pid" value="on" checked>{{ _('Numeric PID') }}
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="hidden" value="on">{{ _('Hidden') }}
+            </label>
+          </label>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
 <script>
@@ -38,6 +55,11 @@
         {% if not pdoc['data'] %}
           <blockquote class="warn">
             <p>{{ _('No dataset at present.') }}</p>
+          </blockquote>
+        {% endif %}
+        {% if pdoc['data_from'] %}
+          <blockquote class="info">
+            <p>{{ _('Test data comes from') }} {{ pdoc['data_from']['domain'] }}/{{ pdoc['data_from']['pid'] }}.</p>
           </blockquote>
         {% endif %}
         {% if tdoc %}

@@ -4,6 +4,8 @@ import Navigation from 'vj/components/navigation';
 import { ConfirmDialog, ActionDialog } from 'vj/components/dialog';
 import loadReactRedux from 'vj/utils/loadReactRedux';
 import delay from 'vj/utils/delay';
+import request from 'vj/utils/request';
+import i18n from 'vj/utils/i18n';
 
 class ProblemPageExtender {
   constructor() {
@@ -225,15 +227,14 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
 
   async function handleClickCopyProblem() {
     const action = await copyProblemToDialog.clear().open();
-    if (action !== 'ok') {
-      return;
-    }
-    const domainId = copyProblemToDialog.$dom.find('[name="domain_id"]').val();
+    // if (action !== 'ok') {
+    //   return;
+    // }
+    // const domainId = copyProblemToDialog.$dom.find('[name="domain_id"]').val();
     // try {
     //   await request.post('', {
-    //     operation: 'set_users',
-    //     uid: selectedUsers,
-    //     role,
+    //     operation: 'copy_to_domain',
+    //     domain_id: domainId,
     //   });
     //   Notification.success(i18n('Role has been updated to {0} for selected users.', role));
     //   await delay(2000);

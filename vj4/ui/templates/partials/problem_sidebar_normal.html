@@ -64,7 +64,7 @@
         <span class="icon icon-comment--text"></span> {{ _('Solutions') }}
       </a></li>
     {% endif %}
-    {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+    {% if page_name == 'problem_detail' and handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
       <li class="menu__seperator"></li>
       <li class="menu__item"><a class="menu__link" name="problem-sidebar__copy-to" href="javascript:;">
         <span class="icon icon-copy"></span> {{ _('Copy Problem') }}

@@ -185,7 +185,7 @@ class ProblemCategoryRandomHandler(base.Handler):
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
-class ProblemDetailHandler(base.Handler):
+class ProblemDetailHandler(base.OperationHandler):
   async def _get_related_trainings(self, pid):
     if self.has_perm(builtin.PERM_VIEW_TRAINING):
       return await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list()
@@ -224,11 +224,11 @@ class ProblemDetailHandler(base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.require_csrf_token
-  @base.route_argument
   @base.sanitize
+  @base.limit_rate('copy_problem', 60, 100)
   async def post_copy_to_domain(self, *,
                                 pid: document.convert_doc_id, domain_id: str,
-                                numeric_pid: bool, hidden: bool):
+                                numeric_pid: bool=False, hidden: bool=False):
     uid = self.user['_id']
     pdoc = await problem.get(self.domain_id, pid, uid)
     if pdoc.get('hidden', False):

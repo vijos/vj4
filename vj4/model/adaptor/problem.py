@@ -48,12 +48,12 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
 async def copy(pdoc, dest_domain_id: str, owner_uid: int,
                pid: document.convert_doc_id=None, hidden: bool=False):
   pid = await add(domain_id=dest_domain_id, owner_uid=owner_uid,
-                  title=pdoc.title, content=pdoc.content,
+                  title=pdoc['title'], content=pdoc['content'],
                   pid=pid, hidden=hidden,
-                  data=pdoc.data, category=pdoc.category,
+                  data=pdoc['data'], category=pdoc['category'],
                   data_from={
-                    'domain': pdoc.domain_id,
-                    'pid': pdoc.doc_id
+                    'domain': pdoc['domain_id'],
+                    'pid': pdoc['doc_id']
                   })
   return pid
 
