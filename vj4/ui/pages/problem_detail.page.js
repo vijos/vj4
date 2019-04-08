@@ -1,6 +1,7 @@
 import Tether from 'tether';
 import { NamedPage } from 'vj/misc/PageLoader';
 import Navigation from 'vj/components/navigation';
+import Notification from 'vj/components/notification';
 import { ConfirmDialog, ActionDialog } from 'vj/components/dialog';
 import loadReactRedux from 'vj/utils/loadReactRedux';
 import delay from 'vj/utils/delay';
@@ -227,21 +228,30 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
 
   async function handleClickCopyProblem() {
     const action = await copyProblemToDialog.clear().open();
-    // if (action !== 'ok') {
-    //   return;
-    // }
-    // const domainId = copyProblemToDialog.$dom.find('[name="domain_id"]').val();
-    // try {
-    //   await request.post('', {
-    //     operation: 'copy_to_domain',
-    //     domain_id: domainId,
-    //   });
-    //   Notification.success(i18n('Role has been updated to {0} for selected users.', role));
-    //   await delay(2000);
-    //   window.location.reload();
-    // } catch (error) {
-    //   Notification.error(error.message);
-    // }
+    if (action !== 'ok') {
+      return;
+    }
+    const domainId = copyProblemToDialog.$dom.find('[name="domain_id"]').val();
+    const useNumericId = copyProblemToDialog.$dom.find('[name="numeric_pid"]').prop('checked');
+    const isHidden = copyProblemToDialog.$dom.find('[name="hidden"]').prop('checked');
+    const payload = {
+      operation: 'copy_to_domain',
+      domain_id: domainId,
+    };
+    if (useNumericId) {
+      payload.numeric_pid = 'on';
+    }
+    if (isHidden) {
+      payload.hidden = 'on';
+    }
+    try {
+      const data = await request.post('', payload);
+      Notification.success(i18n('Problem is successfully copied.'));
+      await delay(1000);
+      window.location.href = data.new_problem_url;
+    } catch (error) {
+      Notification.error(error.message);
+    }
   }
 
   async function enterScratchpadMode() {

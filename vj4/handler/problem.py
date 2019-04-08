@@ -224,6 +224,7 @@ class ProblemDetailHandler(base.OperationHandler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.require_csrf_token
+  @base.route_argument
   @base.sanitize
   @base.limit_rate('copy_problem', 60, 100)
   async def post_copy_to_domain(self, *,
@@ -244,7 +245,9 @@ class ProblemDetailHandler(base.OperationHandler):
     if numeric_pid:
       pid = await domain.inc_pid_counter(domain_id)
     pid = await problem.copy(pdoc, domain_id, self.user['_id'], pid, hidden)
-    self.json_or_redirect(self.reverse_url('problem_settings', pid=pid, domain_id=domain_id))
+
+    new_url = self.reverse_url('problem_settings', pid=pid, domain_id=domain_id)
+    self.json_or_redirect(new_url, new_problem_url=new_url)
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')

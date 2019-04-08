@@ -5,31 +5,26 @@
     <div class="row"><div class="columns">
       <h1>{{ _('Copy Problem To') }}</h1>
     </div></div>
-    <form method="post">
-      <div class="row">
-        <div class="medium-12 columns">
-          <input type="hidden" name="operation" value="copy_to_domain">
-          <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
-          <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
-          <label>
-            {{ _('Destination Domain') }}
-            <input name="domain_id" placeholder="Domain ID" type="text" class="textbox" autocomplete="off" data-autofocus>
-          </label>
-        </div>
+    <div class="row">
+      <div class="medium-12 columns">
+        <label>
+          {{ _('Destination Domain') }}
+          <input name="domain_id" placeholder="Domain ID" type="text" class="textbox" autocomplete="off" data-autofocus>
+        </label>
       </div>
-      <div class="row">
-        <div class="medium-12 columns">
-          <label>
-            <label class="checkbox">
-              <input type="checkbox" name="numeric_pid" value="on" checked>{{ _('Numeric PID') }}
-            </label>
-            <label class="checkbox">
-              <input type="checkbox" name="hidden" value="on">{{ _('Hidden') }}
-            </label>
+    </div>
+    <div class="row">
+      <div class="medium-12 columns">
+        <label>
+          <label class="checkbox">
+            <input type="checkbox" name="numeric_pid" checked>{{ _('Numeric PID') }}
           </label>
-        </div>
+          <label class="checkbox">
+            <input type="checkbox" name="hidden">{{ _('Hidden') }}
+          </label>
+        </label>
       </div>
-    </form>
+    </div>
   </div>
 </div>
 <script>
