@@ -45,6 +45,8 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
   await domain.inc_user(domain_id, owner_uid, num_problems=1)
   return pid
 
+
+# This copies contents only, data will be referenced to the source problem.
 async def copy(pdoc, dest_domain_id: str, owner_uid: int,
                pid: document.convert_doc_id=None, hidden: bool=False):
   data = pdoc['data']
@@ -61,6 +63,7 @@ async def copy(pdoc, dest_domain_id: str, owner_uid: int,
                   data=data)
   await document.inc(domain_id, document.TYPE_PROBLEM, prev_id, 'be_copied', 1)
   return pid
+
 
 @argmethod.wrap
 async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
