@@ -550,14 +550,12 @@ class ProblemDataHandler(base.Handler):
     # domain administrators will have PERM_READ_PROBLEM_DATA,
     # problem owner will have PERM_READ_PROBLEM_DATA_SELF.
     pdoc = await problem.get(self.domain_id, pid)
-    ddoc, dudoc = self.domain, self.domain_user
     if type(pdoc['data']) is dict:
-      domain_id = pdoc['data']['domain']
-      pdoc, ddoc, dudoc = await asyncio.gather(problem.get(domain_id, pdoc['data']['pid']),
-                                               domain.get(domain_id),
-                                               domain.get_user(domain_id, self.user['_id']))
+      self.redirect(self.reverse_url('problem_data',
+                                     domain_id=pdoc['data']['domain'],
+                                     pid=pdoc['data']['pid']))
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
-        and not self.dudoc_has_perm(dudoc=dudoc, perm=builtin.PERM_READ_PROBLEM_DATA, ddoc=ddoc, udoc=self.user)):
+        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     fdoc = await problem.get_data(pdoc)
     if not fdoc:
