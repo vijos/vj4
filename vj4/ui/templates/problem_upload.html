@@ -1,7 +1,7 @@
 {% extends 'layout/simple.html' %}
 {% block body %}
 <form method="post" enctype="multipart/form-data">
-<p>{{ _('Current dataset: {0}').format(pdoc['data']|default(_('(None)'))) }}</p>
+<p>{{ _('Current dataset: {0}').format(_('From other problem') if pdoc['data'] is mapping else pdoc['data']|default(_('(None)'))) }}</p>
 <p>{{ _('MD5: {0}').format(md5|default(_('(None)'))) }}</p>
 <p>
 {{ _('New dataset') }}:

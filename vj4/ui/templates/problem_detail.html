@@ -57,9 +57,9 @@
             <p>{{ _('No dataset at present.') }}</p>
           </blockquote>
         {% endif %}
-        {% if pdoc['data_from'] %}
+        {% if pdoc['data'] is mapping %}
           <blockquote class="info">
-            <p>{{ _('Test data comes from') }} {{ pdoc['data_from']['domain'] }}/{{ pdoc['data_from']['pid'] }}.</p>
+            <p>{{ _('Test data comes from') }} {{ pdoc['data']['domain'] }}/{{ pdoc['data']['pid'] }}.</p>
           </blockquote>
         {% endif %}
         {% if tdoc %}

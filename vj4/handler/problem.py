@@ -242,7 +242,7 @@ class ProblemDetailHandler(base.OperationHandler):
 
     pid = None
     if numeric_pid:
-      pid = await domain.inc_pid_counter(self.domain_id)
+      pid = await domain.inc_pid_counter(domain_id)
     pid = await problem.copy(pdoc, domain_id, self.user['_id'], pid, hidden)
     self.json_or_redirect(self.reverse_url('problem_settings', pid=pid, domain_id=domain_id))
 
