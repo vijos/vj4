@@ -274,11 +274,16 @@ def delete_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: 
   return document.delete_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid)
 
 
-async def get_data(domain_id, pid):
-  pdoc = await get(domain_id, pid)
-  if not pdoc.get('data', None):
-    raise error.ProblemDataNotFoundError(domain_id, pid)
-  return await fs.get_meta(pdoc['data'])
+async def get_data(pdoc):
+  data = pdoc.get('data', None)
+  if not data:
+    return None
+  if type(data) is dict:
+    upper_pdoc = await get(data['domain'], data['pid'])
+    data = upper_pdoc['data']
+    if not data:
+      return None
+  return await fs.get_meta(data)
 
 
 @argmethod.wrap
@@ -306,9 +311,10 @@ async def get_data_list(last: int):
   pdocs = coll.find({'doc_type': document.TYPE_PROBLEM})
   pids = []  # with domain_id
   async for pdoc in pdocs:
-    if 'data' not in pdoc or not pdoc['data']:
+    data = get_data(pdoc)
+    if not data:
       continue
-    date = await fs.get_datetime(pdoc['data'])
+    date = await fs.get_datetime(data)
     if not date:
       continue
     if last_datetime < date:

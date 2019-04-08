@@ -551,7 +551,7 @@ class ProblemDataHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    fdoc = await problem.get_data(self.domain_id, pid)
+    fdoc = await problem.get_data(pdoc)
     if not fdoc:
       raise error.ProblemDataNotFoundError(self.domain_id, pid)
     self.redirect(options.cdn_prefix.rstrip('/') + \
@@ -707,7 +707,7 @@ class ProblemUploadHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    md5 = await fs.get_md5(pdoc.get('data'))
+    md5 = await fs.get_md5(problem.get_data(pdoc))
     self.render('problem_upload.html', pdoc=pdoc, md5=md5)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -722,7 +722,7 @@ class ProblemUploadHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    if pdoc.get('data'):
+    if pdoc.get('data') and type(pdoc['data']) is objectid.ObjectId:
       await fs.unlink(pdoc['data'])
     await problem.set_data(self.domain_id, pid, file)
     self.json_or_redirect(self.url)
