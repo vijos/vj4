@@ -236,9 +236,8 @@ class ProblemDetailHandler(base.OperationHandler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     ddoc, dudoc = await asyncio.gather(domain.get(domain_id),
                                        domain.get_user(domain_id, uid))
-    if not ddoc:
-      raise error.DomainNotFoundError
     if not self.dudoc_has_perm(dudoc=dudoc, perm=builtin.PERM_CREATE_PROBLEM, ddoc=ddoc, udoc=self.user):
+      # TODO: This is the destination domain's PermissionError.
       raise error.PermissionError(builtin.PERM_CREATE_PROBLEM)
 
     pid = None

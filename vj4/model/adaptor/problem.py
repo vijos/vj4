@@ -50,18 +50,18 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
 async def copy(pdoc, dest_domain_id: str, owner_uid: int,
                pid: document.convert_doc_id=None, hidden: bool=False):
   data = pdoc['data']
-  domain_id, prev_id = pdoc['domain_id'], pdoc['doc_id']
+  src_domain_id, src_pid = pdoc['domain_id'], pdoc['doc_id']
   if type(data) is objectid.ObjectId:
-    data = { 'domain': domain_id,
-             'pid': prev_id }
+    data = { 'domain': src_domain_id,
+             'pid': src_pid }
   elif type(data) is dict:
-    domain_id, prev_id = data['domain'], data['pid']
+    src_domain_id, src_pid = data['domain'], data['pid']
 
   pid = await add(domain_id=dest_domain_id, owner_uid=owner_uid,
                   title=pdoc['title'], content=pdoc['content'],
                   pid=pid, hidden=hidden, category=pdoc['category'],
                   data=data)
-  await document.inc(domain_id, document.TYPE_PROBLEM, prev_id, 'be_copied', 1)
+  await document.inc(src_domain_id, document.TYPE_PROBLEM, src_pid, 'be_copied', 1)
   return pid
 
 
