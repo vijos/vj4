@@ -311,7 +311,7 @@ async def get_data_list(last: int):
   pdocs = coll.find({'doc_type': document.TYPE_PROBLEM})
   pids = []  # with domain_id
   async for pdoc in pdocs:
-    data = get_data(pdoc)
+    data = await get_data(pdoc)
     if not data:
       continue
     date = await fs.get_datetime(data)

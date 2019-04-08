@@ -238,7 +238,7 @@ class ProblemDetailHandler(base.OperationHandler):
     if not ddoc:
       raise error.DomainNotFoundError
     if not self.dudoc_has_perm(dudoc=dudoc, perm=builtin.PERM_CREATE_PROBLEM, ddoc=ddoc, udoc=self.user):
-      raise error.PermissionError
+      raise error.PermissionError(builtin.PERM_CREATE_PROBLEM)
 
     pid = None
     if numeric_pid:
@@ -548,8 +548,14 @@ class ProblemDataHandler(base.Handler):
     # domain administrators will have PERM_READ_PROBLEM_DATA,
     # problem owner will have PERM_READ_PROBLEM_DATA_SELF.
     pdoc = await problem.get(self.domain_id, pid)
+    ddoc, dudoc = self.domain, self.domain_user
+    if type(pdoc['data']) is dict:
+      domain_id = pdoc['data']['domain']
+      pdoc, ddoc, dudoc = await asyncio.gather(problem.get(domain_id, pdoc['data']['pid']),
+                                               domain.get(domain_id),
+                                               domain.get_user(domain_id, self.user['_id']))
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
-        and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
+        and not self.dudoc_has_perm(dudoc=dudoc, perm=builtin.PERM_READ_PROBLEM_DATA, ddoc=ddoc, udoc=self.user)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
     fdoc = await problem.get_data(pdoc)
     if not fdoc:
@@ -707,7 +713,7 @@ class ProblemUploadHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    md5 = await fs.get_md5(problem.get_data(pdoc))
+    md5 = await fs.get_md5(await problem.get_data(pdoc))
     self.render('problem_upload.html', pdoc=pdoc, md5=md5)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
