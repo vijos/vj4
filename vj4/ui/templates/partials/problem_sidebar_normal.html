@@ -35,7 +35,7 @@
     {% endif %}
     {% else %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('problem_detail', pid=pdoc['doc_id']) }}">
-        <span class="ico  n icon-flag"></span> {{ _('View Problem') }}
+        <span class="icon icon-flag"></span> {{ _('View Problem') }}
       </a></li>
     {% endif %}
     {% if handler.has_perm(vj4.model.builtin.PERM_SUBMIT_PROBLEM) %}
