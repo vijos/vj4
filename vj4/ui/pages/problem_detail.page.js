@@ -236,7 +236,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     const isHidden = copyProblemToDialog.$dom.find('[name="hidden"]').prop('checked');
     const payload = {
       operation: 'copy_to_domain',
-      domain_id: domainId,
+      dest_domain_id: domainId,
     };
     if (useNumericId) {
       payload.numeric_pid = 'on';

@@ -46,9 +46,9 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
   return pid
 
 
-# This copies contents only, data will be referenced to the source problem.
 async def copy(pdoc, dest_domain_id: str, owner_uid: int,
                pid: document.convert_doc_id=None, hidden: bool=False):
+  # This copies contents only, data will be referenced to the source problem.
   data = pdoc['data']
   src_domain_id, src_pid = pdoc['domain_id'], pdoc['doc_id']
   if type(data) is objectid.ObjectId:

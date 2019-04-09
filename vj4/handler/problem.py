@@ -229,14 +229,14 @@ class ProblemDetailHandler(base.OperationHandler):
   @base.sanitize
   @base.limit_rate('copy_problem', 60, 100)
   async def post_copy_to_domain(self, *,
-                                pid: document.convert_doc_id, domain_id: str,
+                                pid: document.convert_doc_id, dest_domain_id: str,
                                 numeric_pid: bool=False, hidden: bool=False):
     uid = self.user['_id']
     pdoc = await problem.get(self.domain_id, pid, uid)
     if pdoc.get('hidden', False):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
-    ddoc, dudoc = await asyncio.gather(domain.get(domain_id),
-                                       domain.get_user(domain_id, uid))
+    ddoc, dudoc = await asyncio.gather(domain.get(dest_domain_id),
+                                       domain.get_user(dest_domain_id, uid))
     if not dudoc:
       dudoc = {}
     if not self.dudoc_has_perm(dudoc=dudoc, perm=builtin.PERM_CREATE_PROBLEM, ddoc=ddoc, udoc=self.user):
@@ -245,10 +245,10 @@ class ProblemDetailHandler(base.OperationHandler):
 
     pid = None
     if numeric_pid:
-      pid = await domain.inc_pid_counter(domain_id)
-    pid = await problem.copy(pdoc, domain_id, self.user['_id'], pid, hidden)
+      pid = await domain.inc_pid_counter(dest_domain_id)
+    pid = await problem.copy(pdoc, dest_domain_id, uid, pid, hidden)
 
-    new_url = self.reverse_url('problem_settings', pid=pid, domain_id=domain_id)
+    new_url = self.reverse_url('problem_settings', pid=pid, domain_id=dest_domain_id)
     self.json_or_redirect(new_url, new_problem_url=new_url)
 
 
@@ -555,8 +555,8 @@ class ProblemDataHandler(base.Handler):
     pdoc = await problem.get(self.domain_id, pid)
     if type(pdoc['data']) is dict:
       return self.redirect(self.reverse_url('problem_data',
-                                     domain_id=pdoc['data']['domain'],
-                                     pid=pdoc['data']['pid']))
+                           domain_id=pdoc['data']['domain'],
+                           pid=pdoc['data']['pid']))
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
@@ -602,10 +602,10 @@ class ProblemCopyHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   @base.limit_rate('copy_problems', 30, 10)
-  async def post(self, *, domain_id: str, pids: str,
+  async def post(self, *, src_domain_id: str, pids: str,
                  numeric_pid: bool=False, hidden: bool=False):
-    src_ddoc, src_dudoc = await asyncio.gather(domain.get(domain_id),
-                                               domain.get_user(domain_id, self.user['_id']))
+    src_ddoc, src_dudoc = await asyncio.gather(domain.get(src_domain_id),
+                                               domain.get_user(src_domain_id, self.user['_id']))
     if not src_dudoc:
       src_dudoc = {}
     if not self.dudoc_has_perm(ddoc=src_ddoc, dudoc=src_dudoc, udoc=self.user,
@@ -616,7 +616,7 @@ class ProblemCopyHandler(base.Handler):
     pids = misc.dedupe(map(document.convert_doc_id, pids.replace('\r\n', '\n').split('\n')))
     if len(pids) > 20:
       raise error.BatchCopyLimitExceededError(20, len(pids))
-    pdocs = await problem.get_multi(domain_id=domain_id, doc_id={'$in': pids}) \
+    pdocs = await problem.get_multi(domain_id=src_domain_id, doc_id={'$in': pids}) \
       .sort('doc_id', 1) \
       .to_list()
 
@@ -624,7 +624,7 @@ class ProblemCopyHandler(base.Handler):
     if len(pids) != len(exist_pids):
       for pid in pids:
         if pid not in exist_pids:
-          raise error.ProblemNotFoundError(domain_id, pid)
+          raise error.ProblemNotFoundError(src_domain_id, pid)
 
     for pdoc in pdocs:
       if pdoc.get('hidden', False):
