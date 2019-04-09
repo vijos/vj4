@@ -371,7 +371,7 @@ class NoProblemError(NotFoundError):
 class BatchCopyLimitExceededError(ForbiddenError):
   @property
   def message(self):
-    return 'Only {0} problems can be copied in one request, we got {1}.'
+    return 'Only {0} problems can be copied in one request, got {1}.'
 
 
 class UpgradeLockAcquireError(Error):
