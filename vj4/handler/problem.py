@@ -604,7 +604,7 @@ class ProblemCopyHandler(base.Handler):
   @base.require_csrf_token
   @base.sanitize
   @base.limit_rate('copy_problems', 30, 10)
-  async def post(self, *, src_domain_id: str, pids: str,
+  async def post(self, *, src_domain_id: str, src_pids: str,
                  numeric_pid: bool=False, hidden: bool=False):
     src_ddoc, src_dudoc = await asyncio.gather(domain.get(src_domain_id),
                                                domain.get_user(src_domain_id, self.user['_id']))
@@ -615,16 +615,16 @@ class ProblemCopyHandler(base.Handler):
       # TODO: This is the source domain's PermissionError.
       raise error.PermissionError(builtin.PERM_VIEW_PROBLEM)
 
-    pids = misc.dedupe(map(document.convert_doc_id, pids.replace('\r\n', '\n').split('\n')))
-    if len(pids) > self.MAX_PROBLEMS_PER_REQUEST:
-      raise error.BatchCopyLimitExceededError(self.MAX_PROBLEMS_PER_REQUEST, len(pids))
-    pdocs = await problem.get_multi(domain_id=src_domain_id, doc_id={'$in': pids}) \
+    src_pids = misc.dedupe(map(document.convert_doc_id, src_pids.replace('\r\n', '\n').split('\n')))
+    if len(src_pids) > self.MAX_PROBLEMS_PER_REQUEST:
+      raise error.BatchCopyLimitExceededError(self.MAX_PROBLEMS_PER_REQUEST, len(src_pids))
+    pdocs = await problem.get_multi(domain_id=src_domain_id, doc_id={'$in': src_pids}) \
       .sort('doc_id', 1) \
       .to_list()
 
     exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
-    if len(pids) != len(exist_pids):
-      for pid in pids:
+    if len(src_pids) != len(exist_pids):
+      for pid in src_pids:
         if pid not in exist_pids:
           raise error.ProblemNotFoundError(src_domain_id, pid)
 
