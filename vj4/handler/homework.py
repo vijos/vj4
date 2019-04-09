@@ -349,7 +349,7 @@ class HomeworkCreateHandler(contest.ContestMixin, base.Handler):
     if penalty_since > end_at:
       raise error.ValidationError('extension_days')
     pids = contest._parse_pids(pids)
-    await problem.verify_problems(self.domain_id, pids)
+    await self.verify_problems(pids)
     tid = await contest.add(self.domain_id, document.TYPE_HOMEWORK, title, content, self.user['_id'],
                             constant.contest.RULE_ASSIGNMENT, begin_at, end_at, pids,
                             penalty_since=penalty_since, penalty_rules=penalty_rules)
@@ -418,7 +418,7 @@ class HomeworkEditHandler(contest.ContestMixin, base.Handler):
     if penalty_since > end_at:
       raise error.ValidationError('extension_days')
     pids = contest._parse_pids(pids)
-    await problem.verify_problems(self.domain_id, pids)
+    await self.verify_problems(pids)
     await contest.edit(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'], title=title, content=content,
                        begin_at=begin_at, end_at=end_at, pids=pids,
                        penalty_since=penalty_since, penalty_rules=penalty_rules)

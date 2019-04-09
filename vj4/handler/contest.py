@@ -314,7 +314,7 @@ class ContestCreateHandler(contest.ContestMixin, base.Handler):
     if begin_at >= end_at:
       raise error.ValidationError('duration')
     pids = contest._parse_pids(pids)
-    await problem.verify_problems(self.domain_id, pids)
+    await self.verify_problems(pids)
     tid = await contest.add(self.domain_id, document.TYPE_CONTEST, title, content, self.user['_id'],
                             rule, begin_at, end_at, pids)
     await self.hide_problems(pids)
@@ -368,7 +368,7 @@ class ContestEditHandler(contest.ContestMixin, base.Handler):
     if begin_at >= end_at:
       raise error.ValidationError('duration')
     pids = contest._parse_pids(pids)
-    await problem.verify_problems(self.domain_id, pids)
+    await self.verify_problems(pids)
     await contest.edit(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'], title=title, content=content,
                        rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
     await self.hide_problems(pids)
