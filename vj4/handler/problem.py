@@ -25,6 +25,7 @@ from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.util import pagination
 from vj4.util import options
+from vj4.util import misc
 
 
 async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
@@ -598,13 +599,39 @@ class ProblemCopyHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, title: str, content: str, hidden: bool=False, numeric_pid: bool=False):
-    pid = None
-    if numeric_pid:
-      pid = await domain.inc_pid_counter(self.domain_id)
-    pid = await problem.add(self.domain_id, title, content, self.user['_id'],
-                            hidden=hidden, pid=pid)
-    self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
+  @base.limit_rate('copy_problems', 30, 10)
+  async def post(self, *, domain_id: str, pids: str,
+                 numeric_pid: bool=False, hidden: bool=False):
+    src_ddoc, src_dudoc = await asyncio.gather(domain.get(domain_id),
+                                               domain.get_user(domain_id, self.user['_id']))
+    if not self.dudoc_has_perm(ddoc=src_ddoc, dudoc=src_dudoc, udoc=self.user,
+                               perm=builtin.PERM_VIEW_PROBLEM):
+      # TODO: This is the source domain's PermissionError.
+      raise error.PermissionError(builtin.PERM_VIEW_PROBLEM)
+
+    pids = misc.dedupe(map(document.convert_doc_id, pids.replace('\r\n', '\n').split('\n')))
+    pdocs = await problem.get_multi(domain_id=domain_id, doc_id={'$in': pids}) \
+      .sort('doc_id', 1) \
+      .to_list()
+
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(pids) != len(exist_pids):
+      for pid in pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(domain_id, pid)
+
+    for pdoc in pdocs:
+      if pdoc.get('hidden', False):
+        if not self.dudoc_has_perm(ddoc=src_ddoc, dudoc=src_dudoc, udoc=self.user,
+                                   perm=builtin.PERM_VIEW_PROBLEM_HIDDEN):
+          # TODO: This is the source domain's PermissionError.
+          raise error.PermissionError(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+      pid = None
+      if numeric_pid:
+        pid = await domain.inc_pid_counter(self.domain_id)
+      await problem.copy(pdoc, self.domain_id, self.user['_id'], pid, hidden)
+
+    self.redirect(self.reverse_url('problem_main'))
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
