@@ -320,7 +320,7 @@ async def get_data_list(last: int):
     data = await get_data(pdoc)
     if not data:
       continue
-    date = await fs.get_datetime(data)
+    date = data['uploadDate']
     if not date:
       continue
     if last_datetime < date:
