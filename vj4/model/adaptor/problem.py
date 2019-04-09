@@ -329,6 +329,19 @@ async def get_data_list(last: int):
   return list(set(pids))
 
 
+async def verify_problems(domain_id, pids):
+  pdocs = await get_multi(domain_id=domain_id, doc_id={'$in': pids},
+                          fields={'doc_id': 1}) \
+               .sort('doc_id', 1) \
+               .to_list()
+  exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+  if len(pids) != len(exist_pids):
+    for pid in pids:
+      if pid not in exist_pids:
+        raise error.ProblemNotFoundError(domain_id, pid)
+  return pids
+
+
 @argmethod.wrap
 async def inc(domain_id: str, pid: document.convert_doc_id, key: str, value: int):
   return await document.inc(domain_id, document.TYPE_PROBLEM, pid, key, value)

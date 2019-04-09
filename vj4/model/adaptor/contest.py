@@ -554,17 +554,6 @@ class ContestCommonOperationMixin(object):
                                                        ranked_tsdocs, udict, dudict, pdict)
     return tdoc, rows, udict
 
-  async def verify_problems(self, pids):
-    pdocs = await problem.get_multi(domain_id=self.domain_id, doc_id={'$in': pids},
-                                    fields={'doc_id': 1}) \
-                         .sort('doc_id', 1) \
-                         .to_list()
-    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
-    if len(pids) != len(exist_pids):
-      for pid in pids:
-        if pid not in exist_pids:
-          raise error.ProblemNotFoundError(self.domain_id, pid)
-    return pids
 
   async def hide_problems(self, pids):
     await asyncio.gather(*[problem.set_hidden(self.domain_id, pid, True) for pid in pids])
