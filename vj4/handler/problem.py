@@ -591,6 +591,8 @@ class ProblemCreateHandler(base.Handler):
 
 @app.route('/p/copy', 'problem_copy')
 class ProblemCopyHandler(base.Handler):
+  MAX_PROBLEMS_PER_REQUEST = 20
+
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_CREATE_PROBLEM)
   async def get(self):
@@ -614,8 +616,8 @@ class ProblemCopyHandler(base.Handler):
       raise error.PermissionError(builtin.PERM_VIEW_PROBLEM)
 
     pids = misc.dedupe(map(document.convert_doc_id, pids.replace('\r\n', '\n').split('\n')))
-    if len(pids) > 20:
-      raise error.BatchCopyLimitExceededError(20, len(pids))
+    if len(pids) > self.MAX_PROBLEMS_PER_REQUEST:
+      raise error.BatchCopyLimitExceededError(self.MAX_PROBLEMS_PER_REQUEST, len(pids))
     pdocs = await problem.get_multi(domain_id=src_domain_id, doc_id={'$in': pids}) \
       .sort('doc_id', 1) \
       .to_list()
