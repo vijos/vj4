@@ -632,6 +632,8 @@ class ProblemCopyHandler(base.Handler):
                                    perm=builtin.PERM_VIEW_PROBLEM_HIDDEN):
           # TODO: This is the source domain's PermissionError.
           raise error.PermissionError(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+
+    for pdoc in pdocs:
       pid = None
       if numeric_pid:
         pid = await domain.inc_pid_counter(self.domain_id)

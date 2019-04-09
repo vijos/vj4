@@ -52,8 +52,7 @@ async def copy(pdoc, dest_domain_id: str, owner_uid: int,
   data = pdoc['data']
   src_domain_id, src_pid = pdoc['domain_id'], pdoc['doc_id']
   if type(data) is objectid.ObjectId:
-    data = { 'domain': src_domain_id,
-             'pid': src_pid }
+    data = { 'domain': src_domain_id, 'pid': src_pid }
   elif type(data) is dict:
     src_domain_id, src_pid = data['domain'], data['pid']
 
