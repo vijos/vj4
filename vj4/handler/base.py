@@ -89,10 +89,8 @@ class HandlerBase(setting.SettingMixin):
       raise error.PrivilegeError(priv)
 
   def dudoc_has_perm(self, udoc, dudoc, perm, ddoc=None):
-    if not udoc:
+    if not udoc or not dudoc:
       return False
-    if not dudoc:
-      dudoc = {}
     role = dudoc.get('role', builtin.ROLE_DEFAULT)
     mask = domain.get_all_roles(ddoc if ddoc else self.domain).get(role, builtin.PERM_NONE)
     return ((perm & mask) == perm

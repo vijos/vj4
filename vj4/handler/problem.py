@@ -237,6 +237,8 @@ class ProblemDetailHandler(base.OperationHandler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     ddoc, dudoc = await asyncio.gather(domain.get(domain_id),
                                        domain.get_user(domain_id, uid))
+    if not dudoc:
+      dudoc = {}
     if not self.dudoc_has_perm(dudoc=dudoc, perm=builtin.PERM_CREATE_PROBLEM, ddoc=ddoc, udoc=self.user):
       # TODO: This is the destination domain's PermissionError.
       raise error.PermissionError(builtin.PERM_CREATE_PROBLEM)
@@ -604,6 +606,8 @@ class ProblemCopyHandler(base.Handler):
                  numeric_pid: bool=False, hidden: bool=False):
     src_ddoc, src_dudoc = await asyncio.gather(domain.get(domain_id),
                                                domain.get_user(domain_id, self.user['_id']))
+    if not src_dudoc:
+      src_dudoc = {}
     if not self.dudoc_has_perm(ddoc=src_ddoc, dudoc=src_dudoc, udoc=self.user,
                                perm=builtin.PERM_VIEW_PROBLEM):
       # TODO: This is the source domain's PermissionError.
