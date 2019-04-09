@@ -9,7 +9,7 @@
       <div class="medium-12 columns">
         <label>
           {{ _('Destination Domain') }}
-          <input name="domain_id" placeholder="Domain ID" type="text" class="textbox" autocomplete="off" data-autofocus>
+          <input name="domain_id" placeholder="{{ _('Domain ID') }}" type="text" class="textbox" autocomplete="off" data-autofocus>
         </label>
       </div>
     </div>
@@ -53,8 +53,8 @@
           </blockquote>
         {% endif %}
         {% if pdoc['data'] is mapping %}
-          <blockquote class="info">
-            <p>{{ _('Test data comes from') }} {{ pdoc['data']['domain'] }}/{{ pdoc['data']['pid'] }}.</p>
+          <blockquote>
+            <p>{{ _('Test data comes from') }} <a href="{{ reverse_url('problem_detail', domain_id=pdoc['data']['domain'], pid=pdoc['data']['pid']) }}">{{ pdoc['data']['domain'] }}/{{ pdoc['data']['pid'] }}</a></p>
           </blockquote>
         {% endif %}
         {% if tdoc %}
