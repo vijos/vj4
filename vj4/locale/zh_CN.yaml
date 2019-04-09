@@ -787,3 +787,7 @@ Domain ID: 域 ID
 Test data comes from: 测试数据来自
 From other problem: 来自其他题目
 Copy Problem To: 将题目复制到
+What's this?: 这是什么？
+About test data: 关于测试数据
+With this feature, you can copy problems that you can view from a domain to a specific domain. Title, content and other properties will be copied. Of course, test data is not included.: 你可以通过这个功能将某域下你能查看的题目复制到指定的域中，题目的标题、描述等将被复制过来。当然，测试数据不包括在其中。
+Although test data will not be copied, test data of copied problem will be linked to the source problem if source has test data uploaded. By uploading new test data, it will not be linked anymore. Permission of linked test data follows the original one.: 虽然测试数据不会被复制，但是在原题有数据的情况下，系统会在复制后将题目的测试数据链接到原题。在题目设置页面中可以通过上传新的测试数据的方式，来取消这个数据链接。链接后的测试数据的权限以原题为准。
