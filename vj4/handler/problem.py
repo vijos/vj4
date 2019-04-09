@@ -610,6 +610,8 @@ class ProblemCopyHandler(base.Handler):
       raise error.PermissionError(builtin.PERM_VIEW_PROBLEM)
 
     pids = misc.dedupe(map(document.convert_doc_id, pids.replace('\r\n', '\n').split('\n')))
+    if len(pids) > 20:
+      raise error.BatchCopyLimitExceededError(20, len(pids))
     pdocs = await problem.get_multi(domain_id=domain_id, doc_id={'$in': pids}) \
       .sort('doc_id', 1) \
       .to_list()
