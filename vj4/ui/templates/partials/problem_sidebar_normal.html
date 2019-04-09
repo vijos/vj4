@@ -148,9 +148,9 @@
       <dd>{{ pdoc['num_accept'] }}</dd>
       <dt>{{ _('Accepted Ratio') }}</dt>
       <dd>{% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</dd>
-    {% if pdoc['be_copied'] %}
+    {% if pdoc['num_be_copied'] %}
       <dt>{{ _('Be Copied') }}</dt>
-      <dd>{{ pdoc['be_copied'] }}</dd>
+      <dd>{{ pdoc['num_be_copied'] }}</dd>
     {% endif %}
     {% if pdoc['owner_uid'] != 0 %}
       <dt>{{ _('Uploaded By') }}</dt>
