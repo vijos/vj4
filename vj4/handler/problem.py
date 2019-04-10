@@ -25,6 +25,7 @@ from vj4.model.adaptor import training
 from vj4.service import bus
 from vj4.util import pagination
 from vj4.util import options
+from vj4.util import misc
 
 
 async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
@@ -185,7 +186,7 @@ class ProblemCategoryRandomHandler(base.Handler):
 
 
 @app.route('/p/{pid:-?\d+|\w{24}}', 'problem_detail')
-class ProblemDetailHandler(base.Handler):
+class ProblemDetailHandler(base.OperationHandler):
   async def _get_related_trainings(self, pid):
     if self.has_perm(builtin.PERM_VIEW_TRAINING):
       return await training.get_multi(self.domain_id, **{'dag.pids': pid}).to_list()
@@ -220,6 +221,35 @@ class ProblemDetailHandler(base.Handler):
     self.render('problem_detail.html', pdoc=pdoc, udoc=udoc, dudoc=dudoc,
                 tdocs=tdocs, ctdocs=ctdocs, htdocs=htdocs,
                 page_title=pdoc['title'], path_components=path_components)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_PROBLEM)
+  @base.require_csrf_token
+  @base.route_argument
+  @base.sanitize
+  @base.limit_rate('copy_problem', 60, 100)
+  async def post_copy_to_domain(self, *,
+                                pid: document.convert_doc_id, dest_domain_id: str,
+                                numeric_pid: bool=False, hidden: bool=False):
+    uid = self.user['_id']
+    pdoc = await problem.get(self.domain_id, pid, uid)
+    if pdoc.get('hidden', False):
+      self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+    ddoc, dudoc = await asyncio.gather(domain.get(dest_domain_id),
+                                       domain.get_user(dest_domain_id, uid))
+    if not dudoc:
+      dudoc = {}
+    if not self.dudoc_has_perm(dudoc=dudoc, perm=builtin.PERM_CREATE_PROBLEM, ddoc=ddoc, udoc=self.user):
+      # TODO: This is the destination domain's PermissionError.
+      raise error.PermissionError(builtin.PERM_CREATE_PROBLEM)
+
+    pid = None
+    if numeric_pid:
+      pid = await domain.inc_pid_counter(dest_domain_id)
+    pid = await problem.copy(pdoc, dest_domain_id, uid, pid, hidden)
+
+    new_url = self.reverse_url('problem_settings', pid=pid, domain_id=dest_domain_id)
+    self.json_or_redirect(new_url, new_problem_url=new_url)
 
 
 @app.route('/p/{pid}/submit', 'problem_submit')
@@ -523,10 +553,14 @@ class ProblemDataHandler(base.Handler):
     # domain administrators will have PERM_READ_PROBLEM_DATA,
     # problem owner will have PERM_READ_PROBLEM_DATA_SELF.
     pdoc = await problem.get(self.domain_id, pid)
+    if type(pdoc['data']) is dict:
+      return self.redirect(self.reverse_url('problem_data',
+                           domain_id=pdoc['data']['domain'],
+                           pid=pdoc['data']['pid']))
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    fdoc = await problem.get_data(self.domain_id, pid)
+    fdoc = await problem.get_data(pdoc)
     if not fdoc:
       raise error.ProblemDataNotFoundError(self.domain_id, pid)
     self.redirect(options.cdn_prefix.rstrip('/') + \
@@ -553,6 +587,61 @@ class ProblemCreateHandler(base.Handler):
     pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                             hidden=hidden, pid=pid)
     self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
+
+
+@app.route('/p/copy', 'problem_copy')
+class ProblemCopyHandler(base.Handler):
+  MAX_PROBLEMS_PER_REQUEST = 20
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_CREATE_PROBLEM)
+  async def get(self):
+    self.render('problem_copy.html')
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_CREATE_PROBLEM)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  @base.limit_rate('copy_problems', 30, 10)
+  async def post(self, *, src_domain_id: str, src_pids: str,
+                 numeric_pid: bool=False, hidden: bool=False):
+    src_ddoc, src_dudoc = await asyncio.gather(domain.get(src_domain_id),
+                                               domain.get_user(src_domain_id, self.user['_id']))
+    if not src_dudoc:
+      src_dudoc = {}
+    if not self.dudoc_has_perm(ddoc=src_ddoc, dudoc=src_dudoc, udoc=self.user,
+                               perm=builtin.PERM_VIEW_PROBLEM):
+      # TODO: This is the source domain's PermissionError.
+      raise error.PermissionError(builtin.PERM_VIEW_PROBLEM)
+
+    src_pids = misc.dedupe(map(document.convert_doc_id, src_pids.replace('\r\n', '\n').split('\n')))
+    if len(src_pids) > self.MAX_PROBLEMS_PER_REQUEST:
+      raise error.BatchCopyLimitExceededError(self.MAX_PROBLEMS_PER_REQUEST, len(src_pids))
+    pdocs = await problem.get_multi(domain_id=src_domain_id, doc_id={'$in': src_pids}) \
+      .sort('doc_id', 1) \
+      .to_list()
+
+    exist_pids = [pdoc['doc_id'] for pdoc in pdocs]
+    if len(src_pids) != len(exist_pids):
+      for pid in src_pids:
+        if pid not in exist_pids:
+          raise error.ProblemNotFoundError(src_domain_id, pid)
+
+    for pdoc in pdocs:
+      if pdoc.get('hidden', False):
+        if not self.dudoc_has_perm(ddoc=src_ddoc, dudoc=src_dudoc, udoc=self.user,
+                                   perm=builtin.PERM_VIEW_PROBLEM_HIDDEN):
+          # TODO: This is the source domain's PermissionError.
+          raise error.PermissionError(builtin.PERM_VIEW_PROBLEM_HIDDEN)
+
+    for pdoc in pdocs:
+      pid = None
+      if numeric_pid:
+        pid = await domain.inc_pid_counter(self.domain_id)
+      await problem.copy(pdoc, self.domain_id, self.user['_id'], pid, hidden)
+
+    self.redirect(self.reverse_url('problem_main'))
 
 
 @app.route('/p/{pid}/edit', 'problem_edit')
@@ -661,7 +750,7 @@ class ProblemUploadHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    md5 = await fs.get_md5(pdoc.get('data'))
+    md5 = await fs.get_md5(await problem.get_data(pdoc))
     self.render('problem_upload.html', pdoc=pdoc, md5=md5)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -676,7 +765,7 @@ class ProblemUploadHandler(base.Handler):
     if (not self.own(pdoc, builtin.PERM_READ_PROBLEM_DATA_SELF)
         and not self.has_perm(builtin.PERM_READ_PROBLEM_DATA)):
       self.check_priv(builtin.PRIV_READ_PROBLEM_DATA)
-    if pdoc.get('data'):
+    if pdoc.get('data') and type(pdoc['data']) is objectid.ObjectId:
       await fs.unlink(pdoc['data'])
     await problem.set_data(self.domain_id, pid, file)
     self.json_or_redirect(self.url)

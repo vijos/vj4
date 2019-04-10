@@ -64,6 +64,12 @@
         <span class="icon icon-comment--text"></span> {{ _('Solutions') }}
       </a></li>
     {% endif %}
+    {% if page_name == 'problem_detail' and handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
+      <li class="menu__seperator"></li>
+      <li class="menu__item"><a class="menu__link" name="problem-sidebar__copy-to" href="javascript:;">
+        <span class="icon icon-copy"></span> {{ _('Copy Problem') }}
+      </a></li>
+    {% endif %}
     {% if handler.own(pdoc, vj4.model.builtin.PERM_EDIT_PROBLEM_SELF) or handler.has_perm(vj4.model.builtin.PERM_EDIT_PROBLEM) %}
       <li class="menu__seperator"></li>
       <li class="menu__item"><a class="menu__link{% if page_name == 'problem_edit' %} active{% endif %}" href="{{ reverse_url('problem_edit', pid=pdoc['doc_id']) }}">
@@ -142,6 +148,10 @@
       <dd>{{ pdoc['num_accept'] }}</dd>
       <dt>{{ _('Accepted Ratio') }}</dt>
       <dd>{% if pdoc['num_submit'] > 0 %}{{ (100 * pdoc['num_accept'] / pdoc['num_submit'])|round|int }}%{% else %}{{ _('?') }}{% endif %}</dd>
+    {% if pdoc['num_be_copied'] %}
+      <dt>{{ _('Be Copied') }}</dt>
+      <dd>{{ pdoc['num_be_copied'] }}</dd>
+    {% endif %}
     {% if pdoc['owner_uid'] != 0 %}
       <dt>{{ _('Uploaded By') }}</dt>
       <dd>{{ user.render_inline(owner_udoc, owner_dudoc, badge=false) }}</dd>

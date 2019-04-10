@@ -1,8 +1,12 @@
 import Tether from 'tether';
 import { NamedPage } from 'vj/misc/PageLoader';
 import Navigation from 'vj/components/navigation';
+import Notification from 'vj/components/notification';
+import { ConfirmDialog, ActionDialog } from 'vj/components/dialog';
 import loadReactRedux from 'vj/utils/loadReactRedux';
 import delay from 'vj/utils/delay';
+import request from 'vj/utils/request';
+import i18n from 'vj/utils/i18n';
 
 class ProblemPageExtender {
   constructor() {
@@ -206,6 +210,50 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     $('.loader-container').hide();
   }
 
+  const copyProblemToDialog = new ActionDialog({
+    $body: $('.dialog__body--copy-to > div'),
+    onDispatch(action) {
+      const $domainId = copyProblemToDialog.$dom.find('[name="domain_id"]');
+      if (action === 'ok' && $domainId.val() === '') {
+        $domainId.focus();
+        return false;
+      }
+      return true;
+    },
+  });
+  copyProblemToDialog.clear = function () {
+    this.$dom.find('[name="domain_id"]').val('');
+    return this;
+  };
+
+  async function handleClickCopyProblem() {
+    const action = await copyProblemToDialog.clear().open();
+    if (action !== 'ok') {
+      return;
+    }
+    const domainId = copyProblemToDialog.$dom.find('[name="domain_id"]').val();
+    const useNumericId = copyProblemToDialog.$dom.find('[name="numeric_pid"]').prop('checked');
+    const isHidden = copyProblemToDialog.$dom.find('[name="hidden"]').prop('checked');
+    const payload = {
+      operation: 'copy_to_domain',
+      dest_domain_id: domainId,
+    };
+    if (useNumericId) {
+      payload.numeric_pid = 'on';
+    }
+    if (isHidden) {
+      payload.hidden = 'on';
+    }
+    try {
+      const data = await request.post('', payload);
+      Notification.success(i18n('Problem is successfully copied.'));
+      await delay(1000);
+      window.location.href = data.new_problem_url;
+    } catch (error) {
+      Notification.error(error.message);
+    }
+  }
+
   async function enterScratchpadMode() {
     await extender.extend();
     await loadReact();
@@ -229,6 +277,10 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
   });
   $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', (ev) => {
     leaveScratchpadMode();
+    ev.preventDefault();
+  });
+  $(document).on('click', '[name="problem-sidebar__copy-to"]', (ev) => {
+    handleClickCopyProblem();
     ev.preventDefault();
   });
   $(document).on('click', '[name="problem-sidebar__show-category"]', (ev) => {

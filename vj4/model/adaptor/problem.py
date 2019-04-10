@@ -36,13 +36,31 @@ def get_categories():
 @argmethod.wrap
 async def add(domain_id: str, title: str, content: str, owner_uid: int,
               pid: document.convert_doc_id=None, data: objectid.ObjectId=None,
-              category: list=[], hidden: bool=False):
+              category: list=[], tag: list=[], hidden: bool=False):
   validator.check_title(title)
   validator.check_content(content)
   pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
-                           pid, title=title, data=data, category=category,
+                           pid, title=title, data=data, category=category, tag=tag,
                            hidden=hidden, num_submit=0, num_accept=0)
   await domain.inc_user(domain_id, owner_uid, num_problems=1)
+  return pid
+
+
+async def copy(pdoc, dest_domain_id: str, owner_uid: int,
+               pid: document.convert_doc_id=None, hidden: bool=False):
+  # This copies contents only, data will be referenced to the source problem.
+  data = pdoc['data']
+  src_domain_id, src_pid = pdoc['domain_id'], pdoc['doc_id']
+  if type(data) is objectid.ObjectId:
+    data = { 'domain': src_domain_id, 'pid': src_pid }
+  elif type(data) is dict:
+    src_domain_id, src_pid = data['domain'], data['pid']
+
+  pid = await add(domain_id=dest_domain_id, owner_uid=owner_uid,
+                  title=pdoc['title'], content=pdoc['content'],
+                  pid=pid, hidden=hidden, category=pdoc['category'],
+                  data=data, tag=pdoc.get('tag', []))
+  await document.inc(src_domain_id, document.TYPE_PROBLEM, src_pid, 'num_be_copied', 1)
   return pid
 
 
@@ -262,11 +280,16 @@ def delete_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: 
   return document.delete_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid)
 
 
-async def get_data(domain_id, pid):
-  pdoc = await get(domain_id, pid)
-  if not pdoc.get('data', None):
-    raise error.ProblemDataNotFoundError(domain_id, pid)
-  return await fs.get_meta(pdoc['data'])
+async def get_data(pdoc):
+  data = pdoc.get('data', None)
+  if not data:
+    return None
+  if type(data) is dict:
+    upper_pdoc = await get(data['domain'], data['pid'])
+    data = upper_pdoc['data']
+    if not data:
+      return None
+  return await fs.get_meta(data)
 
 
 @argmethod.wrap
@@ -294,9 +317,10 @@ async def get_data_list(last: int):
   pdocs = coll.find({'doc_type': document.TYPE_PROBLEM})
   pids = []  # with domain_id
   async for pdoc in pdocs:
-    if 'data' not in pdoc or not pdoc['data']:
+    data = await get_data(pdoc)
+    if not data:
       continue
-    date = await fs.get_datetime(pdoc['data'])
+    date = data['uploadDate']
     if not date:
       continue
     if last_datetime < date:

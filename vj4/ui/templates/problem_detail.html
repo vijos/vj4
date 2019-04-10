@@ -1,5 +1,32 @@
 {% extends "layout/basic.html" %}
 {% block content %}
+<div style="display: none" class="dialog__body--copy-to">
+  <div>
+    <div class="row"><div class="columns">
+      <h1>{{ _('Copy Problem To') }}</h1>
+    </div></div>
+    <div class="row">
+      <div class="medium-12 columns">
+        <label>
+          {{ _('Destination Domain') }}
+          <input name="domain_id" placeholder="{{ _('Domain ID') }}" type="text" class="textbox" autocomplete="off" data-autofocus>
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="medium-12 columns">
+        <label>
+          <label class="checkbox">
+            <input type="checkbox" name="numeric_pid" checked>{{ _('Numeric PID') }}
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="hidden">{{ _('Hidden') }}
+          </label>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
   var Context = {{ {
     'problemId': pdoc['doc_id'],
@@ -23,6 +50,11 @@
         {% if not pdoc['data'] %}
           <blockquote class="warn">
             <p>{{ _('No dataset at present.') }}</p>
+          </blockquote>
+        {% endif %}
+        {% if pdoc['data'] is mapping %}
+          <blockquote>
+            <p>{{ _('Test data comes from') }} <a href="{{ reverse_url('problem_detail', domain_id=pdoc['data']['domain'], pid=pdoc['data']['pid']) }}">{{ pdoc['data']['domain'] }}/{{ pdoc['data']['pid'] }}</a></p>
           </blockquote>
         {% endif %}
         {% if tdoc %}
