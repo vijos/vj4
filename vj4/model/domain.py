@@ -11,7 +11,11 @@ from vj4.model import system
 from vj4.util import argmethod
 from vj4.util import validator
 
-PROJECTION_PUBLIC = {'uid': 1}
+PROJECTION_PUBLIC = {
+  '_id': 1,
+  'name': 1,
+  'gravatar': 1
+}
 
 
 @argmethod.wrap
@@ -316,6 +320,18 @@ def get_join_settings(ddoc, now):
   if join_settings['expire'] != None and join_settings['expire'] < now:
     return None
   return join_settings
+
+
+@argmethod.wrap
+async def get_prefix_search(prefix: str, fields={}, limit: int=50):
+  regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))
+  coll = db.coll('domain')
+  udocs = await coll.find({'$or': [{'_id': {'$regex': regex}},
+                                   {'name': {'$regex': regex}}]},
+                          projection=fields) \
+                    .limit(limit) \
+                    .to_list()
+  return udocs
 
 
 @argmethod.wrap
