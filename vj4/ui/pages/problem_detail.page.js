@@ -3,6 +3,7 @@ import { NamedPage } from 'vj/misc/PageLoader';
 import Navigation from 'vj/components/navigation';
 import Notification from 'vj/components/notification';
 import { ConfirmDialog, ActionDialog } from 'vj/components/dialog';
+import DomainSelectAutoComplete from 'vj/components/autocomplete/DomainSelectAutoComplete';
 import loadReactRedux from 'vj/utils/loadReactRedux';
 import delay from 'vj/utils/delay';
 import request from 'vj/utils/request';
@@ -210,21 +211,22 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     $('.loader-container').hide();
   }
 
+  const domainSelector = DomainSelectAutoComplete.getOrConstruct($('.dialog__body--copy-to [name="domain_id"]'));
   const copyProblemToDialog = new ActionDialog({
     $body: $('.dialog__body--copy-to > div'),
     onDispatch(action) {
-      const $domainId = copyProblemToDialog.$dom.find('[name="domain_id"]');
-      if (action === 'ok' && $domainId.val() === '') {
-        $domainId.focus();
+      if (action === 'ok' && domainSelector.value() === null) {
+        domainSelector.focus();
         return false;
       }
       return true;
     },
   });
   copyProblemToDialog.clear = function () {
-    this.$dom.find('[name="domain_id"]').val('');
+    domainSelector.clear();
     return this;
   };
+
 
   async function handleClickCopyProblem() {
     const action = await copyProblemToDialog.clear().open();
