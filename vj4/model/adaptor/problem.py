@@ -48,14 +48,13 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
 
 async def copy(pdoc, dest_domain_id: str, owner_uid: int,
                pid: document.convert_doc_id=None, hidden: bool=False):
-  # This copies contents only, data will be referenced to the source problem.
+  # This copies contents only, and the data will be linked to the source problem.
   data = pdoc['data']
   src_domain_id, src_pid = pdoc['domain_id'], pdoc['doc_id']
-  if type(data) is objectid.ObjectId:
-    data = { 'domain': src_domain_id, 'pid': src_pid }
-  elif type(data) is dict:
+  if type(data) is dict:
     src_domain_id, src_pid = data['domain'], data['pid']
-
+  else:
+    data = {'domain': src_domain_id, 'pid': src_pid}
   pid = await add(domain_id=dest_domain_id, owner_uid=owner_uid,
                   title=pdoc['title'], content=pdoc['content'],
                   pid=pid, hidden=hidden, category=pdoc['category'],
