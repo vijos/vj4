@@ -324,14 +324,18 @@ def get_join_settings(ddoc, now):
 
 @argmethod.wrap
 async def get_prefix_search(prefix: str, fields={}, limit: int=50):
+  builtin_ddocs = []
+  for domain in builtin.DOMAINS:
+    if domain['_id'][:len(prefix)] == prefix or domain['name'][:len(prefix)] == prefix:
+      builtin_ddocs.append(domain)
   regex = r'\A\Q{0}\E'.format(prefix.replace(r'\E', r'\E\\E\Q'))
   coll = db.coll('domain')
-  udocs = await coll.find({'$or': [{'_id': {'$regex': regex}},
+  ddocs = await coll.find({'$or': [{'_id': {'$regex': regex}},
                                    {'name': {'$regex': regex}}]},
                           projection=fields) \
                     .limit(limit) \
                     .to_list()
-  return udocs
+  return builtin_ddocs + ddocs
 
 
 @argmethod.wrap
