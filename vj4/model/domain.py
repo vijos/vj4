@@ -324,7 +324,7 @@ def get_join_settings(ddoc, now):
 
 @argmethod.wrap
 async def get_prefix_search(prefix: str, fields={}, limit: int=50):
-  regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))
+  regex = r'\A\Q{0}\E'.format(prefix.replace(r'\E', r'\E\\E\Q'))
   coll = db.coll('domain')
   udocs = await coll.find({'$or': [{'_id': {'$regex': regex}},
                                    {'name': {'$regex': regex}}]},
@@ -340,6 +340,7 @@ async def ensure_indexes():
   await coll.create_index('owner_uid')
   user_coll = db.coll('domain.user')
   await user_coll.create_index('uid')
+  await user_coll.create_index('name')
   await user_coll.create_index([('domain_id', 1),
                                 ('uid', 1)], unique=True)
   await user_coll.create_index([('domain_id', 1),

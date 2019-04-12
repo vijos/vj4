@@ -195,7 +195,7 @@ async def set_default(uid: int):
 @argmethod.wrap
 async def get_prefix_list(prefix: str, fields=PROJECTION_VIEW, limit: int=50):
   prefix = prefix.lower()
-  regex = '\\A\\Q{0}\\E'.format(prefix.replace('\\E', '\\E\\\\E\\Q'))
+  regex = r'\A\Q{0}\E'.format(prefix.replace(r'\E', r'\E\\E\Q'))
   coll = db.coll('user')
   udocs = await coll.find({'uname_lower': {'$regex': regex}}, projection=fields) \
                     .limit(limit) \

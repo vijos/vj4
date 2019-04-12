@@ -363,8 +363,8 @@ class DomainSearchHandler(base.Handler):
   @base.route_argument
   @base.sanitize
   async def get(self, *, q: str):
-    udocs = await domain.get_prefix_search(q, domain.PROJECTION_PUBLIC, 20)
+    ddocs = await domain.get_prefix_search(q, domain.PROJECTION_PUBLIC, 20)
 
-    for i in range(len(udocs)):
-      self.modify_ddoc(udocs, i)
-    self.json(udocs)
+    for i in range(len(ddocs)):
+      self.modify_ddoc(ddocs, i)
+    self.json(ddocs)
