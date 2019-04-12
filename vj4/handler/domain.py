@@ -17,6 +17,8 @@ from vj4.model.adaptor import training
 from vj4.handler import base
 from vj4.handler import training as training_handler
 from vj4.util import validator
+from vj4.util import misc
+from vj4.util import options
 
 
 @app.route('/', 'domain_main')
@@ -343,3 +345,26 @@ class DomainRoleHandler(base.OperationHandler):
   async def post_delete(self, *, role: str):
     await domain.delete_roles(self.domain_id, (await self.request.post()).getall('role'))
     self.json_or_redirect(self.url)
+
+
+@app.route('/domain/search', 'domain_search')
+class DomainSearchHandler(base.Handler):
+  def modify_ddoc(self, ddict, key):
+    ddoc = ddict[key]
+    gravatar_url = options.cdn_prefix.rstrip('/') + '/img/team_avatar.png'
+    if ddoc.get('gravatar', ''):
+      gravatar_url = misc.gravatar_url(ddoc['gravatar'])
+
+    ddict[key] = {**ddoc,
+                  'gravatar_url': gravatar_url}
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.get_argument
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, q: str):
+    ddocs = await domain.get_prefix_search(q, domain.PROJECTION_PUBLIC, 20)
+
+    for i in range(len(ddocs)):
+      self.modify_ddoc(ddocs, i)
+    self.json(ddocs)

@@ -11,7 +11,11 @@ from vj4.model import system
 from vj4.util import argmethod
 from vj4.util import validator
 
-PROJECTION_PUBLIC = {'uid': 1}
+PROJECTION_PUBLIC = {
+  '_id': 1,
+  'name': 1,
+  'gravatar': 1
+}
 
 
 @argmethod.wrap
@@ -319,11 +323,24 @@ def get_join_settings(ddoc, now):
 
 
 @argmethod.wrap
+async def get_prefix_search(prefix: str, fields={}, limit: int=50):
+  regex = r'\A\Q{0}\E'.format(prefix.replace(r'\E', r'\E\\E\Q'))
+  coll = db.coll('domain')
+  udocs = await coll.find({'$or': [{'_id': {'$regex': regex}},
+                                   {'name': {'$regex': regex}}]},
+                          projection=fields) \
+                    .limit(limit) \
+                    .to_list()
+  return udocs
+
+
+@argmethod.wrap
 async def ensure_indexes():
   coll = db.coll('domain')
   await coll.create_index('owner_uid')
   user_coll = db.coll('domain.user')
   await user_coll.create_index('uid')
+  await user_coll.create_index('name')
   await user_coll.create_index([('domain_id', 1),
                                 ('uid', 1)], unique=True)
   await user_coll.create_index([('domain_id', 1),
