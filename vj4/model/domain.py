@@ -338,9 +338,9 @@ async def get_prefix_search(prefix: str, fields={}, limit: int=50):
 async def ensure_indexes():
   coll = db.coll('domain')
   await coll.create_index('owner_uid')
+  await coll.create_index('name')
   user_coll = db.coll('domain.user')
   await user_coll.create_index('uid')
-  await user_coll.create_index('name')
   await user_coll.create_index([('domain_id', 1),
                                 ('uid', 1)], unique=True)
   await user_coll.create_index([('domain_id', 1),
