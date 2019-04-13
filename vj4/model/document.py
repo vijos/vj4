@@ -101,7 +101,8 @@ def get_multi(*, fields=None, **kwargs):
 
 async def get_dict(domain_id: str, dtuples, *, fields=None):
   query = {'$or': []}
-  for doc_type, doc_tuples in itertools.groupby(sorted(dtuples), key=lambda e: e[0]):
+  key_func = lambda e: e[0]
+  for doc_type, doc_tuples in itertools.groupby(sorted(dtuples, key=key_func), key=key_func):
     query['$or'].append({'domain_id': domain_id, 'doc_type': doc_type,
                          'doc_id': {'$in': [e[1] for e in doc_tuples]}})
   result = dict()
