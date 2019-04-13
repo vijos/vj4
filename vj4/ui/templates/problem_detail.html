@@ -53,8 +53,8 @@
           </blockquote>
         {% endif %}
         {% if pdoc['data'] is mapping %}
-          <blockquote>
-            <p>{{ _('Test data comes from') }} <a href="{{ reverse_url('problem_detail', domain_id=pdoc['data']['domain'], pid=pdoc['data']['pid']) }}">{{ pdoc['data']['domain'] }}/{{ pdoc['data']['pid'] }}</a></p>
+          <blockquote class="note">
+            <p>{{ _('Test data comes from') }} <a href="{{ reverse_url('problem_detail', domain_id=pdoc['data']['domain'], pid=pdoc['data']['pid']) }}" target="_blank">{{ pdoc['data']['domain'] }}/{{ pdoc['data']['pid'] }}</a></p>
           </blockquote>
         {% endif %}
         {% if tdoc %}
