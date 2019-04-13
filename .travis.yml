@@ -23,8 +23,7 @@ before_deploy:
 - tar -cJf uibuild.tar.xz vj4/.uibuild vj4/constant
 deploy:
   provider: releases
-  api_key:
-    secure: u2LJEVgg5BH6Os+4ogTKB0y7AzqIfgfHPzzih+HGNFpB3Opt4hjag9MTMtWfKGUwjE7IwNAiYMwBuS0LBJdoAHjctvorW+78cMKXgfJVQzUPpSCa4bESTRsi3s1DJ+o9KKDnh88eCFBl78ufx1tKvAAVS1yI6z5DWjhg988Mzu5aYOVZkEAuj2alkuU1ZT627QgrMm0XupSJh7L5vh7Pjlx9Lf727b2JT8ZJwKLNlViBesV8O1G0IzEXu5L2UFAE7vX9l/XCGsjbZnECN9igPXu87YJDmNG55rJktDuk0xoZ3HtWA6+tLB4/78lA9TGLTZAE9h93o+frH3Rxpr36Z15Jmfo/0gv5Z9gYSp/kiI0KggtiIBzPgtn2AQdak/hgCfVDYCd+RNl4vWxb0WbvSRivn+3ahkuJ9MB/XM0BqcKz+H7P+NUOWRsDskzjodR5QNNcpMwdDUBP8yGtFVPDTwIepRkMuIjHX46/C5e+lw5q1iwsl+rwun59hs6+sd1NjVq/8WosJA30wMroqvmimax7pfUJ3oqJxThN8bOZZxYklosJLPSEybJmKyD7k99YOCNFcgPh2gBa8uij8Rj6bntInc7O/wQOfyiR8GFq/aOvcpB6RzEdACuRGZxiIxbDg+VhA0ryUG7vYDWXiELOyTFEp4EWGw25yqdW5nPpPj8=
+  api_key: $GITHUB_TOKEN
   name: uibuild-$(git rev-parse --short HEAD)
   file: uibuild.tar.xz
   skip_cleanup: true
