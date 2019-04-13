@@ -354,9 +354,9 @@ class DomainSearchHandler(base.Handler):
     gravatar_url = options.cdn_prefix.rstrip('/') + '/img/team_avatar.png'
     if ddoc.get('gravatar', ''):
       gravatar_url = misc.gravatar_url(ddoc['gravatar'])
-
     ddict[key] = {**ddoc,
-                  'gravatar_url': gravatar_url}
+                  'gravatar_url': gravatar_url,
+                  'gravatar': ''}
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.get_argument
