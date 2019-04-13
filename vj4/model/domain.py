@@ -324,9 +324,11 @@ def get_join_settings(ddoc, now):
 
 @argmethod.wrap
 async def get_prefix_search(prefix: str, fields={}, limit: int=50):
+  prefix_lower = prefix.lower()
   builtin_ddocs = []
   for domain in builtin.DOMAINS:
-    if domain['_id'][:len(prefix)] == prefix or domain['name'][:len(prefix)] == prefix:
+    if domain['_id'].lower().startswith(prefix_lower) or \
+       domain['name'].lower().startswith(prefix_lower):
       builtin_ddocs.append(domain)
   regex = r'\A\Q{0}\E'.format(prefix.replace(r'\E', r'\E\\E\Q'))
   coll = db.coll('domain')
