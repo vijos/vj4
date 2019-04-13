@@ -32,7 +32,8 @@ async def _send_ac_mail(handler, rdoc):
     return
   if rdoc.get('hidden') and not handler.udoc_has_priv(udoc, builtin.PRIV_VIEW_HIDDEN_RECORD):
     return
-  translate = locale.get_translate(u.get_setting('view_lang'))
+  locale_dict = locale.get(u.get_setting('view_lang'))
+  translate = lambda text: locale_dict.get(text, text)
   pdoc = await problem.get(rdoc['domain_id'], rdoc['pid'])
   await handler.send_mail(udoc['mail'],
                           translate('P{0} - {1} Accepted!').format(pdoc['doc_id'], pdoc['title']),

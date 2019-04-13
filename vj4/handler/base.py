@@ -217,8 +217,7 @@ class HandlerBase(setting.SettingMixin):
     return page_title
 
   async def send_mail(self, mail, title, template_name, **kwargs):
-    content = self.render_html(template_name, url_prefix=options.url_prefix,
-                               **kwargs)
+    content = self.render_html(template_name, url_prefix=options.url_prefix, **kwargs)
     translate = self.translate
     if '_' in kwargs:
       translate = kwargs['_']
