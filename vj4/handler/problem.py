@@ -580,9 +580,8 @@ class ProblemCreateHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, title: str, content: str, hidden: bool=False, numeric_pid: bool=False):
-    pid = None
-    if numeric_pid:
+  async def post(self, *, title: str, content: str, hidden: bool=False, pid: str):
+    if not pid:
       pid = await domain.inc_pid_counter(self.domain_id)
     pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                             hidden=hidden, pid=pid)
