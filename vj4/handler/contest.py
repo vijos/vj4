@@ -132,7 +132,7 @@ class ContestCodeHandler(base.OperationHandler):
                       file_name='{}.zip'.format(tdoc['title']))
 
 
-@app.route('/contest/{tid}/{pid:[A-Z0-9]+}', 'contest_detail_problem')
+@app.route('/contest/{tid}/{pid:[A-Z0-9]+|\w{24}}', 'contest_detail_problem')
 class ContestDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST)

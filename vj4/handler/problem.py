@@ -185,7 +185,7 @@ class ProblemCategoryRandomHandler(base.Handler):
       self.json_or_redirect(self.referer_or_main)
 
 
-@app.route('/p/{pid:[A-Z0-9]+}', 'problem_detail')
+@app.route('/p/{pid:[A-Z0-9]+|\w{24}}', 'problem_detail')
 class ProblemDetailHandler(base.OperationHandler):
   async def _get_related_trainings(self, pid):
     if self.has_perm(builtin.PERM_VIEW_TRAINING):
