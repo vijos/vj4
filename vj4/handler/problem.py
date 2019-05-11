@@ -26,6 +26,7 @@ from vj4.service import bus
 from vj4.util import pagination
 from vj4.util import options
 from vj4.util import misc
+from vj4.util import validator
 
 
 async def render_or_json_problem_list(self, page, ppcount, pcount, pdocs,
@@ -583,6 +584,8 @@ class ProblemCreateHandler(base.Handler):
   async def post(self, *, title: str, content: str, hidden: bool=False, pid: str):
     if not pid:
       pid = await domain.inc_pid_counter(self.domain_id)
+    else:
+      validator.check_pid(pid)
     pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                             hidden=hidden, pid=pid)
     self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
