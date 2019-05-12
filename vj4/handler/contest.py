@@ -132,7 +132,84 @@ class ContestCodeHandler(base.OperationHandler):
                       file_name='{}.zip'.format(tdoc['title']))
 
 
-@app.route('/contest/{tid}/{pid:[A-Z0-9]+|\w{24}}', 'contest_detail_problem')
+@app.route('/contest/{tid}/scoreboard', 'contest_scoreboard')
+class ContestScoreboardHandler(contest.ContestMixin, base.Handler):
+  @base.route_argument
+  @base.require_perm(builtin.PERM_VIEW_CONTEST)
+  @base.require_perm(builtin.PERM_VIEW_CONTEST_SCOREBOARD)
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc, rows, udict = await self.get_scoreboard(document.TYPE_CONTEST, tid)
+    page_title = self.translate('contest_scoreboard')
+    path_components = self.build_path(
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
+        (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
+        (page_title, None))
+    dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=udict.keys())
+    self.render('contest_scoreboard.html', tdoc=tdoc, rows=rows, dudict=dudict,
+                page_title=page_title, path_components=path_components)
+
+
+@app.route('/contest/{tid}/edit', 'contest_edit')
+class ContestEditHandler(contest.ContestMixin, base.Handler):
+  @base.route_argument
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_CONTEST)
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    rules = list(map(lambda i: (i, constant.contest.RULE_TEXTS[i]),
+                     constant.contest.CONTEST_RULES))
+    tdoc = await contest.get(self.domain_id, document.TYPE_CONTEST, tid)
+    if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
+      self.check_perm(builtin.PERM_EDIT_CONTEST)
+    dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
+    duration = (tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600
+    path_components = self.build_path(
+        (self.translate('contest_main'), self.reverse_url('contest_main')),
+        (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
+        (self.translate('contest_edit'), None))
+    self.render('contest_edit.html', rules=rules, tdoc=tdoc,
+                date_text=dt.strftime('%Y-%m-%d'),
+                time_text=dt.strftime('%H:%M'),
+                duration=duration,
+                pids=contest._format_pids(tdoc['pids']),
+                path_components=path_components)
+
+  @base.route_argument
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.require_perm(builtin.PERM_EDIT_CONTEST)
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, tid: objectid.ObjectId, title: str, content: str, rule: int,
+                 begin_at_date: str=None, begin_at_time: str=None, duration: float,
+                 pids: str):
+    tdoc = await contest.get(self.domain_id, document.TYPE_CONTEST, tid)
+    if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
+      self.check_perm(builtin.PERM_EDIT_CONTEST)
+    try:
+      begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
+      begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
+    except ValueError:
+      raise error.ValidationError('begin_at_date', 'begin_at_time')
+    end_at = begin_at + datetime.timedelta(hours=duration)
+    if begin_at >= end_at:
+      raise error.ValidationError('duration')
+    pids = contest._parse_pids(pids)
+    await self.verify_problems(pids)
+    await contest.edit(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'], title=title, content=content,
+                       rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
+    await self.hide_problems(pids)
+    if tdoc['begin_at'] != begin_at \
+        or tdoc['end_at'] != end_at \
+        or set(tdoc['pids']) != set(pids) \
+        or tdoc['rule'] != rule:
+      await contest.recalc_status(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'])
+    self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['doc_id']))
+
+
+@app.route('/contest/{tid}/{pid:[a-zA-Z0-9]+|\w{24}}', 'contest_detail_problem')
 class ContestDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
@@ -233,24 +310,6 @@ class ContestDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.route('/contest/{tid}/scoreboard', 'contest_scoreboard')
-class ContestScoreboardHandler(contest.ContestMixin, base.Handler):
-  @base.route_argument
-  @base.require_perm(builtin.PERM_VIEW_CONTEST)
-  @base.require_perm(builtin.PERM_VIEW_CONTEST_SCOREBOARD)
-  @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId):
-    tdoc, rows, udict = await self.get_scoreboard(document.TYPE_CONTEST, tid)
-    page_title = self.translate('contest_scoreboard')
-    path_components = self.build_path(
-        (self.translate('contest_main'), self.reverse_url('contest_main')),
-        (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
-        (page_title, None))
-    dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=udict.keys())
-    self.render('contest_scoreboard.html', tdoc=tdoc, rows=rows, dudict=dudict,
-                page_title=page_title, path_components=path_components)
-
-
 @app.route('/contest/{tid}/scoreboard/download/{ext}', 'contest_scoreboard_download')
 class ContestScoreboardDownloadHandler(contest.ContestMixin, base.Handler):
   def _export_status_as_csv(self, rows):
@@ -319,62 +378,3 @@ class ContestCreateHandler(contest.ContestMixin, base.Handler):
                             rule, begin_at, end_at, pids)
     await self.hide_problems(pids)
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
-
-
-@app.route('/contest/{tid}/edit', 'contest_edit')
-class ContestEditHandler(contest.ContestMixin, base.Handler):
-  @base.route_argument
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_CONTEST)
-  @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId):
-    rules = list(map(lambda i: (i, constant.contest.RULE_TEXTS[i]),
-                     constant.contest.CONTEST_RULES))
-    tdoc = await contest.get(self.domain_id, document.TYPE_CONTEST, tid)
-    if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
-      self.check_perm(builtin.PERM_EDIT_CONTEST)
-    dt = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
-    duration = (tdoc['end_at'] - tdoc['begin_at']).total_seconds() / 3600
-    path_components = self.build_path(
-        (self.translate('contest_main'), self.reverse_url('contest_main')),
-        (tdoc['title'], self.reverse_url('contest_detail', tid=tdoc['doc_id'])),
-        (self.translate('contest_edit'), None))
-    self.render('contest_edit.html', rules=rules, tdoc=tdoc,
-                date_text=dt.strftime('%Y-%m-%d'),
-                time_text=dt.strftime('%H:%M'),
-                duration=duration,
-                pids=contest._format_pids(tdoc['pids']),
-                path_components=path_components)
-
-  @base.route_argument
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
-  @base.require_perm(builtin.PERM_EDIT_CONTEST)
-  @base.post_argument
-  @base.require_csrf_token
-  @base.sanitize
-  async def post(self, *, tid: objectid.ObjectId, title: str, content: str, rule: int,
-                 begin_at_date: str=None, begin_at_time: str=None, duration: float,
-                 pids: str):
-    tdoc = await contest.get(self.domain_id, document.TYPE_CONTEST, tid)
-    if not self.own(tdoc, builtin.PERM_EDIT_CONTEST_SELF):
-      self.check_perm(builtin.PERM_EDIT_CONTEST)
-    try:
-      begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-      begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
-    except ValueError:
-      raise error.ValidationError('begin_at_date', 'begin_at_time')
-    end_at = begin_at + datetime.timedelta(hours=duration)
-    if begin_at >= end_at:
-      raise error.ValidationError('duration')
-    pids = contest._parse_pids(pids)
-    await self.verify_problems(pids)
-    await contest.edit(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'], title=title, content=content,
-                       rule=rule, begin_at=begin_at, end_at=end_at, pids=pids)
-    await self.hide_problems(pids)
-    if tdoc['begin_at'] != begin_at \
-        or tdoc['end_at'] != end_at \
-        or set(tdoc['pids']) != set(pids) \
-        or tdoc['rule'] != rule:
-      await contest.recalc_status(self.domain_id, document.TYPE_CONTEST, tdoc['doc_id'])
-    self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['doc_id']))

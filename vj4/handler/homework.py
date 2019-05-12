@@ -157,7 +157,99 @@ class HomeworkCodeHandler(base.OperationHandler):
                       file_name='{}.zip'.format(tdoc['title']))
 
 
-@app.route('/homework/{tid}/{pid:[A-Z0-9]+|\w{24}}', 'homework_detail_problem')
+@app.route('/homework/{tid}/scoreboard', 'homework_scoreboard')
+class HomeworkScoreboardHandler(contest.ContestMixin, base.Handler):
+  @base.route_argument
+  @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
+  @base.require_perm(builtin.PERM_VIEW_HOMEWORK_SCOREBOARD)
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc, rows, udict = await self.get_scoreboard(document.TYPE_HOMEWORK, tid)
+    page_title = self.translate('homework_scoreboard')
+    path_components = self.build_path(
+        (self.translate('homework_main'), self.reverse_url('homework_main')),
+        (tdoc['title'], self.reverse_url('homework_detail', tid=tdoc['doc_id'])),
+        (page_title, None))
+    dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=udict.keys())
+    self.render('contest_scoreboard.html', tdoc=tdoc, rows=rows, dudict=dudict,
+                page_title=page_title, path_components=path_components)
+
+
+@app.route('/homework/{tid}/edit', 'homework_edit')
+class HomeworkEditHandler(contest.ContestMixin, base.Handler):
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_HOMEWORK)
+  @base.route_argument
+  @base.sanitize
+  async def get(self, *, tid: objectid.ObjectId):
+    tdoc = await contest.get(self.domain_id, document.TYPE_HOMEWORK, tid)
+    if not self.own(tdoc, builtin.PERM_EDIT_HOMEWORK_SELF):
+      self.check_perm(builtin.PERM_EDIT_HOMEWORK)
+    begin_at = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
+    penalty_since = pytz.utc.localize(tdoc['penalty_since']).astimezone(self.timezone)
+    end_at = pytz.utc.localize(tdoc['end_at']).astimezone(self.timezone)
+    extension_days = round((end_at - penalty_since).total_seconds() / 60 / 60 / 24, ndigits=2)
+    page_title = self.translate('homework_edit')
+    path_components = self.build_path(
+        (self.translate('homework_main'), self.reverse_url('homework_main')),
+        (tdoc['title'], self.reverse_url('homework_detail', tid=tdoc['doc_id'])),
+        (page_title, None))
+    self.render('homework_edit.html', tdoc=tdoc,
+                date_begin_text=begin_at.strftime('%Y-%m-%d'),
+                time_begin_text=begin_at.strftime('%H:%M'),
+                date_penalty_text=penalty_since.strftime('%Y-%m-%d'),
+                time_penalty_text=penalty_since.strftime('%H:%M'),
+                extension_days=extension_days,
+                penalty_rules=_format_penalty_rules_yaml(tdoc['penalty_rules']),
+                pids=contest._format_pids(tdoc['pids']),
+                page_title=page_title, path_components=path_components)
+
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
+  @base.require_perm(builtin.PERM_EDIT_HOMEWORK)
+  @base.route_argument
+  @base.post_argument
+  @base.require_csrf_token
+  @base.sanitize
+  async def post(self, *, tid: objectid.ObjectId, title: str, content: str,
+                 begin_at_date: str, begin_at_time: str,
+                 penalty_since_date: str, penalty_since_time: str,
+                 extension_days: float, penalty_rules: str,
+                 pids: str):
+    tdoc = await contest.get(self.domain_id, document.TYPE_HOMEWORK, tid)
+    if not self.own(tdoc, builtin.PERM_EDIT_HOMEWORK_SELF):
+      self.check_perm(builtin.PERM_EDIT_HOMEWORK)
+    penalty_rules = _parse_penalty_rules_yaml(penalty_rules)
+    try:
+      begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
+      begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
+    except ValueError:
+      raise error.ValidationError('begin_at_date', 'begin_at_time')
+    try:
+      penalty_since = datetime.datetime.strptime(penalty_since_date + ' ' + penalty_since_time, '%Y-%m-%d %H:%M')
+      penalty_since = self.timezone.localize(penalty_since).astimezone(pytz.utc).replace(tzinfo=None)
+    except ValueError:
+      raise error.ValidationError('end_at_date', 'end_at_time')
+    end_at = penalty_since + datetime.timedelta(days=extension_days)
+    if begin_at >= penalty_since:
+      raise error.ValidationError('end_at_date', 'end_at_time')
+    if penalty_since > end_at:
+      raise error.ValidationError('extension_days')
+    pids = contest._parse_pids(pids)
+    await self.verify_problems(pids)
+    await contest.edit(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'], title=title, content=content,
+                       begin_at=begin_at, end_at=end_at, pids=pids,
+                       penalty_since=penalty_since, penalty_rules=penalty_rules)
+    await self.hide_problems(pids)
+    if tdoc['begin_at'] != begin_at \
+        or tdoc['end_at'] != end_at \
+        or tdoc['penalty_since'] != penalty_since \
+        or set(tdoc['pids']) != set(pids):
+      await contest.recalc_status(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'])
+    self.json_or_redirect(self.reverse_url('homework_detail', tid=tid))
+
+
+@app.route('/homework/{tid}/{pid:[a-zA-Z0-9]+|\w{24}}', 'homework_detail_problem')
 class HomeworkDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
@@ -257,24 +349,6 @@ class HomeworkDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.route('/homework/{tid}/scoreboard', 'homework_scoreboard')
-class HomeworkScoreboardHandler(contest.ContestMixin, base.Handler):
-  @base.route_argument
-  @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
-  @base.require_perm(builtin.PERM_VIEW_HOMEWORK_SCOREBOARD)
-  @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId):
-    tdoc, rows, udict = await self.get_scoreboard(document.TYPE_HOMEWORK, tid)
-    page_title = self.translate('homework_scoreboard')
-    path_components = self.build_path(
-        (self.translate('homework_main'), self.reverse_url('homework_main')),
-        (tdoc['title'], self.reverse_url('homework_detail', tid=tdoc['doc_id'])),
-        (page_title, None))
-    dudict = await domain.get_dict_user_by_uid(domain_id=self.domain_id, uids=udict.keys())
-    self.render('contest_scoreboard.html', tdoc=tdoc, rows=rows, dudict=dudict,
-                page_title=page_title, path_components=path_components)
-
-
 @app.route('/homework/{tid}/scoreboard/download/{ext}', 'homework_scoreboard_download')
 class HomeworkScoreboardDownloadHandler(contest.ContestMixin, base.Handler):
   def _export_status_as_csv(self, rows):
@@ -354,78 +428,4 @@ class HomeworkCreateHandler(contest.ContestMixin, base.Handler):
                             constant.contest.RULE_ASSIGNMENT, begin_at, end_at, pids,
                             penalty_since=penalty_since, penalty_rules=penalty_rules)
     await self.hide_problems(pids)
-    self.json_or_redirect(self.reverse_url('homework_detail', tid=tid))
-
-
-@app.route('/homework/{tid}/edit', 'homework_edit')
-class HomeworkEditHandler(contest.ContestMixin, base.Handler):
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_HOMEWORK)
-  @base.route_argument
-  @base.sanitize
-  async def get(self, *, tid: objectid.ObjectId):
-    tdoc = await contest.get(self.domain_id, document.TYPE_HOMEWORK, tid)
-    if not self.own(tdoc, builtin.PERM_EDIT_HOMEWORK_SELF):
-      self.check_perm(builtin.PERM_EDIT_HOMEWORK)
-    begin_at = pytz.utc.localize(tdoc['begin_at']).astimezone(self.timezone)
-    penalty_since = pytz.utc.localize(tdoc['penalty_since']).astimezone(self.timezone)
-    end_at = pytz.utc.localize(tdoc['end_at']).astimezone(self.timezone)
-    extension_days = round((end_at - penalty_since).total_seconds() / 60 / 60 / 24, ndigits=2)
-    page_title = self.translate('homework_edit')
-    path_components = self.build_path(
-        (self.translate('homework_main'), self.reverse_url('homework_main')),
-        (tdoc['title'], self.reverse_url('homework_detail', tid=tdoc['doc_id'])),
-        (page_title, None))
-    self.render('homework_edit.html', tdoc=tdoc,
-                date_begin_text=begin_at.strftime('%Y-%m-%d'),
-                time_begin_text=begin_at.strftime('%H:%M'),
-                date_penalty_text=penalty_since.strftime('%Y-%m-%d'),
-                time_penalty_text=penalty_since.strftime('%H:%M'),
-                extension_days=extension_days,
-                penalty_rules=_format_penalty_rules_yaml(tdoc['penalty_rules']),
-                pids=contest._format_pids(tdoc['pids']),
-                page_title=page_title, path_components=path_components)
-
-  @base.require_priv(builtin.PRIV_USER_PROFILE)
-  @base.require_perm(builtin.PERM_EDIT_PROBLEM)
-  @base.require_perm(builtin.PERM_EDIT_HOMEWORK)
-  @base.route_argument
-  @base.post_argument
-  @base.require_csrf_token
-  @base.sanitize
-  async def post(self, *, tid: objectid.ObjectId, title: str, content: str,
-                 begin_at_date: str, begin_at_time: str,
-                 penalty_since_date: str, penalty_since_time: str,
-                 extension_days: float, penalty_rules: str,
-                 pids: str):
-    tdoc = await contest.get(self.domain_id, document.TYPE_HOMEWORK, tid)
-    if not self.own(tdoc, builtin.PERM_EDIT_HOMEWORK_SELF):
-      self.check_perm(builtin.PERM_EDIT_HOMEWORK)
-    penalty_rules = _parse_penalty_rules_yaml(penalty_rules)
-    try:
-      begin_at = datetime.datetime.strptime(begin_at_date + ' ' + begin_at_time, '%Y-%m-%d %H:%M')
-      begin_at = self.timezone.localize(begin_at).astimezone(pytz.utc).replace(tzinfo=None)
-    except ValueError:
-      raise error.ValidationError('begin_at_date', 'begin_at_time')
-    try:
-      penalty_since = datetime.datetime.strptime(penalty_since_date + ' ' + penalty_since_time, '%Y-%m-%d %H:%M')
-      penalty_since = self.timezone.localize(penalty_since).astimezone(pytz.utc).replace(tzinfo=None)
-    except ValueError:
-      raise error.ValidationError('end_at_date', 'end_at_time')
-    end_at = penalty_since + datetime.timedelta(days=extension_days)
-    if begin_at >= penalty_since:
-      raise error.ValidationError('end_at_date', 'end_at_time')
-    if penalty_since > end_at:
-      raise error.ValidationError('extension_days')
-    pids = contest._parse_pids(pids)
-    await self.verify_problems(pids)
-    await contest.edit(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'], title=title, content=content,
-                       begin_at=begin_at, end_at=end_at, pids=pids,
-                       penalty_since=penalty_since, penalty_rules=penalty_rules)
-    await self.hide_problems(pids)
-    if tdoc['begin_at'] != begin_at \
-        or tdoc['end_at'] != end_at \
-        or tdoc['penalty_since'] != penalty_since \
-        or set(tdoc['pids']) != set(pids):
-      await contest.recalc_status(self.domain_id, document.TYPE_HOMEWORK, tdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('homework_detail', tid=tid))
