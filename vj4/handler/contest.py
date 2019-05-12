@@ -209,7 +209,7 @@ class ContestEditHandler(contest.ContestMixin, base.Handler):
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tdoc['doc_id']))
 
 
-@app.route('/contest/{tid}/{pid:[a-zA-Z0-9]+|\w{24}}', 'contest_detail_problem')
+@app.route('/contest/{tid}/{pid:[a-zA-Z0-9]+}', 'contest_detail_problem')
 class ContestDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST)

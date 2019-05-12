@@ -249,7 +249,7 @@ class HomeworkEditHandler(contest.ContestMixin, base.Handler):
     self.json_or_redirect(self.reverse_url('homework_detail', tid=tid))
 
 
-@app.route('/homework/{tid}/{pid:[a-zA-Z0-9]+|\w{24}}', 'homework_detail_problem')
+@app.route('/homework/{tid}/{pid:[a-zA-Z0-9]+}', 'homework_detail_problem')
 class HomeworkDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
