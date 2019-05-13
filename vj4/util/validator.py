@@ -12,7 +12,7 @@ DOMAIN_ID_RE = re.compile(r'[_A-Za-z][_0-9A-Za-z]{3,255}')
 ID_RE = re.compile(r'[^\\/\s\u3000]([^\\/\n\r]*[^\\/\s\u3000])?')
 ROLE_RE = re.compile(r'[_0-9A-Za-z]{1,256}')
 DOMAIN_INVITATION_CODE_RE = re.compile(r'[0-9A-Za-z]{1,64}')
-PID_RE = re.compile(r'[a-zA-Z0-9]{3,23}')
+PNAME_RE = re.compile(r'[a-zA-Z]+[a-zA-Z0-9]*')
 
 
 def is_uid(s):
@@ -24,13 +24,13 @@ def check_uid(s):
     raise error.ValidationError('uid')
 
 
-def is_string_pid(s):
-    return bool(PID_RE.fullmatch(s))
+def is_string_pname(s):
+    return bool(PNAME_RE.fullmatch(s))
 
 
-def check_string_pid(s):
-  if not is_string_pid(s):
-    raise error.ValidationError('pid')
+def check_string_pname(s):
+  if not is_string_pname(s):
+    raise error.ValidationError('pname')
 
 
 def is_uname(s):

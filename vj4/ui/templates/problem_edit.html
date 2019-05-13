@@ -12,13 +12,12 @@
                 <input name="title" placeholder="{{ _('title') }}" value="{{ pdoc['title']|default('') }}" class="textbox" autofocus>
               </label>
             </div>
-            {% if page_name == 'problem_create' %}
             <div class="medium-3 columns">
               <label>
-                {{ _('PID') }}
+                {{ _('PNAME') }}
                 <br>
                 <label>
-                  <input name="pid" placeholder="{{ _('Leave blank to use an allocated one.') }}" class="textbox">
+                  <input name="pname" placeholder="{{ _('Leave blank to use numeric pid.') }}" class="textbox">
                 </label>
               </label>
             </div>
@@ -30,7 +29,6 @@
                 </label>
               </label>
             </div>
-            {% endif %}
           </div>
           <div class="row"><div class="columns">
             <label>
