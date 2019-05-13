@@ -83,8 +83,6 @@ export default function ({ watch, production, errorHandler }) {
     gulp.watch('vj4/locale/*.yaml', handleWatchChange('locale'));
   };
 
-  tasks['default'] = () => gulp.parallel(tasks.iconfont, tasks.constant, tasks.locale)();
-
   for(let key in tasks) {
     // gulp4 uses function name directly as task name
     Object.defineProperty(tasks[key], 'name', {
@@ -93,6 +91,8 @@ export default function ({ watch, production, errorHandler }) {
     });
     tasks[key] = gulp.series(tasks[key]);
   }
+
+  tasks.default = gulp.series(gulp.parallel(tasks.iconfont, tasks.constant, tasks.locale));
 
   return tasks;
 

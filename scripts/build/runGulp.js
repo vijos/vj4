@@ -14,12 +14,17 @@ export default async function ({ watch, production }) {
   }
   const gulpTasks = gulpConfig({ watch, production, errorHandler: handleError });
   return new Promise(resolve => {
-    gulp.on('start', ({ name }) => {
-      log(chalk.blue(`Starting task: %s`), chalk.reset(name));
+    let taskList = {};
+
+    gulp.on('start', ({ uid, name }) => {
+      name[0] === '<' || log(chalk.blue(`Starting task: %s`), chalk.reset(name));
+      taskList[uid] = true;
     });
-    gulp.on('stop', ({ name }) => {
-      log(chalk.green(`Finished: %s`), chalk.reset(name));
-      if (name === 'default') {
+    gulp.on('stop', ({ uid, name }) => {
+      name[0] === '<' || log(chalk.green(`Finished: %s`), chalk.reset(name));
+      taskList[uid] = false;
+
+      if (Object.values(taskList).filter(b => b).length === 0) {
         if (watch) {
           gulpTasks['watch']();
         }
