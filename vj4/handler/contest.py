@@ -24,7 +24,7 @@ from vj4.handler import base
 from vj4.util import pagination
 
 
-@app.route('/contest', 'contest_main')
+@app.route('/c', 'contest_main')
 class ContestMainHandler(contest.ContestMixin, base.Handler):
   CONTESTS_PER_PAGE = 20
 
@@ -47,7 +47,7 @@ class ContestMainHandler(contest.ContestMixin, base.Handler):
                 tdocs=tdocs, tsdict=tsdict)
 
 
-@app.route('/contest/{tid:\w{24}}', 'contest_detail')
+@app.route('/c/{tid:\w{24}}', 'contest_detail')
 class ContestDetailHandler(contest.ContestMixin, base.OperationHandler):
   DISCUSSIONS_PER_PAGE = 15
 
@@ -105,7 +105,7 @@ class ContestDetailHandler(contest.ContestMixin, base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/contest/{tid:\w{24}}/code', 'contest_code')
+@app.route('/c/{tid:\w{24}}/code', 'contest_code')
 class ContestCodeHandler(base.OperationHandler):
   @base.limit_rate('contest_code', 3600, 60)
   @base.route_argument
@@ -132,7 +132,7 @@ class ContestCodeHandler(base.OperationHandler):
                       file_name='{}.zip'.format(tdoc['title']))
 
 
-@app.route('/contest/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
+@app.route('/c/{tid}/p/{pid:[a-zA-Z0-9]+}', 'contest_detail_problem')
 class ContestDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
@@ -163,7 +163,7 @@ class ContestDetailProblemHandler(contest.ContestMixin, base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
 
-@app.route('/contest/{tid}/{pid}/submit', 'contest_detail_problem_submit')
+@app.route('/c/{tid}/p/{pid}/submit', 'contest_detail_problem_submit')
 class ContestDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
@@ -233,7 +233,7 @@ class ContestDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.route('/contest/{tid}/scoreboard', 'contest_scoreboard')
+@app.route('/c/{tid}/scoreboard', 'contest_scoreboard')
 class ContestScoreboardHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
@@ -251,7 +251,7 @@ class ContestScoreboardHandler(contest.ContestMixin, base.Handler):
                 page_title=page_title, path_components=path_components)
 
 
-@app.route('/contest/{tid}/scoreboard/download/{ext}', 'contest_scoreboard_download')
+@app.route('/c/{tid}/scoreboard/download/{ext}', 'contest_scoreboard_download')
 class ContestScoreboardDownloadHandler(contest.ContestMixin, base.Handler):
   def _export_status_as_csv(self, rows):
     # \r\n for notepad compatibility
@@ -321,7 +321,7 @@ class ContestCreateHandler(contest.ContestMixin, base.Handler):
     self.json_or_redirect(self.reverse_url('contest_detail', tid=tid))
 
 
-@app.route('/contest/{tid}/edit', 'contest_edit')
+@app.route('/c/{tid}/edit', 'contest_edit')
 class ContestEditHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_priv(builtin.PRIV_USER_PROFILE)

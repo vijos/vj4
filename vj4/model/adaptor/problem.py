@@ -39,6 +39,10 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
               category: list=[], tag: list=[], hidden: bool=False):
   validator.check_title(title)
   validator.check_content(content)
+  try:
+    pid = int(pid)
+  except ValueError:
+    validator.check_string_pid(pid)
   pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
                            pid, title=title, data=data, category=category, tag=tag,
                            hidden=hidden, num_submit=0, num_accept=0)

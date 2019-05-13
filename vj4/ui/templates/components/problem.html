@@ -10,7 +10,7 @@
   {%- endif %}
   >
   {%- endif %}
-    {% if pdoc['doc_id']|string|length < 10 %}P{{ pdoc['doc_id'] }} {% endif %}{{ pdoc['title'] }}
+  {% if pdoc['doc_id'] is number %}P {{ pdoc['doc_id'] }}{% elif pdoc['doc_id']|string|length < 10 %} {{ pdoc['doc_id'] }} {% endif %}{{ pdoc['title'] }}
   {%- if not invalid %}
   </a>
   {%- endif %}
