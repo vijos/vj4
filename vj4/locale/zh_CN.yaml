@@ -775,6 +775,7 @@ home_domain_account: 当前域的设置
 Display name {1} you want to set is used by others.: 您想要设置的显示名 {1} 已经被其他人使用了。
 PID: 题号
 Leave blank to use an allocated one.: 留空以自动分配
+domain_rank: 排行
 Only {0} problems can be copied in one request, got {1}.: 一次请求只能复制 {0} 个题目，但是您输入了 {1} 个。
 Problem is successfully copied.: 题目复制完成。
 problem_copy: 复制题目

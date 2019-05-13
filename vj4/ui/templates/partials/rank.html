@@ -1,0 +1,29 @@
+{% import "components/paginator.html" as paginator with context %}
+{% import "components/nothing.html" as nothing with context %}
+<div data-fragment-id="rank">
+{% if not pdocs %}
+  {{ nothing.render('Sorry, there is no user in this domain.') }}
+{% else %}
+  <table class="data-table">
+    <colgroup>
+      <col class="col--name">
+      <col class="col--rp">
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="col--name">{{ _('Username') }}</th>
+        <th class="col--rp">{{ _('RP') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for pdoc in pdocs %}
+      <tr>
+        <td class="col--name">{{ pdoc['uname'] }}</td>
+        <td class="col--rp">{{ pdoc['rp']|int }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {{ paginator.render(page, ppcount) }}
+{% endif %}
+</div>
