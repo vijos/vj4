@@ -12,20 +12,20 @@ export default async function ({ watch, production }) {
       return;
     }
   }
-  gulpConfig({ watch, production, errorHandler: handleError });
+  const gulpTasks = gulpConfig({ watch, production, errorHandler: handleError });
   return new Promise(resolve => {
-    gulp.on('task_start', ({ task }) => {
-      log(chalk.blue(`Starting task: %s`), chalk.reset(task));
+    gulp.on('start', ({ name }) => {
+      log(chalk.blue(`Starting task: %s`), chalk.reset(name));
     });
-    gulp.on('task_stop', ({ task }) => {
-      log(chalk.green(`Finished: %s`), chalk.reset(task));
-      if (task === 'default') {
+    gulp.on('stop', ({ name }) => {
+      log(chalk.green(`Finished: %s`), chalk.reset(name));
+      if (name === 'default') {
         if (watch) {
-          gulp.start('watch');
+          gulpTasks['watch']();
         }
         resolve();
       }
     });
-    gulp.start('default');
+    gulpTasks['default']();
   });
 };

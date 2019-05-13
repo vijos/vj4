@@ -19,7 +19,7 @@ export default function touch(mtime) {
       return;
     }
     if (file.isStream()) {
-      this.emit('error', new PluginError('Stream not supported'));
+      this.emit('error', new PluginError('gulpTouch', 'Stream not supported'));
       callback();
       return;
     }
