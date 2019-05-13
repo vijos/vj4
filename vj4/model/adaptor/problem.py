@@ -34,8 +34,8 @@ def get_categories():
 
 
 @argmethod.wrap
-async def add(domain_id: str, title: str, content: str, owner_uid: int, pname: str=None,
-              pid: document.convert_doc_id=None, data: objectid.ObjectId=None,
+async def add(domain_id: str, title: str, content: str, owner_uid: int, 
+              pid: document.convert_doc_id=None, pname: str=None, data: objectid.ObjectId=None,
               category: list=[], tag: list=[], hidden: bool=False):
   validator.check_title(title)
   validator.check_content(content)
