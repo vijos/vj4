@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import gulp from 'gulp';
-import gutil from 'gulp-util';
+import log from 'fancy-log';
 import chalk from 'chalk';
 import del from 'del';
 import svgmin from 'gulp-svgmin';
@@ -18,7 +18,7 @@ const iconTimestamp = moment.utc([2017, 0, 1, 0, 0, 0, 0]).unix();
 
 function handleWatchChange(name, r = 300) {
   return _.debounce((ev) => {
-    gutil.log('File %s: %s', chalk.yellow(ev.type), ev.path);
+    log('File %s: %s', chalk.yellow(ev.type), ev.path);
     gulp.start(name);
   }, r);
 }
