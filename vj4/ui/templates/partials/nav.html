@@ -31,6 +31,7 @@
     {% if handler.has_perm(vj4.model.builtin.PERM_EDIT_DESCRIPTION) or handler.has_perm(vj4.model.builtin.PERM_EDIT_PERM) %}
       {{ nav_item('domain_manage', 'domain_manage') }}
     {% endif %}
+    {{ nav_item('domain_ranking', 'domain_ranking') }}
     </ol>
     <ol class="nav__list nav__list--secondary clearfix">
     {% if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}

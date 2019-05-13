@@ -13,6 +13,7 @@ from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
+from vj4.util import pagination
 from vj4.util import misc
 from vj4.util import options
 from vj4.util import validator
@@ -253,3 +254,35 @@ class UserSearchHandler(base.Handler):
     for i in range(len(udocs)):
       self.modify_udoc(udocs, i)
     self.json(udocs)
+
+
+async def render_or_json_rank(self, page, ppcount, pcount, pdocs, **kwargs):
+  if 'page_title' not in kwargs:
+    kwargs['page_title'] = self.translate(self.TITLE)
+  if 'path_components' not in kwargs:
+    kwargs['path_components'] = self.build_path((self.translate(self.NAME), None))
+  if self.prefer_json:
+    list_html = self.render_html('partials/rank.html', page=page, ppcount=ppcount,
+                                 pcount=pcount, pdocs=pdocs, psdict=psdict)
+    path_html = self.render_html('partials/path.html', path_components=kwargs['path_components'])
+    self.json({'title': self.render_title(kwargs['page_title']),
+               'fragments': [{'html': list_html},
+                             {'html': stat_html},
+                             {'html': lucky_html},
+                             {'html': path_html}]})
+  else:
+    self.render('ranking.html', page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs, **kwargs)
+
+
+@app.route('/ranking', 'domain_ranking')
+class RankHandler(base.Handler):
+  USERS_PER_PAGE = 100
+  @base.get_argument
+  @base.sanitize
+  async def get(self, *, domain_id: str="system", page: int=1):
+    pdocs, ppcount, pcount = await pagination.paginate(domain.get_multi_user(domain_id=domain_id).sort([('rp', -1)]),
+                                                       page, self.USERS_PER_PAGE)
+    for pdoc in pdocs:
+      pdoc['uname'] = await user.get_by_uid(pdoc['uid'])
+      pdoc['uname'] = pdoc['uname']['uname']
+    await render_or_json_rank(self, domain_id=domain_id, page=page, ppcount=ppcount, pcount=pcount, pdocs=pdocs, page_title="Rank")
