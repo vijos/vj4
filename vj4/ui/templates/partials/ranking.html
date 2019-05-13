@@ -13,6 +13,7 @@
       <tr>
         <th class="col--name">{{ _('Username') }}</th>
         <th class="col--rp">{{ _('RP') }}</th>
+        <th class="col--ac">{{ _('Accepted') }}</th>
       </tr>
     </thead>
     <tbody>
@@ -20,6 +21,7 @@
       <tr>
         <td class="col--name">{{ pdoc['uname'] }}</td>
         <td class="col--rp">{{ pdoc['rp']|int }}</td>
+        <td class="col--ac">{{ pdoc['num_accept'] }}</td>
       </tr>
     {% endfor %}
     </tbody>
