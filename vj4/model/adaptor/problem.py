@@ -73,7 +73,7 @@ async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
   try:
     pid = int(pid)
     pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
-  except ValueError:
+  except ValueError, TypeError:
     if len(pid) < 24:
       pdoc = await document.get_by_pname(domain_id, document.TYPE_PROBLEM, pid)
     else:
