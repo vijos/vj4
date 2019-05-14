@@ -254,17 +254,3 @@ class UserSearchHandler(base.Handler):
     for i in range(len(udocs)):
       self.modify_udoc(udocs, i)
     self.json(udocs)
-
-
-@app.route('/ranking', 'domain_ranking')
-class RankHandler(base.Handler):
-  USERS_PER_PAGE = 100
-  @base.get_argument
-  @base.sanitize
-  async def get(self, *, domain_id: str="system", page: int=1):
-    udocs, uucount, ucount = await pagination.paginate(domain.get_multi_user(domain_id=domain_id).sort([('rp', -1)]),
-                                                       page, self.USERS_PER_PAGE)
-    for udoc in udocs:
-      udoc['uname'] = await user.get_by_uid(udoc['uid'])
-      udoc['uname'] = udoc['uname']['uname']
-    self.render('ranking.html', page=page, uucount=uucount, ucount=ucount, udocs=udocs, **kwargs)

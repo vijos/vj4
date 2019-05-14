@@ -51,7 +51,7 @@ def _format_penalty_rules_yaml(penalty_rules):
   return yaml_doc
 
 
-@app.route('/h', 'homework_main')
+@app.route('/homework', 'homework_main')
 class HomeworkMainHandler(contest.ContestMixin, base.Handler):
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
   async def get(self):
@@ -72,7 +72,7 @@ class HomeworkMainHandler(contest.ContestMixin, base.Handler):
     self.render('homework_main.html', tdocs=tdocs, calendar_tdocs=calendar_tdocs)
 
 
-@app.route('/h/{tid:\w{24}}', 'homework_detail')
+@app.route('/homework/{tid:\w{24}}', 'homework_detail')
 class HomeworkDetailHandler(contest.ContestMixin, base.OperationHandler):
   DISCUSSIONS_PER_PAGE = 15
 
@@ -130,7 +130,7 @@ class HomeworkDetailHandler(contest.ContestMixin, base.OperationHandler):
     self.json_or_redirect(self.url)
 
 
-@app.route('/h/{tid:\w{24}}/code', 'homework_code')
+@app.route('/homework/{tid:\w{24}}/code', 'homework_code')
 class HomeworkCodeHandler(base.OperationHandler):
   @base.limit_rate('homework_code', 3600, 60)
   @base.route_argument
@@ -157,7 +157,7 @@ class HomeworkCodeHandler(base.OperationHandler):
                       file_name='{}.zip'.format(tdoc['title']))
 
 
-@app.route('/h/{tid}/p/{pid:[a-zA-Z0-9]+}', 'homework_detail_problem')
+@app.route('/homework/{tid}/p/{pid}', 'homework_detail_problem')
 class HomeworkDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
@@ -188,7 +188,7 @@ class HomeworkDetailProblemHandler(contest.ContestMixin, base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
 
-@app.route('/h/{tid}/p/{pid}/submit', 'homework_detail_problem_submit')
+@app.route('/homework/{tid}/p/{pid}/submit', 'homework_detail_problem_submit')
 class HomeworkDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
@@ -257,7 +257,7 @@ class HomeworkDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
       self.json_or_redirect(self.reverse_url('record_detail', rid=rid))
 
 
-@app.route('/h/{tid}/scoreboard', 'homework_scoreboard')
+@app.route('/homework/{tid}/scoreboard', 'homework_scoreboard')
 class HomeworkScoreboardHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
@@ -275,7 +275,7 @@ class HomeworkScoreboardHandler(contest.ContestMixin, base.Handler):
                 page_title=page_title, path_components=path_components)
 
 
-@app.route('/h/{tid}/scoreboard/download/{ext}', 'homework_scoreboard_download')
+@app.route('/homework/{tid}/scoreboard/download/{ext}', 'homework_scoreboard_download')
 class HomeworkScoreboardDownloadHandler(contest.ContestMixin, base.Handler):
   def _export_status_as_csv(self, rows):
     # \r\n for notepad compatibility
@@ -357,7 +357,7 @@ class HomeworkCreateHandler(contest.ContestMixin, base.Handler):
     self.json_or_redirect(self.reverse_url('homework_detail', tid=tid))
 
 
-@app.route('/h/{tid}/edit', 'homework_edit')
+@app.route('/homework/{tid}/edit', 'homework_edit')
 class HomeworkEditHandler(contest.ContestMixin, base.Handler):
   @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.require_perm(builtin.PERM_EDIT_HOMEWORK)

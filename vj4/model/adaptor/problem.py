@@ -41,17 +41,21 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
   validator.check_content(content)
   if not pid:
     pid = await domain.inc_pid_counter(domain_id)
-  if not pname:
-    try:
-      pid = int(pid)
-      pname = 'P' + str(pid)
-    except ValueError:
-      pass
-  else:
+  try:
+    pid = int(pid)
+  except ValueError:
+    pass
+  if pname == "":
+    pname = None
+  if pname:
     validator.check_string_pname(pname)
-  pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
-                           pid, pname=pname, title=title, data=data, category=category, tag=tag,
-                           hidden=hidden, num_submit=0, num_accept=0)
+    pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
+                             pid, pname=pname, title=title, data=data, category=category, tag=tag,
+                             hidden=hidden, num_submit=0, num_accept=0)
+  else:
+    pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
+                             pid, title=title, data=data, category=category, tag=tag,
+                             hidden=hidden, num_submit=0, num_accept=0)
   await domain.inc_user(domain_id, owner_uid, num_problems=1)
   return pid
 
