@@ -40,10 +40,13 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
   validator.check_title(title)
   validator.check_content(content)
   if not pname:
-    pname = 'P' + str(pid)
+    try:
+      pid = int(pid)
+      pname = 'P' + str(pid)
+    except ValueError:
+      pass
   else:
     validator.check_string_pname(pname)
-    print(pname)
   pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
                            pid, pname=pname, title=title, data=data, category=category, tag=tag,
                            hidden=hidden, num_submit=0, num_accept=0)
@@ -73,8 +76,8 @@ async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
   try:
     pid = int(pid)
     pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
-  except ValueError, TypeError:
-    if len(pid) < 24:
+  except ValueError:
+    if len(str(pid)) < 24:
       pdoc = await document.get_by_pname(domain_id, document.TYPE_PROBLEM, pid)
     else:
       pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)

@@ -57,7 +57,7 @@ async def add(domain_id: str, content: str, owner_uid: int,
     assert parent_doc_type and parent_doc_id
     doc['parent_doc_type'], doc['parent_doc_id'] = parent_doc_type, parent_doc_id
   await coll.insert_one(doc)
-  return doc['doc_id']
+  return doc.get('pname',doc['doc_id'])
 
 
 @argmethod.wrap
