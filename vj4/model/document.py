@@ -40,6 +40,20 @@ def convert_doc_id(doc_id):
 
 
 @argmethod.wrap
+async def get_pid(domain_id, key):
+  if objectid.ObjectId.is_valid(key):
+    pdoc = await get(domain_id, TYPE_PROBLEM, objectid.ObjectId(key))
+  try:
+    key = int(key)
+    pdoc = await get(domain_id, TYPE_PROBLEM, key)
+  except ValueError:
+    pdoc = await get_by_pname(domain_id, TYPE_PROBLEM, key)
+  if not pdoc:
+    raise error.ProblemNotFoundError(domain_id, key)
+  return pdoc['doc_id']
+
+
+@argmethod.wrap
 async def add(domain_id: str, content: str, owner_uid: int,
               doc_type: int, doc_id: convert_doc_id = None,
               parent_doc_type: int = None, parent_doc_id: convert_doc_id = None, **kwargs):

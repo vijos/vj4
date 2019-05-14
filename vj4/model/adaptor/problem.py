@@ -75,17 +75,9 @@ async def copy(pdoc, dest_domain_id: str, owner_uid: int,
 
 @argmethod.wrap
 async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
-  try:
-    pid = int(pid)
-    pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
-  except ValueError:
-    if len(str(pid)) < 24:
-      pdoc = await document.get_by_pname(domain_id, document.TYPE_PROBLEM, pid)
-    else:
-      pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
-  if not pdoc:
-    raise error.ProblemNotFoundError(domain_id, pid)
   # TODO(twd2): move out:
+  pid = await document.get_pid(domain_id, pid)
+  pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
   if uid is not None:
     pdoc['psdoc'] = await document.get_status(domain_id, document.TYPE_PROBLEM,
                                               doc_id=pid, uid=uid)
@@ -96,6 +88,7 @@ async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
 
 @argmethod.wrap
 async def edit(domain_id: str, pid: document.convert_doc_id, **kwargs):
+  pid = await document.get_pid(domain_id, pid)
   if 'title' in kwargs:
       validator.check_title(kwargs['title'])
   if 'content' in kwargs:
@@ -151,12 +144,14 @@ async def get_dict_multi_domain(pdom_and_ids, *, fields=None):
 
 @argmethod.wrap
 async def get_status(domain_id: str, pid: document.convert_doc_id, uid: int, fields=None):
+  pid = await document.get_pid(domain_id, pid)
   return await document.get_status(domain_id, document.TYPE_PROBLEM, pid, uid, fields=fields)
 
 
 @argmethod.wrap
 async def inc_status(domain_id: str, pid: document.convert_doc_id, uid: int,
                      key: str, value: int):
+  pid = await document.get_pid(domain_id, pid)
   return await document.inc_status(domain_id, document.TYPE_PROBLEM, pid, uid, key, value)
 
 
@@ -176,12 +171,14 @@ async def get_dict_status(domain_id, uid, pids, *, fields=None):
 
 @argmethod.wrap
 async def set_star(domain_id: str, pid: document.convert_doc_id, uid: int, star: bool):
+  pid = await document.get_pid(domain_id, pid)
   return await document.set_status(domain_id, document.TYPE_PROBLEM, pid, uid, star=star)
 
 
 @argmethod.wrap
 async def add_solution(domain_id: str, pid: document.convert_doc_id, uid: int, content: str):
   validator.check_content(content)
+  pid = await document.get_pid(domain_id, pid)
   return await document.add(domain_id, content, uid, document.TYPE_PROBLEM_SOLUTION, None,
                             document.TYPE_PROBLEM, pid, vote=0, reply=[])
 
@@ -203,7 +200,8 @@ async def set_solution(domain_id: str, psid: document.convert_doc_id, content: s
   return psdoc
 
 
-def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None):
+async def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None):
+  pid = await document.get_pid(domain_id, pid)
   return document.get_multi(domain_id=domain_id,
                             doc_type=document.TYPE_PROBLEM_SOLUTION,
                             parent_doc_type=document.TYPE_PROBLEM,
@@ -231,6 +229,7 @@ async def delete_solution(domain_id: str, psid: document.convert_doc_id):
 @argmethod.wrap
 async def get_list_solution(domain_id: str, pid: document.convert_doc_id,
                             fields=None, skip: int = 0, limit: int = 0):
+  pid = await document.get_pid(domain_id, pid)
   return await document.get_multi(domain_id=domain_id,
                                   doc_type=document.TYPE_PROBLEM_SOLUTION,
                                   parent_doc_type=document.TYPE_PROBLEM,
@@ -310,6 +309,7 @@ async def get_data(pdoc):
 
 @argmethod.wrap
 async def set_data(domain_id: str, pid: document.convert_doc_id, data: objectid.ObjectId):
+  pid = await document.get_pid(domain_id, pid)
   pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, data=data)
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
@@ -319,6 +319,7 @@ async def set_data(domain_id: str, pid: document.convert_doc_id, data: objectid.
 
 @argmethod.wrap
 async def set_hidden(domain_id: str, pid: document.convert_doc_id, hidden: bool):
+  pid = await document.get_pid(domain_id, pid)
   pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, hidden=hidden)
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
@@ -346,12 +347,14 @@ async def get_data_list(last: int):
 
 @argmethod.wrap
 async def inc(domain_id: str, pid: document.convert_doc_id, key: str, value: int):
+  pid = await document.get_pid(domain_id, pid)
   return await document.inc(domain_id, document.TYPE_PROBLEM, pid, key, value)
 
 
 @argmethod.wrap
 async def update_status(domain_id: str, pid: document.convert_doc_id, uid: int,
                         rid: objectid.ObjectId, status: int):
+  pid = await document.get_pid(domain_id, pid)
   try:
     return await document.set_if_not_status(domain_id, document.TYPE_PROBLEM, pid, uid,
                                             'status', status, constant.record.STATUS_ACCEPTED,
