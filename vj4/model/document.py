@@ -68,6 +68,14 @@ async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id, fields=None
                               'doc_id': doc_id}, projection=fields)
 
 
+@argmethod.wrap
+async def get_by_pname(domain_id: str, doc_type: int, pname: str, fields=None):
+  coll = db.coll('document')
+  return await coll.find_one({'domain_id': domain_id,
+                              'doc_type': doc_type,
+                              'pname': pname}, projection=fields)
+
+
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
   coll = db.coll('document')
   doc = await coll.find_one_and_update(filter={'domain_id': domain_id,
@@ -408,6 +416,9 @@ async def ensure_indexes():
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('dag.pids', 1)], sparse=True)
+  await coll.create_index([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('pname', 1)], sparse=True)
   status_coll = db.coll('document.status')
   await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),
@@ -437,9 +448,6 @@ async def ensure_indexes():
                                   ('uid', 1),
                                   ('enroll', 1),
                                   ('doc_id', 1)], sparse=True)
-  await status_coll.create_indec([('domain_id', 1),
-                                  ('doc_type', 1),
-                                  ('pname', 1)], sparse=True)
 
 
 if __name__ == '__main__':

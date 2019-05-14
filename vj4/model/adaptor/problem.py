@@ -34,15 +34,16 @@ def get_categories():
 
 
 @argmethod.wrap
-async def add(domain_id: str, title: str, content: str, owner_uid: int, 
+async def add(domain_id: str, title: str, content: str, owner_uid: int,
               pid: document.convert_doc_id=None, pname: str=None, data: objectid.ObjectId=None,
               category: list=[], tag: list=[], hidden: bool=False):
   validator.check_title(title)
   validator.check_content(content)
   if not pname:
-    pname = str(pid)
+    pname = 'P' + str(pid)
   else:
     validator.check_string_pname(pname)
+    print(pname)
   pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
                            pid, pname=pname, title=title, data=data, category=category, tag=tag,
                            hidden=hidden, num_submit=0, num_accept=0)
@@ -71,9 +72,12 @@ async def copy(pdoc, dest_domain_id: str, owner_uid: int,
 async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
   try:
     pid = int(pid)
+    pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
   except ValueError:
-    
-  pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
+    if len(pid) < 24:
+      pdoc = await document.get_by_pname(domain_id, document.TYPE_PROBLEM, pid)
+    else:
+      pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
   if not pdoc:
     raise error.ProblemNotFoundError(domain_id, pid)
   # TODO(twd2): move out:
