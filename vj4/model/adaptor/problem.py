@@ -39,6 +39,8 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
               category: list=[], tag: list=[], hidden: bool=False):
   validator.check_title(title)
   validator.check_content(content)
+  if not pid:
+    pid = await domain.inc_pid_counter(domain_id)
   if not pname:
     try:
       pid = int(pid)
