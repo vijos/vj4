@@ -24,6 +24,7 @@ export default class MessagePadDialogueListContainer extends React.PureComponent
   componentDidMount() {
     $(this.refs.list).scrollLock({ strict: true });
   }
+
   render() {
     const orderedDialogues = _.orderBy(
       _.values(this.props.dialogues),

@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 export default function SplitPaneFillOverlayComponent(props) {
@@ -14,6 +14,6 @@ export default function SplitPaneFillOverlayComponent(props) {
 }
 
 SplitPaneFillOverlayComponent.propTypes = {
-  className: React.PropTypes.string,
-  children: React.PropTypes.node,
+  className: PropTypes.string,
+  children: PropTypes.node,
 };

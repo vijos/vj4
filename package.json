@@ -81,6 +81,7 @@
     "pickadate": "^3.5.6",
     "plugin-error": "^1.0.1",
     "prismjs": "^1.6.0",
+    "prop-types": "^15.7.2",
     "rc-tabs": "^9.1.0",
     "react": "^15.6.1",
     "react-codemirror": "^1.0.0",
@@ -112,14 +113,19 @@
       "@babel/plugin-transform-runtime",
       "@babel/plugin-syntax-dynamic-import",
       "@babel/plugin-syntax-import-meta",
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-proposal-json-strings",
       [
         "@babel/plugin-proposal-decorators",
         {
           "legacy": true
         }
       ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ],
+      "@babel/plugin-proposal-json-strings",
       "@babel/plugin-proposal-function-sent",
       "@babel/plugin-proposal-export-namespace-from",
       "@babel/plugin-proposal-numeric-separator",
@@ -140,12 +146,17 @@
       "@babel/plugin-transform-runtime",
       "@babel/plugin-syntax-dynamic-import",
       "@babel/plugin-syntax-import-meta",
-      "@babel/plugin-proposal-class-properties",
       "@babel/plugin-proposal-json-strings",
       [
         "@babel/plugin-proposal-decorators",
         {
           "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
         }
       ],
       "@babel/plugin-proposal-function-sent",

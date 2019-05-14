@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default class DomComponent extends React.PureComponent {
   componentDidMount() {
@@ -21,5 +22,5 @@ export default class DomComponent extends React.PureComponent {
 }
 
 DomComponent.propTypes = {
-  childDom: React.PropTypes.instanceOf(HTMLElement).isRequired,
+  childDom: PropTypes.instanceOf(HTMLElement).isRequired,
 };

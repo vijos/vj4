@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SplitPaneFillOverlay from 'vj/components/react-splitpane/SplitPaneFillOverlayComponent';
 
@@ -19,7 +20,7 @@ export default function PanelComponent(props) {
 }
 
 PanelComponent.propTypes = {
-  title: React.PropTypes.node,
-  className: React.PropTypes.string,
-  children: React.PropTypes.node,
+  title: PropTypes.node,
+  className: PropTypes.string,
+  children: PropTypes.node,
 };

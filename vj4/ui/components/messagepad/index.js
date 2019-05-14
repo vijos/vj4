@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import request from 'vj/utils/request';
@@ -20,11 +21,13 @@ const mapDispatchToProps = dispatch => ({
 @connect(null, mapDispatchToProps)
 export default class MessagePadContainer extends React.PureComponent {
   static propTypes = {
-    onAdd: React.PropTypes.func.isRequired,
+    onAdd: PropTypes.func.isRequired,
   };
+
   componentDidMount() {
     this.props.loadDialogues();
   }
+
   render() {
     return (
       <div className="messagepad clearfix">
@@ -34,7 +37,9 @@ export default class MessagePadContainer extends React.PureComponent {
               onClick={() => this.props.onAdd()}
               className="primary rounded button"
             >
-              <Icon name="add" /> {i18n('New')}
+              <Icon name="add" />
+              {' '}
+              {i18n('New')}
             </button>
           </div>
           <MessagePadDialogueList />

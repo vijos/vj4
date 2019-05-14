@@ -21,6 +21,7 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
   componentDidMount() {
     $(this.refs.list).scrollLock({ strict: true });
   }
+
   componentWillUpdate(nextProps) {
     if (nextProps.activeId !== this.props.activeId) {
       this.scrollToBottom = true;
@@ -35,6 +36,7 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
     }
     this.scrollToBottom = false;
   }
+
   componentDidUpdate() {
     if (this.scrollToBottom) {
       const node = this.refs.list;
@@ -46,6 +48,7 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
       }
     }
   }
+
   renderInner() {
     if (this.props.activeId === null) {
       return [];
@@ -67,6 +70,7 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
       </Message>
     ));
   }
+
   render() {
     return (
       <ol className="messagepad__content" ref="list">
