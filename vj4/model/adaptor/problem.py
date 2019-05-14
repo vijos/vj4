@@ -69,6 +69,10 @@ async def copy(pdoc, dest_domain_id: str, owner_uid: int,
 
 @argmethod.wrap
 async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
+  try:
+    pid = int(pid)
+  except ValueError:
+    
   pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
   if not pdoc:
     raise error.ProblemNotFoundError(domain_id, pid)

@@ -437,6 +437,9 @@ async def ensure_indexes():
                                   ('uid', 1),
                                   ('enroll', 1),
                                   ('doc_id', 1)], sparse=True)
+  await status_coll.create_indec([('domain_id', 1),
+                                  ('doc_type', 1),
+                                  ('pname', 1)], sparse=True)
 
 
 if __name__ == '__main__':
