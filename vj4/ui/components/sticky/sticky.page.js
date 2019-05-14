@@ -30,7 +30,7 @@ function updateStickies($stickies) {
 function getCutoff(str) {
   if (str === 'medium') {
     return responsiveCutoff.mobile;
-  } else if (str === 'large') {
+  } if (str === 'large') {
     return responsiveCutoff.desktop;
   }
   return 0;

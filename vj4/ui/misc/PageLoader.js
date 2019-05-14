@@ -23,6 +23,7 @@ export class Page {
     this.afterLoading = afterLoading;
     this.beforeLoading = beforeLoading;
   }
+
   isNameMatch(name) {
     if (typeof this.name === 'string') {
       return this.name === name;

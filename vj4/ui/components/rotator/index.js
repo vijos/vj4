@@ -38,14 +38,14 @@ export default class Rotator extends DOMAttachedObject {
   }
 
   async animateOutItem(toPosition) {
-    const $item = this.$item;
+    const { $item } = this;
     $item.attr('class', this.getItemClass(toPosition));
     await delay(ANIMATION_DURATION);
     $item.remove();
   }
 
   async animateInItem() {
-    const $item = this.$item;
+    const { $item } = this;
     $item.height(); // force reflow
     $item.attr('class', this.getItemClass(POS_ORIGINAL));
     await delay(ANIMATION_DURATION);

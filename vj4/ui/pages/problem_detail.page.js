@@ -17,6 +17,7 @@ class ProblemPageExtender {
     this.$contentBound = this.$content.closest('.section');
     this.$scratchpadContainer = $('.scratchpad-container');
   }
+
   async extend() {
     if (this.inProgress) {
       return;
@@ -182,7 +183,9 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     const SockJs = await import('sockjs-client');
     const { default: ScratchpadApp } = await import('../components/scratchpad');
     const { default: ScratchpadReducer } = await import('../components/scratchpad/reducers');
-    const { React, render, unmountComponentAtNode, Provider, store } = await loadReactRedux(ScratchpadReducer);
+    const {
+      React, render, unmountComponentAtNode, Provider, store,
+    } = await loadReactRedux(ScratchpadReducer);
 
     const sock = new SockJs(Context.socketUrl);
     sock.onmessage = (message) => {

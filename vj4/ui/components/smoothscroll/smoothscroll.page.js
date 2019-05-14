@@ -34,8 +34,8 @@ const smoothScrollPage = new AutoloadPage('smoothScrollPage', null, () => {
     }
     const elem = e.target;
     if (
-      elem.nodeName === 'A' &&
-      scrollIfAnchor(elem.getAttribute('href'), true)
+      elem.nodeName === 'A'
+      && scrollIfAnchor(elem.getAttribute('href'), true)
     ) {
       e.preventDefault();
     }

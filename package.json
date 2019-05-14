@@ -104,7 +104,8 @@
   "scripts": {
     "build": "node scripts/build",
     "build:production": "node scripts/build --production",
-    "build:watch": "node scripts/build --watch"
+    "build:watch": "node scripts/build --watch",
+    "lint": "eslint --fix ./vj4/ui/"
   },
   "babel": {
     "plugins": [
