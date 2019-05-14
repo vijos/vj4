@@ -43,7 +43,7 @@
     "fs-extra": "^8.0.1",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.0",
-    "gulp-iconfont": "^10.0.2",
+    "gulp-iconfont": "^9.2.0",
     "gulp-if": "^2.0.2",
     "gulp-nunjucks": "^4.0.0",
     "gulp-plumber": "^1.2.1",
