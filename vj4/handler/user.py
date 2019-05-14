@@ -13,7 +13,6 @@ from vj4.model import user
 from vj4.model.adaptor import discussion
 from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
-from vj4.util import pagination
 from vj4.util import misc
 from vj4.util import options
 from vj4.util import validator
