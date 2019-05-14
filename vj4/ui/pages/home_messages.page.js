@@ -26,9 +26,9 @@ const page = new NamedPage('home_messages', () => {
   }
 
   async function mountComponent() {
-    const SockJs = await System.import('sockjs-client');
-    const { default: MessagePadApp } = await System.import('../components/messagepad');
-    const { default: MessagePadReducer } = await System.import('../components/messagepad/reducers');
+    const SockJs = await import('sockjs-client');
+    const { default: MessagePadApp } = await import('../components/messagepad');
+    const { default: MessagePadReducer } = await import('../components/messagepad/reducers');
     const { React, render, Provider, store } = await loadReactRedux(MessagePadReducer);
 
     reduxStore = store;

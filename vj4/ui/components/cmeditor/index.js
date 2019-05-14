@@ -12,7 +12,7 @@ export default class CmEditor extends DOMAttachedObject {
   }
 
   async init() {
-    const { default: VjCmEditor } = await System.import('./vjcmeditor');
+    const { default: VjCmEditor } = await import('./vjcmeditor');
 
     const hasFocus = this.$dom.is(':focus');
     const srcHeight = this.$dom.outerHeight();

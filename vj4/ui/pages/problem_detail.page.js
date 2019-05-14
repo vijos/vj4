@@ -179,9 +179,9 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
 
     $('.loader-container').show();
 
-    const SockJs = await System.import('sockjs-client');
-    const { default: ScratchpadApp } = await System.import('../components/scratchpad');
-    const { default: ScratchpadReducer } = await System.import('../components/scratchpad/reducers');
+    const SockJs = await import('sockjs-client');
+    const { default: ScratchpadApp } = await import('../components/scratchpad');
+    const { default: ScratchpadReducer } = await import('../components/scratchpad/reducers');
     const { React, render, unmountComponentAtNode, Provider, store } = await loadReactRedux(ScratchpadReducer);
 
     const sock = new SockJs(Context.socketUrl);
