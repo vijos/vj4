@@ -164,6 +164,7 @@ Sign Up Now: 现在注册
 Sign up mail has been sent to your email.: 注册邮件已经发送到您的电子邮箱。
 Solutions: 题解
 'Solved {0} problems, RP: {1} (No. {2})': '解决了 {0} 道题目，RP: {1} (No. {2})'
+'Solved {0} problems, RP: {1}': '解决了 {0} 道题目，RP: {1}'
 Sorry: 对不起
 Sorry, there is no problem in the problem set: 题库中没有题目
 Solutions Liked: 题解被赞
@@ -783,6 +784,7 @@ Copy from: 复制自
 domain_ranking: 排名
 Problem ID List: 题目 ID 列表
 Copy: 复制
+Info: 信息
 Destination Domain: 目标域
 Domain ID: 域 ID
 Test data comes from: 测试数据来自
