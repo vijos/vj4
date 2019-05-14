@@ -1,12 +1,44 @@
 {% extends "layout/basic.html" %}
+{% import "components/paginator.html" as paginator with context %}
+{% import "components/nothing.html" as nothing with context %}
 {% block content %}
 <div class="row">
-  <div class="medium-12 columns">
-    <div class="section">
-      <div class="section__body no-padding">
-        {% include "partials/ranking.html" %}
-      </div>
-    </div>
-  </div>
+	<div class="medium-12 columns">
+		<div class="section">
+			<div class="section__body no-padding">
+				<div data-fragment-id="rank">
+					{% if not udocs %}
+					{{ nothing.render('Sorry, there is no user in this domain.') }}
+					{% else %}
+					<table class="data-table">
+						<colgroup>
+							<col class="col--name">
+							<col class="col--rp">
+						</colgroup>
+						<thead>
+							<tr>
+								<th class="col--name">{{ _('Username') }}</th>
+								<th class="col--rp">{{ _('RP') }}</th>
+								<th class="col--ac">{{ _('Accepted') }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for udoc in udocs %}
+							{% if udoc['rp']>0 %}
+							<tr>
+								<td class="col--name">{{ udoc['uname'] }}</td>
+								<td class="col--rp">{{ udoc['rp']|int }}</td>
+								<td class="col--ac">{{ udoc['num_accept'] }}</td>
+							</tr>
+							{% endif %}
+							{% endfor %}
+						</tbody>
+					</table>
+					{{ paginator.render(page, uucount) }}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}
