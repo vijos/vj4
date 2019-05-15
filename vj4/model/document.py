@@ -71,7 +71,7 @@ async def add(domain_id: str, content: str, owner_uid: int,
     assert parent_doc_type and parent_doc_id
     doc['parent_doc_type'], doc['parent_doc_id'] = parent_doc_type, parent_doc_id
   await coll.insert_one(doc)
-  return doc.get('pname',doc['doc_id'])
+  return doc.get('pname', doc['doc_id'])
 
 
 @argmethod.wrap
@@ -431,8 +431,8 @@ async def ensure_indexes():
                            ('doc_type', 1),
                            ('dag.pids', 1)], sparse=True)
   await coll.create_index([('domain_id', 1),
-                                  ('doc_type', 1),
-                                  ('pname', 1)], sparse=True)
+                           ('doc_type', 1),
+                           ('pname', 1)], sparse=True)
   status_coll = db.coll('document.status')
   await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),

@@ -41,17 +41,21 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
   validator.check_content(content)
   if not pid:
     pid = await domain.inc_pid_counter(domain_id)
-  if not pname:
-    try:
-      pid = int(pid)
-      pname = 'P' + str(pid)
-    except ValueError:
-      pass
-  else:
+  try:
+    pid = int(pid)
+  except ValueError:
+    pass
+  if pname == "":
+    pname = None
+  if pname:
     validator.check_string_pname(pname)
-  pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
-                           pid, pname=pname, title=title, data=data, category=category, tag=tag,
-                           hidden=hidden, num_submit=0, num_accept=0)
+    pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
+                             pid, pname=pname, title=title, data=data, category=category, tag=tag,
+                             hidden=hidden, num_submit=0, num_accept=0)
+  else:
+    pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
+                             pid, title=title, data=data, category=category, tag=tag,
+                             hidden=hidden, num_submit=0, num_accept=0)
   await domain.inc_user(domain_id, owner_uid, num_problems=1)
   return pid
 
@@ -75,9 +79,10 @@ async def copy(pdoc, dest_domain_id: str, owner_uid: int,
 
 @argmethod.wrap
 async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
-  # TODO(twd2): move out:
   pid = await document.get_pid(domain_id, pid)
   pdoc = await document.get(domain_id, document.TYPE_PROBLEM, pid)
+  if not pdoc:
+    raise error.ProblemNotFoundError(domain_id, pid)
   if uid is not None:
     pdoc['psdoc'] = await document.get_status(domain_id, document.TYPE_PROBLEM,
                                               doc_id=pid, uid=uid)
