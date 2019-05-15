@@ -16,7 +16,7 @@ class MultipleStateContainer {
     }
   }
 
-  get() {
+  get(name) {
     return this.states[name];
   }
 

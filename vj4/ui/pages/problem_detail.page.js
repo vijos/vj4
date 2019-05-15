@@ -2,7 +2,7 @@ import Tether from 'tether';
 import { NamedPage } from 'vj/misc/PageLoader';
 import Navigation from 'vj/components/navigation';
 import Notification from 'vj/components/notification';
-import { ConfirmDialog, ActionDialog } from 'vj/components/dialog';
+import { ActionDialog } from 'vj/components/dialog';
 import DomainSelectAutoComplete from 'vj/components/autocomplete/DomainSelectAutoComplete';
 import loadReactRedux from 'vj/utils/loadReactRedux';
 import delay from 'vj/utils/delay';
@@ -17,6 +17,7 @@ class ProblemPageExtender {
     this.$contentBound = this.$content.closest('.section');
     this.$scratchpadContainer = $('.scratchpad-container');
   }
+
   async extend() {
     if (this.inProgress) {
       return;
@@ -179,10 +180,12 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
 
     $('.loader-container').show();
 
-    const SockJs = await System.import('sockjs-client');
-    const { default: ScratchpadApp } = await System.import('../components/scratchpad');
-    const { default: ScratchpadReducer } = await System.import('../components/scratchpad/reducers');
-    const { React, render, unmountComponentAtNode, Provider, store } = await loadReactRedux(ScratchpadReducer);
+    const SockJs = await import('sockjs-client');
+    const { default: ScratchpadApp } = await import('../components/scratchpad');
+    const { default: ScratchpadReducer } = await import('../components/scratchpad/reducers');
+    const {
+      React, render, unmountComponentAtNode, Provider, store,
+    } = await loadReactRedux(ScratchpadReducer);
 
     const sock = new SockJs(Context.socketUrl);
     sock.onmessage = (message) => {

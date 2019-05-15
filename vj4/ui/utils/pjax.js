@@ -132,7 +132,7 @@ function handlePopState(ev) {
   if (!ev.originalEvent) {
     return;
   }
-  const state = ev.originalEvent.state;
+  const { state } = ev.originalEvent;
   if (!state) {
     return;
   }

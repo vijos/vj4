@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 export default function IconComponent(props) {
@@ -14,6 +14,6 @@ export default function IconComponent(props) {
 }
 
 IconComponent.propTypes = {
-  name: React.PropTypes.string.isRequired,
-  className: React.PropTypes.string,
+  name: PropTypes.string.isRequired,
+  className: PropTypes.string,
 };

@@ -3,7 +3,7 @@ import 'jquery.easing';
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
 const smoothScrollPage = new AutoloadPage('smoothScrollPage', null, () => {
-  const HISTORY_SUPPORT = !!(typeof history === 'object' && history.pushState);
+  const HISTORY_SUPPORT = !!(typeof window.history === 'object' && window.history.pushState);
   const ANCHOR_REGEX = /^#[^ ]+$/;
   const OFFSET_HEIGHT = 10 + ($('.nav').height() || 0);
 
@@ -19,7 +19,7 @@ const smoothScrollPage = new AutoloadPage('smoothScrollPage', null, () => {
     const anchorOffset = window.pageYOffset + rect.top - OFFSET_HEIGHT;
     $('html,body').animate({ scrollTop: anchorOffset }, 200, 'easeOutCubic');
     if (HISTORY_SUPPORT && pushToHistory) {
-      history.pushState({}, document.title, location.pathname + href);
+      window.history.pushState({}, document.title, window.location.pathname + href);
     }
     return true;
   }
@@ -34,8 +34,8 @@ const smoothScrollPage = new AutoloadPage('smoothScrollPage', null, () => {
     }
     const elem = e.target;
     if (
-      elem.nodeName === 'A' &&
-      scrollIfAnchor(elem.getAttribute('href'), true)
+      elem.nodeName === 'A'
+      && scrollIfAnchor(elem.getAttribute('href'), true)
     ) {
       e.preventDefault();
     }

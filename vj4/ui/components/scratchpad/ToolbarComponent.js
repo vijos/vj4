@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 export default function ToolbarComponent(props) {
@@ -14,8 +14,8 @@ export default function ToolbarComponent(props) {
 }
 
 ToolbarComponent.propTypes = {
-  className: React.PropTypes.string,
-  children: React.PropTypes.node,
+  className: PropTypes.string,
+  children: PropTypes.node,
 };
 
 export function ToolbarButtonComponent(props) {
@@ -45,11 +45,11 @@ export function ToolbarButtonComponent(props) {
 }
 
 ToolbarButtonComponent.propTypes = {
-  activated: React.PropTypes.bool,
-  disabled: React.PropTypes.bool,
-  onClick: React.PropTypes.func,
-  className: React.PropTypes.string,
-  children: React.PropTypes.node,
+  activated: PropTypes.bool,
+  disabled: PropTypes.bool,
+  onClick: PropTypes.func,
+  className: PropTypes.string,
+  children: PropTypes.node,
 };
 
 ToolbarButtonComponent.defaultProps = {
@@ -69,7 +69,7 @@ export function ToolbarSplitComponent(props) {
 }
 
 ToolbarSplitComponent.propTypes = {
-  className: React.PropTypes.string,
+  className: PropTypes.string,
 };
 
 export function ToolbarItemComponent(props) {
@@ -85,6 +85,6 @@ export function ToolbarItemComponent(props) {
 }
 
 ToolbarItemComponent.propTypes = {
-  className: React.PropTypes.string,
-  children: React.PropTypes.node,
+  className: PropTypes.string,
+  children: PropTypes.node,
 };

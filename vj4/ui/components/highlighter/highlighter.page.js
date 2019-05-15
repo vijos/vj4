@@ -1,7 +1,7 @@
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
 const highlighterPage = new AutoloadPage('highlighterPage', () => {
-  System.import('./prismjs').then((module) => {
+  import('./prismjs').then((module) => {
     const prismjs = module.default;
     function runHighlight($container) {
       prismjs.highlightBlocks($container);

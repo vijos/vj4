@@ -1,29 +1,14 @@
 /*
 
 To add a new language to highlight:
-1. Add new import statement in this file
+1. Add language in babel in package.json
 2. Add new import statement in `components/cmeditor/vjcmeditor.js`
 3. Add new import statement in `components/scratchpad/ScratchpadEditorContainer.js`
 4. Add new meta data in `components/highlighter/meta.js`
 
  */
 
-import Prism from 'prismjs/components/prism-core';
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-c';
-import 'prismjs/components/prism-cpp';
-import 'prismjs/components/prism-pascal';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-php';
-import 'prismjs/components/prism-rust';
-import 'prismjs/components/prism-haskell';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-go';
-import 'prismjs/components/prism-ruby';
-import 'prismjs/components/prism-csharp';
-import 'prismjs/plugins/toolbar/prism-toolbar';
-import 'prismjs/plugins/line-numbers/prism-line-numbers';
+import Prism from 'prismjs';
 
 import Clipboard from 'clipboard';
 import Notification from 'vj/components/notification';

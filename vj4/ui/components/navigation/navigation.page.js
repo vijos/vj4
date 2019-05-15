@@ -4,12 +4,12 @@ import Slideout from 'slideout';
 import { AutoloadPage } from 'vj/misc/PageLoader';
 import request from 'vj/utils/request';
 import responsiveCutoff from 'vj/breakpoints.json';
+import { isAbove } from 'vj/utils/mediaQuery';
 import Navigation from '.';
 
-import { isAbove } from 'vj/utils/mediaQuery';
 
 const nav = Navigation.instance;
-const $nav = nav.$nav;
+const { $nav } = nav;
 
 function handleScroll() {
   const currentState = $(window).scrollTop() > 20;

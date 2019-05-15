@@ -4,7 +4,7 @@ import 'katex/dist/katex.min.css';
 import './katex.styl';
 
 const katexPage = new AutoloadPage('katexPage', () => {
-  System.import('katex/dist/contrib/auto-render.min.js').then((renderKatex) => {
+  import('katex/dist/contrib/auto-render.min.js').then((renderKatex) => {
     function runKatex($containers) {
       $containers.get().forEach(container => renderKatex(container));
     }

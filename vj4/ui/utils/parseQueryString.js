@@ -4,8 +4,8 @@ export default function parseQueryString(str) {
     .replace(/(^\?)/, '')
     .split('&')
     .forEach((n) => {
-      const s = n.split('=').map(v => decodeURIComponent(v));
-      obj[s[0]] = s[1];
+      const [key, value] = n.split('=').map(v => decodeURIComponent(v));
+      obj[key] = value;
     });
   return obj;
 }
