@@ -17,7 +17,7 @@
                 {{ _('PNAME') }}
                 <br>
                 <label>
-                  <input name="pname" placeholder="{{ _('Leave blank to use numeric pid.') }}" class="textbox">
+                  <input name="pname" placeholder="{{ _('Leave blank to use numeric pid.') }}" value="{{ pdoc['pname']|default('') }}" class="textbox">
                 </label>
               </label>
             </div>
