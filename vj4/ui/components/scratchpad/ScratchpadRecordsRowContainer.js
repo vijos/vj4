@@ -35,9 +35,7 @@ const getRecordDetail = (data) => {
     });
     return (
       <span key={text} className={cn}>
-        {text}
-:
-        {count}
+        {text}: {count}
       </span>
     );
   });

@@ -1,7 +1,6 @@
 /*
 
 To add a new language to highlight:
-~~1. Add new import statement in this file~~
 1. Add language in babel in package.json
 2. Add new import statement in `components/cmeditor/vjcmeditor.js`
 3. Add new import statement in `components/scratchpad/ScratchpadEditorContainer.js`

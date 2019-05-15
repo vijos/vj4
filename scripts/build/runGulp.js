@@ -17,11 +17,11 @@ export default async function ({ watch, production }) {
     let taskList = {};
 
     gulp.on('start', ({ uid, name }) => {
-      name[0] === '<' || log(chalk.blue(`Starting task: %s`), chalk.reset(name));
+      log(chalk.blue(`Starting task: %s`), chalk.reset(name));
       taskList[uid] = true;
     });
     gulp.on('stop', ({ uid, name }) => {
-      name[0] === '<' || log(chalk.green(`Finished: %s`), chalk.reset(name));
+      log(chalk.green(`Finished: %s`), chalk.reset(name));
       taskList[uid] = false;
 
       if (Object.values(taskList).filter(b => b).length === 0) {

@@ -83,7 +83,7 @@ export default function ({ watch, production, errorHandler }) {
     gulp.watch('vj4/locale/*.yaml', handleWatchChange('locale'));
   };
 
-  for(let key in tasks) {
+  for (let key in tasks) {
     // gulp4 uses function name directly as task name
     Object.defineProperty(tasks[key], 'name', {
       value: key,

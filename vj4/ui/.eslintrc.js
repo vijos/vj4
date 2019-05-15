@@ -80,6 +80,7 @@ module.exports = {
     "react/self-closing-comp": "off",
     "react/prop-types": "off",
     "react/jsx-filename-extension": "off",
+    "react/jsx-one-expression-per-line": "off",
     "react/no-string-refs": "off",
     "react/require-default-props": "off",
     "react/react-in-jsx-scope": "off",
