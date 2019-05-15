@@ -1,6 +1,6 @@
 import transformConstant from '../utils/transformConstant';
 
-import { PluginError } from 'gulp-util';
+import PluginError from 'plugin-error';
 import through from 'through2';
 import path from 'path';
 
@@ -15,14 +15,14 @@ export default function generateConstants() {
       return;
     }
     if (file.isStream()) {
-      this.emit('error', new PluginError('Stream not supported'));
+      this.emit('error', new PluginError('gulpGenerateConstants', 'Stream not supported'));
       callback();
       return;
     }
     lastFile = file;
 
     const moduleName = path.basename(file.path, path.extname(file.path));
-    file.contents = new Buffer(transformConstant(file.path));
+    file.contents = Buffer.from(transformConstant(file.path));
     file.path = path.join(path.dirname(file.path), `${moduleName}.py`);
     packages.push(moduleName);
 
@@ -37,7 +37,7 @@ export default function generateConstants() {
     }
     const packageFile = lastFile.clone({contents: false});
     packageFile.path = path.join(path.dirname(lastFile.path), '__init__.py');
-    packageFile.contents = new Buffer(transformConstant.getPackageContent(packages));
+    packageFile.contents = Buffer.from(transformConstant.getPackageContent(packages));
 
     this.push(packageFile);
     callback();

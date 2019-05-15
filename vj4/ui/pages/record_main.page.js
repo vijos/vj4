@@ -2,8 +2,8 @@ import { NamedPage } from 'vj/misc/PageLoader';
 import UserSelectAutoComplete from 'vj/components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('record_main', async () => {
-  const SockJs = await System.import('sockjs-client');
-  const DiffDOM = await System.import('diff-dom');
+  const SockJs = await import('sockjs-client');
+  const DiffDOM = await import('diff-dom');
 
   const sock = new SockJs(Context.socketUrl);
   const dd = new DiffDOM();

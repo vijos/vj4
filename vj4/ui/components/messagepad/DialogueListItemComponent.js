@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 export default function DialogueListItemComponent(props) {
@@ -30,10 +30,10 @@ export default function DialogueListItemComponent(props) {
 }
 
 DialogueListItemComponent.propTypes = {
-  userName: React.PropTypes.string.isRequired,
-  summary: React.PropTypes.string.isRequired,
-  faceUrl: React.PropTypes.string.isRequired,
-  active: React.PropTypes.bool,
-  onClick: React.PropTypes.func,
-  className: React.PropTypes.string,
+  userName: PropTypes.string.isRequired,
+  summary: PropTypes.string.isRequired,
+  faceUrl: PropTypes.string.isRequired,
+  active: PropTypes.bool,
+  onClick: PropTypes.func,
+  className: PropTypes.string,
 };

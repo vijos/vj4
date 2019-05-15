@@ -263,8 +263,7 @@ export default class Calendar {
           banner => banner.beginAt.valueOf(),
           banner => (banner.beginTrunc ? 0 : 1), // truncated events first
           banner => -banner.endAt.valueOf(), // long events first
-        ])
-      )
+        ]))
       .map((banners) => {
         const dayBitmap = _
           .fill(new Array(7), 1)
@@ -275,14 +274,13 @@ export default class Calendar {
           // find available space
           const vIndexMax = _.max(_
             .range(beginDay, endDay + 1)
-            .map(day => dayBitmap[day].length)
-          );
+            .map(day => dayBitmap[day].length));
           let vIndex = 0;
           for (; vIndex < vIndexMax; ++vIndex) {
             if (_.every(_
               .range(beginDay, endDay + 1)
               .map(day => !dayBitmap[day][vIndex]) // eslint-disable-line no-loop-func
-            )) {
+            )) { // eslint-disable-line function-paren-newline
               break;
             }
           }
@@ -312,7 +310,7 @@ export default class Calendar {
         // cut banners by masked areas, scanning from left to right
         weekBanners.forEach((bannerSpans) => {
           for (let i = 0; i < bannerSpans.length; ++i) {
-            const banner = bannerSpans[i].banner;
+            const { banner } = bannerSpans[i];
             if (!banner) {
               continue;
             }
