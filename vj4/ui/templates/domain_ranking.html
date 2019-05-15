@@ -13,24 +13,26 @@
 					<table class="data-table">
             <colgroup>
               <col class="col--rank">
-							<col class="col--name">
+							<col class="col--user">
               <col class="col--info">
 						</colgroup>
 						<thead>
 							<tr>
                 <th class="col--rank">{{ _('Rank') }}</th>
-								<th class="col--name">{{ _('Username') }}</th>
+								<th class="col--user">{{ _('Username') }}</th>
 								<th class="col--info">{{ _('Info') }}</th>
 							</tr>
 						</thead>
 						<tbody>
 							{% for udoc in udocs %}
+							{% if udoc['rp'] %}
 							{% if udoc['rp'] > 0 %}
 							<tr>
                 <td class="col--rank">{{ udoc['rank'] }}</td>
-								<td class="col--name">{{ user.render_inline(udoc['info'], badge=false) }}</td>
+								<td class="col--user">{{ user.render_inline(udoc['info'], badge=false) }}</td>
 								<td class="col--info">{{ _('Solved {0} problems, RP: {1}').format(udoc['num_accept']|default(0), udoc['rp']|default(0.0)|round(2)) }}</td>
 							</tr>
+							{% endif %}
 							{% endif %}
 							{% endfor %}
 						</tbody>

@@ -261,10 +261,11 @@ class RankHandler(base.Handler):
   USERS_PER_PAGE = 100
 
   @base.get_argument
+  @base.route_argument
   @base.sanitize
   async def get(self, *, page: int=1):
     udocs, uucount, ucount = await pagination.paginate(domain.get_multi_user(domain_id=self.domain_id).sort([('rank', 1)]),
                                                        page, self.USERS_PER_PAGE)
     for udoc in udocs:
       udoc['info'] = await user.get_by_uid(udoc['uid'])
-    self.render('ranking.html', page=page, uucount=uucount, ucount=ucount, udocs=udocs)
+    self.render('domain_ranking.html', page=page, uucount=uucount, ucount=ucount, udocs=udocs)
