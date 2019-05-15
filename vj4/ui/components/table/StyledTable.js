@@ -6,6 +6,7 @@ import DOMAttachedObject from 'vj/components/DOMAttachedObject';
 
 export default class StyledTable extends DOMAttachedObject {
   static DOMAttachKey = 'vjStyledTableInstance';
+
   static DOMAttachSelector = '.data-table';
 
   constructor($dom) {

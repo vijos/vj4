@@ -59,7 +59,7 @@ export default function reducer(state = {}, action) {
         ...state,
         [id]: data,
       };
-    } else if (type === 'reply') {
+    } if (type === 'reply') {
       if (state[id] === undefined) {
         window.location.reload();
         return state;

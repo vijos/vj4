@@ -1,31 +1,36 @@
 import _ from 'lodash';
 import gulp from 'gulp';
-import gutil from 'gulp-util';
+import log from 'fancy-log';
 import chalk from 'chalk';
 import gulpConfig from './config/gulp.js';
 
 export default async function ({ watch, production }) {
   function handleError(err) {
-    gutil.log(chalk.red('Error: %s'), chalk.reset(err.toString()));
+    log(chalk.red('Error: %s'), chalk.reset(err.toString()));
     if (err && !watch) {
       process.exit(1);
       return;
     }
   }
-  gulpConfig({ watch, production, errorHandler: handleError });
+  const gulpTasks = gulpConfig({ watch, production, errorHandler: handleError });
   return new Promise(resolve => {
-    gulp.on('task_start', ({ task }) => {
-      gutil.log(chalk.blue(`Starting task: %s`), chalk.reset(task));
+    let taskList = {};
+
+    gulp.on('start', ({ uid, name }) => {
+      log(chalk.blue(`Starting task: %s`), chalk.reset(name));
+      taskList[uid] = true;
     });
-    gulp.on('task_stop', ({ task }) => {
-      gutil.log(chalk.green(`Finished: %s`), chalk.reset(task));
-      if (task === 'default') {
+    gulp.on('stop', ({ uid, name }) => {
+      log(chalk.green(`Finished: %s`), chalk.reset(name));
+      taskList[uid] = false;
+
+      if (Object.values(taskList).filter(b => b).length === 0) {
         if (watch) {
-          gulp.start('watch');
+          gulpTasks['watch']();
         }
         resolve();
       }
     });
-    gulp.start('default');
+    gulpTasks['default']();
   });
 };

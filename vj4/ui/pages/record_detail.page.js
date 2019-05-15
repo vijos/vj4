@@ -1,8 +1,8 @@
 import { NamedPage } from 'vj/misc/PageLoader';
 
 const page = new NamedPage('record_detail', async () => {
-  const SockJs = await System.import('sockjs-client');
-  const DiffDOM = await System.import('diff-dom');
+  const SockJs = await import('sockjs-client');
+  const DiffDOM = await import('diff-dom');
 
   const sock = new SockJs(Context.socketUrl);
   const dd = new DiffDOM();

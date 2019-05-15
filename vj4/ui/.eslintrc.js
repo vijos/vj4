@@ -18,11 +18,12 @@ module.exports = {
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 7,
-    "ecmaFeatures": [
-      "impliedStrict",
-      "experimentalObjectRestSpread",
-      "jsx"
-    ]
+    "ecmaFeatures": {
+      "impliedStrict": true,
+      "experimentalObjectRestSpread": true,
+      "jsx": true,
+      "legacyDecorators": true
+    }
   },
   "settings": {
     "import/resolver": {
@@ -79,8 +80,15 @@ module.exports = {
     "react/self-closing-comp": "off",
     "react/prop-types": "off",
     "react/jsx-filename-extension": "off",
+    "react/jsx-one-expression-per-line": "off",
     "react/no-string-refs": "off",
     "react/require-default-props": "off",
-    "jsx-a11y/no-static-element-interactions": "off"
+    "react/react-in-jsx-scope": "off",
+    "react/destructuring-assignment": "off",
+    "react/button-has-type": "off",
+    "react/forbid-prop-types": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/click-events-have-key-events": "off"
   }
 };

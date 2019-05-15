@@ -42,6 +42,7 @@ export default class ScratchpadEditorContainer extends React.PureComponent {
   componentDidMount() {
     this.refs.editor.getCodeMirror().setOption('theme', 'vjcm');
   }
+
   render() {
     return (
       <CodeMirror

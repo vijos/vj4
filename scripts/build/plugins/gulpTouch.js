@@ -1,4 +1,4 @@
-import { PluginError } from 'gulp-util';
+import PluginError from 'plugin-error';
 import through from 'through2';
 import fs from 'fs-extra';
 
@@ -19,7 +19,7 @@ export default function touch(mtime) {
       return;
     }
     if (file.isStream()) {
-      this.emit('error', new PluginError('Stream not supported'));
+      this.emit('error', new PluginError('gulpTouch', 'Stream not supported'));
       callback();
       return;
     }

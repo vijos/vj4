@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import i18n from 'vj/utils/i18n';
@@ -43,7 +44,7 @@ const mapDispatchToProps = dispatch => ({
   },
   postPretest(context) {
     const state = context.store.getState();
-    const pretest = state.pretest;
+    const { pretest } = state;
     const testCases = pretest.tabs
       .filter(tabId => isTestCaseDataValid(pretest.data[tabId]));
     // const titles = testCases.map(tabId => pretest.meta[tabId].title);
@@ -76,8 +77,9 @@ const mapDispatchToProps = dispatch => ({
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ScratchpadToolbarContainer extends React.PureComponent {
   static contextTypes = {
-    store: React.PropTypes.object,
+    store: PropTypes.object,
   };
+
   render() {
     return (
       <Toolbar>
@@ -88,7 +90,11 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           data-global-hotkey="f9"
           data-tooltip={`${i18n('Pretest Your Code')} (F9)`}
         >
-          <Icon name="debug" /> {i18n('Run Pretest')} (F9)
+          <Icon name="debug" />
+          {' '}
+          {i18n('Run Pretest')}
+          {' '}
+(F9)
         </ToolbarButton>
         <ToolbarButton
           disabled={this.props.isPosting}
@@ -97,7 +103,11 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           data-global-hotkey="f10"
           data-tooltip={`${i18n('Submit Your Code')} (F10)`}
         >
-          <Icon name="play" /> {i18n('Submit Solution')} (F10)
+          <Icon name="play" />
+          {' '}
+          {i18n('Submit Solution')}
+          {' '}
+(F10)
         </ToolbarButton>
         <ToolbarItem>
           <select
@@ -118,7 +128,9 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           data-global-hotkey="alt+p"
           data-tooltip={`${i18n('Toggle Pretest Panel')} (Alt+P)`}
         >
-          <Icon name="edit" /> {i18n('Pretest')}
+          <Icon name="edit" />
+          {' '}
+          {i18n('Pretest')}
         </ToolbarButton>
         <ToolbarButton
           activated={this.props.recordsVisible}
@@ -126,7 +138,9 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
           data-global-hotkey="alt+r"
           data-tooltip={`${i18n('Toggle Records Panel')} (Alt+R)`}
         >
-          <Icon name="flag" /> {i18n('Records')}
+          <Icon name="flag" />
+          {' '}
+          {i18n('Records')}
         </ToolbarButton>
       </Toolbar>
     );

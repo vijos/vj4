@@ -44,8 +44,7 @@ async function updateSelection(sendRequest = true) {
     // a list of categories which subcategory is selected
     const requestCategoryTags = _.uniq(selections
       .filter(s => s.indexOf(',') !== -1)
-      .map(s => s.split(',')[0])
-    );
+      .map(s => s.split(',')[0]));
     // drop the category if its subcategory is selected
     const requestTags = _.uniq(_.pullAll(selections, requestCategoryTags));
     let url;

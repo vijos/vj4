@@ -1,6 +1,6 @@
 import yaml from 'js-yaml';
 
-import { PluginError } from 'gulp-util';
+import PluginError from 'plugin-error';
 import through from 'through2';
 import path from 'path';
 
@@ -12,13 +12,13 @@ export default function generateLocales() {
       return;
     }
     if (file.isStream()) {
-      this.emit('error', new PluginError('Stream not supported'));
+      this.emit('error', new PluginError('gulpGenerateLocales', 'Stream not supported'));
       callback();
       return;
     }
 
     const doc = yaml.safeLoad(file.contents);
-    file.contents = new Buffer(`window.LOCALES = ${JSON.stringify(doc, null, 2)}`);
+    file.contents = Buffer.from(`window.LOCALES = ${JSON.stringify(doc, null, 2)}`);
     file.path = path.join(
       path.dirname(file.path),
       path.basename(file.path, path.extname(file.path)) + '.js'
