@@ -3,6 +3,7 @@ from bson import objectid
 from pymongo import ReturnDocument
 
 from vj4 import db
+from vj4 import error
 from vj4.util import argmethod
 
 TYPE_PROBLEM = 10
