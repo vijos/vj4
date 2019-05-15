@@ -43,7 +43,7 @@
     "fs-extra": "^8.0.1",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.0",
-    "gulp-iconfont": "^9.2.0",
+    "gulp-iconfont": "^10.0.2",
     "gulp-if": "^2.0.2",
     "gulp-nunjucks": "^4.0.0",
     "gulp-plumber": "^1.2.1",
@@ -58,6 +58,7 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "through2": "^3.0.1",
+    "vinyl-buffer": "^1.0.1",
     "webpack": "^3.12.0",
     "yargs": "^13.2.4"
   },

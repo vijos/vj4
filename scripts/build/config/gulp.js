@@ -5,6 +5,7 @@ import log from 'fancy-log';
 import chalk from 'chalk';
 import del from 'del';
 import svgmin from 'gulp-svgmin';
+import vinylBuffer from 'vinyl-buffer';
 import iconfont from 'gulp-iconfont';
 import nunjucks from 'gulp-nunjucks';
 import plumber from 'gulp-plumber';
@@ -60,6 +61,7 @@ export default function ({ watch, production, errorHandler }) {
       tasks['iconfont:template']();
     })
     .pipe(gulp.dest('vj4/ui/misc/.iconfont'))
+    .pipe(vinylBuffer())
     .pipe(offsetMtimeAtFirstBuild());
 
   tasks['constant'] = () => gulp
