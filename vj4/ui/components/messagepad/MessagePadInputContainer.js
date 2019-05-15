@@ -68,7 +68,7 @@ const mapDispatchToProps = dispatch => ({
 @connect(mapStateToProps, mapDispatchToProps)
 export default class MessagePadInputContainer extends React.PureComponent {
   static contextTypes = {
-    store: PropTypes.objectOf(PropTypes.object),
+    store: PropTypes.object,
   };
 
   componentWillUpdate(nextProps) {
