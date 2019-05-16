@@ -665,12 +665,12 @@ class ProblemEditHandler(base.Handler):
   @base.post_argument
   @base.require_csrf_token
   @base.sanitize
-  async def post(self, *, pid: document.convert_doc_id, title: str, content: str):
+  async def post(self, *, pid: document.convert_doc_id, title: str, content: str, pname: str=None):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
-    await problem.edit(self.domain_id, pdoc['doc_id'], title=title, content=content)
-    self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
+    pdoc = await problem.edit(self.domain_id, pdoc['doc_id'], title=title, content=content, pname=pname)
+    self.json_or_redirect(self.reverse_url('problem_detail', pid=pdoc.get('pname', pdoc['doc_id'])))
 
 
 @app.route('/p/{pid}/settings', 'problem_settings')
