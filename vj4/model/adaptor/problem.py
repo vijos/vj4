@@ -92,13 +92,19 @@ async def get(domain_id: str, pid: document.convert_doc_id, uid: int = None):
 
 
 @argmethod.wrap
-async def edit(domain_id: str, pid: document.convert_doc_id, **kwargs):
+async def edit(domain_id: str, pid: document.convert_doc_id, pname: str=None, **kwargs):
   pid = await document.get_pid(domain_id, pid)
   if 'title' in kwargs:
-      validator.check_title(kwargs['title'])
+    validator.check_title(kwargs['title'])
   if 'content' in kwargs:
-      validator.check_content(kwargs['content'])
-  pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, **kwargs)
+    validator.check_content(kwargs['content'])
+  if pname == "":
+    pname = None
+  if pname:
+    validator.check_string_pname(pname)
+    pid = await document.set(domain_id, document.TYPE_PROBLEM, pid, pname=pname, **kwargs)
+  else:
+    pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, **kwargs)
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
   return pdoc
@@ -205,8 +211,7 @@ async def set_solution(domain_id: str, psid: document.convert_doc_id, content: s
   return psdoc
 
 
-async def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None):
-  pid = await document.get_pid(domain_id, pid)
+def get_multi_solution(domain_id: str, pid: document.convert_doc_id, fields=None):
   return document.get_multi(domain_id=domain_id,
                             doc_type=document.TYPE_PROBLEM_SOLUTION,
                             parent_doc_type=document.TYPE_PROBLEM,
