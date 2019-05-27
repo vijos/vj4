@@ -102,7 +102,7 @@ async def edit(domain_id: str, pid: document.convert_doc_id, pname: str=None, **
     pname = None
   if pname:
     validator.check_string_pname(pname)
-    pid = await document.set(domain_id, document.TYPE_PROBLEM, pid, pname=pname, **kwargs)
+    pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, pname=pname, **kwargs)
   else:
     pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, **kwargs)
   if not pdoc:
