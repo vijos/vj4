@@ -37,33 +37,42 @@ export default class ScratchpadRecordsContainer extends React.PureComponent {
   componentDidMount() {
     this.props.loadSubmissions();
   }
+
   render() {
     return (
       <Panel
-        title={<span><Icon name="flag" /> {i18n('Records')}</span>}
+        title={(
+          <span>
+            <Icon name="flag" />
+            {' '}
+            {i18n('Records')}
+          </span>
+        )}
       >
         <Tabs
           className="scratchpad__panel-tab flex-col flex-fill"
-          activeKey={'all'}
+          activeKey="all"
           animation="slide-horizontal"
-          renderTabBar={() => (<ScrollableInkTabBar
-            extraContent={
-              <span>
-                <PanelButton
-                  data-tooltip={i18n('Refresh Records')}
-                  data-tooltip-pos="top right"
-                  onClick={() => this.props.handleClickRefresh()}
-                >
-                  {i18n('Refresh')}
-                </PanelButton>
-                <PanelButton
-                  onClick={() => this.props.handleClickClose()}
-                >
-                  <Icon name="close" />
-                </PanelButton>
-              </span>
-            }
-          />)}
+          renderTabBar={() => (
+            <ScrollableInkTabBar
+              extraContent={(
+                <span>
+                  <PanelButton
+                    data-tooltip={i18n('Refresh Records')}
+                    data-tooltip-pos="top right"
+                    onClick={() => this.props.handleClickRefresh()}
+                  >
+                    {i18n('Refresh')}
+                  </PanelButton>
+                  <PanelButton
+                    onClick={() => this.props.handleClickClose()}
+                  >
+                    <Icon name="close" />
+                  </PanelButton>
+                </span>
+              )}
+            />
+          )}
           renderTabContent={() => <TabContent />}
         >
           <TabPane tab={<span>{i18n('All')}</span>} key="all">

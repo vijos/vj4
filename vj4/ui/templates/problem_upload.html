@@ -2,7 +2,7 @@
 {% block body %}
 <form method="post" enctype="multipart/form-data">
 {% if pdoc['data'] is mapping %}
-<p>{{ _('Test data comes from') }} <a href="{{ reverse_url('problem_detail', domain_id=pdoc['data']['domain'], pid=pdoc['data']['pid']) }}" target="_blank">{{ pdoc['data']['domain'] }}/{{ pdoc['data']['pid'] }}</a></p>
+<p><b>{{ _('Current dataset comes from') }} <a href="{{ reverse_url('problem_detail', domain_id=pdoc['data']['domain'], pid=pdoc['data']['pid']) }}" target="_blank">{{ pdoc['data']['domain'] }}/{{ pdoc['data']['pid'] }}</a></b></p>
 {% else %}
 <p>{{ _('Current dataset: {0}').format(pdoc['data']|default(_('(None)'))) }}</p>
 <p>{{ _('MD5: {0}').format(md5|default(_('(None)'))) }}</p>

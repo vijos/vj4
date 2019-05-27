@@ -8,6 +8,7 @@ import { isBelow } from 'vj/utils/mediaQuery';
 
 export default class Dropdown extends DOMAttachedObject {
   static DOMAttachKey = 'vjDropdownInstance';
+
   static DOMAttachSelector = '[data-dropdown-target]';
 
   constructor($dom, options = {}) {

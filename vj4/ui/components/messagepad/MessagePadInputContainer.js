@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Icon from 'vj/components/react/IconComponent';
@@ -67,14 +68,16 @@ const mapDispatchToProps = dispatch => ({
 @connect(mapStateToProps, mapDispatchToProps)
 export default class MessagePadInputContainer extends React.PureComponent {
   static contextTypes = {
-    store: React.PropTypes.object,
+    store: PropTypes.object,
   };
+
   componentWillUpdate(nextProps) {
     this.focusInput = (
       nextProps.activeId !== this.props.activeId
       || this.props.isPosting !== nextProps.isPosting && nextProps.isPosting === false
     );
   }
+
   componentDidUpdate() {
     if (this.focusInput) {
       const { scrollX, scrollY } = window;
@@ -82,11 +85,13 @@ export default class MessagePadInputContainer extends React.PureComponent {
       window.scrollTo(scrollX, scrollY);
     }
   }
+
   handleKeyDown(ev) {
     if (ev.keyCode === 13 && (ev.ctrlKey || ev.metaKey)) {
       this.submit();
     }
   }
+
   submit() {
     const state = this.context.store.getState();
     if (state.dialogues[this.props.activeId].isPlaceholder) {
@@ -102,6 +107,7 @@ export default class MessagePadInputContainer extends React.PureComponent {
       );
     }
   }
+
   render() {
     const cn = classNames('messagepad__input', {
       visible: this.props.activeId !== null,

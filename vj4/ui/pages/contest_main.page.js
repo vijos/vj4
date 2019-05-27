@@ -1,7 +1,4 @@
 import { NamedPage } from 'vj/misc/PageLoader';
-import Calendar from 'vj/components/calendar';
-import i18n from 'vj/utils/i18n';
-import { parse as parseMongoId } from 'vj/utils/mongoId';
 
 const page = new NamedPage('contest_main', () => {
   // Contest Filter

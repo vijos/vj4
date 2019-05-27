@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 export default function DataInputComponent(props) {
@@ -27,8 +27,8 @@ export default function DataInputComponent(props) {
 }
 
 DataInputComponent.propTypes = {
-  title: React.PropTypes.node,
-  value: React.PropTypes.string,
-  onChange: React.PropTypes.func,
-  className: React.PropTypes.string,
+  title: PropTypes.node,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  className: PropTypes.string,
 };
