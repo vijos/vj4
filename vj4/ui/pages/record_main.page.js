@@ -3,7 +3,7 @@ import UserSelectAutoComplete from 'vj/components/autocomplete/UserSelectAutoCom
 
 const page = new NamedPage('record_main', async () => {
   const SockJs = await import('sockjs-client');
-  const DiffDOM = await import('diff-dom');
+  const { DiffDOM } = await import('diff-dom');
 
   const sock = new SockJs(Context.socketUrl);
   const dd = new DiffDOM();
