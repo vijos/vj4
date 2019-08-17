@@ -8,6 +8,10 @@ const page = new NamedPage('record_main', async () => {
   const sock = new SockJs(Context.socketUrl);
   const dd = new DiffDOM();
 
+  setInterval(() => {
+    sock.send(JSON.stringify({}));  // heartbeat
+  }, 25000);
+
   sock.onmessage = (message) => {
     const msg = JSON.parse(message.data);
     const $newTr = $(msg.html);
@@ -21,6 +25,7 @@ const page = new NamedPage('record_main', async () => {
       $newTr.trigger('vjContentNew');
     }
   };
+
   UserSelectAutoComplete.getOrConstruct($('.filter-user [name="uid_or_name"]'), {
     clearDefaultValue: false,
   });

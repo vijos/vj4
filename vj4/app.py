@@ -122,7 +122,9 @@ def connection_route(prefix, name, global_route=False):
           await session.prepare()
           await session.on_open()
         elif msg.tp == sockjs.MSG_MESSAGE:
-          await session.on_message(**json.decode(msg.data))
+          message = json.decode(msg.data)
+          if message:
+            await session.on_message(**message)
         elif msg.tp == sockjs.MSG_CLOSED:
           await session.on_close()
       except error.UserFacingError as e:

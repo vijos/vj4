@@ -36,6 +36,11 @@ const page = new NamedPage('home_messages', () => {
     reduxStore = store;
 
     const sock = new SockJs('/home/messages-conn');
+
+    setInterval(() => {
+      sock.send(JSON.stringify({}));  // heartbeat
+    }, 25000);
+
     sock.onmessage = (message) => {
       const msg = JSON.parse(message.data);
       store.dispatch({
