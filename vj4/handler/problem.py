@@ -2,6 +2,7 @@ import asyncio
 import functools
 import io
 import os.path
+import re
 import zipfile
 from bson import objectid
 from urllib import parse
@@ -65,14 +66,8 @@ class ProblemMainHandler(base.OperationHandler):
     else:
       f = {}
     if search:
-      query = search.replace('\\','\\\\').replace('.','\.')
-                    .replace('*','\*').replace('+','\+')
-                    .replace('?','\?').replace('|','\|')
-                    .replace('(','\(').replace(')','\)')
-                    .replace('[','\[').replace(']','\]')
-                    .replace('{','\}').replace('}','\}')
-                    .replace(' ','.*')
-      f['title'] = {'$regex': search}
+      query = re.escape(search).replace(' ','.*')
+      f['$or'] = [{'title': {'$regex': query}}, {'content': {'$regex': query}}]
     pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
                                                                          **f) \
                                                               .sort([('doc_id', 1)]),
