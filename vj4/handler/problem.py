@@ -64,7 +64,14 @@ class ProblemMainHandler(base.OperationHandler):
       f = {'hidden': False}
     else:
       f = {}
-    if query:
+    if search:
+      query = search.replace('\\','\\\\').replace('.','\.')
+                    .replace('*','\*').replace('+','\+')
+                    .replace('?','\?').replace('|','\|')
+                    .replace('(','\(').replace(')','\)')
+                    .replace('[','\[').replace(']','\]')
+                    .replace('{','\}').replace('}','\}')
+                    .replace(' ','.*')
       f['title'] = {'$regex': search}
     pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
                                                                          **f) \
