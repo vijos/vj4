@@ -58,12 +58,14 @@ class ProblemMainHandler(base.OperationHandler):
   @base.require_perm(builtin.PERM_VIEW_PROBLEM)
   @base.get_argument
   @base.sanitize
-  async def get(self, *, page: int=1):
+  async def get(self, *, page: int=1, search: str=None):
     # TODO(iceboy): projection.
     if not self.has_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN):
       f = {'hidden': False}
     else:
       f = {}
+    if query:
+      f['title'] = {'$regex': search}
     pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
                                                                          **f) \
                                                               .sort([('doc_id', 1)]),
@@ -808,5 +810,5 @@ class ProblemSearchHandler(base.Handler):
     if pdoc:
       self.redirect(self.reverse_url('problem_detail', pid=pdoc['doc_id']))
       return
-    self.redirect('http://cn.bing.com/search?q={0}+site%3A{1}' \
-                  .format(parse.quote(q), parse.quote(options.url_prefix)))
+    self.redirect('{0}/p?search={1}' \
+                  .format(parse.quote(options.url_prefix), parse.quote(q)))
