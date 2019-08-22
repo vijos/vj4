@@ -584,8 +584,13 @@ class ProblemCreateHandler(base.Handler):
     pid = None
     if numeric_pid:
       pid = await domain.inc_pid_counter(self.domain_id)
-    pid = await problem.add(self.domain_id, title, content, self.user['_id'],
-                            hidden=hidden, pid=pid)
+    try:
+      pid = await problem.add(self.domain_id, title, content, self.user['_id'],
+                              hidden=hidden, pid=pid)
+    except Exception as e:
+      if numeric_pid:
+        await domain.dec_pid_counter(self.domain_id)
+      raise
     self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
 
 

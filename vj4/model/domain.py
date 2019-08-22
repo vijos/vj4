@@ -130,6 +130,24 @@ async def inc_pid_counter(domain_id: str):
 
 
 @argmethod.wrap
+async def dec_pid_counter(domain_id: str):
+  """Decrements the problem ID counter.
+
+  Returns:
+    Integer value before decrement.
+  """
+  for domain in builtin.DOMAINS:
+    if domain['_id'] == domain_id:
+      return await system.dec_pid_counter()
+  coll = db.coll('domain')
+  await coll.update_one(filter={'_id': domain_id, 'pid_counter': {'$exists': False}},
+                        update={'$set': {'pid_counter': 1000}})
+  doc = await coll.find_one_and_update(filter={'_id': domain_id},
+                                       update={'$dec': {'pid_counter': 1}})
+  return doc['pid_counter']
+
+
+@argmethod.wrap
 async def set_role(domain_id: str, role: str, perm: int):
   return await set_roles(domain_id, {role: perm})
 
