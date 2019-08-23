@@ -27,7 +27,7 @@ async def inc_user_counter():
 
 
 @argmethod.wrap
-async def inc_pid_counter():
+async def inc_pid_counter(inc: int=1):
   """Increments the problem ID counter.
 
   Returns:
@@ -37,22 +37,7 @@ async def inc_pid_counter():
   await coll.update_one(filter={'_id': 'pid_counter'},
                         update={'$setOnInsert': {'value': 1000}}, upsert=True)
   doc = await coll.find_one_and_update(filter={'_id': 'pid_counter'},
-                                       update={'$inc': {'value': 1}})
-  return doc['value']
-
-
-@argmethod.wrap
-async def dec_pid_counter():
-  """Decrements the problem ID counter.
-
-  Returns:
-    Integer value before decrement.
-  """
-  coll = db.coll('system')
-  await coll.update_one(filter={'_id': 'pid_counter'},
-                        update={'$setOnInsert': {'value': 1000}}, upsert=True)
-  doc = await coll.find_one_and_update(filter={'_id': 'pid_counter'},
-                                       update={'$dec': {'value': 1}})
+                                       update={'$inc': {'value': inc}})
   return doc['value']
 
 

@@ -583,13 +583,13 @@ class ProblemCreateHandler(base.Handler):
   async def post(self, *, title: str, content: str, hidden: bool=False, numeric_pid: bool=False):
     pid = None
     if numeric_pid:
-      pid = await domain.inc_pid_counter(self.domain_id)
+      pid = await domain.inc_pid_counter(self.domain_id, 1)
     try:
       pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                               hidden=hidden, pid=pid)
     except Exception as e:
       if numeric_pid:
-        await domain.dec_pid_counter(self.domain_id)
+        await domain.inc_pid_counter(self.domain_id, -1)
       raise
     self.json_or_redirect(self.reverse_url('problem_settings', pid=pid))
 
