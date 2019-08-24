@@ -5,7 +5,7 @@ import os.path
 import zipfile
 from bson import objectid
 from urllib import parse
-
+from pymongo import errors
 from vj4 import app
 from vj4 import constant
 from vj4 import error
@@ -587,7 +587,9 @@ class ProblemCreateHandler(base.Handler):
     try:
       pid = await problem.add(self.domain_id, title, content, self.user['_id'],
                               hidden=hidden, pid=pid)
-    except Exception as e:
+    except errors.DuplicateKeyError:
+      raise
+    except:
       if numeric_pid:
         await domain.inc_pid_counter(self.domain_id, -1)
       raise
