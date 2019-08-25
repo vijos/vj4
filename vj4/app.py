@@ -38,6 +38,8 @@ options.define('sentry_dsn', default='', help='Sentry integration DSN.')
 
 _logger = logging.getLogger(__name__)
 
+WS_MSG_HEARTBEAT = {}
+
 
 class SentryMiddleware(aiohttp_sentry.SentryMiddleware): # For getting a correct client IP
   async def get_extra_data(self, request):
@@ -123,7 +125,9 @@ def connection_route(prefix, name, global_route=False):
           await session.on_open()
         elif msg.tp == sockjs.MSG_MESSAGE:
           message = json.decode(msg.data)
-          if message:
+          if message == WS_MSG_HEARTBEAT:
+            pass
+          else:
             await session.on_message(**message)
         elif msg.tp == sockjs.MSG_CLOSED:
           await session.on_close()
