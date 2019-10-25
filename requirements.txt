@@ -1,6 +1,6 @@
 aiohttp>=3
 jinja2>=2.9.0
-sockjs>=0.7.0
+sockjs>=0.7.0,<0.10.0
 hoedown
 accept
 aioamqp
