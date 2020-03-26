@@ -42,7 +42,7 @@
         <td class="col--name col--problem-name">
         {% if handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
           <form class="form--inline" action="{{ reverse_url('problem_main') }}" method="post">
-            <input type="hidden" name="pid" value="{{ pdoc['doc_id'] }}">
+            <input type="hidden" name="pid" value="{{ pdoc['pname'] }}">
             <input type="hidden" name="operation" value="{% if not psdoc['star'] %}star{% else %}unstar{% endif %}">
             <input type="hidden" name="csrf_token" value="{{ handler.csrf_token }}">
             <button class="star{% if psdoc['star'] %} activated{% endif %}" type="submit">

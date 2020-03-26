@@ -6,19 +6,18 @@
       <div class="section__body">
         <form method="post">
           <div class="row">
-            <div class="medium-8 columns">
+            <div class="medium-7 columns">
               <label>
                 {{ _('Title') }}
                 <input name="title" placeholder="{{ _('title') }}" value="{{ pdoc['title']|default('') }}" class="textbox" autofocus>
               </label>
             </div>
-            {% if page_name == 'problem_create' %}
-            <div class="medium-2 columns">
+            <div class="medium-3 columns">
               <label>
-                {{ _('Settings') }}
+                {{ _('pname') }}
                 <br>
-                <label class="checkbox">
-                  <input type="checkbox" name="numeric_pid" value="on" checked>{{ _('Numeric PID') }}
+                <label>
+                  <input name="pname" placeholder="{{ _('Leave blank to use numeric pid.') }}" value="{{ pdoc['pname']|default('') }}" class="textbox">
                 </label>
               </label>
             </div>
@@ -30,7 +29,6 @@
                 </label>
               </label>
             </div>
-            {% endif %}
           </div>
           <div class="row"><div class="columns">
             <label>

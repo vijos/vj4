@@ -132,7 +132,7 @@ class ContestCodeHandler(base.OperationHandler):
                       file_name='{}.zip'.format(tdoc['title']))
 
 
-@app.route('/contest/{tid}/{pid:-?\d+|\w{24}}', 'contest_detail_problem')
+@app.route('/contest/{tid}/p/{pid}', 'contest_detail_problem')
 class ContestDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST)
@@ -163,7 +163,7 @@ class ContestDetailProblemHandler(contest.ContestMixin, base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
 
-@app.route('/contest/{tid}/{pid}/submit', 'contest_detail_problem_submit')
+@app.route('/contest/{tid}/p/{pid}/submit', 'contest_detail_problem_submit')
 class ContestDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_CONTEST)

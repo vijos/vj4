@@ -157,7 +157,7 @@ class HomeworkCodeHandler(base.OperationHandler):
                       file_name='{}.zip'.format(tdoc['title']))
 
 
-@app.route('/homework/{tid}/{pid:-?\d+|\w{24}}', 'homework_detail_problem')
+@app.route('/homework/{tid}/p/{pid}', 'homework_detail_problem')
 class HomeworkDetailProblemHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)
@@ -188,7 +188,7 @@ class HomeworkDetailProblemHandler(contest.ContestMixin, base.Handler):
                 page_title=pdoc['title'], path_components=path_components)
 
 
-@app.route('/homework/{tid}/{pid}/submit', 'homework_detail_problem_submit')
+@app.route('/homework/{tid}/p/{pid}/submit', 'homework_detail_problem_submit')
 class HomeworkDetailProblemSubmitHandler(contest.ContestMixin, base.Handler):
   @base.route_argument
   @base.require_perm(builtin.PERM_VIEW_HOMEWORK)

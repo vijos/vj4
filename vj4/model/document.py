@@ -3,6 +3,7 @@ from bson import objectid
 from pymongo import ReturnDocument
 
 from vj4 import db
+from vj4 import error
 from vj4.util import argmethod
 
 TYPE_PROBLEM = 10
@@ -40,6 +41,20 @@ def convert_doc_id(doc_id):
 
 
 @argmethod.wrap
+async def get_pid(domain_id, key):
+  if objectid.ObjectId.is_valid(key):
+    pdoc = await get(domain_id, TYPE_PROBLEM, objectid.ObjectId(key))
+  try:
+    key = int(key)
+    pdoc = await get(domain_id, TYPE_PROBLEM, key)
+  except ValueError:
+    pdoc = await get_by_pname(domain_id, TYPE_PROBLEM, key)
+  if not pdoc:
+    raise error.ProblemNotFoundError(domain_id, key)
+  return pdoc['doc_id']
+
+
+@argmethod.wrap
 async def add(domain_id: str, content: str, owner_uid: int,
               doc_type: int, doc_id: convert_doc_id = None,
               parent_doc_type: int = None, parent_doc_id: convert_doc_id = None, **kwargs):
@@ -57,7 +72,7 @@ async def add(domain_id: str, content: str, owner_uid: int,
     assert parent_doc_type and parent_doc_id
     doc['parent_doc_type'], doc['parent_doc_id'] = parent_doc_type, parent_doc_id
   await coll.insert_one(doc)
-  return doc['doc_id']
+  return doc.get('pname', doc['doc_id'])
 
 
 @argmethod.wrap
@@ -66,6 +81,14 @@ async def get(domain_id: str, doc_type: int, doc_id: convert_doc_id, fields=None
   return await coll.find_one({'domain_id': domain_id,
                               'doc_type': doc_type,
                               'doc_id': doc_id}, projection=fields)
+
+
+@argmethod.wrap
+async def get_by_pname(domain_id: str, doc_type: int, pname: str, fields=None):
+  coll = db.coll('document')
+  return await coll.find_one({'domain_id': domain_id,
+                              'doc_type': doc_type,
+                              'pname': pname}, projection=fields)
 
 
 async def set(domain_id: str, doc_type: int, doc_id: convert_doc_id, **kwargs):
@@ -408,6 +431,9 @@ async def ensure_indexes():
   await coll.create_index([('domain_id', 1),
                            ('doc_type', 1),
                            ('dag.pids', 1)], sparse=True)
+  await coll.create_index([('domain_id', 1),
+                           ('doc_type', 1),
+                           ('pname', 1)], sparse=True)
   status_coll = db.coll('document.status')
   await status_coll.create_index([('domain_id', 1),
                                   ('doc_type', 1),
