@@ -708,7 +708,7 @@ class ProblemSettingsHandler(base.Handler):
   async def post(self, *, pid: document.convert_doc_id, hidden: bool=False,
                  category: str, tag: str,
                  difficulty_setting: int, difficulty_admin: str='',
-                 accode: str):
+                 accode: str=''):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)

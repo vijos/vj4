@@ -59,7 +59,7 @@ async def copy(pdoc, dest_domain_id: str, owner_uid: int,
                   title=pdoc['title'], content=pdoc['content'],
                   pid=pid, hidden=hidden, category=pdoc['category'],
                   data=data, tag=pdoc.get('tag', []),
-                  accode=pdoc['accode'])
+                  accode=pdoc.get('accode', ''))
   await document.inc(src_domain_id, document.TYPE_PROBLEM, src_pid, 'num_be_copied', 1)
   return pid
 
