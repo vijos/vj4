@@ -23,7 +23,7 @@
           {{ form.form_checkbox(label='Hidden', help_text='Note: Problem title may not be hidden.', name='hidden', value=pdoc['hidden']) }}
           {{ form.form_text(columns=12, label='Category', help_text='Format: category 1, sub category 1.1, sub category 1.2, ..., sub category 1.x, ..., category n, sub category n.1, sub category n.2, ..., sub category n.m, ...', name='category', value=pdoc['category']|join(', ')) }}
           {{ form.form_text(columns=12, label='Tags', help_text='Splitted by \', \'.', name='tag', value=pdoc['tag']|join(', ')) }}
-          {{ form.form_text(columns=12, label='ACCode', help_text='This message will be presented to those whose submissions are accepted.', name='accode', value=(pdoc['accode'] or '' )) }}
+          {{ form.form_text(columns=12, label='AC Message', help_text='This message will be presented to those whose submissions are accepted.', name='ac_msg', value=(pdoc['ac_msg'] or '' )) }}
           <div class="row">
             {{ form.form_select(columns=4, label='Difficulty', name='difficulty_setting', options=vj4.model.adaptor.problem.SETTING_DIFFICULTY_RANGE.items(), value=pdoc['difficulty_setting']|default(0), row=false) }}
             {{ form.form_text(columns=4, label='Evaluated difficulty', help_text='Effects only when Difficulty is not \'Use algorithm calculated\'.', name='difficulty_admin', placeholder='9', value=pdoc['difficulty_admin'] or '', row=False) }}
