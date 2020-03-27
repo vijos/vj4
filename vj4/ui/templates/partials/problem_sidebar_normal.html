@@ -106,14 +106,10 @@
         {{ _('(None)') }}
       {% endif %}
       </dd>
-      <dt>{{ _('PassCode') }}</dt>
-      <dd>
-      {% if pdoc['psdoc']['status']==1 %}
-        {{ pdoc['passcode'] or _('(None)') }}
-      {% else %}
-        {{ _('(None)') }}
+      {% if pdoc['psdoc']['status']==1 and pdoc['flag'] %}
+        <dt>{{ _('Flag') }}</dt>
+        <dd>{{ pdoc['flag'] }}</dd>
       {% endif %}
-      </dd>
     {% endif %}
     {% endif %}
       <dt>{{ _('Difficulty') }}</dt>
