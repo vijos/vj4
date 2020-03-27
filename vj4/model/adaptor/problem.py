@@ -41,7 +41,7 @@ async def add(domain_id: str, title: str, content: str, owner_uid: int,
   validator.check_content(content)
   pid = await document.add(domain_id, content, owner_uid, document.TYPE_PROBLEM,
                            pid, title=title, data=data, category=category, tag=tag,
-                           hidden=hidden, num_submit=0, num_accept=0, flag='')
+                           hidden=hidden, num_submit=0, num_accept=0)
   await domain.inc_user(domain_id, owner_uid, num_problems=1)
   return pid
 
@@ -59,7 +59,7 @@ async def copy(pdoc, dest_domain_id: str, owner_uid: int,
                   title=pdoc['title'], content=pdoc['content'],
                   pid=pid, hidden=hidden, category=pdoc['category'],
                   data=data, tag=pdoc.get('tag', []),
-                  flag=pdoc['flag'])
+                  accode=pdoc['accode'])
   await document.inc(src_domain_id, document.TYPE_PROBLEM, src_pid, 'num_be_copied', 1)
   return pid
 
