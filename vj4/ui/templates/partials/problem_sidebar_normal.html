@@ -106,6 +106,10 @@
         {{ _('(None)') }}
       {% endif %}
       </dd>
+      {% if pdoc['ac_msg'] and pdoc['psdoc']['status'] == vj4.constant.record.STATUS_ACCEPTED %}
+        <dt>{{ _('AC Message') }}</dt>
+        <dd>{{ pdoc['ac_msg'] }}</dd>
+      {% endif %}
     {% endif %}
     {% endif %}
       <dt>{{ _('Difficulty') }}</dt>
