@@ -13,7 +13,7 @@ from coloredlogs import syslog
 from vj4 import app
 from vj4.util import options
 
-options.define('listen', default='http://127.0.0.1:8888', help='Server listening address.')
+options.define('listen', default='http://0.0.0.0:8888', help='Server listening address.')
 options.define('prefork', default=1, help='Number of prefork workers.')
 options.define('syslog', default=False, help='Use syslog instead of stderr for logging.')
 options.define('listen_owner', default='', help='Owner of the unix socket which is server listening to.')
