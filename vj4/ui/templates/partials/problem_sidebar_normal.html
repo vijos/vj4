@@ -106,9 +106,9 @@
         {{ _('(None)') }}
       {% endif %}
       </dd>
-      {% if pdoc['flag'] and pdoc['psdoc']['status'] == vj4.constant.record.STATUS_ACCEPTED %}
-        <dt>{{ _('Flag') }}</dt>
-        <dd>{{ pdoc['flag'] }}</dd>
+      {% if pdoc['accode'] and pdoc['psdoc']['status'] == vj4.constant.record.STATUS_ACCEPTED %}
+        <dt>{{ _('ACCode') }}</dt>
+        <dd>{{ pdoc['accode'] }}</dd>
       {% endif %}
     {% endif %}
     {% endif %}
