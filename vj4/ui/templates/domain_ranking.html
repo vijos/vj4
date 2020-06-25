@@ -3,45 +3,41 @@
 {% import "components/nothing.html" as nothing with context %}
 {% block content %}
 <div class="row">
-	<div class="medium-12 columns">
-		<div class="section">
-			<div class="section__body no-padding">
-				<div data-fragment-id="ranking">
-					{% if not udocs %}
-					{{ nothing.render('Sorry, there is no user in this domain.') }}
-					{% else %}
-					<table class="data-table">
+  <div class="medium-12 columns">
+    <div class="section">
+      <div class="section__body no-padding">
+        <div data-fragment-id="ranking">
+          {% if not udocs %}
+          {{ nothing.render('Sorry, there is no user in this domain.') }}
+          {% else %}
+          <table class="data-table">
             <colgroup>
               <col class="col--rank">
-							<col class="col--user">
+              <col class="col--user">
               <col class="col--info">
-						</colgroup>
-						<thead>
-							<tr>
+            </colgroup>
+            <thead>
+              <tr>
                 <th class="col--rank">{{ _('Rank') }}</th>
-								<th class="col--user">{{ _('Username') }}</th>
-								<th class="col--info">{{ _('Info') }}</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for udoc in udocs %}
-							{% if udoc['rp'] %}
-							{% if udoc['rp'] > 0 %}
-							<tr>
+                <th class="col--user">{{ _('Username') }}</th>
+                <th class="col--info">{{ _('Info') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for udoc in udocs %}
+              <tr>
                 <td class="col--rank">{{ udoc['rank'] }}</td>
-								<td class="col--user">{{ user.render_inline(udoc['info'], badge=false) }}</td>
-								<td class="col--info">{{ _('Solved {0} problems, RP: {1}').format(udoc['num_accept']|default(0), udoc['rp']|default(0.0)|round(2)) }}</td>
-							</tr>
-							{% endif %}
-							{% endif %}
-							{% endfor %}
-						</tbody>
-					</table>
-					{{ paginator.render(page, uucount) }}
-					{% endif %}
-				</div>
-			</div>
-		</div>
-	</div>
+                <td class="col--user">{{ user.render_inline(udict[udoc._id], badge=false) }}</td>
+                <td class="col--info">{{ _('Solved {0} problems, RP: {1}').format(udoc['num_accept']|default(0), udoc['rp']|default(0.0)|round(2)) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {{ paginator.render(page, uucount) }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
