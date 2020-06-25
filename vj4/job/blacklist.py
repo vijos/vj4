@@ -66,6 +66,8 @@ async def _user(uid, bset, uset, dset):
       'doc_type': document.TYPE_DISCUSSION,
       'owner_uid': uid}, {'domain_id': 1, 'doc_id': 1}):
     await _discussion(ddoc['domain_id'], ddoc['doc_id'], bset, uset, dset)
+  if not options.dryrun:
+    await user.set_priv(uid, 0)
 
 
 if __name__ == '__main__':

@@ -590,6 +590,7 @@ Created By: 创建人
 Judged By: 评测机
 Categories: 分类
 Tags: 标签
+AC Message: 通过消息
 problem-category-delim: '|'
 problem-subcategory-delim: 、
 Download Dataset: 下载数据集
@@ -791,3 +792,4 @@ What's this?: 这是什么？
 About test data: 关于测试数据
 With this feature, you can copy problems that you can view from a domain to some other domain. Their title, content, tags and categories will be copied. However, their test data are not copied directly.: 您可以通过这个功能将某域下您能查看的题目复制到其它域中，题目的标题、描述、标签与分类将被复制过来。但是测试数据不会被直接复制。
 Instead of copying the test data directly, the test data of the copied problems will be linked to the test data of the source problems (called the source test data). Thus, the copied problems can observe the changes in the source test data. The permissions of the test data of the copied problems follow the source test data, e.g., you still might not download them but the judges can. By uploading some new test data, the link will be broken and the new test data will be used.: 虽然测试数据不会被复制，但是系统会将题目的测试数据链接到原题。因此在原题的数据被改动的时候，复制后的题目的数据也会同时改动。链接后的测试数据的权限以原题为准，比如您可能依旧无法下载数据，但是评测机可以。在题目设置页面中可以通过上传新的测试数据的方式，这个数据链接会被删除，以后将使用您的新测试数据。
+This message will be presented to those whose submissions are accepted.: 这条消息将会被展示给通过此题的用户。

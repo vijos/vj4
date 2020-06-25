@@ -714,7 +714,8 @@ class ProblemSettingsHandler(base.Handler):
   @base.sanitize
   async def post(self, *, pid: document.convert_doc_id, hidden: bool=False,
                  category: str, tag: str,
-                 difficulty_setting: int, difficulty_admin: str=''):
+                 difficulty_setting: int, difficulty_admin: str='',
+                 ac_msg: str=''):
     pdoc = await problem.get(self.domain_id, pid)
     if not self.own(pdoc, builtin.PERM_EDIT_PROBLEM_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM)
@@ -735,7 +736,8 @@ class ProblemSettingsHandler(base.Handler):
       difficulty_admin = None
     await problem.edit(self.domain_id, pdoc['doc_id'], hidden=hidden,
                        category=category, tag=tag,
-                       difficulty_setting=difficulty_setting, difficulty_admin=difficulty_admin)
+                       difficulty_setting=difficulty_setting, difficulty_admin=difficulty_admin,
+                       ac_msg=ac_msg)
     await job.difficulty.update_problem(self.domain_id, pdoc['doc_id'])
     self.json_or_redirect(self.reverse_url('problem_detail', pid=pid))
 

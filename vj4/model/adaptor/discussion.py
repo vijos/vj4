@@ -158,11 +158,8 @@ async def edit(domain_id: str, did: document.convert_doc_id, **kwargs):
 
 @argmethod.wrap
 async def delete(domain_id: str, did: document.convert_doc_id):
-  # TODO(twd2): delete status?
+  # No need to delete related objects.
   await document.delete(domain_id, document.TYPE_DISCUSSION, did)
-  await document.delete_multi(domain_id, document.TYPE_DISCUSSION_REPLY,
-                              parent_doc_type=document.TYPE_DISCUSSION,
-                              parent_doc_id=did)
 
 
 @argmethod.wrap

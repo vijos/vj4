@@ -328,8 +328,8 @@ LEVELS = collections.OrderedDict([(10, 1),
                                   (1, 100)])
 
 # Footer extra HTMLs. TODO(iceboy): remove.
-FOOTER_EXTRA_HTMLS = ['© 2005 - 2019 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
-                      '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
+FOOTER_EXTRA_HTMLS = ['© 2005 - 2020 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
+                      '<a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow">' +
                       '沪ICP备14040537号</a>']
 
 PROBLEM_CATEGORIES = collections.OrderedDict([
@@ -518,7 +518,10 @@ DEFAULT_VNODES = collections.OrderedDict([
     {'pic': None, 'name': 'POJ'},
     {'pic': None, 'name': 'BZOJ'},
     {'pic': None, 'name': 'USACO'},
-    {'pic': None, 'name': 'RQNOJ'}
+    {'pic': None, 'name': 'RQNOJ'},
+    {'pic': None, 'name': 'UOJ'},
+    {'pic': None, 'name': 'LOJ'},
+    {'pic': None, 'name': '洛谷'}
   ]),
   ('泛', [
     {'pic': None, 'name': '数学'},
