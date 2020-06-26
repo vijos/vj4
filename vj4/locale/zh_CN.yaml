@@ -309,6 +309,7 @@ Create Domain: 创建域
 Properties: 属性
 Access Control: 访问控制
 domain_main: 首页
+domain_ranking: 排名
 domain_manage: 管理域
 domain_manage_dashboard: 概况
 domain_manage_discussion: 讨论节点

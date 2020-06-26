@@ -1,0 +1,47 @@
+{% extends "layout/basic.html" %}
+{% import "components/paginator.html" as paginator with context %}
+{% import "components/nothing.html" as nothing with context %}
+{% block content %}
+<div class="row">
+  <div class="medium-12 columns">
+    <div class="section">
+      <div class="section__body no-padding">
+        <div data-fragment-id="ranking">
+          {% if not dudocs %}
+          {{ nothing.render('Sorry, there is no user in this domain.') }}
+          {% else %}
+          <table class="data-table">
+            <colgroup>
+              <col class="col--rank">
+              <col class="col--user">
+              <col class="col--info">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="col--rank">{{ _('Rank') }}</th>
+                <th class="col--user">{{ _('User') }}</th>
+                <th class="col--rp">{{ _('RP') }}</th>
+                <th class="col--accept">{{ _('Accepted') }}</th>
+                <th class="col--bio">{{ _('Bio') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for dudoc in dudocs %}
+              <tr>
+                <td class="col--rank">{{ dudoc['rank'] }}</td>
+                <td class="col--user">{{ user.render_inline(udict[dudoc['uid']], dudoc=dudoc) }}</td>
+                <td class="col--rp">{{ dudoc['rp']|default(0.0)|round(2) }}</td>
+                <td class="col--accept">{{ dudoc['num_accept']|default(0) }}</td>
+                <td class="col--bio">{{ udict[dudoc['uid']]['bio']|default('')|markdown }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {{ paginator.render(page, dupcount) }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -49,6 +49,7 @@ user_lostpass: Lost Password
 user_register: Register
 home_domain_create: Create Domain
 domain_main: Main
+domain_ranking: Ranking
 domain_manage: Domain Manage
 domain_manage_dashboard: Dashboard
 domain_manage_discussion: Discussion Nodes
