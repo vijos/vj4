@@ -260,6 +260,7 @@ class UserSearchHandler(base.Handler):
 class RankHandler(base.Handler):
   USERS_PER_PAGE = 100
 
+  @base.require_priv(builtin.PRIV_USER_PROFILE)
   @base.get_argument
   @base.route_argument
   @base.sanitize

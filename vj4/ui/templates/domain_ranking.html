@@ -19,16 +19,20 @@
             <thead>
               <tr>
                 <th class="col--rank">{{ _('Rank') }}</th>
-                <th class="col--user">{{ _('Username') }}</th>
-                <th class="col--info">{{ _('Info') }}</th>
+                <th class="col--user">{{ _('User') }}</th>
+                <th class="col--rp">{{ _('RP') }}</th>
+                <th class="col--accept">{{ _('Accepted') }}</th>
+                <th class="col--bio">{{ _('Bio') }}</th>
               </tr>
             </thead>
             <tbody>
               {% for dudoc in dudocs %}
               <tr>
                 <td class="col--rank">{{ dudoc['rank'] }}</td>
-                <td class="col--user">{{ user.render_inline(udict[dudoc['uid']], badge=false) }}</td>
-                <td class="col--info">{{ _('Solved {0} problems, RP: {1}').format(dudoc['num_accept']|default(0), dudoc['rp']|default(0.0)|round(2)) }}</td>
+                <td class="col--user">{{ user.render_inline(udict[dudoc['uid']], dudoc=dudoc) }}</td>
+                <td class="col--rp">{{ dudoc['rp']|default(0.0)|round(2) }}</td>
+                <td class="col--accept">{{ dudoc['num_accept']|default(0) }}</td>
+                <td class="col--bio">{{ udict[dudoc['uid']]['bio']|default('')|markdown }}</td>
               </tr>
               {% endfor %}
             </tbody>
