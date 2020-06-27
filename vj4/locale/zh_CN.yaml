@@ -464,6 +464,7 @@ View hidden contest submission status and scoreboard: 查看隐藏的比赛递�
 Create contests: 创建比赛
 Attend contests: 参加比赛
 View training plans: 查看训练计划
+View ranking: 查看排名
 Have ALL PERMISSIONS in this domain: 在此域中拥有全部权限
 Select User: 选择用户
 Submitted: 已递交
@@ -531,6 +532,7 @@ perm_discussion: 讨论
 perm_contest: 比赛
 perm_homework: 作业
 perm_training: 训练
+perm_ranking: 排名
 discussion_edit: 编辑讨论
 At least 4 characters: 至少 4 个字符
 Contact: 联系
