@@ -42,6 +42,7 @@ setting_customize: Customize
 training_main: Training
 training_edit: Training Edit
 training_create: Training Create
+ranking_main: Ranking
 user_detail: User Detail
 user_login: Login
 user_logout: Logout
@@ -49,7 +50,6 @@ user_lostpass: Lost Password
 user_register: Register
 home_domain_create: Create Domain
 domain_main: Main
-domain_ranking: Ranking
 domain_manage: Domain Manage
 domain_manage_dashboard: Dashboard
 domain_manage_discussion: Discussion Nodes
