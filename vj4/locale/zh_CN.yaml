@@ -259,6 +259,7 @@ title: 标题
 training_main: 训练
 training_edit: 编辑训练
 training_create: 创建训练
+ranking_main: 排名
 user_detail: 用户
 user_login: 登录
 user_logout: 登出
@@ -309,7 +310,6 @@ Create Domain: 创建域
 Properties: 属性
 Access Control: 访问控制
 domain_main: 首页
-domain_ranking: 排名
 domain_manage: 管理域
 domain_manage_dashboard: 概况
 domain_manage_discussion: 讨论节点
