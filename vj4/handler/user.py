@@ -257,10 +257,11 @@ class UserSearchHandler(base.Handler):
 
 
 @app.route('/ranking', 'domain_ranking')
-class RankHandler(base.Handler):
+class RankingHandler(base.Handler):
   USERS_PER_PAGE = 100
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
+  @base.require_perm(builtin.PERM_VIEW_RANKING)
   @base.get_argument
   @base.route_argument
   @base.sanitize
