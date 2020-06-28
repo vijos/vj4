@@ -1,19 +1,8 @@
 from vj4 import app
-#from vj4 import constant
-#from vj4 import error
 from vj4.model import builtin
 from vj4.model import domain
-#from vj4.model import record
-#from vj4.model import system
-#from vj4.model import token
 from vj4.model import user
-#from vj4.model.adaptor import discussion
-#from vj4.model.adaptor import problem
-#from vj4.model.adaptor import setting
-#from vj4.util import misc
-#from vj4.util import options
 from vj4.util import pagination
-#from vj4.util import validator
 from vj4.handler import base
 
 
