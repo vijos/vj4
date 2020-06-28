@@ -72,11 +72,7 @@ to resolve this.
 
 #### IP Geo-Location
 
-To enable IP geo-location translation, you need to obtain a [MaxMind GeoLite City DB](http://dev.maxmind.com/geoip/geoip2/geolite2/) and put it in the project root directory:
-
-```bash
-curl "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz" | gunzip -c > GeoLite2-City.mmdb
-```
+To enable IP geo-location translation, you need to follow the instruction on [MaxMind GeoLite2](http://dev.maxmind.com/geoip/geoip2/geolite2/) to obtain a GeoLite2 City Database, unzip it, and put it in the project root directory with the filename `GeoLite2-City.mmdb`.
 
 You may also want to install [libmaxminddb](https://github.com/maxmind/libmaxminddb/blob/master/README.md) for higher performance.
 

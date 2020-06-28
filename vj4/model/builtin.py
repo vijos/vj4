@@ -525,7 +525,7 @@ DEFAULT_VNODES = collections.OrderedDict([
     {'pic': None, 'name': 'USACO'},
     {'pic': None, 'name': 'RQNOJ'},
     {'pic': None, 'name': 'UOJ'},
-    {'pic': None, 'name': 'LOJ'},
+    {'pic': None, 'name': 'LibreOJ'},
     {'pic': None, 'name': '洛谷'}
   ]),
   ('泛', [
