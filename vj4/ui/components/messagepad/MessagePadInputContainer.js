@@ -6,8 +6,15 @@ import Icon from 'vj/components/react/IconComponent';
 
 import request from 'vj/utils/request';
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   activeId: state.activeId,
+  isPlaceholder: state.activeId !== null
+    ? state.dialogues[state.activeId].isPlaceholder
+    : false,
+  sendee_uid: state.activeId !== null
+    ? state.dialogues[state.activeId].sendee_uid
+    : null,
+  dialogue: state.dialogues[state.activeId],
   isPosting: state.activeId !== null
     ? state.isPosting[state.activeId]
     : false,
@@ -16,7 +23,7 @@ const mapStateToProps = state => ({
     : '',
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   handleChange(id, value) {
     if (id === null) {
       return;
@@ -71,14 +78,11 @@ export default class MessagePadInputContainer extends React.PureComponent {
     store: PropTypes.object,
   };
 
-  componentWillUpdate(nextProps) {
+  componentDidUpdate(prevProps) {
     this.focusInput = (
-      nextProps.activeId !== this.props.activeId
-      || this.props.isPosting !== nextProps.isPosting && nextProps.isPosting === false
+      this.props.activeId !== prevProps.activeId
+      || prevProps.isPosting !== this.props.isPosting && this.props.isPosting === false
     );
-  }
-
-  componentDidUpdate() {
     if (this.focusInput) {
       const { scrollX, scrollY } = window;
       this.refs.input.focus();
@@ -93,11 +97,10 @@ export default class MessagePadInputContainer extends React.PureComponent {
   }
 
   submit() {
-    const state = this.context.store.getState();
-    if (state.dialogues[this.props.activeId].isPlaceholder) {
+    if (!this.props.isPlaceholder) {
       this.props.postSend(
         this.props.activeId,
-        state.dialogues[this.props.activeId].sendee_uid,
+        this.props.sendee_uid,
         this.props.inputValue,
       );
     } else {
@@ -119,8 +122,8 @@ export default class MessagePadInputContainer extends React.PureComponent {
             ref="input"
             disabled={this.props.isPosting}
             value={this.props.inputValue}
-            onKeyDown={ev => this.handleKeyDown(ev)}
-            onChange={ev => this.props.handleChange(this.props.activeId, ev.target.value)}
+            onKeyDown={(ev) => this.handleKeyDown(ev)}
+            onChange={(ev) => this.props.handleChange(this.props.activeId, ev.target.value)}
           />
         </div>
         <button

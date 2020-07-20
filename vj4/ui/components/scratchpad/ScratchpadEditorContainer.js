@@ -15,7 +15,7 @@ import 'codemirror/mode/ruby/ruby';
 
 import * as languageEnum from 'vj/constant/language';
 
-const getOptions = lang => ({
+const getOptions = (lang) => ({
   lineNumbers: true,
   tabSize: 4,
   indentUnit: 4,
@@ -23,12 +23,12 @@ const getOptions = lang => ({
   mode: languageEnum.LANG_CODEMIRROR_MODES[lang],
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   code: state.editor.code,
   lang: state.editor.lang,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   handleUpdateCode: (code) => {
     dispatch({
       type: 'SCRATCHPAD_EDITOR_UPDATE_CODE',
@@ -47,7 +47,7 @@ export default class ScratchpadEditorContainer extends React.PureComponent {
     return (
       <CodeMirror
         value={this.props.code}
-        onChange={code => this.props.handleUpdateCode(code)}
+        onChange={(code) => this.props.handleUpdateCode(code)}
         options={getOptions(this.props.lang)}
         ref="editor"
       />

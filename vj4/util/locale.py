@@ -20,7 +20,7 @@ def _init():
     with open(os.path.join(translation_path, filename), encoding='utf-8') as yaml_file:
       code = filename[:-5]
       name = yaml_file.readline()[1:].strip()
-      locale = yaml.load(yaml_file)
+      locale = yaml.load(yaml_file, Loader=yaml.SafeLoader)
       _locales[code] = locale
       if code == options.default_locale:
         global _default_locale

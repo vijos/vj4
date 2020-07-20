@@ -180,7 +180,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
 
     $('.loader-container').show();
 
-    const SockJs = await import('sockjs-client');
+    const { default: SockJs } = await import('sockjs-client');
     const { default: ScratchpadApp } = await import('../components/scratchpad');
     const { default: ScratchpadReducer } = await import('../components/scratchpad/reducers');
     const {
@@ -229,7 +229,6 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     domainSelector.clear();
     return this;
   };
-
 
   async function handleClickCopyProblem() {
     const action = await copyProblemToDialog.clear().open();

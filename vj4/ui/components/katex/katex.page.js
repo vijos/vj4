@@ -6,10 +6,10 @@ import './katex.styl';
 const katexPage = new AutoloadPage('katexPage', () => {
   import('katex/dist/contrib/auto-render.min.js').then((renderKatex) => {
     function runKatex($containers) {
-      $containers.get().forEach(container => renderKatex(container));
+      $containers.get().forEach((container) => renderKatex.default(container));
     }
     runKatex($('.typo'));
-    $(document).on('vjContentNew', e => runKatex($(e.target).find('.typo')));
+    $(document).on('vjContentNew', (e) => runKatex($(e.target).find('.typo')));
   });
 });
 

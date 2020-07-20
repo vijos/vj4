@@ -5,21 +5,16 @@ import fs from 'fs-extra';
 
 import root from '../utils/root.js';
 import mapWebpackUrlPrefix from '../utils/mapWebpackUrlPrefix.js';
-import DummyOutputPlugin from '../plugins/webpackDummyOutputPlugin.js';
 import StaticManifestPlugin from '../plugins/webpackStaticManifestPlugin.js';
 import FriendlyErrorsPlugin from 'friendly-errors-webpack-plugin';
 import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import ExtractCssPlugin from 'mini-css-extract-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
-
-const extractProjectCSS = new ExtractTextPlugin({ filename: 'vj4.css?[sha1:contenthash:hex:10]', allChunks: true });
-const extractVendorCSS = new ExtractTextPlugin({ filename: 'vendors.css?[sha1:contenthash:hex:10]', allChunks: true });
 
 const beautifyOutputUrl = mapWebpackUrlPrefix([
-  { prefix: 'vj4/ui/',                  replace: 'ui/' },
-  { prefix: 'node_modules/katex/dist/', replace: 'katex/' },
-  { prefix: 'ui/misc/.iconfont',        replace: 'ui/iconfont' },
+  { prefix: 'vj4/ui/', replace: 'ui/' },
+  { prefix: '_/_/node_modules/katex/dist/', replace: 'katex/' },
+  { prefix: 'ui/misc/.iconfont', replace: 'ui/iconfont' },
 ]);
 
 export default function (env = {}) {
@@ -48,10 +43,6 @@ export default function (env = {}) {
     };
   }
 
-  function jsonLoader() {
-    return 'json-loader';
-  }
-
   function postcssLoader() {
     return {
       loader: 'postcss-loader',
@@ -66,7 +57,12 @@ export default function (env = {}) {
   }
 
   function cssLoader() {
-    return 'css-loader?importLoaders=1';
+    return {
+      loader: 'css-loader',
+      options: {
+        importLoaders: 1
+      }
+    }
   }
 
   function stylusLoader() {
@@ -82,7 +78,12 @@ export default function (env = {}) {
     };
   }
 
+  function extractCssLoader() {
+    return ExtractCssPlugin.loader;
+  }
+
   const config = {
+    mode: env.production ? 'production' : 'development',
     bail: true,
     profile: true,
     context: root('vj4/ui'),
@@ -105,6 +106,20 @@ export default function (env = {}) {
       ],
       alias: {
         vj: root('vj4/ui'),
+        picker: 'pickadate/lib/picker',
+      },
+    },
+    optimization: {
+      splitChunks: {
+        minChunks: 1,
+        cacheGroups: {
+          vendors: {
+            test: /node_modules/,
+            name: "vendors",
+            chunks: "all",
+            reuseExistingChunk: true
+          }
+        },
       },
     },
     module: {
@@ -127,48 +142,32 @@ export default function (env = {}) {
           use: [babelLoader()],
         },
         {
-          test: /\.json$/,
-          use: [jsonLoader()],
-        },
-        {
-          // fix pickadate loading
-          test: /pickadate/,
-          use: [
-            {
-              loader: 'imports-loader',
-              options: { define: '>false' },
-            },
-          ],
-        },
-        {
-          // project stylus stylesheets
           test: /\.styl$/,
           use: env.watch
             ? [styleLoader(), cssLoader(), postcssLoader(), stylusLoader()]
-            : extractProjectCSS.extract([cssLoader(), postcssLoader(), stylusLoader()])
-            ,
+            : [extractCssLoader(), cssLoader(), postcssLoader(), stylusLoader()]
+          ,
         },
         {
-          // vendors stylesheets
           test: /\.css$/,
           include: /node_modules[\/\\]/,
           use: env.watch
             ? [styleLoader(), cssLoader()]
-            : extractVendorCSS.extract([cssLoader()])
-            ,
+            : [extractCssLoader(), cssLoader()]
+          ,
         },
         {
-          // project stylesheets
           test: /\.css$/,
           exclude: /node_modules[\/\\]/,
           use: env.watch
             ? [styleLoader(), cssLoader(), postcssLoader()]
-            : extractProjectCSS.extract([cssLoader(), postcssLoader()])
-            ,
+            : [extractCssLoader(), cssLoader(), postcssLoader()]
+          ,
         },
       ],
     },
     plugins: [
+      new webpack.ProgressPlugin(),
 
       new webpack.ProvidePlugin({
         $: 'jquery',
@@ -187,49 +186,17 @@ export default function (env = {}) {
       // no use. FIXME.
       // new webpack.IgnorePlugin(/locales\//, /timeago/),
 
-      // extract stylesheets into a standalone file
-      env.watch
-        ? new DummyOutputPlugin('vendors.css')
-        : extractVendorCSS
-        ,
-
-      env.watch
-        ? new DummyOutputPlugin('vj4.css')
-        : extractProjectCSS
-        ,
-
-      // extract 3rd-party JavaScript libraries into a standalone file
-      env.watch
-        ? new DummyOutputPlugin('vendors.js')
-        : new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendors',
-            minChunks: (module, count) => (
-              module.resource
-              && module.resource.indexOf(root('vj4/ui/')) === -1
-              && module.resource.match(/\.jsx?$/)
-            ),
-          })
-        ,
-
-      // extract manifest into a standalone file
-      env.watch
-        ? new DummyOutputPlugin('manifest.js')
-        : new webpack.optimize.CommonsChunkPlugin({
-            name: 'manifest',
-          })
-        ,
-
-      new webpack.optimize.CommonsChunkPlugin({
-        children: true,
-        async: true,
-        minChunks: 2,
+      new ExtractCssPlugin({
+        filename: '[name].css?[contenthash:10]',
       }),
 
       // copy static assets
-      new CopyWebpackPlugin([{ from: root('vj4/ui/static') }]),
-
-      // copy emoji images
-      new CopyWebpackPlugin([{ from: root('node_modules/emojify.js/dist/images/basic'), to: 'img/emoji/' }]),
+      new CopyWebpackPlugin({
+        patterns: [
+          'static',
+          { from: root('node_modules/emojify.js/dist/images/basic'), to: 'img/emoji/' },
+        ],
+      }),
 
       // Options are provided by LoaderOptionsPlugin until webpack#3136 is fixed
       new webpack.LoaderOptionsPlugin({
@@ -254,27 +221,17 @@ export default function (env = {}) {
         },
       }),
 
-      env.production
-        ? new UglifyJsPlugin({ sourceMap: true })
-        : function () {}
-        ,
-      env.production
-        ? new OptimizeCssAssetsPlugin()
-        : function () {}
-        ,
-      env.production
-        ? new webpack.optimize.ModuleConcatenationPlugin()
-        : function () {}
-        ,
-      env.production
-        ? new webpack.LoaderOptionsPlugin({ minimize: true })
-        : function () {}
-        ,
-      // Replace Module Id with hash or name
-      env.production
-        ? new webpack.HashedModuleIdsPlugin()
-        : new webpack.NamedModulesPlugin()
-        ,
+      ...env.production
+        ? [
+          new OptimizeCssAssetsPlugin(),
+          new webpack.optimize.ModuleConcatenationPlugin(),
+          new webpack.LoaderOptionsPlugin({ minimize: true }),
+          // Replace Module Id with hash or name
+          new webpack.HashedModuleIdsPlugin()
+        ]
+        : [
+          new webpack.NamedModulesPlugin()
+        ],
 
       new webpack.LoaderOptionsPlugin({
         options: {

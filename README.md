@@ -54,13 +54,12 @@ In the root of the repository, where `requirements.txt` and `package.json` locat
 
 ```bash
 python3 -m pip install -r requirements.txt
-npm install   # cnpm install
+yarn
 ```
 
-You don't need root privilege to run `npm install`. It installs stuffs in the project directory. We recommend using Node 8.
+You don't need root privilege to run `yarn`. It installs stuffs in the project directory. We recommend using Node 10.
 
 You may want to use [cnpm](https://npm.taobao.org/) and [tuna](https://pypi.tuna.tsinghua.edu.cn/)
-if you are in China. Make sure to use `cnpm` by adding `alias` to `npm` instead of installing cnpm cli-tool.
 
 Some requirements may need `Python.h`. In Debian/Ubuntu you can use
 
@@ -81,7 +80,7 @@ You may also want to install [libmaxminddb](https://github.com/maxmind/libmaxmin
 In the root of the repository:
 
 ```bash
-npm run build   # or: npm run build:watch
+yarn build   # or: yarn build:watch
 python3 -m vj4.server --debug
 ```
 
@@ -108,7 +107,7 @@ pm vj4.job.rank run_all
 Frontend source codes can be recompiled automatically by running:
 
 ```bash
-npm run build:watch
+yarn build:watch
 ```
 
 However you need to manually restart the server for server-side code to take effect.
@@ -116,7 +115,7 @@ However you need to manually restart the server for server-side code to take eff
 ## Production
 
 ```bash
-npm run build:production
+yarn build:production
 python3 -m vj4.server --listen=unix:/var/run/vj4.sock
 ```
 
