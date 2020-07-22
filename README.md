@@ -45,7 +45,7 @@ There is pre-built docker package at `vijos/vj4`. This is maintained by [@moesoh
 
 * [Python 3.5.3+](https://www.python.org/downloads/)
 * [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
-* [Node.js 6.0+](https://nodejs.org/en/download/package-manager/)
+* [Node.js 10.0+](https://nodejs.org/en/download/package-manager/)
 * [RabbitMQ](http://www.rabbitmq.com/)
 
 #### Install requirements
@@ -59,7 +59,7 @@ yarn
 
 You don't need root privilege to run `yarn`. It installs stuffs in the project directory. We recommend using Node 10.
 
-You may want to use [cnpm](https://npm.taobao.org/) and [tuna](https://pypi.tuna.tsinghua.edu.cn/)
+You may want to use [tuna](https://pypi.tuna.tsinghua.edu.cn/)
 
 Some requirements may need `Python.h`. In Debian/Ubuntu you can use
 
