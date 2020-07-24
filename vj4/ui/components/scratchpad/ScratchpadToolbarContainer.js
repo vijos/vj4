@@ -18,10 +18,10 @@ function isTestCaseDataValid(data) {
 }
 
 function isPretestValid(state) {
-  return _.some(state.tabs, (id) => isTestCaseDataValid(state.data[id]));
+  return _.some(state.tabs, id => isTestCaseDataValid(state.data[id]));
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   pretestVisible: state.ui.pretest.visible,
   recordsVisible: state.ui.records.visible,
   isPosting: state.ui.isPosting,
@@ -29,7 +29,7 @@ const mapStateToProps = (state) => ({
   pretestValid: isPretestValid(state.pretest),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   togglePanel(uiElement) {
     dispatch({
       type: 'SCRATCHPAD_UI_TOGGLE_VISIBILITY',
@@ -46,10 +46,10 @@ const mapDispatchToProps = (dispatch) => ({
     const state = context.store.getState();
     const { pretest } = state;
     const testCases = pretest.tabs
-      .filter((tabId) => isTestCaseDataValid(pretest.data[tabId]));
+      .filter(tabId => isTestCaseDataValid(pretest.data[tabId]));
     // const titles = testCases.map(tabId => pretest.meta[tabId].title);
-    const inputs = testCases.map((tabId) => pretest.data[tabId].input);
-    const outputs = testCases.map((tabId) => pretest.data[tabId].output);
+    const inputs = testCases.map(tabId => pretest.data[tabId].input);
+    const outputs = testCases.map(tabId => pretest.data[tabId].output);
     const req = request.post(Context.postPretestUrl, {
       lang: state.editor.lang,
       code: state.editor.code,
@@ -114,7 +114,7 @@ export default class ScratchpadToolbarContainer extends React.PureComponent {
             className="select"
             disabled={this.props.isPosting}
             value={this.props.editorLang}
-            onChange={(ev) => this.props.setEditorLanguage(ev.target.value)}
+            onChange={ev => this.props.setEditorLanguage(ev.target.value)}
           >
             {_.map(languageEnum.LANG_TEXTS, (val, key) => (
               <option value={key} key={key}>{val}</option>

@@ -13,7 +13,7 @@ const page = new NamedPage('judge_playground', async () => {
       .appendTo(div);
   };
 
-  sock.onmessage = (message) => {
+  sock.onmessage = message => {
     const msg = JSON.parse(message.data);
     const div = $('<div class="section visible">').appendTo('#messages');
     $('<div class="section__header"><h1 class="section__title">Record</h1></div>')
@@ -102,7 +102,7 @@ const page = new NamedPage('judge_playground', async () => {
       .appendTo(body);
   };
 
-  sock.onclose = (message) => {
+  sock.onclose = message => {
     const div = $('<div class="section visible">').appendTo('#messages');
     $(`
     <div class="section__header">

@@ -63,7 +63,7 @@ export default class DOMAttachedObject {
       .find(this.DOMAttachSelector)
       .addBack(this.DOMAttachSelector)
       .get()
-      .forEach((element) => this.getOrConstruct($(element), ...args));
+      .forEach(element => this.getOrConstruct($(element), ...args));
     if (process.env.NODE_ENV !== 'production') {
       console.timeEnd(`DOMAttachedObject[${this.DOMAttachKey}]: attachAll`);
     }
@@ -84,7 +84,7 @@ export default class DOMAttachedObject {
       .find(selector)
       .addBack(selector)
       .get()
-      .forEach((element) => {
+      .forEach(element => {
         const instance = this.get($(element));
         if (instance) {
           instance.detach();
@@ -102,8 +102,8 @@ export default class DOMAttachedObject {
         throw new Error(`'DOMAttachSelector' should be specified`);
       }
     }
-    $(document).on('vjContentNew', (e) => this.attachAll(e.target));
-    $(document).on('vjContentRemove', (e) => this.detachAll(e.target));
+    $(document).on('vjContentNew', e => this.attachAll(e.target));
+    $(document).on('vjContentRemove', e => this.detachAll(e.target));
     if (attach) {
       this.attachAll();
     }

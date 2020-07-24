@@ -49,6 +49,7 @@ module.exports = {
     LOCALES: true,
   },
   rules: {
+    'arrow-parens': ['warn', 'as-needed'],
     'comma-dangle': [
       'error',
       'always-multiline',

@@ -6,7 +6,7 @@ import { parse as parseMongoId } from 'vj/utils/mongoId';
 const page = new NamedPage('homework_main', () => {
   // Homework Calendar
   if (Context.docs) {
-    const events = Context.docs.map((doc) => ({
+    const events = Context.docs.map(doc => ({
       beginAt: doc.begin_at * 1000,
       endAt: doc.end_at * 1000,
       title: doc.title,
@@ -17,7 +17,7 @@ const page = new NamedPage('homework_main', () => {
     }));
     const calendar = new Calendar(events);
     calendar.getDom().appendTo('[name="calendar_entry"]');
-    $('[name="homework_display"]').change((ev) => {
+    $('[name="homework_display"]').change(ev => {
       switch (ev.currentTarget.value) {
       case 'calendar':
         $('.homework__list').hide();

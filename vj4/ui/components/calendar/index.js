@@ -27,7 +27,7 @@ export default class Calendar {
         <div class="calendar__body-container"></div>
       </div>
     `);
-    this.events = events.map((ev) => ({
+    this.events = events.map(ev => ({
       ...ev,
       beginAt: moment(ev.beginAt),
       endAt: moment(ev.endAt),
@@ -112,7 +112,7 @@ export default class Calendar {
   buildBody() {
     const data = this.buildBodyData();
     const $body = $('<div class="calendar__body"></div>');
-    data.forEach((week) => {
+    data.forEach(week => {
       const $row = $(tpl`<div class="calendar__row">
         <div class="calendar__row__bg"><table><tbody><tr></tr></tbody></table></div>
         <div class="calendar__row__content"><table><thead><tr></tr></thead><tbody></tbody></table></div>
@@ -120,16 +120,16 @@ export default class Calendar {
       const $bgContainer = $row.find('.calendar__row__bg tr');
       const $numContainer = $row.find('.calendar__row__content thead tr');
       const $bannerContainer = $row.find('.calendar__row__content tbody');
-      week.days.forEach((day) => {
+      week.days.forEach(day => {
         const isInactive = day.active ? '' : 'is-inactive';
         const isCurrentDay = day.current ? 'is-current-day' : '';
         const today = day.current ? ' (TODAY)' : '';
         $bgContainer.append($('<td></td>').addClass(isInactive).addClass(isCurrentDay));
         $numContainer.append($(tpl`<th>${day.date.format('D')}${today}</th>`).addClass(isInactive).addClass(isCurrentDay));
       });
-      week.banners.forEach((banners) => {
+      week.banners.forEach(banners => {
         const $tr = $('<tr/>');
-        banners.forEach((bannerSpan) => {
+        banners.forEach(bannerSpan => {
           if (!bannerSpan.banner) {
             $tr.append(tpl`<td colspan="${bannerSpan.span}"></td>`);
             return;
@@ -206,7 +206,7 @@ export default class Calendar {
       }
     }
 
-    days.forEach((day) => {
+    days.forEach(day => {
       day.current = day.date.isSame(now, 'day'); // eslint-disable-line no-param-reassign
     });
 
@@ -218,7 +218,7 @@ export default class Calendar {
     const endDate = _.last(days).date.clone();
 
     // cut events by week to banners
-    this.events.forEach((ev) => {
+    this.events.forEach(ev => {
       if (ev.endAt.isBefore(ev.beginAt, 'day')) {
         return;
       }
@@ -258,28 +258,28 @@ export default class Calendar {
 
     // layout banners
     const layout = bannersByWeek
-      .map((banners) => _
+      .map(banners => _
         .sortBy(banners, [
-          (banner) => banner.beginAt.valueOf(),
-          (banner) => (banner.beginTrunc ? 0 : 1), // truncated events first
-          (banner) => -banner.endAt.valueOf(), // long events first
+          banner => banner.beginAt.valueOf(),
+          banner => (banner.beginTrunc ? 0 : 1), // truncated events first
+          banner => -banner.endAt.valueOf(), // long events first
         ]))
-      .map((banners) => {
+      .map(banners => {
         const dayBitmap = _
           .fill(new Array(7), 1)
           .map(() => []);
-        banners.forEach((banner) => {
+        banners.forEach(banner => {
           const beginDay = banner.beginAt.day();
           const endDay = banner.endAt.day();
           // find available space
           const vIndexMax = _.max(_
             .range(beginDay, endDay + 1)
-            .map((day) => dayBitmap[day].length));
+            .map(day => dayBitmap[day].length));
           let vIndex = 0;
           for (; vIndex < vIndexMax; ++vIndex) {
             if (_.every(_
               .range(beginDay, endDay + 1)
-              .map((day) => !dayBitmap[day][vIndex]) // eslint-disable-line no-loop-func
+              .map(day => !dayBitmap[day][vIndex]) // eslint-disable-line no-loop-func
             )) { // eslint-disable-line function-paren-newline
               break;
             }
@@ -290,7 +290,7 @@ export default class Calendar {
           }
         });
         // merge adjacent cells and arrange banners by vertical index
-        const vMaxLength = _.max(_.range(0, 7).map((day) => dayBitmap[day].length));
+        const vMaxLength = _.max(_.range(0, 7).map(day => dayBitmap[day].length));
         const weekBanners = _
           .fill(new Array(vMaxLength), 1)
           .map(() => []);
@@ -308,7 +308,7 @@ export default class Calendar {
           }
         }
         // cut banners by masked areas, scanning from left to right
-        weekBanners.forEach((bannerSpans) => {
+        weekBanners.forEach(bannerSpans => {
           for (let i = 0; i < bannerSpans.length; ++i) {
             const { banner } = bannerSpans[i];
             if (!banner) {

@@ -8,7 +8,7 @@ const locales = require.context('timeago.js/lib/lang', false, /\.js$/);
 timeago.register(i18n('timeago_locale'), locales(`./${i18n('timeago_locale')}.js`).default);
 
 function runRelativeTime($container) {
-  $container.find('span.time.relative[data-timestamp]').get().forEach((element) => {
+  $container.find('span.time.relative[data-timestamp]').get().forEach(element => {
     const $element = $(element);
     if ($element.attr('data-has-timeago') !== undefined) {
       return;
@@ -21,7 +21,7 @@ function runRelativeTime($container) {
 }
 
 function cancelRelativeTime($container) {
-  $container.find('span.time.relative[data-timestamp]').get().forEach((element) => {
+  $container.find('span.time.relative[data-timestamp]').get().forEach(element => {
     const $element = $(element);
     if ($element.attr('data-has-timeago') === undefined) {
       return;
@@ -33,8 +33,8 @@ function cancelRelativeTime($container) {
 
 const relativeTimePage = new AutoloadPage('relativeTimePage', () => {
   runRelativeTime($('body'));
-  $(document).on('vjContentNew', (e) => runRelativeTime($(e.target)));
-  $(document).on('vjContentRemove', (e) => cancelRelativeTime($(e.target)));
+  $(document).on('vjContentNew', e => runRelativeTime($(e.target)));
+  $(document).on('vjContentRemove', e => cancelRelativeTime($(e.target)));
 });
 
 export default relativeTimePage;

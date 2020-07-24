@@ -3,8 +3,8 @@ export default function parseQueryString(str) {
   (str || document.location.search)
     .replace(/(^\?)/, '')
     .split('&')
-    .forEach((n) => {
-      const [key, value] = n.split('=').map((v) => decodeURIComponent(v));
+    .forEach(n => {
+      const [key, value] = n.split('=').map(v => decodeURIComponent(v));
       obj[key] = value;
     });
   return obj;

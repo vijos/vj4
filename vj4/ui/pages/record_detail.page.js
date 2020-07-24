@@ -7,7 +7,7 @@ const page = new NamedPage('record_detail', async () => {
   const sock = new SockJs(Context.socketUrl);
   const dd = new DiffDOM();
 
-  sock.onmessage = (message) => {
+  sock.onmessage = message => {
     const msg = JSON.parse(message.data);
     const newStatus = $(msg.status_html);
     const oldStatus = $('#status');
