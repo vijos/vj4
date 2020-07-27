@@ -30,7 +30,9 @@ export default class MessagePadDialogueContentContainer extends React.PureCompon
     } else if (node.scrollTop + node.offsetHeight === node.scrollHeight) {
       this.scrollToBottom = true;
       this.scrollWithAnimation = true;
-    } else this.scrollToBottom = false;
+    } else {
+      this.scrollToBottom = false;
+    }
 
     if (this.scrollToBottom) {
       const targetScrollTop = node.scrollHeight - node.offsetHeight;
