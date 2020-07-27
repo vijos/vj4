@@ -21,9 +21,19 @@ export default function reducer(state = {
     ) {
       return state;
     }
+    const rows = [...state.rows];
+    if (!rows.includes(rdoc._id)) {
+      return {
+        ...state,
+        rows: [rdoc._id, ...state.rows],
+        items: {
+          ...state.items,
+          [rdoc._id]: rdoc,
+        },
+      };
+    }
     return {
       ...state,
-      rows: [rdoc._id, ...state.rows],
       items: {
         ...state.items,
         [rdoc._id]: rdoc,

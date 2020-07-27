@@ -97,7 +97,7 @@ export default class MessagePadInputContainer extends React.PureComponent {
   }
 
   submit() {
-    if (!this.props.isPlaceholder) {
+    if (this.props.isPlaceholder) {
       this.props.postSend(
         this.props.activeId,
         this.props.sendee_uid,
