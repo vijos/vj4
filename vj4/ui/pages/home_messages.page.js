@@ -45,7 +45,6 @@ const page = new NamedPage('home_messages', () => {
     };
     sock.onclose = () => clearInterval(heartbeatClock);
 
-    sock.onmessage = (message) => {
     sock.onmessage = message => {
       const msg = JSON.parse(message.data);
       store.dispatch({
