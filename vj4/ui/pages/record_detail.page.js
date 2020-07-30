@@ -7,6 +7,14 @@ const page = new NamedPage('record_detail', async () => {
   const sock = new SockJs(Context.socketUrl);
   const dd = new DiffDOM();
 
+  let heartbeatClock;
+  sock.onopen = () => {
+    heartbeatClock = setInterval(() => {
+      sock.send(JSON.stringify({}));  // heartbeat
+    }, 25000);
+  };
+  sock.onclose = () => clearInterval(heartbeatClock);
+
   sock.onmessage = message => {
     const msg = JSON.parse(message.data);
     const newStatus = $(msg.status_html);

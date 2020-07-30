@@ -188,6 +188,15 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     } = await loadReactRedux(ScratchpadReducer);
 
     const sock = new SockJs(Context.socketUrl);
+
+    let heartbeatClock;
+    sock.onopen = () => {
+      heartbeatClock = setInterval(() => {
+        sock.send(JSON.stringify({}));  // heartbeat
+      }, 25000);
+    };
+    sock.onclose = () => clearInterval(heartbeatClock);
+
     sock.onmessage = message => {
       const msg = JSON.parse(message.data);
       store.dispatch({

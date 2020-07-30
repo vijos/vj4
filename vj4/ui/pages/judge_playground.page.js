@@ -6,11 +6,16 @@ const page = new NamedPage('judge_playground', async () => {
   const { default: SockJs } = await import('sockjs-client');
 
   const sock = new SockJs('/judge/consume-conn');
+  let heartbeatClock;
 
   sock.onopen = () => {
     const div = $('<div class="section visible">').appendTo('#messages');
     $('<div class="section__header"><h1 class="section__title">Connection opened.</h1></div>')
       .appendTo(div);
+
+    heartbeatClock = setInterval(() => {
+      sock.send(JSON.stringify({}));  // heartbeat
+    }, 25000);
   };
 
   sock.onmessage = message => {
@@ -113,6 +118,8 @@ const page = new NamedPage('judge_playground', async () => {
     </div>
     `)
       .appendTo(div);
+
+    clearInterval(heartbeatClock);
   };
 });
 
