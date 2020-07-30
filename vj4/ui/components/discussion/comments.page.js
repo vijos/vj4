@@ -113,7 +113,7 @@ async function onCommentClickReplyReply(ev) {
   const $mediaBody = $evTarget.closest('.media__body');
   const username = $mediaBody
     .find('.user-profile-name').eq(0)
-    .text();
+    .text().trim();
 
   $evTarget
     .closest('.dczcomments__item')
