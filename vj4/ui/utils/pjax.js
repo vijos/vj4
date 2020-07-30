@@ -1,7 +1,7 @@
 // Modified from jquery-pjax to support multiple fragments and jQuery 3.0
 // https://github.com/defunkt/jquery-pjax/blob/master/jquery.pjax.js
 
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 
 import Notification from 'vj/components/notification';
 import NProgress from 'vj/components/nprogress';
@@ -48,7 +48,7 @@ function decProgress() {
   }
 }
 
-pjax.request = async (opt) => {
+pjax.request = async opt => {
   const options = {
     method: 'get',
     push: true,
@@ -86,7 +86,7 @@ pjax.request = async (opt) => {
       window.history.replaceState(currentState, null, meta.url);
     }
     document.title = meta.title;
-    data.fragments.forEach((fragment) => {
+    data.fragments.forEach(fragment => {
       if (process.env.NODE_ENV !== 'production') {
         if (fragment.html === undefined) {
           // eslint-disable-next-line quotes

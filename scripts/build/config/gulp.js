@@ -3,7 +3,6 @@ import moment from 'moment';
 import gulp from 'gulp';
 import log from 'fancy-log';
 import chalk from 'chalk';
-import del from 'del';
 import svgmin from 'gulp-svgmin';
 import vinylBuffer from 'vinyl-buffer';
 import iconfont from 'gulp-iconfont';

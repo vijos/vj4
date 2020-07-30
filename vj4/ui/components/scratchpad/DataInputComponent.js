@@ -16,7 +16,7 @@ export default function DataInputComponent(props) {
         className="scratchpad__data-input"
         wrap="off"
         value={value}
-        onChange={(ev) => {
+        onChange={ev => {
           ev.stopPropagation();
           onChange(ev.target.value);
         }}

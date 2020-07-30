@@ -7,7 +7,7 @@ const footerPage = new AutoloadPage('footerPage', () => {
   if ($('.footer').length === 0) {
     return;
   }
-  $('.footer__category.expandable > h1').click(async (ev) => {
+  $('.footer__category.expandable > h1').click(async ev => {
     if (!isBelow(responsiveCutoff.mobile)) {
       return;
     }

@@ -180,7 +180,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
 
     $('.loader-container').show();
 
-    const SockJs = await import('sockjs-client');
+    const { default: SockJs } = await import('sockjs-client');
     const { default: ScratchpadApp } = await import('../components/scratchpad');
     const { default: ScratchpadReducer } = await import('../components/scratchpad/reducers');
     const {
@@ -188,7 +188,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     } = await loadReactRedux(ScratchpadReducer);
 
     const sock = new SockJs(Context.socketUrl);
-    sock.onmessage = (message) => {
+    sock.onmessage = message => {
       const msg = JSON.parse(message.data);
       store.dispatch({
         type: 'SCRATCHPAD_RECORDS_PUSH',
@@ -229,7 +229,6 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     domainSelector.clear();
     return this;
   };
-
 
   async function handleClickCopyProblem() {
     const action = await copyProblemToDialog.clear().open();
@@ -276,19 +275,19 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
   }
 
   $(document).on('vjScratchpadRelayout', updateFloatingSidebar);
-  $(document).on('click', '[name="problem-sidebar__open-scratchpad"]', (ev) => {
+  $(document).on('click', '[name="problem-sidebar__open-scratchpad"]', ev => {
     enterScratchpadMode();
     ev.preventDefault();
   });
-  $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', (ev) => {
+  $(document).on('click', '[name="problem-sidebar__quit-scratchpad"]', ev => {
     leaveScratchpadMode();
     ev.preventDefault();
   });
-  $(document).on('click', '[name="problem-sidebar__copy-to"]', (ev) => {
+  $(document).on('click', '[name="problem-sidebar__copy-to"]', ev => {
     handleClickCopyProblem();
     ev.preventDefault();
   });
-  $(document).on('click', '[name="problem-sidebar__show-category"]', (ev) => {
+  $(document).on('click', '[name="problem-sidebar__show-category"]', ev => {
     $(ev.currentTarget).hide();
     $('[name="problem-sidebar__categories"]').show();
   });

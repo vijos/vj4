@@ -26,7 +26,7 @@ const page = new NamedPage('home_messages', () => {
   }
 
   async function mountComponent() {
-    const SockJs = await import('sockjs-client');
+    const { default: SockJs } = await import('sockjs-client');
     const { default: MessagePadApp } = await import('../components/messagepad');
     const { default: MessagePadReducer } = await import('../components/messagepad/reducers');
     const {
@@ -36,7 +36,7 @@ const page = new NamedPage('home_messages', () => {
     reduxStore = store;
 
     const sock = new SockJs('/home/messages-conn');
-    sock.onmessage = (message) => {
+    sock.onmessage = message => {
       const msg = JSON.parse(message.data);
       store.dispatch({
         type: 'DIALOGUES_MESSAGE_PUSH',

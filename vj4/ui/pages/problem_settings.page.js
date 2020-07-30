@@ -10,7 +10,7 @@ async function handleCategoryClick(ev) {
 
 const page = new NamedPage('problem_settings', async () => {
   $(document).on('click', '.category-a', handleCategoryClick);
-  $(document).on('click', '[name="problem-sidebar__show-category"]', (ev) => {
+  $(document).on('click', '[name="problem-sidebar__show-category"]', ev => {
     $(ev.currentTarget).hide();
     $('[name="problem-sidebar__categories"]').show();
   });

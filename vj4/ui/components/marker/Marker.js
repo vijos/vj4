@@ -102,7 +102,7 @@ class Marker {
 
   closeTooltipsImmediately() {
     const $elements = this.$dom.find('[data-tooltip]');
-    $elements.get().forEach((element) => {
+    $elements.get().forEach(element => {
       const $el = $(element);
       const tooltipInstance = Tooltip.get($el);
       if (tooltipInstance) {

@@ -29,7 +29,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  handleUpdateCode: (code) => {
+  handleUpdateCode: code => {
     dispatch({
       type: 'SCRATCHPAD_EDITOR_UPDATE_CODE',
       payload: code,

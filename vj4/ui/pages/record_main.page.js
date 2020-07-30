@@ -2,13 +2,13 @@ import { NamedPage } from 'vj/misc/PageLoader';
 import UserSelectAutoComplete from 'vj/components/autocomplete/UserSelectAutoComplete';
 
 const page = new NamedPage('record_main', async () => {
-  const SockJs = await import('sockjs-client');
+  const { default: SockJs } = await import('sockjs-client');
   const { DiffDOM } = await import('diff-dom');
 
   const sock = new SockJs(Context.socketUrl);
   const dd = new DiffDOM();
 
-  sock.onmessage = (message) => {
+  sock.onmessage = message => {
     const msg = JSON.parse(message.data);
     const $newTr = $(msg.html);
     const $oldTr = $(`.record_main__table tr[data-rid="${$newTr.attr('data-rid')}"]`);

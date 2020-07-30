@@ -34,7 +34,7 @@ function testElementHotkey(hotkey, $element, attr) {
   }
   String($element.attr(attr))
     .split(',')
-    .forEach((singleDef) => {
+    .forEach(singleDef => {
       const [defStr, trigger] = singleDef.split(':');
       if (isHotkeyMatch(hotkey, defStr)) {
         switch (trigger) {
@@ -53,7 +53,7 @@ function testElementHotkey(hotkey, $element, attr) {
 }
 
 const hotkeyPage = new AutoloadPage('hotkeyPage', () => {
-  $(document).on('keydown', (ev) => {
+  $(document).on('keydown', ev => {
     const hotkey = ['alt', 'ctrl', 'shift'].filter(modifyKey => ev[`${modifyKey}Key`]);
     if (ev.metaKey && !ev.ctrlKey) {
       hotkey.push('ctrl');
@@ -66,12 +66,12 @@ const hotkeyPage = new AutoloadPage('hotkeyPage', () => {
     hotkey.sort();
 
     // Find all global hotkeys
-    $('[data-global-hotkey]').get().forEach((element) => {
+    $('[data-global-hotkey]').get().forEach(element => {
       testElementHotkey(hotkey, $(element), 'data-global-hotkey');
     });
 
     // Find all local hotkeys
-    $(ev.target).parents('[data-hotkey]').get().forEach((element) => {
+    $(ev.target).parents('[data-hotkey]').get().forEach(element => {
       testElementHotkey(hotkey, $(element), 'data-hotkey');
     });
   });

@@ -1,13 +1,13 @@
 import { NamedPage } from 'vj/misc/PageLoader';
 
 const page = new NamedPage('record_detail', async () => {
-  const SockJs = await import('sockjs-client');
+  const { default: SockJs } = await import('sockjs-client');
   const { DiffDOM } = await import('diff-dom');
 
   const sock = new SockJs(Context.socketUrl);
   const dd = new DiffDOM();
 
-  sock.onmessage = (message) => {
+  sock.onmessage = message => {
     const msg = JSON.parse(message.data);
     const newStatus = $(msg.status_html);
     const oldStatus = $('#status');
