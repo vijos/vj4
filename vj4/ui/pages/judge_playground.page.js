@@ -118,9 +118,9 @@ const page = new NamedPage('judge_playground', async () => {
     </div>
     `)
       .appendTo(div);
-  };
 
-  clearInterval(heartbeatClock)
+    clearInterval(heartbeatClock);
+  };
 });
 
 export default page;
