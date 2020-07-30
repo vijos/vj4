@@ -42,6 +42,7 @@ setting_customize: Customize
 training_main: Training
 training_edit: Training Edit
 training_create: Training Create
+ranking_main: Ranking
 user_detail: User Detail
 user_login: Login
 user_logout: Logout
@@ -65,6 +66,7 @@ perm_problem_solution: Problem Solutions
 perm_discussion: Discussions
 perm_contest: Contests
 perm_training: Trainings
+perm_ranking: Ranking
 discussion_edit: Discussion Edit
 wiki_help: Help
 no_translation_warn: <blockquote class="warn">This part of content is under translation.</blockquote>

@@ -10,7 +10,7 @@ function setStarButtonState($starButton, star) {
 }
 
 const starPage = new AutoloadPage('starPage', () => {
-  $(document).on('click', '.star', (ev) => {
+  $(document).on('click', '.star', ev => {
     const $button = $(ev.currentTarget);
     const currentState = $button.hasClass('activated');
     const $form = $button.closest('form');
@@ -18,7 +18,7 @@ const starPage = new AutoloadPage('starPage', () => {
     setStarButtonState($button, !currentState);
     request
       .post($form.attr('action'), $form)
-      .then((data) => {
+      .then(data => {
         setStarButtonState($button, data.star);
       })
       .catch(() => {

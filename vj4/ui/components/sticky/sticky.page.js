@@ -7,7 +7,7 @@ import { isAbove } from 'vj/utils/mediaQuery';
 import responsiveCutoff from 'vj/breakpoints.json';
 
 function updateStickies($stickies) {
-  $stickies.get().forEach((element) => {
+  $stickies.get().forEach(element => {
     const $sticky = $(element);
     const shouldEnableSticky = (isAbove($sticky.data('sticky-cutoff-min')));
     const stickyEnabled = $sticky.data('sticky-enabled');
@@ -43,7 +43,7 @@ function stickyRelayout() {
 const stickyPage = new AutoloadPage('stickyPage', () => {
   let shouldListenResize = false;
   const $stickies = $('[data-sticky]');
-  $stickies.get().forEach((element) => {
+  $stickies.get().forEach(element => {
     const $sticky = $(element);
     const minEnabledSize = $sticky.attr('data-sticky');
     if (minEnabledSize === 'medium' || minEnabledSize === 'large') {

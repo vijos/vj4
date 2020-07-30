@@ -1,11 +1,11 @@
 import { AutoloadPage } from 'vj/misc/PageLoader';
 
 const textboxPage = new AutoloadPage('textboxPage', () => {
-  $(document).on('focusin', '.textbox.material input', (ev) => {
+  $(document).on('focusin', '.textbox.material input', ev => {
     $(ev.currentTarget).parent().addClass('focus');
   });
 
-  $(document).on('focusout', '.textbox.material input', (ev) => {
+  $(document).on('focusout', '.textbox.material input', ev => {
     $(ev.currentTarget).parent().removeClass('focus');
   });
 

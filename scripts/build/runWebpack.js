@@ -6,7 +6,6 @@ import webpackConfig from './config/webpack.js';
 export default function ({ watch, production }) {
 
   const compiler = webpack(webpackConfig({ watch, production }));
-  compiler.apply(new webpack.ProgressPlugin());
 
   const outputOptions = {
     colors: true,

@@ -15,6 +15,7 @@ from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
 from vj4.util import misc
 from vj4.util import options
+from vj4.util import pagination
 from vj4.util import validator
 from vj4.handler import base
 

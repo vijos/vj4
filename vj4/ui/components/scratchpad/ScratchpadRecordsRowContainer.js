@@ -15,7 +15,7 @@ const shouldShowDetail = data => recordEnum.STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS[
 
 const isPretest = data => data.type === recordEnum.TYPE_PRETEST;
 
-const getRecordDetail = (data) => {
+const getRecordDetail = data => {
   if (!shouldShowDetail(data)) {
     return (
       <span className={`record-status--text ${recordEnum.STATUS_CODES[data.status]}`}>
@@ -70,8 +70,7 @@ export default class ScratchpadRecordsRowContainer extends React.PureComponent {
           <span className="icol icol--pretest">
             {isPretest(data)
               ? <span className={`flag record-status--background ${recordEnum.STATUS_CODES[data.status]}`}>{i18n('Pretest')}</span>
-              : ''
-            }
+              : ''}
           </span>
           {getRecordDetail(data)}
         </td>

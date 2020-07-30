@@ -19,13 +19,13 @@ function applyRotator(element) {
 
 const votePage = new AutoloadPage('votePage', () => {
   $('.vote-number.rotator--enabled').get().forEach(element => applyRotator(element));
-  $(document).on('click', '.vote-button', (ev) => {
+  $(document).on('click', '.vote-button', ev => {
     const $button = $(ev.currentTarget);
     const $container = $button.closest('.vote');
     const $form = $button.closest('form');
     request
       .post($form.attr('action'), $form)
-      .then((data) => {
+      .then(data => {
         setVoteState($container, data.vote, data.user_vote);
       })
       .catch(() => {

@@ -50,7 +50,7 @@ export class AutoloadPage extends Page {
 export class PageLoader {
   constructor() {
     const pageReq = require.context('../', true, /\.page\.js$/i);
-    this.pageInstances = pageReq.keys().map((key) => {
+    this.pageInstances = pageReq.keys().map(key => {
       const page = pageReq(key).default;
       if (!page || !(page instanceof Page)) {
         return null;

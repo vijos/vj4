@@ -67,7 +67,7 @@ function buildCategoryFilter() {
     return;
   }
   $container.attr('class', 'widget--category-filter row small-up-3 medium-up-2');
-  $container.children('li').get().forEach((category) => {
+  $container.children('li').get().forEach(category => {
     const $category = $(category)
       .attr('class', 'widget--category-filter__category column');
     const $categoryTag = $category
@@ -94,7 +94,7 @@ function buildCategoryFilter() {
         .find('a')
         .attr('class', 'widget--category-filter__subcategory-tag')
         .attr('data-category', categoryText);
-      $subCategoryTags.get().forEach((subCategoryTag) => {
+      $subCategoryTags.get().forEach(subCategoryTag => {
         const $tag = $(subCategoryTag);
         treeItem.children[$tag.text()] = {
           select: false,
@@ -107,7 +107,7 @@ function buildCategoryFilter() {
       });
     }
   });
-  $(document).on('click', '.widget--category-filter__category-tag', (ev) => {
+  $(document).on('click', '.widget--category-filter__category-tag', ev => {
     if (ev.shiftKey || ev.metaKey || ev.ctrlKey) {
       return;
     }
@@ -129,7 +129,7 @@ function buildCategoryFilter() {
     updateSelection();
     ev.preventDefault();
   });
-  $(document).on('click', '.widget--category-filter__subcategory-tag', (ev) => {
+  $(document).on('click', '.widget--category-filter__subcategory-tag', ev => {
     if (ev.shiftKey || ev.metaKey || ev.ctrlKey) {
       return;
     }
@@ -144,7 +144,7 @@ function buildCategoryFilter() {
 }
 
 function parseCategorySelection() {
-  Context.currentCategory.split(' ').forEach((cline) => {
+  Context.currentCategory.split(' ').forEach(cline => {
     const [category, subcategory] = cline.split(',');
     if (!categories[category]) {
       return;

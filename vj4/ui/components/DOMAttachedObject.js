@@ -84,7 +84,7 @@ export default class DOMAttachedObject {
       .find(selector)
       .addBack(selector)
       .get()
-      .forEach((element) => {
+      .forEach(element => {
         const instance = this.get($(element));
         if (instance) {
           instance.detach();

@@ -82,6 +82,9 @@ PERM_CREATE_TRAINING = 1 << 47
 PERM_EDIT_TRAINING = 1 << 48
 PERM_EDIT_TRAINING_SELF = 1 << 49
 
+# Ranking.
+PERM_VIEW_RANKING = 1 << 59
+
 PERM_ALL = -1
 
 Permission = collections.namedtuple('Permission',
@@ -147,6 +150,7 @@ PERMS = [
     Permission('perm_training', PERM_CREATE_TRAINING, 'Create training plans'),
     Permission('perm_training', PERM_EDIT_TRAINING, 'Edit training plans'),
     Permission('perm_training', PERM_EDIT_TRAINING_SELF, 'Edit own training plans'),
+    Permission('perm_ranking', PERM_VIEW_RANKING, 'View ranking'),
 ]
 
 PERMS_BY_FAMILY = collections.OrderedDict(
@@ -230,7 +234,8 @@ DEFAULT_PERMISSIONS = (
     PERM_EDIT_HOMEWORK_SELF |
     PERM_VIEW_TRAINING |
     PERM_CREATE_TRAINING |
-    PERM_EDIT_TRAINING_SELF
+    PERM_EDIT_TRAINING_SELF |
+    PERM_VIEW_RANKING
 )
 ADMIN_PERMISSIONS = PERM_ALL
 
@@ -520,7 +525,7 @@ DEFAULT_VNODES = collections.OrderedDict([
     {'pic': None, 'name': 'USACO'},
     {'pic': None, 'name': 'RQNOJ'},
     {'pic': None, 'name': 'UOJ'},
-    {'pic': None, 'name': 'LOJ'},
+    {'pic': None, 'name': 'LibreOJ'},
     {'pic': None, 'name': '洛谷'}
   ]),
   ('泛', [

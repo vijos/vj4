@@ -7,13 +7,13 @@ export default class Tab extends DOMAttachedObject {
   static DOMAttachKey = 'vjTabInstance';
 
   static initAll() {
-    $('.section__tabs').get().forEach((tab) => {
+    $('.section__tabs').get().forEach(tab => {
       Tab.getOrConstruct($(tab));
     });
   }
 
   static initEventListeners() {
-    $(document).on('click', '.section__tab-header-item', (ev) => {
+    $(document).on('click', '.section__tab-header-item', ev => {
       const targetIndex = $(ev.currentTarget).attr('data-tab-index');
       const $container = $(ev.currentTarget).closest('.section__tab-container');
       const tabInstance = Tab.get($container);

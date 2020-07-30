@@ -19,7 +19,7 @@ import languageMeta from './meta';
 const languageExtMap = {};
 
 // Map possible language names to Prism language name
-languageMeta.forEach((meta) => {
+languageMeta.forEach(meta => {
   for (let i = 0; i < meta.ext.length; ++i) {
     if (Prism.languages[meta.ext[i]] !== undefined) {
       // eslint-disable-next-line no-param-reassign
@@ -27,13 +27,13 @@ languageMeta.forEach((meta) => {
       break;
     }
   }
-  meta.ext.forEach((ext) => {
+  meta.ext.forEach(ext => {
     languageExtMap[ext] = meta.target;
   });
 });
 
 // Copy to Clipboard
-Prism.plugins.toolbar.registerButton('copy-to-clipboard', (env) => {
+Prism.plugins.toolbar.registerButton('copy-to-clipboard', env => {
   const linkCopy = document.createElement('a');
   linkCopy.href = 'javascript:;'; // eslint-disable-line no-script-url
   linkCopy.textContent = 'Copy';
@@ -48,8 +48,8 @@ Prism.plugins.toolbar.registerButton('copy-to-clipboard', (env) => {
 });
 
 const prismjsApiWrap = {
-  highlightBlocks: ($dom) => {
-    $dom.find('pre code').get().forEach((code) => {
+  highlightBlocks: $dom => {
+    $dom.find('pre code').get().forEach(code => {
       const $pre = $(code).parent();
       $pre.addClass('syntax-hl');
       if ($pre.closest('[data-syntax-hl-show-line-number]')) {
