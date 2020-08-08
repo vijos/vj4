@@ -10,7 +10,7 @@ const page = new NamedPage('record_detail', async () => {
   let heartbeatClock;
   sock.onopen = () => {
     heartbeatClock = setInterval(() => {
-      sock.send(JSON.stringify({}));  // heartbeat
+      sock.send(JSON.stringify({}));
     }, 25000);
   };
   sock.onclose = () => clearInterval(heartbeatClock);
