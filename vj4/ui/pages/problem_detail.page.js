@@ -192,7 +192,7 @@ const page = new NamedPage(['problem_detail', 'contest_detail_problem', 'homewor
     let heartbeatClock;
     sock.onopen = () => {
       heartbeatClock = setInterval(() => {
-        sock.send(JSON.stringify({}));  // heartbeat
+        sock.send(JSON.stringify({}));
       }, 25000);
     };
     sock.onclose = () => clearInterval(heartbeatClock);

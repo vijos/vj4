@@ -40,7 +40,7 @@ const page = new NamedPage('home_messages', () => {
     let heartbeatClock;
     sock.onopen = () => {
       heartbeatClock = setInterval(() => {
-        sock.send(JSON.stringify({}));  // heartbeat
+        sock.send(JSON.stringify({}));
       }, 25000);
     };
     sock.onclose = () => clearInterval(heartbeatClock);

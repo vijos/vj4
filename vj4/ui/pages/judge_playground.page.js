@@ -14,7 +14,7 @@ const page = new NamedPage('judge_playground', async () => {
       .appendTo(div);
 
     heartbeatClock = setInterval(() => {
-      sock.send(JSON.stringify({}));  // heartbeat
+      sock.send(JSON.stringify({}));
     }, 25000);
   };
 
