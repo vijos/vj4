@@ -51,20 +51,6 @@ _integrate_ensure_cache(1000000)
 
 
 @argmethod.wrap
-def _integrate_direct(y: int):
-  last_y = 0
-  s = 0.0
-  dx = 0.1
-  dT = 2
-  x0 = last_y / dT * dx
-  while y > last_y:
-    x0 += dx
-    s += _LOGP(x0) * dx
-    last_y += dT
-  return s
-
-
-@argmethod.wrap
 def _integrate(y: int):
   _integrate_ensure_cache(y)
   return _CACHE_INFO['values'][y]
