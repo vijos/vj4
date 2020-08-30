@@ -17,8 +17,6 @@ async def run():
   try:
     await system.ensure_db_version(0)
 
-    coll_domain = db.coll('domain')
-
     ddocs = await domain.get_multi().to_list()
     for ddoc in ddocs:
       _logger.info('Updating domain {0}...'.format(ddoc['_id']))

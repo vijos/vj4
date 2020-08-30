@@ -14,7 +14,7 @@ _LOCALE_MAP = {
 
 
 def ip2geo(ip: str, locale: str='en'):
-  if _reader == None:
+  if _reader is None:
     return 'Not available'
 
   # Map VJ locale string to MaxMind locale string

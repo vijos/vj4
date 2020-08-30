@@ -1,8 +1,6 @@
 import asyncio
-import calendar
 import collections
 import datetime
-import functools
 import io
 import pytz
 import yaml
