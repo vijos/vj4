@@ -217,8 +217,8 @@ class DiscussionDetailHandler(base.OperationHandler):
     if (not self.own(ddoc, builtin.PERM_EDIT_DISCUSSION_REPLY_SELF_DISCUSSION)
         and not self.own(drdoc, builtin.PERM_EDIT_DISCUSSION_REPLY_SELF)):
       self.check_perm(builtin.PERM_EDIT_DISCUSSION_REPLY)
-    drdoc = await discussion.edit_reply(self.domain_id, drdoc['doc_id'],
-                                        content=content)
+    await discussion.edit_reply(self.domain_id, drdoc['doc_id'],
+                                content=content)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -233,7 +233,7 @@ class DiscussionDetailHandler(base.OperationHandler):
         and not self.own(drdoc, builtin.PERM_DELETE_DISCUSSION_REPLY_SELF)):
       self.check_perm(builtin.PERM_DELETE_DISCUSSION_REPLY)
     await oplog.add(self.user['_id'], oplog.TYPE_DELETE_DOCUMENT, doc=drdoc)
-    drdoc = await discussion.delete_reply(self.domain_id, drdoc['doc_id'])
+    await discussion.delete_reply(self.domain_id, drdoc['doc_id'])
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
@@ -315,8 +315,8 @@ class DiscussionTailReplyRawHandler(base.Handler):
   @base.sanitize
   async def get(self, *, did: document.convert_doc_id, drid: document.convert_doc_id,
                 drrid: objectid.ObjectId):
-    ddoc = await discussion.get(self.domain_id, did)
-    drdoc, drrdoc = await discussion.get_tail_reply(self.domain_id, drid, drrid)
+    await discussion.get(self.domain_id, did)
+    _, drrdoc = await discussion.get_tail_reply(self.domain_id, drid, drrid)
     self.response.content_type = 'text/markdown'
     self.response.text = drrdoc['content']
 

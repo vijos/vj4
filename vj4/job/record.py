@@ -5,11 +5,9 @@ import logging
 
 from vj4 import db
 from vj4 import constant
-from vj4.model import builtin
 from vj4.model import domain
 from vj4.model import document
 from vj4.model import record
-from vj4.model import user
 from vj4.model.adaptor import problem
 from vj4.util import argmethod
 from vj4.util import domainjob

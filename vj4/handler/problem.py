@@ -265,7 +265,7 @@ class ProblemSubmitHandler(base.Handler):
       self.check_perm(builtin.PERM_VIEW_PROBLEM_HIDDEN)
     udoc, dudoc = await asyncio.gather(user.get_by_uid(pdoc['owner_uid']),
                                        domain.get_user(self.domain_id, pdoc['owner_uid']))
-    if uid == None:
+    if uid is None:
       rdocs = []
     else:
       # TODO(iceboy): needs to be in sync with contest_detail_problem_submit
@@ -419,8 +419,8 @@ class ProblemSolutionHandler(base.OperationHandler):
     psdoc = await problem.get_solution(self.domain_id, psid, pdoc['doc_id'])
     if not self.own(psdoc, builtin.PERM_EDIT_PROBLEM_SOLUTION_SELF):
       self.check_perm(builtin.PERM_EDIT_PROBLEM_SOLUTION)
-    psdoc = await problem.set_solution(self.domain_id, psdoc['doc_id'],
-                                       content=content)
+    await problem.set_solution(self.domain_id, psdoc['doc_id'],
+                               content=content)
     self.json_or_redirect(self.url)
 
   @base.require_priv(builtin.PRIV_USER_PROFILE)
