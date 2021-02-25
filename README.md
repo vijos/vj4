@@ -148,7 +148,7 @@ pm vj4.model.user set_judge -2
 
 ### Use HydroJudge
 
-* See https://hydro.js.org/plugins/hydrojudge-for-vijos.html for more details about this judge daemon.
+* See https://github.com/hydro-dev/HydroJudge for more details about this judge daemon.
 
 ## Notes
 
