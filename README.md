@@ -142,7 +142,13 @@ pm vj4.model.user add -2 judge 123456 judge@example.org
 pm vj4.model.user set_judge -2
 ```
 
+### Use jd4
+
 * See https://github.com/vijos/jd4 for more details about the judge daemon.
+
+### Use HydroJudge
+
+* See https://hydro.js.org/plugins/hydrojudge-for-vijos.html for more details about this judge daemon.
 
 ## Notes
 
