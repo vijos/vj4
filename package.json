@@ -79,7 +79,7 @@
     "nprogress": "^0.2.0",
     "pickadate": "^3.6.3",
     "plugin-error": "^1.0.1",
-    "prismjs": "^1.21.0",
+    "prismjs": "^1.23.0",
     "prop-types": "^15.7.2",
     "rc-tabs": "^9.6.3",
     "react": "^16.13.1",
