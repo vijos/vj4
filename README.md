@@ -148,7 +148,7 @@ pm vj4.model.user set_judge -2
 
 ### Use HydroJudge
 
-* You can also use [HydroJudge](https://hydro.js.org/plugins/hydrojudge.html) from [Hydro](https://github.com/hydro-dev/Hydro).
+* You can also use [HydroJudge](https://hydro.js.org/plugins/hydrojudge/) from [Hydro](https://github.com/hydro-dev/Hydro).
 
 ## Notes
 
