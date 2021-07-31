@@ -8,6 +8,8 @@ on:
 jobs:
   check-path:
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changed.outputs.changed }}
     steps:
       - uses: actions/checkout@v2
         with:
