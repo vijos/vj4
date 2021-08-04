@@ -2,7 +2,7 @@ name: Build and Release Front-End
 
 on:
   push:
-    branch:
+    branches:
       - master
 
 jobs:
