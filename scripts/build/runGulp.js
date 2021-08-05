@@ -4,7 +4,7 @@ import log from 'fancy-log';
 import chalk from 'chalk';
 import gulpConfig from './config/gulp.js';
 
-export default async function ({ watch, production }) {
+export default async function ({ watch, production, constant }) {
   function handleError(err) {
     log(chalk.red('Error: %s'), chalk.reset(err.toString()));
     if (err && !watch) {
@@ -31,6 +31,11 @@ export default async function ({ watch, production }) {
         resolve();
       }
     });
-    gulpTasks['default']();
+
+    if (constant) {
+      gulpTasks['constant']();
+    } else {
+      gulpTasks['default']();
+    }
   });
 };
