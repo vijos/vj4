@@ -62,7 +62,7 @@ function printLiteralOrObject(v) {
     const { __intKey, ...val } = v;
     print('collections.OrderedDict([\n');
     for (const [ name, item ] of _.entries(val)) {
-      print('(')
+      print('(');
       if (__intKey) {
         print(name);
       } else {
