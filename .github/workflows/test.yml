@@ -1,0 +1,118 @@
+name: Tests
+
+on:
+  push: ~
+  pull_request: ~
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      fe-changed: ${{ steps.fe.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 10
+
+      - uses: marceloprado/has-changed-path@v1
+        id: fe
+        with:
+          paths: vj4/ui yarn.lock
+
+  build-constant:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: 10
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Generate constant
+        run: yarn build --constant
+
+      - name: Upload Python constant
+        uses: actions/upload-artifact@v2
+        with:
+          name: vj4-constant
+          path: vj4/constant/
+
+  test-fe:
+    needs: check
+    if: ${{ needs.check.outputs.fe-changed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: 10
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Generate constant
+        run: yarn build:production
+
+      - name: Upload uibuild
+        uses: actions/upload-artifact@v2
+        with:
+          name: uibuild
+          path: |
+            vj4/.uibuild/
+            vj4/constant/
+  
+  test-python:
+    needs: build-constant
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8]
+    services:
+      rabbitmq:
+        image: rabbitmq
+        ports:
+          - "5672:5672"
+      mongodb:
+        image: mongo
+        ports:
+          - "27017:27017"
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Download constants
+        uses: actions/download-artifact@v2
+        with:
+          name: vj4-constant
+          path: vj4/constant/
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup pip cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-py${{ matrix.python-version }}-pip--${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-py${{ matrix.python-version }}-pip-
+            ${{ runner.os }}-py${{ matrix.python-version }}-
+
+      - name: Install dependencies
+        run: |
+          sudo python -m pip install --upgrade setuptools pip
+          python -c "import sys; print(sys.version)"
+          python -m pip install -r requirements.txt
+
+      - name: Unit tests
+        run: python -m unittest
+        continue-on-error: ${{ matrix.python-version == '3.8' }}
