@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://travis-ci.org/vijos/vj4" target="_blank"><img src="https://img.shields.io/travis/vijos/vj4/master.svg?style=flat-square"></a>
+  <a href="https://github.com/vijos/vj4/actions" target="_blank"><img src="https://github.com/vijos/vj4/actions/workflows/test.yml/badge.svg?branch=master"></a>
   <a href="https://codeclimate.com/github/vijos/vj4" target="_blank"><img src="https://img.shields.io/codeclimate/github/vijos/vj4.svg?style=flat-square"></a>
   <a href="https://www.versioneye.com/user/projects/598d6f846725bd005228a0e4" target="_blank"><img src="https://www.versioneye.com/user/projects/598d6f846725bd005228a0e4/badge.svg?style=flat-square"></a>
   <a href="https://raw.githubusercontent.com/vijos/vj4/master/LICENSE" target="_blank"><img src="https://img.shields.io/badge/license-AGPLv3-blue.svg?style=flat-square"></a>
@@ -43,7 +43,7 @@ There is pre-built docker package at `vijos/vj4`. This is maintained by [@moesoh
 
 #### Prerequisites
 
-* [Python 3.5.3+](https://www.python.org/downloads/)
+* [Python 3.5.3+, <3.8](https://www.python.org/downloads/)
 * [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
 * [Node.js 10.0+](https://nodejs.org/en/download/package-manager/)
 * [RabbitMQ](http://www.rabbitmq.com/)
