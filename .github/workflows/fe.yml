@@ -1,0 +1,75 @@
+name: Build and Release Front-End
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  check-path:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changed.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 10
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed
+        with:
+          paths: vj4/ui yarn.lock
+
+  build:
+    needs: check-path
+    if: ${{ needs.check-path.outputs.changed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: 10
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build front-end
+        run: yarn build:production
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: uibuild
+          path: |
+            vj4/.uibuild/
+            vj4/constant/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get variable
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Download constant
+        uses: actions/download-artifact@v2
+        with:
+          name: uibuild
+          path: vj4/
+
+      - name: Pack them
+        run: tar -cJf uibuild.tar.xz vj4/.uibuild vj4/constant
+      
+      - uses: ncipollo/release-action@v1
+        with:
+          name: uibuild-${{ steps.vars.outputs.sha_short }}
+          artifacts: uibuild.tar.xz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          tag: uibuild-${{ steps.vars.outputs.sha_short }}
