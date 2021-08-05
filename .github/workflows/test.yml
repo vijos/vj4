@@ -1,11 +1,26 @@
-name: Unit test
+name: Tests
 
 on:
   push: ~
   pull_request: ~
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      fe-changed: ${{ steps.fe.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 10
+
+      - uses: marceloprado/has-changed-path@v1
+        id: fe
+        with:
+          paths: vj4/ui yarn.lock
+
   build-constant:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,6 +36,10 @@ jobs:
           node --version
           yarn install
 
+      - if: ${{ needs.check.outputs.fe-changed == 'true' }}
+        name: Build test for front-end
+        run: yarn build
+
       - name: Generate constant
         run: yarn build --constant
 
@@ -30,7 +49,7 @@ jobs:
           name: vj4-constant
           path: vj4/constant/
   
-  test:
+  test-python:
     needs: build-constant
     runs-on: ubuntu-latest
     strategy:
@@ -74,6 +93,6 @@ jobs:
           python -c "import sys; print(sys.version)"
           python -m pip install -r requirements.txt
 
-      - name: Unit Test
+      - name: Unit tests
         run: python -m unittest
         continue-on-error: ${{ matrix.python-version == '3.8' }}
