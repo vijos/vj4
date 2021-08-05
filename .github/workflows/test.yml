@@ -20,7 +20,6 @@ jobs:
           paths: vj4/ui yarn.lock
 
   build-constant:
-    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -32,13 +31,7 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: |
-          node --version
-          yarn install
-
-      - if: ${{ needs.check.outputs.fe-changed == 'true' }}
-        name: Build test for front-end
-        run: yarn build
+        run: yarn install
 
       - name: Generate constant
         run: yarn build --constant
@@ -48,6 +41,33 @@ jobs:
         with:
           name: vj4-constant
           path: vj4/constant/
+
+  test-fe:
+    needs: check
+    if: ${{ needs.check.outputs.fe-changed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: 10
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Generate constant
+        run: yarn build:production
+
+      - name: Upload uibuild
+        uses: actions/upload-artifact@v2
+        with:
+          name: uibuild
+          path: |
+            vj4/.uibuild/
+            vj4/constant/
   
   test-python:
     needs: build-constant

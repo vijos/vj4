@@ -34,11 +34,9 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: |
-          node --version
-          yarn install
+        run: yarn install
 
-      - name: Build Front-End
+      - name: Build front-end
         run: yarn build:production
 
       - name: Upload artifact
