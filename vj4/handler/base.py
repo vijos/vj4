@@ -91,8 +91,6 @@ class HandlerBase(setting.SettingMixin):
   def dudoc_has_perm(self, udoc, dudoc, perm, ddoc=None):
     if not udoc:
       role = builtin.ROLE_GUEST
-    elif not dudoc:
-      role = builtin.ROLE_DEFAULT
     else:
       role = dudoc.get('role', builtin.ROLE_DEFAULT)
     mask = domain.get_all_roles(ddoc if ddoc else self.domain).get(role, builtin.PERM_NONE)
