@@ -25,7 +25,6 @@ class Environment(jinja2.Environment):
   def __init__(self):
     super(Environment, self).__init__(
         loader=jinja2.FileSystemLoader(path.join(path.dirname(__file__), 'ui/templates')),
-        extensions=[jinja2.ext.with_],
         auto_reload=options.debug,
         autoescape=True,
         trim_blocks=True,
