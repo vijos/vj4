@@ -1,4 +1,4 @@
-aiohttp==3.7.4
+aiohttp>=3.6.0,<3.8.0
 jinja2>=2.9.0
 sockjs>=0.7.0,<0.10.0
 misaka
