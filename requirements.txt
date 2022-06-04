@@ -11,6 +11,6 @@ httpagentparser
 geoip2
 GitPython
 PyYAML
-aiomongo
+git+https://github.com/iceboy233/aiomongo
 yarl
 aiohttp-sentry
