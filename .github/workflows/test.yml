@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
     services:
       rabbitmq:
         image: rabbitmq
@@ -115,4 +115,3 @@ jobs:
 
       - name: Unit tests
         run: python -m unittest
-        continue-on-error: ${{ matrix.python-version == '3.8' }}
