@@ -1,7 +1,7 @@
 aiohttp==3.7.4
 jinja2>=2.9.0
 sockjs>=0.7.0,<0.10.0
-hoedown
+misaka
 accept
 aioamqp
 git+https://github.com/LukeXuan/aiosmtplib # custom aiosmtlib with ssl support
