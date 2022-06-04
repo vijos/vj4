@@ -43,7 +43,7 @@ There is pre-built docker package at `vijos/vj4`. This is maintained by [@moesoh
 
 #### Prerequisites
 
-* [Python 3.5.3+](https://www.python.org/downloads/)
+* [Python 3.6+](https://www.python.org/downloads/)
 * [MongoDB 3.0+, <3.6](https://docs.mongodb.org/manual/installation/)
 * [Node.js 10.0+](https://nodejs.org/en/download/package-manager/)
 * [RabbitMQ](http://www.rabbitmq.com/)
