@@ -43,8 +43,8 @@ There is pre-built docker package at `vijos/vj4`. This is maintained by [@moesoh
 
 #### Prerequisites
 
-* [Python 3.5.3+, <3.8](https://www.python.org/downloads/)
-* [MongoDB 3.0+](https://docs.mongodb.org/manual/installation/)
+* [Python 3.6+](https://www.python.org/downloads/)
+* [MongoDB 3.0+, <3.6](https://docs.mongodb.org/manual/installation/)
 * [Node.js 10.0+](https://nodejs.org/en/download/package-manager/)
 * [RabbitMQ](http://www.rabbitmq.com/)
 
@@ -61,10 +61,10 @@ You don't need root privilege to run `yarn`. It installs stuffs in the project d
 
 You may want to use [tuna](https://pypi.tuna.tsinghua.edu.cn/) if you are in China.
 
-Some requirements may need `Python.h`. In Debian/Ubuntu you can use
+Some requirements may need `Python.h` and `ffi.h`. In Debian/Ubuntu you can use
 
 ```bash
-apt install python3-dev
+apt install python3-dev libffi-dev
 ```
 
 to resolve this.

@@ -1,7 +1,7 @@
-aiohttp>=3
+aiohttp>=3.6.0,<3.8.0
 jinja2>=2.9.0
 sockjs>=0.7.0,<0.10.0
-hoedown
+misaka
 accept
 aioamqp
 git+https://github.com/LukeXuan/aiosmtplib # custom aiosmtlib with ssl support
@@ -11,6 +11,6 @@ httpagentparser
 geoip2
 GitPython
 PyYAML
-aiomongo
+git+https://github.com/iceboy233/aiomongo
 yarl
 aiohttp-sentry
