@@ -25,8 +25,8 @@ FS_RE = re.compile(r'\(vijos\:\/\/fs\/([0-9a-f]{40,})\)')
 
 
 def nl2br(text):
-  markup = jinja2.escape(text)
-  return jinja2.Markup('<br>'.join(markup.split('\n')))
+  markup = markupsafe.escape(text)
+  return markupsafe.Markup('<br>'.join(markup.split('\n')))
 
 
 def fs_replace(m):
