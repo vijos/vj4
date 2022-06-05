@@ -61,10 +61,10 @@ You don't need root privilege to run `yarn`. It installs stuffs in the project d
 
 You may want to use [tuna](https://pypi.tuna.tsinghua.edu.cn/) if you are in China.
 
-Some requirements may need `Python.h`. In Debian/Ubuntu you can use
+Some requirements may need `Python.h` and `ffi.h`. In Debian/Ubuntu you can use
 
 ```bash
-apt install python3-dev
+apt install python3-dev libffi-dev
 ```
 
 to resolve this.
