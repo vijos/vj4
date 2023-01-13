@@ -7,6 +7,7 @@ import logging
 import markupsafe
 import pytz
 import sockjs
+import urllib.parse
 from aiohttp import web
 from email import utils
 
@@ -367,7 +368,8 @@ def _get_csrf_token(session_id_binary):
 @functools.lru_cache()
 def _reverse_url(name, *, domain_id, **kwargs):
   """DEPRECATED: This function is deprecated. But we don't have a replacement yet."""
-  kwargs = {key: str(value) for key, value in kwargs.items()}
+  kwargs = {key: urllib.parse.quote(str(value), safe='')
+            for key, value in kwargs.items()}
   if domain_id != builtin.DOMAIN_ID_SYSTEM:
     name += '_with_domain_id'
     kwargs['domain_id'] = domain_id
