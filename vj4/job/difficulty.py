@@ -87,10 +87,12 @@ def _get_difficulty(pdoc, calculated_difficulty):
   if setting == problem.SETTING_DIFFICULTY_ALGORITHM:
     return calculated_difficulty
   elif setting == problem.SETTING_DIFFICULTY_ADMIN:
-     return pdoc['difficulty_admin']
+    return pdoc['difficulty_admin']
   elif setting == problem.SETTING_DIFFICULTY_AVERAGE \
        and pdoc.get('difficulty_admin', None):
-       return int(round((calculated_difficulty + pdoc['difficulty_admin']) / 2))
+    if calculated_difficulty is None:
+      return pdoc['difficulty_admin']
+    return int(round((calculated_difficulty + pdoc['difficulty_admin']) / 2))
   else:
     return calculated_difficulty
 
