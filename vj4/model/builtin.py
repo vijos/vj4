@@ -333,7 +333,7 @@ LEVELS = collections.OrderedDict([(10, 1),
                                   (1, 100)])
 
 # Footer extra HTMLs. TODO(iceboy): remove.
-FOOTER_EXTRA_HTMLS = ['© 2005 - 2023 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
+FOOTER_EXTRA_HTMLS = ['© 2005 - 2024 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
                       '<a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow">' +
                       '沪ICP备14040537号-1</a>']
 
